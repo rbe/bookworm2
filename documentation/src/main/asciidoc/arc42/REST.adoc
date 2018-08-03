@@ -1,0 +1,19 @@
+----
+blista_curl="curl -H "bibliothek: wbh06" -H 'bibkennwort: ' https://rest-dls-katalog.blista.de/v1/werke"
+----
+
+----
+$blista_curl /titusTest
+----
+
+----
+$blista_curl /titusTest/1-0000122-3-9
+----
+
+----
+curl -LO http://dls-test-katalog.blista.de/download/wbh06/titusTest/1-0000122-3-9/cof67n4m68fhitcht9onr5lpcg
+----
+
+----
+curl -O http://dls-test-katalog.blista.de:80/filedownload/wbh06/titusTest/1-0000122-3-9/cof67n4m68fhitcht9onr5lpcg/93.211.79.246/defaultbrowser/LXMwpyIg3P011L8rGDIe5O1au0i3lW1
+----

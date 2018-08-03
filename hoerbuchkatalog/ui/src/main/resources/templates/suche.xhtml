@@ -1,0 +1,23 @@
+<!DOCTYPE html [
+        <!ENTITY nbsp "&#160;">
+        ]>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <h2 class="contentheading">Onlinekatalog Suche</h2>
+            <hk:navigation/>
+            <hk:katalogsuche/>
+        </div>
+        <div class="noticetext">
+            <h3>Hinweise für bessere Suchergebnisse</h3>
+            <p>
+                Eine Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>Eine Suche nach »test« findet also auch »späteste«.
+            </p>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

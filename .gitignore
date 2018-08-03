@@ -1,0 +1,23 @@
+# bookworm
+var/
+documentation/src/main/resources
+*/php/approxy/vendor/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/images
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/img
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates
+
+# Maven
+pom.xml.versionsBackup
+
+# Compiler
+*.class
+out/
+target/
+
+# IntelliJ
+*.iml
+.idea/

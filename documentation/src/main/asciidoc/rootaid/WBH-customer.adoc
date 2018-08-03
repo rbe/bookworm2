@@ -1,0 +1,79 @@
+== WBH Bookworm Customer
+
+<code bash>
+# ls -lad /home/wbh/app/*customer*
+drwxr-xr-x  7 wbh  cew  4096 Okt 25 14:42 eu.artofcoding.bookworm.customer.etl.assembly-1.0.0.230
+-rw-r--r--  1 wbh  cew   137 Apr 26  2015 eu.artofcoding.bookworm.customer.etl.assembly.env
+drwxr-xr-x  4 wbh  cew  4096 Mai  5  2015 eu.artofcoding.bookworm.customer.web.assembly-1.0.0.195
+-rw-r--r--  1 wbh  cew   137 Apr 16  2015 eu.artofcoding.bookworm.customer.web.assembly.env
+</code>
+
+<code bash>
+# tree -d -L 1 /home/wbh/app/eu.artofcoding.bookworm.customer.*
+eu.artofcoding.bookworm.customer.etl.assembly-1.0.0.230
+├── conf
+├── example
+├── init.d
+├── lib
+└── temp
+
+eu.artofcoding.bookworm.customer.web.assembly-1.0.0.195
+├── apache-tomee
+└── init.d
+</code>
+
+=== Konfiguration
+
+Folgendes muss konfiguriert werden:
+  * Verschlüsselung
+  * Datenbankzugriff
+  * Routen für den ETL-Prozess
+
+==== Verschlüsselung
+
+Konfiguriert wird der Algorithmus und ein Schlüssel für die Verschlüsselung der Daten in einer ''.env''-Datei.
+
+<code bash>
+# cat /home/wbh/app/eu.artofcoding.bookworm.customer.etl.assembly.env
+export CAMEL_ENCRYPTION_ALGORITHM=PBEWithMD5AndTripleDES
+export CAMEL_ENCRYPTION_PASSWORD=askjf0984673hjgfjhgfgj3sdflhsdf1245
+</code>
+
+<code bash>
+# cat /home/wbh/app/eu.artofcoding.bookworm.customer.web.assembly.env
+export CAMEL_ENCRYPTION_ALGORITHM=PBEWithMD5AndTripleDES
+export CAMEL_ENCRYPTION_PASSWORD=askjf0984673hjgfjhgfgj3sdflhsdf1245
+</code>
+
+==== System
+
+<code bash>
+# ls -laR /home/wbh/app/eu.artofcoding.bookworm.customer.etl.assembly-1.0.0.230/conf
+/home/wbh/app/eu.artofcoding.bookworm.customer.etl.assembly-1.0.0.230/conf:
+insgesamt 24
+drwxr-xr-x 3 wbh cew 4096 Okt 27 07:49 .
+drwxr-xr-x 7 wbh cew 4096 Okt 25 15:42 ..
+-rw-r--r-- 1 wbh cew  594 Aug 18 21:40 etl.encrypted.properties
+-rw-r--r-- 1 wbh cew 2054 Sep 12 18:12 etl.properties
+drwxr-xr-x 2 wbh cew 4096 Okt 27 07:48 system
+-rw-r--r-- 1 wbh cew  193 Sep 12 16:18 transactions.properties
+
+/home/wbh/app/eu.artofcoding.bookworm.customer.etl.assembly-1.0.0.230/conf/system:
+insgesamt 32
+drwxr-xr-x 2 wbh cew 4096 Okt 27 07:48 .
+drwxr-xr-x 3 wbh cew 4096 Okt 27 07:49 ..
+-rw-r--r-- 1 wbh cew 1941 Mai 11  2015 bookworm-camel-beans.xml
+-rw-r--r-- 1 wbh cew 6160 Mai 11  2015 bookworm-camel-routes.xml
+-rw-r--r-- 1 wbh cew  738 Mai 11  2015 bookworm-datasource.xml
+-rw-r--r-- 1 wbh cew 4201 Okt 27 07:48 bookworm-spring-context.xml
+</code>
+
+==== Services
+
+<code bash>
+# service bookworm-customer-etl start | stop
+</code>
+
+<code bash>
+# service bookworm-customer-web start | stop
+</code>

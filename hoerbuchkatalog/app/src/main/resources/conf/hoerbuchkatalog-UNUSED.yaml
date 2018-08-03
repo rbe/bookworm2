@@ -1,0 +1,34 @@
+#
+# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
+
+hoerbuchkatalog:
+  directory: ./var/hoerbuchkatalog
+  cronexpression: 0 0 * * * *
+
+#
+# WBH
+#
+
+wbh:
+  gesamtdat:
+    filename: Gesamt.dat
+    charset: ISO-8859-15
+
+#
+# blista DLS Katalog
+#
+
+blista:
+  dlscatalog:
+    rest:
+      scheme: https
+      host: rest-dls-katalog.blista.de
+      port: 443
+      path: /v1/isofiles
+      url: ${blista.dlscatalog.rest.scheme}://${blista.dlscatalog.rest.host}:${blista.dlscatalog.rest.port}${blista.dlscatalog.rest.path}
+    path_in_zip: /iso.txt
+  aghnummern:
+    charset: ISO-8859-15

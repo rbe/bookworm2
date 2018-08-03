@@ -1,0 +1,44 @@
+#
+# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
+
+spring:
+  profiles: development
+  main:
+    banner-mode: "console"
+
+jsf:
+  project-stage: development
+  facelets-refresh-period: 0
+  interpret-empty-string-submitted-values-as-null: true
+  state-saving-method: server
+  partial-state-saving: true
+
+server:
+  address: 127.0.0.1
+  port: 8080
+  compression:
+    enabled: true
+  servlet:
+    context-path: /hoerbuchkatalog
+
+logging:
+  config: classpath:logback-development.xml
+  #level:
+  #  .: ERROR
+  #  wbh.bookworm.hoerbuchkatalog.app: DEBUG
+  #  wbh.bookworm.hoerbuchkatalog.ui: DEBUG
+  #  wbh.bookworm.hoerbuchkatalog.repository: DEBUG
+  #  wbh.bookworm.hoerbuchkatalog.domain: DEBUG
+  #  eu.artofcoding: DEBUG
+  #  com.hazelcast: INFO
+  #  org.omnifaces: INFO
+  #  org.joinfaces: INFO
+  #  javax.enterprise.resource.webcontainer.jsf: INFO
+  #  org.apache.jasper: INFO
+  #  org.eclipse.jetty: INFO
+  #  org.springframework: INFO
+  #  org.reflections: ERROR
+

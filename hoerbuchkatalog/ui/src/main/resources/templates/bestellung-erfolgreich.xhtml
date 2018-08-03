@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <div class="download-success">
+                <h3>Vielen Dank für Ihre Bestellung!</h3>
+                <h:outputText styleClass="line15 baskettext"
+                              value="Ihre Bestellung wurde erfolgreich übermittelt!"/>
+            </div>
+            <div class="download-header">
+                <h3>Download</h3>
+                <hk:bestellte-hoerbuecher-tabelle basket="#{orderBean.orderedDigitalBasket}"
+                                                  basketType="DigitalBasketBean"/>
+            </div>
+            <div class="post-header">
+                <h3>Bestellung auf CD</h3>
+                <hk:bestellte-hoerbuecher-tabelle basket="#{orderBean.orderedPostalBasket}"
+                                                  basketType="PostalBasketBean"/>
+            </div>
+        </div>
+        <div class="noticetext">
+            <h3>Hinweise zu Ihrer Bestellung</h3>
+            Ihre Bestellung wurde aufgenommen.
+            <p>Bestellungen auf CD erhalten Sie auf dem gewohntem Versandweg. Download Bestellungen stehen Ihnen in Kürze unter "Downloads" zum herunterladen bereit.</p>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

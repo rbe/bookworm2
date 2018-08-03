@@ -1,0 +1,138 @@
+<!DOCTYPE html [
+        <!ENTITY nbsp "&#160;">
+        <!ENTITY copy "&#169;">
+        ]>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <h2 class="contentheading">Bestellung Ihres Warenkorb - Onlinekatalog</h2>
+            <hk:navigation/>
+
+            <div class="download-header">
+                <h3>Auswahltitel für den Download</h3>
+                <hk:warenkorb-tabelle basket="#{digitalBasketBean}" readonly="false"/>
+            </div>
+            <div class="post-header">
+                <h3>Auswahltitel für die Bestellung per CD</h3>
+                <hk:warenkorb-tabelle basket="#{postalBasketBean}" readonly="false"/>
+            </div>
+            <h:form>
+                <h:panelGrid rendered="#{orderBean.itemCount > 0}"
+                             columns="2"
+                             styleClass="basket-member"
+                             columnClasses="basket-order-column1,basket-order-column2"
+                             rowClasses="basket-order-row1,basket-order-row2">
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="name"/>
+                        </div>
+                        <h:outputLabel for="name" value="Name"/>
+                    </h:panelGroup>
+                    <h:inputText id="name"
+                                 value="#{orderBean.orderDetails.name}"
+                                 styleClass="input_hoerername"
+                                 readonly="#{null != orderBean.orderDetails.name}"
+                                 required="true" requiredMessage="Bitte geben Sie Ihren Namen ein"
+                                 validatorMessage="Bitte geben Sie mehr als 3 Zeichen ein">
+                        <f:validateLength minimum="3"/>
+                    </h:inputText>
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="hoerernummer"/>
+                        </div>
+                        <h:outputLabel for="hoerernummer" value="Hörernummer"/>
+                    </h:panelGroup>
+                    <h:inputText id="hoerernummer"
+                                 value="#{orderBean.orderDetails.hoerernummer}"
+                                 styleClass="input_hoerernummer"
+                                 readonly="#{null != orderBean.orderDetails.hoerernummer}"
+                                 required="true"
+                                 requiredMessage="Bitte geben Sie Ihre Hörernummer ein"
+                                 validatorMessage="Bitte geben Sie mehr als 2 Zeichen ein">
+                        <f:validateLength minimum="2"/>
+                    </h:inputText>
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="email"/>
+                        </div>
+                        <h:outputLabel for="email" value="Email"/>
+                    </h:panelGroup>
+                    <h:inputText id="email"
+                                 value="#{orderBean.orderDetails.email}" styleClass="input_hoereremail"
+                                 readonly="#{null != orderBean.orderDetails.email}"
+                                 required="true"
+                                 requiredMessage="Bitte geben Sie Ihre Email-Adresse ein"
+                                 validatorMessage="Bitte geben Sie mehr als 5 Zeichen ein">
+                        <f:validateLength minimum="5"/>
+                    </h:inputText>
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="bemerkung"/>
+                        </div>
+                        <h:outputLabel for="bemerkung" value="Bemerkung"/>
+                    </h:panelGroup>
+                    <h:inputTextarea id="bemerkung"
+                                     value="#{orderBean.orderDetails.bemerkung}"
+                                     styleClass="input_bemerkung"
+                                     rows="5" cols="35"
+                                     required="false"
+                                     validatorMessage="Bitte geben Sie mehr als 5 Zeichen ein">
+                        <f:validateLength minimum="5"/>
+                    </h:inputTextarea>
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="bestellkarteMischen"/>
+                        </div>
+                        <h:outputLabel for="bestellkarteMischen" value="Bestellkarte mischen?"/>
+                    </h:panelGroup>
+                    <h:selectBooleanCheckbox id="bestellkarteMischen"
+                                             value="#{orderBean.orderDetails.bestellkarteMischen}"
+                                             styleClass="input_bestellkarteMischen"
+                                             required="false">
+                    </h:selectBooleanCheckbox>
+
+                    <h:panelGroup>
+                        <div class="basketerror">
+                            <h:message for="alteBestellkarteLoeschen"/>
+                        </div>
+                        <h:outputLabel for="alteBestellkarteLoeschen"
+                                       value="Alte Bestellkarte löschen?"/>
+                    </h:panelGroup>
+                    <h:selectBooleanCheckbox id="alteBestellkarteLoeschen"
+                                             value="#{orderBean.orderDetails.alteBestellkarteLoeschen}"
+                                             styleClass="input_alteBestellkarteLoeschen"
+                                             required="false">
+                    </h:selectBooleanCheckbox>
+
+                    <h:outputLabel value=" "/>
+                    <h:commandButton value="Bestellen"
+                                     onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);"
+                                     action="#{orderBean.placeOrder}"
+                                     styleClass="basketsubmit" required="true">
+                        <f:ajax execute="@form" render="orderSubmitMessage"/>
+                    </h:commandButton>
+                    <h:outputLabel id="orderSubmitMessage" value="#{orderBean.orderSubmitMessage}"/>
+
+                </h:panelGrid>
+            </h:form>
+        </div>
+        <div class="noticetext">
+            <h3>Hinweise zum Warenkorb</h3>
+            Im Warenkorb erhalten Sie eine Übersicht Ihrer Bestellungen, unterteilt in "Downloads" und "Bestellungen per CD". Geben Sie für eine Bestellung Ihre Daten und Ihre Hörernummer in die entsprechenden Felder ein und klicken Sie auf Bestellen.
+
+            <p>Mit Ihrer Bestellung wird eine Hörbuchdatei inkl. Wasserzeichen generiert. Informationen zum Bearbeitungsstatus und einen Link für den Download erhalten Sie unter "Downloads".</p>
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

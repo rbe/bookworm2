@@ -1,0 +1,47 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<cc:interface>
+    <cc:attribute name="hoerbuch" required="true" type="wbh.bookworm.hoerbuchkatalog.domain.Hoerbuch"/>
+</cc:interface>
+
+<cc:implementation>
+    <div class="itemtobasket">
+        <h:commandLink rendered="#{!cdWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+                       styleClass="basket-order-link"
+                       action="#{cdWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
+                       value="CD bestellen"/>
+        <h:commandLink rendered="#{cdWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+                       styleClass="basket-remove-link"
+                       action="#{cdWarenkorb.entfernen(cc.attrs.hoerbuch)}"
+                       value="CD Bestellung löschen"/>
+
+        <!--digitalBasketBean.canBeOrderedAsDownload(hoerbuch)-->
+        <h:commandLink rendered="#{cc.attrs.hoerbuch.downloadbar}"
+                       styleClass="basket-order-link"
+                       action="#{digitalWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
+                       value="Download bestellen"/>
+        <h:commandLink rendered="#{digitalWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+                       styleClass="basket-remove-link"
+                       action="#{digitalWarenkorb.entfernen(cc.attrs.hoerbuch)}"
+                       value="Download löschen"/>
+   </div>
+    <div class="nextdetail">
+        <h:commandLink value="vorheriger Titel"
+                       rendered="#{katalogsuchergebnis.vorherigesBuchVorhanden(cc.attrs.hoerbuch)}"
+                       action="#{katalogsuchergebnis.vorherigesHoerbuchAnsehen(cc.attrs.hoerbuch)}"/>
+        &nbsp;Titel Nr.
+        <h:outputText value="#{katalogsuchergebnis.position(cc.attrs.hoerbuch)}"/>
+        von <h:outputText value="#{katalogsuchergebnis.anzahl}"/>
+        &nbsp;
+        <h:commandLink value="nächster Titel"
+                       rendered="#{katalogsuchergebnis.naechstesBuchVorhanden(cc.attrs.hoerbuch)}"
+                       action="#{katalogsuchergebnis.naechstesHoerbuchAnsehen(cc.attrs.hoerbuch)}"/>
+        <br/><br/>
+    </div>
+</cc:implementation>
+
+</html>

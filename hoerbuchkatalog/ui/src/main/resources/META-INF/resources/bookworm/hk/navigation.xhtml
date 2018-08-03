@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html">
+
+<cc:interface>
+</cc:interface>
+
+<cc:implementation>
+    <div class="search_basket">
+        <h:form>
+            <!-- Ergebnis -->
+            <h:commandLink rendered="#{navigation.linkZumSuchergebnisAnzeigen}"
+                           styleClass="nav-link-resultlist"
+                           action="#{navigation.suchergebnis}">Zurück zum Suchergebnis</h:commandLink>
+            <!-- Suche -->
+            <div class="newsearch_basket">
+                <h:commandLink rendered="#{navigation.linkZurErneutenSucheAnzeigen}"
+                               styleClass="nav-link-newsearch"
+                               action="#{navigation.erneuteSuche}">Erneute Suche</h:commandLink>
+                <h:commandLink rendered="#{navigation.linkZurSucheAnzeigen}"
+                               styleClass="nav-link-search"
+                               action="#{navigation.erneuteSuche}">Suchen</h:commandLink>
+            </div>
+            <!-- Merkliste -->
+            <h:panelGroup rendered="#{navigation.linkZumWarenkorbAnzeigen}"
+                          layout="block" styleClass="basket-count">
+                <h:outputLink value="#{navigation.warenkorb}">
+                    <h:outputText value="Warenkorb (#{bestellung.anzahl})"/>
+                </h:outputLink>
+            </h:panelGroup>
+            <h:panelGroup rendered="#{!navigation.linkZumWarenkorbAnzeigen}"
+                          layout="block" styleClass="basket-count">
+                Warenkorb (0)
+            </h:panelGroup>
+            <h:panelGroup rendered="#{digitalWarenkorb.maxDownloadsProTagErreicht}"
+                          layout="block" styleClass="basket-count">
+                Sie haben Ihr Limit für die Bestellung von Downloads für heute erreicht!
+            </h:panelGroup>
+            <h:panelGroup rendered="#{digitalWarenkorb.maxDownloadsProMonatErreicht}"
+                          layout="block" styleClass="basket-count">
+                Sie haben Ihr Limit für die Bestellung von Downloads für diesen Monat erreicht!
+            </h:panelGroup>
+         </h:form>
+    </div>
+</cc:implementation>
+
+</html>

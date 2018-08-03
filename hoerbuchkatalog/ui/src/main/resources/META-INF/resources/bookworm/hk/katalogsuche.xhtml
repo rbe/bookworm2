@@ -1,0 +1,74 @@
+<!DOCTYPE html [
+        <!ENTITY nbsp "&#160;">
+        <!ENTITY copy "&#169;">
+        ]>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:cc="http://java.sun.com/jsf/composite"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<cc:interface>
+</cc:interface>
+
+<cc:implementation>
+    <h:form name="katalogsuche">
+        <div class="multisearch">
+            <div class="search-stichwort">
+                <label class="suchlabel_stichwort">nach Stichwort</label>
+                <h:inputText name="stichwortsuche"
+                             styleClass="input_stichwort" type="text"
+                             size="40" maxlength="30" style="width:30"
+                             value="#{katalogsuche.stichwort}"/>
+                <h:commandButton class="submitbutton search-stichwort-button" type="submit"
+                                 value="Suchen" action="#{katalogsuche.sucheNachStichwort}"/>
+            </div>
+            <div class="search-sachgebiet">
+                <label class="suchlabel_sachgebiet">nach Sachgebiet</label>
+                <!-- JAVASERVERFACES-1591 -->
+                <h:selectOneMenu id="sachgebiet" name="sachgebietsuche"
+                                 styleClass="input_sachgebiet" type="text"
+                                 value="#{katalogsuche.sachgebiet}">
+                    <f:selectItem itemLabel="-- keine Auswahl --" itemValue=""/>
+                    <f:selectItems value="#{katalogsuche.sachgebiete}" var="sachgebiet"
+                                   itemLabel="#{sachgebiet.label}" itemValue="#{sachgebiet.name}"/>
+                </h:selectOneMenu>
+            </div>
+            <div class="search-autor">
+                <label class="suchlabel_autor">nach Autor</label>
+                <h:inputText name="autorsuche"
+                             styleClass="input_autor"
+                             type="text" size="40"  maxlength="30" style="width:30"
+                             value="#{katalogsuche.autor}"/>
+            </div>
+            <div class="search-titel">
+                <label class="suchlabel_titel">nach Titel</label>
+                <h:inputText name="titelsuche"
+                             styleClass="input_titel"
+                             type="text" size="40" maxlength="30" style="width:30"
+                             value="#{katalogsuche.titel}"/>
+            </div>
+            <div class="search-sprecher">
+                <label class="suchlabel_sprecher">nach Sprecher</label>
+                <h:inputText name="sprechersuche"
+                             styleClass="input_sprecher"
+                             type="text" size="40" maxlength="30" style="width:30"
+                             value="#{katalogsuche.sprecher}"/>
+            </div>
+            <div class="search-datum">
+                <label class="suchlabel_datum">nach Datum</label>
+                <h:inputText name="datumsuche"
+                             styleClass="input_datum"
+                             type="text" size="40" maxlength="30" style="width:30"
+                             value="#{katalogsuche.einstelldatum}"/>
+            </div>
+            <div class="search-detail-button">
+                <label>&nbsp;</label>
+                <h:commandButton class="submitbutton"
+                                 type="submit" value="Suchen"
+                                 action="#{katalogsuche.suchen}"/>
+            </div>
+        </div>
+    </h:form>
+</cc:implementation>
+
+</html>

@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <h2 class="contentheading">Onlinekatalog Suche</h2>
+            <div class="noticetext">
+                <h3>Keine Suchergebnisse</h3>
+                Es wurden keine Treffer zu Ihrer Suche gefunden.<br/>
+                Bitte geben Sie Suchbegriffe mit mindestens 3 Zeichen ein!
+            </div>
+            <hk:navigation/>
+            <hk:katalogsuche/>
+        </div>
+        <div class="noticetext">
+            <h3>Platz für Hinweistext</h3>
+            Hier kann eine Erklärung stehen.....
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

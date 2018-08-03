@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <h2 class="contentheading">Merkliste</h2>
+            <hk:navigation/>
+            <div class="download-header">
+                <h3>
+                    <h:outputText rendered="#{wishlistBean.itemCount == 0}"
+                                  value="Ihre Merkliste ist leer."/>
+                    <h:outputText rendered="#{wishlistBean.itemCount == 1}"
+                                  value="Ihre Merkliste enthält 1 Hörbuch."/>
+                    <h:outputText rendered="#{wishlistBean.itemCount > 1}"
+                                  value="Ihre Merkliste enthält #{wishlistBean.itemCount} Hörbücher."/>
+                </h3>
+            </div>
+            <p></p>
+            <h:form styleClass="Wishlist">
+                <h:dataTable id="bookwormBasketTable"
+                             rendered="#{wishlistBean.itemCount > 0}"
+                             styleClass="tab basket-table"
+                             columnClasses="basket-column1,basket-column2,basket-column3,basket-column4,basket-column5"
+                             rowClasses="row basket-row1,row basket-row2"
+                             cellpadding="0" cellspacing="0"
+                             value="#{wishlistBean.books}" var="buch">
+                    <h:column headerClass="basket-column-header">
+                        <f:facet name="header">
+                            Titelnummer
+                        </f:facet>
+                        <h:outputText styleClass="basket-column-content" value="#{buch.titelnummer}"/>
+                    </h:column>
+                    <h:column headerClass="basket-column-header">
+                        <f:facet name="header">
+                            Autor
+                        </f:facet>
+                        <h:outputText styleClass="basket-column-content" value="#{buch.autor}"/>
+                    </h:column>
+                    <h:column headerClass="basket-column-header">
+                        <f:facet name="header">
+                            Titel
+                        </f:facet>
+                        <h:outputText styleClass="basket-column-content" value="#{buch.titel}"/>
+                    </h:column>
+                    <h:column headerClass="basket-column-header">
+                        <f:facet name="header">
+                            Merkliste
+                        </f:facet>
+                        <h:commandLink rendered="#{!postalBasketBean.isInBasket(buch)}"
+                                       styleClass="basket-order-link post"
+                                       action="#{wishlistBean.moveToPostalBasketBean(buch)}"
+                                       value="CD bestellen"/>
+                        <h:commandLink
+                                rendered="#{digitalBasketBean.canBeOrderedAsDownload(buch) and !digitalBasketBean.isInBasket(buch)}"
+                                styleClass="basket-order-link download"
+                                action="#{wishlistBean.moveToDigitalBasketBean(buch)}"
+                                value="Download"/>
+                        <h:commandLink action="#{wishlistBean.remove(buch)}"
+                                       styleClass="basket-order-link list wishlist"
+                                       value="Löschen"/>
+                    </h:column>
+                </h:dataTable>
+            </h:form>
+
+        </div>
+        <div class="noticetext">
+            <h3>Hinweise zur Merkliste</h3>
+            In der Merkliste sind alle Hörbücher aufgeführt, die Sie sich vorgemerkt haben. Hier haben Sie dann die Möglichkeit, die Titel als CD oder für den Download zu bestellen und Sie können natürlich auch Hörbücher wieder aus der Liste löschen.
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

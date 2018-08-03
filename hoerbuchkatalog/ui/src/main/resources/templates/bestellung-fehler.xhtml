@@ -1,0 +1,23 @@
+<!DOCTYPE html [
+        <!ENTITY nbsp "&#160;">
+        <!ENTITY copy "&#169;">
+        ]>
+<html lang="de"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://java.sun.com/jsf/facelets">
+<ui:composition template="hoerbuchkatalog-ui.xhtml">
+    <ui:define name="container">
+        <div class="leading">
+            <div class="download-success">
+                <h3>Leider ist ein Problem aufgetreten!</h3>
+                <h:outputText styleClass="line15 baskettext" value="Ihre Bestellung wurde nicht übermittelt!"/>
+            </div>
+        </div>
+        <div class="noticetext">
+            <h3>Platz für Hinweistext</h3>
+            Hier kann eine Erklärung stehen.....
+        </div>
+    </ui:define>
+</ui:composition>
+</html>

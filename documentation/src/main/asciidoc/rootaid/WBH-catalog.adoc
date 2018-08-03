@@ -1,0 +1,107 @@
+== WBH Bookworm Catalog
+
+[source,bash]
+----
+# ls -lad /home/wbh/app/*catalog*
+drwxr-xr-x  7 wbh  cew  4096 Mai  5  2015 eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230
+-rw-r--r--  1 wbh  cew   137 Apr 26  2015 eu.artofcoding.bookworm.catalog.etl.assembly.env
+drwxr-xr-x  4 wbh  cew  4096 Okt 11 14:39 eu.artofcoding.bookworm.catalog.web.assembly-1.0.0-230
+-rw-r--r--  1 wbh  cew   137 Apr 26  2015 eu.artofcoding.bookworm.catalog.web.assembly.env
+----
+
+[source,bash]
+----
+# tree -d -L 1 /home/wbh/app/eu.artofcoding.bookworm.catalog.*
+eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230
+├── conf
+├── example
+├── init.d
+├── lib
+└── temp
+
+eu.artofcoding.bookworm.catalog.web.assembly-1.0.0-230
+├── apache-tomee
+└── init.d
+----
+
+=== Konfiguration
+
+Folgendes muss konfiguriert werden:
+  * Inhaltsdatenverschlüsselung
+  * Datenbankzugriff
+  * Routen für den ETL-Prozess
+
+==== Inhaltsdatenverschlüsselung
+
+Konfiguriert wird der Algorithmus und ein Schlüssel für die Verschlüsselung der Daten in einer ''.env''-Datei.
+
+[source,bash]
+----
+# cat /home/wbh/app/eu.artofcoding.bookworm.catalog.etl.assembly.env
+export CAMEL_ENCRYPTION_ALGORITHM=PBEWithMD5AndTripleDES
+export CAMEL_ENCRYPTION_PASSWORD=<schlüssel hier eintragen>
+----
+
+[source,bash]
+----
+# cat /home/wbh/app/eu.artofcoding.bookworm.catalog.web.assembly.env
+export CAMEL_ENCRYPTION_ALGORITHM=PBEWithMD5AndTripleDES
+export CAMEL_ENCRYPTION_PASSWORD=<schlüssel hier eintragen>
+----
+
+=== System
+
+Die Konfiguration der Passwörter für die Datenbank, den FTP-Zugang erfolgt in der `conf/etl.encrypted.properties`, die URLs für die Routen stehen in der `conf/etl.properties`.
+
+[source,bash]
+----
+# ls -laR /home/wbh/app/eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230/conf
+/home/wbh/app/eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230/conf:
+insgesamt 20
+drwxr-xr-x 3 wbh cew 4096 Mai  5  2015 .
+drwxr-xr-x 7 wbh cew 4096 Mai  5  2015 ..
+-rw-r--r-- 1 wbh cew  405 Mai  5  2015 etl.encrypted.properties
+-rw-r--r-- 1 wbh cew  341 Mai  5  2015 etl.properties
+drwxr-xr-x 2 wbh cew 4096 Mai  5  2015 system
+----
+
+Die Konfiguration für
+
+* Datenbank
+* Camel Routen
+* Spring Context
+
+liegen unter `conf/system`:
+
+[source,bash]
+----
+/home/wbh/app/eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230/conf/system:
+insgesamt 20
+drwxr-xr-x 2 wbh cew 4096 Mai  5  2015 .
+drwxr-xr-x 3 wbh cew 4096 Mai  5  2015 ..
+-rw-r--r-- 1 wbh cew 1686 Mai  5  2015 bookworm-camel.xml
+-rw-r--r-- 1 wbh cew  738 Mai  5  2015 bookworm-datasource.xml
+-rw-r--r-- 1 wbh cew 4069 Mai  5  2015 bookworm-spring-context.xml
+----
+
+==== Services
+
+Die Skripte für den Start/Stop der Dienste liegen unter ''${BOOKWORM_HOME}/<application>/init.d'' und werden nach ''/etc/init.d'' verlinkt. Dies wird automatisch bei Aktualisierung durch ''wbh_update'' angepasst.
+
+[source,bash]
+----
+ln -s /home/wbh/app/eu.artofcoding.bookworm.catalog.etl.assembly-1.0.0-230/init.d/bookworm-catalog-etl /etc/init.d
+ln -s /home/wbh/app/eu.artofcoding.bookworm.catalog.web.assembly-1.0.0-230/init.d/bookworm-catalog-web /etc/init.d
+ln -s /home/wbh/app/eu.artofcoding.bookworm.customer.etl.assembly-1.0.0-230/init.d/bookworm-customer-etl /etc/init.d
+ln -s /home/wbh/app/eu.artofcoding.bookworm.customer.web.assembly-1.0.0-230/init.d/bookworm-customer-web /etc/init.d
+----
+
+[source,bash]
+----
+service bookworm-catalog-etl start | stop
+----
+
+[source,bash]
+----
+service bookworm-catalog-web start | stop
+----
