@@ -13,7 +13,7 @@ CREATE OR REPLACE VIEW v_webhoer AS
     , DATE_FORMAT(bo.ausleihdatum + INTERVAL 1 MONTH, '%H%i%s') RUEGZT -- TODO
   FROM BlistaOrder bo
     INNER JOIN BlistaOrder_Book bob ON bo.id = bob.blistaorder_id
-    INNER JOIN Book b ON bob.books_titelnummer = b.titelnummer
+    INNER JOIN Book b ON bob.books_titelnummer = b.titelnummern
     INNER JOIN HoererBuchstamm hbs ON hbs.hoerernummer = bo.hoerernummer
 ;
 

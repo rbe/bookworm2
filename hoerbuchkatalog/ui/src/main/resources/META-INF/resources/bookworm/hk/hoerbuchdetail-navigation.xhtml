@@ -5,7 +5,7 @@
       xmlns:h="http://java.sun.com/jsf/html">
 
 <cc:interface>
-    <cc:attribute name="hoerbuch" required="true" type="wbh.bookworm.hoerbuchkatalog.domain.Hoerbuch"/>
+    <cc:attribute name="hoerbuch" required="true" type="wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch"/>
 </cc:interface>
 
 <cc:implementation>
@@ -22,11 +22,11 @@
         <!--digitalBasketBean.canBeOrderedAsDownload(hoerbuch)-->
         <h:commandLink rendered="#{cc.attrs.hoerbuch.downloadbar}"
                        styleClass="basket-order-link"
-                       action="#{digitalWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
+                       action="#{downloadWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
                        value="Download bestellen"/>
-        <h:commandLink rendered="#{digitalWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+        <h:commandLink rendered="#{downloadWarenkorb.enthalten(cc.attrs.hoerbuch)}"
                        styleClass="basket-remove-link"
-                       action="#{digitalWarenkorb.entfernen(cc.attrs.hoerbuch)}"
+                       action="#{downloadWarenkorb.entfernen(cc.attrs.hoerbuch)}"
                        value="Download löschen"/>
    </div>
     <div class="nextdetail">

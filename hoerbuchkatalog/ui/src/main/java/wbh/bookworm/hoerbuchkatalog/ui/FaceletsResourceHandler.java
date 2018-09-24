@@ -6,6 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.faces.FacesException;
 import javax.faces.application.ResourceHandler;
 import javax.faces.application.ResourceHandlerWrapper;
@@ -19,7 +22,8 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
 
     private ResourceHandler wrapped;
 
-    public FaceletsResourceHandler(ResourceHandler wrapped) {
+    @SuppressWarnings({"deprecation"})
+    public FaceletsResourceHandler(final ResourceHandler wrapped) {
         this.wrapped = wrapped;
     }
 
@@ -31,7 +35,6 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
                 @Override
                 public URL getURL() {
                     try {
-                        //return new File(WebFilesystem.BASE_PATH, name).toURI().toURL();
                         return Paths.get(WebFilesystem.BASE_PATH, name).toUri().toURL();
                     } catch (MalformedURLException e) {
                         throw new FacesException(e);
@@ -45,6 +48,27 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
     @Override
     public ResourceHandler getWrapped() {
         return wrapped;
+    }
+
+    private static final class WebFilesystem {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(WebFilesystem.class);
+
+        private static final String TEMPLATE_SYSTEM_VARIABLE = "HOERBUCHKATALOG_TEMPLATE";
+
+        static final String BASE_PATH;
+
+        static {
+            BASE_PATH = System.getenv(TEMPLATE_SYSTEM_VARIABLE);
+            if (null == WebFilesystem.BASE_PATH) {
+                LOGGER.error("Variable {} not set!", TEMPLATE_SYSTEM_VARIABLE);
+            }
+        }
+
+        private WebFilesystem() {
+            throw new AssertionError();
+        }
+
     }
 
 }

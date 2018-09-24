@@ -6,11 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
-import wbh.bookworm.hoerbuchkatalog.domain.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.Sachgebiet;
-import wbh.bookworm.hoerbuchkatalog.domain.Titelnummer;
 
 import java.time.format.DateTimeFormatter;
 
@@ -20,7 +21,7 @@ public class Hoerbuchdetail {
 
     private Hoerbuch hoerbuch;
 
-    public void setHoerbuch(final Hoerbuch hoerbuch) {
+    void setHoerbuch(final Hoerbuch hoerbuch) {
         this.hoerbuch = hoerbuch;
     }
 
@@ -65,21 +66,7 @@ public class Hoerbuchdetail {
     }
 
     public String getSprecher() {
-        final StringBuilder builder = new StringBuilder();
-        final String sprecher1 = hoerbuch.getSprecher1();
-        final boolean sprecher1HatWert = null != sprecher1 && !sprecher1.trim().isEmpty();
-        if (sprecher1HatWert) {
-            builder.append(sprecher1);
-        }
-        final String sprecher2 = hoerbuch.getSprecher1();
-        final boolean sprecher2HatWert = null != sprecher2 && !sprecher2.trim().isEmpty();
-        if (sprecher2HatWert) {
-            if (sprecher1HatWert) {
-                builder.append(", ");
-            }
-            builder.append(sprecher2);
-        }
-        return sprecher1;
+        return hoerbuch.getSprecher();
     }
 
     public String getSpieldauer() {

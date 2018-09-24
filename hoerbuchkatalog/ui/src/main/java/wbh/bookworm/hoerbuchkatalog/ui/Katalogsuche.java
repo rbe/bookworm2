@@ -6,15 +6,17 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
-import wbh.bookworm.hoerbuchkatalog.domain.Sachgebiet;
-import wbh.bookworm.hoerbuchkatalog.domain.Suchergebnis;
-import wbh.bookworm.hoerbuchkatalog.domain.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.repository.HoerbuchkatalogSuche;
 
 @Component
 @SessionScope
@@ -22,26 +24,34 @@ public class Katalogsuche {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
 
-    private final HoerbuchkatalogSuche hoerbuchkatalogSuche;
+    private final Hoerernummer hoerernummer;
+
+    private final HoerbuchkatalogService hoerbuchkatalogService;
 
     private final Katalogsuchergebnis katalogsuchergebnis;
+
+    private String stichwort;
 
     private Suchparameter suchparameter;
 
     @Autowired
-    public Katalogsuche(final HoerbuchkatalogSuche hoerbuchkatalogSuche,
+    public Katalogsuche(final Hoerernummer hoerernummer,
+                        final HoerbuchkatalogService hoerbuchkatalogService,
                         final Katalogsuchergebnis katalogsuchergebnis) {
-        this.hoerbuchkatalogSuche = hoerbuchkatalogSuche;
+        this.hoerernummer = hoerernummer;
+        this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.katalogsuchergebnis = katalogsuchergebnis;
         this.suchparameter = new Suchparameter();
     }
 
     public String getStichwort() {
-        return suchparameter.wert(Suchparameter.Feld.STICHWORT);
+        //return suchparameter.wert(Suchparameter.Feld.STICHWORT);
+        return stichwort;
     }
 
     public void setStichwort(final String stichwort) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        //suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        this.stichwort = stichwort;
     }
 
     public Sachgebiet[] getSachgebiete() {
@@ -89,8 +99,9 @@ public class Katalogsuche {
     }
 
     public String sucheNachStichwort() {
-        LOGGER.info("Suche {}", suchparameter);
-        final Suchergebnis suchergebnis = hoerbuchkatalogSuche.sucheNachStichwort(suchparameter);
+        LOGGER.info("Suche nach Stichwort '{}'", stichwort);
+        final Suchergebnis suchergebnis =
+                hoerbuchkatalogService.sucheNachStichwort(hoerernummer, stichwort);
         if (suchergebnis.getAnzahl() > 0) {
             katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
             return Navigation.NAV_SUCHERGEBNIS;
@@ -101,7 +112,8 @@ public class Katalogsuche {
 
     public String suchen() {
         LOGGER.info("Suche {}", suchparameter);
-        final Suchergebnis suchergebnis = hoerbuchkatalogSuche.suchen(suchparameter);
+        final Suchergebnis suchergebnis =
+                hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
         if (suchergebnis.getAnzahl() > 0) {
             katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
             return Navigation.NAV_SUCHERGEBNIS;

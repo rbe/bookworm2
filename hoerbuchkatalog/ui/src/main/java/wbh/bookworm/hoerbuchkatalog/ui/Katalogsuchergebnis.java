@@ -6,14 +6,17 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import wbh.bookworm.hoerbuchkatalog.domain.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.Hoerbuchkatalog;
-import wbh.bookworm.hoerbuchkatalog.domain.Suchergebnis;
-import wbh.bookworm.hoerbuchkatalog.domain.Titelnummer;
+import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -22,17 +25,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
+@SessionScope
 public class Katalogsuchergebnis {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuchergebnis.class);
 
-    private static final String NAV_SUCHERGEBNIS = "suchergebnis.xhtml";
-
-    private static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml";
-
     private static final int ANZAHL_HOERBUECHER_PRO_SEITE = 25;
 
-    private final Hoerbuchkatalog hoerbuchkatalog;
+    private final Hoerernummer hoerernummer;
+
+    private final Navigation navigation;
+
+    private final HoerbuchkatalogService hoerbuchkatalogService;
 
     private Suchergebnis suchergebnis;
 
@@ -43,9 +47,13 @@ public class Katalogsuchergebnis {
     private final Hoerbuchdetail hoerbuchdetail;
 
     @Autowired
-    public Katalogsuchergebnis(final Hoerbuchkatalog hoerbuchkatalog,
+    public Katalogsuchergebnis(final Hoerernummer hoerernummer,
+                               final Navigation navigation,
+                               final HoerbuchkatalogService hoerbuchkatalogService,
                                final Hoerbuchdetail hoerbuchdetail) {
-        this.hoerbuchkatalog = hoerbuchkatalog;
+        this.hoerernummer = hoerernummer;
+        this.navigation = navigation;
+        this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.hoerbuchdetail = hoerbuchdetail;
     }
 
@@ -59,7 +67,7 @@ public class Katalogsuchergebnis {
         aktuelleSeitennummer = 1;
     }
 
-    public String getSuchparameter() {
+    public String getSuchparameterAlsText() {
         return null != suchergebnis ? suchergebnis.getSuchparameter().getLabel() : "";
     }
 
@@ -85,7 +93,7 @@ public class Katalogsuchergebnis {
         return suchergebnis.getTitelnummern().stream()
                 .skip(skip)
                 .limit(ANZAHL_HOERBUECHER_PRO_SEITE)
-                .map(hoerbuchkatalog::hoerbuch)
+                .map((Titelnummer titelnummer) -> hoerbuchkatalogService.finde(hoerernummer, titelnummer))
                 .collect(Collectors.toCollection(LinkedList::new));
 
     }
@@ -99,7 +107,7 @@ public class Katalogsuchergebnis {
         if (aktuelleSeitennummer < 0) {
             aktuelleSeitennummer = seitenanzahl;
         }
-        return NAV_SUCHERGEBNIS;
+        return navigation.suchergebnis();
     }
 
     public boolean isNaechsteSeiteVorhanden() {
@@ -111,12 +119,12 @@ public class Katalogsuchergebnis {
         if (aktuelleSeitennummer > seitenanzahl) {
             aktuelleSeitennummer = 1;
         }
-        return NAV_SUCHERGEBNIS;
+        return navigation.suchergebnis();
     }
 
     public String ansehen(final Hoerbuch hoerbuch) {
         hoerbuchdetail.setHoerbuch(hoerbuch);
-        return NAV_HOERBUCHDETAIL;
+        return navigation.hoerbuchdetail();
     }
 
     public int position(final Hoerbuch hoerbuch) {
@@ -137,10 +145,10 @@ public class Katalogsuchergebnis {
     }
 
     public String vorherigesHoerbuchAnsehen(final Hoerbuch hoerbuch) {
-        final Titelnummer naechste = suchergebnis.vorherige(hoerbuch.getTitelnummer());
-        final Hoerbuch vorherigesHoerbuch = hoerbuchkatalog.hoerbuch(naechste);
+        final Titelnummer vorherige = suchergebnis.vorherige(hoerbuch.getTitelnummer());
+        final Hoerbuch vorherigesHoerbuch = hoerbuchkatalogService.finde(hoerernummer, vorherige);
         hoerbuchdetail.setHoerbuch(vorherigesHoerbuch);
-        return NAV_HOERBUCHDETAIL;
+        return navigation.hoerbuchdetail();
     }
 
     public boolean naechstesBuchVorhanden(final Hoerbuch hoerbuch) {
@@ -150,9 +158,9 @@ public class Katalogsuchergebnis {
 
     public String naechstesHoerbuchAnsehen(final Hoerbuch hoerbuch) {
         final Titelnummer naechste = suchergebnis.naechste(hoerbuch.getTitelnummer());
-        final Hoerbuch naechstesHoerbuch = hoerbuchkatalog.hoerbuch(naechste);
+        final Hoerbuch naechstesHoerbuch = hoerbuchkatalogService.finde(hoerernummer, naechste);
         hoerbuchdetail.setHoerbuch(naechstesHoerbuch);
-        return NAV_HOERBUCHDETAIL;
+        return navigation.hoerbuchdetail();
     }
 
     void leeren() {

@@ -16,27 +16,36 @@ import javax.faces.context.FacesContext;
 @SessionScope
 public class Navigation {
 
-    static final String NAV_SUCHE = "suche.xhtml";
+    static final String NAV_SUCHE = "katalogsuche.xhtml?faces-redirect=true";
 
-    static final String NAV_SUCHERGEBNIS = "suchergebnis.xhtml";
+    static final String NAV_SUCHERGEBNIS = "katalogsuchergebnis.xhtml?faces-redirect=true";
 
-    static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml";
+    static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml?faces-redirect=true";
 
-    static final String NAV_WARENKORB = "warenkorb.xhtml";
+    static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml?faces-redirect=true";
+
+    static final String NAV_MERKLISTE = "merkliste.xhtml?faces-redirect=true";
+
+    static final String NAV_WARENKORB = "warenkorb.xhtml?faces-redirect=true";
+
+    private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml?faces-redirect=true";
 
     private final Katalogsuche katalogsuche;
 
     private final Katalogsuchergebnis katalogsuchergebnis;
 
-    private final Bestellung bestellung;
+    private final MeineMerkliste meineMerkliste;
+
+    private final MeinWarenkorb meinWarenkorb;
 
     @Autowired
     public Navigation(final Katalogsuche katalogsuche,
                       final Katalogsuchergebnis katalogsuchergebnis,
-                      final Bestellung bestellung) {
+                      final MeineMerkliste meineMerkliste, final MeinWarenkorb meinWarenkorb) {
         this.katalogsuche = katalogsuche;
         this.katalogsuchergebnis = katalogsuchergebnis;
-        this.bestellung = bestellung;
+        this.meineMerkliste = meineMerkliste;
+        this.meinWarenkorb = meinWarenkorb;
     }
 
     private String getViewId() {
@@ -75,12 +84,28 @@ public class Navigation {
         return NAV_SUCHE;
     }
 
-    public boolean isLinkZumWarenkorbAnzeigen() {
-        return bestellung.getAnzahl() > 0;
+    public String hoerbuchdetail() {
+        return NAV_HOERBUCHDETAIL;
     }
 
-    public String getWarenkorb() {
+    public boolean isLinkZurMerklisteAnzeigen() {
+        return meineMerkliste.getAnzahl() > 0;
+    }
+
+    public String getMeineMerkliste() {
+        return NAV_MERKLISTE;
+    }
+
+    public boolean isLinkZumWarenkorbAnzeigen() {
+        return meinWarenkorb.getTotaleAnzahl() > 0;
+    }
+
+    public String getMeinWarenkorb() {
         return NAV_WARENKORB;
+    }
+
+    public String bestellungErfolgreich() {
+        return NAV_BESTELLUNG_ERFOLGREICH;
     }
 
 }

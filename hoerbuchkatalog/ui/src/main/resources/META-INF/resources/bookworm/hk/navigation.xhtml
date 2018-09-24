@@ -1,5 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!DOCTYPE html>
+<!DOCTYPE html [
+        <!ENTITY nbsp "&#160;">
+        <!ENTITY copy "&#169;">
+        ]>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:cc="http://java.sun.com/jsf/composite"
       xmlns:h="http://java.sun.com/jsf/html">
@@ -9,8 +12,8 @@
 
 <cc:implementation>
     <div class="search_basket">
-        <h:form>
-            <!-- Ergebnis -->
+        <h:form id="navigation">
+            <!-- Suchergebnis -->
             <h:commandLink rendered="#{navigation.linkZumSuchergebnisAnzeigen}"
                            styleClass="nav-link-resultlist"
                            action="#{navigation.suchergebnis}">Zurück zum Suchergebnis</h:commandLink>
@@ -23,26 +26,27 @@
                                styleClass="nav-link-search"
                                action="#{navigation.erneuteSuche}">Suchen</h:commandLink>
             </div>
-            <!-- Merkliste -->
-            <h:panelGroup rendered="#{navigation.linkZumWarenkorbAnzeigen}"
-                          layout="block" styleClass="basket-count">
-                <h:outputLink value="#{navigation.warenkorb}">
-                    <h:outputText value="Warenkorb (#{bestellung.anzahl})"/>
+            <!-- Merkliste / Warenkorb -->
+            <h:panelGroup layout="block" styleClass="basket-count">
+                <h:outputLink disabled="#{!navigation.linkZurMerklisteAnzeigen}"
+                              value="#{navigation.meineMerkliste}">
+                    <h:outputText value="Merkliste (#{meineMerkliste.anzahl})"/>
+                </h:outputLink>
+                &nbsp;
+                <h:outputLink disabled="#{!navigation.linkZumWarenkorbAnzeigen}"
+                              value="#{navigation.meinWarenkorb}">
+                    <h:outputText value="Warenkorb (#{meinWarenkorb.totaleAnzahl})"/>
                 </h:outputLink>
             </h:panelGroup>
-            <h:panelGroup rendered="#{!navigation.linkZumWarenkorbAnzeigen}"
-                          layout="block" styleClass="basket-count">
-                Warenkorb (0)
-            </h:panelGroup>
-            <h:panelGroup rendered="#{digitalWarenkorb.maxDownloadsProTagErreicht}"
+            <h:panelGroup rendered="#{meinWarenkorb.maxDownloadsProTagErreicht}"
                           layout="block" styleClass="basket-count">
                 Sie haben Ihr Limit für die Bestellung von Downloads für heute erreicht!
             </h:panelGroup>
-            <h:panelGroup rendered="#{digitalWarenkorb.maxDownloadsProMonatErreicht}"
+            <h:panelGroup rendered="#{meinWarenkorb.maxDownloadsProMonatErreicht}"
                           layout="block" styleClass="basket-count">
                 Sie haben Ihr Limit für die Bestellung von Downloads für diesen Monat erreicht!
             </h:panelGroup>
-         </h:form>
+        </h:form>
     </div>
 </cc:implementation>
 

@@ -8,6 +8,22 @@ spring:
   profiles: production
   main:
     banner-mode: "log"
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: <login user to smtp server>
+    password: <login password to smtp server>
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: false
+    properties:
+      mail:
+        debug: true
+        smtp:
+          debug: true
+          auth: true
+          starttls:
+            enable: true
 
 jsf:
   project-stage: production
@@ -15,6 +31,8 @@ jsf:
   interpret-empty-string-submitted-values-as-null: true
   state-saving-method: server
   partial-state-saving: true
+  mojarra:
+    enable-restore-view11-compatibility: false
 
 server:
   address: 127.0.0.1
@@ -26,18 +44,3 @@ server:
 
 logging:
   config: classpath:logback-production.xml
-  #level:
-  #  .: ERROR
-  #  wbh.bookworm.hoerbuchkatalog.app: INFO
-  #  wbh.bookworm.hoerbuchkatalog.ui: INFO
-  #  wbh.bookworm.hoerbuchkatalog.repository: INFO
-  #  wbh.bookworm.hoerbuchkatalog.domain: INFO
-  #  eu.artofcoding: INFO
-  #  com.hazelcast: ERROR
-  #  org.omnifaces: ERROR
-  #  org.joinfaces: ERROR
-  #  javax.enterprise.resource.webcontainer.jsf: ERROR
-  #  org.apache.jasper: ERROR
-  #  org.eclipse.jetty: ERROR
-  #  org.springframework: ERROR
-  #  org.reflections: ERROR

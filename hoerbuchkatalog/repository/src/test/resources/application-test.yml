@@ -9,13 +9,6 @@ spring:
   main:
     banner-mode: "off"
 
-jsf:
-  project-stage: development
-  facelets-refresh-period: 0
-  interpret-empty-string-submitted-values-as-null: true
-  state-saving-method: server
-  partial-state-saving: true
-
 server:
   address: 127.0.0.1
   port: 8080

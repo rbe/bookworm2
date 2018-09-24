@@ -1,0 +1,29 @@
+#
+# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
+
+spring:
+  profiles: test
+  main:
+    banner-mode: "off"
+  mail:
+    host: 127.0.0.1
+    port: 3025
+    username: username
+    password: password
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: false
+    properties:
+      mail:
+        debug: true
+        smtp:
+          debug: true
+          auth: true
+          starttls:
+            enable: true
+
+logging:
+  config: classpath:logback-test.xml

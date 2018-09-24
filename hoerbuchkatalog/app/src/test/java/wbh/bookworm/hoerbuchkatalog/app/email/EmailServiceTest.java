@@ -1,0 +1,92 @@
+/*
+ * Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+ * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+ * All rights reserved. Use is subject to license terms.
+ */
+
+package wbh.bookworm.hoerbuchkatalog.app.email;
+
+import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
+
+import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.user.UserException;
+import com.icegreen.greenmail.util.GreenMailUtil;
+import com.icegreen.greenmail.util.ServerSetup;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.extension.RegisterExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@SpringBootTest(classes = {EmailTestAppConfig.class})
+@ExtendWith({SpringExtension.class})
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+class EmailServiceTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailServiceTest.class);
+
+    private final EmailService emailService;
+
+    @RegisterExtension
+    static GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup(
+                    3025, "127.0.0.1", "smtp")
+                    .setVerbose(true));
+
+    @Autowired
+    EmailServiceTest(final EmailService emailService) {
+        this.emailService = emailService;
+    }
+
+    @BeforeEach
+    void before() throws UserException {
+        greenMail.getManagers().getUserManager()
+                .createUser("user@example.com", "username", "password");
+    }
+
+    @Test
+    @DisplayName("Text-E-Mail versenden")
+    void shouldSendTextEmail() {
+        GreenMailUtil.sendTextEmailTest("wbh@example.com",
+                "kunde@example.com", "Some subject",
+                "some body");
+        final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        final MimeMessage receivedMessage = receivedMessages[0];
+        Assertions.assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
+    }
+
+    @Test()
+    @DisplayName("HTML-E-Email senden")
+    void shouldSendMimeMessage() throws MessagingException, IOException {
+        final Email email = new Email();
+        email.setFrom("no-reply@memorynotfound.com");
+        email.setTo("info@memorynotfound.com");
+        email.setSubject("Spring Email Integration Testing with JUnit and GreenMail Example");
+        email.setContent("We show how to write Integration Tests using Spring and GreenMail.");
+        emailService.sendSimpleMessage(email);
+        assertMessageReceived(email);
+    }
+
+    private void assertMessageReceived(final Email email) throws MessagingException, IOException {
+        final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
+        assertEquals(1, receivedMessages.length);
+        final MimeMessage current = receivedMessages[0];
+        assertEquals(email.getSubject(), current.getSubject());
+        assertEquals(email.getTo(), current.getAllRecipients()[0].toString());
+        assertTrue(String.valueOf(current.getContent()).contains(email.getContent()));
+    }
+
+}

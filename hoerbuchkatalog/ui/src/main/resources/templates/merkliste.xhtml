@@ -4,7 +4,7 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
       xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk" xmlns:c="http://java.sun.com/jsp/jstl/core">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
         <div class="leading">
@@ -12,55 +12,55 @@
             <hk:navigation/>
             <div class="download-header">
                 <h3>
-                    <h:outputText rendered="#{wishlistBean.itemCount == 0}"
+                    <h:outputText rendered="#{meineMerkliste.anzahl == 0}"
                                   value="Ihre Merkliste ist leer."/>
-                    <h:outputText rendered="#{wishlistBean.itemCount == 1}"
+                    <h:outputText rendered="#{meineMerkliste.anzahl == 1}"
                                   value="Ihre Merkliste enthält 1 Hörbuch."/>
-                    <h:outputText rendered="#{wishlistBean.itemCount > 1}"
-                                  value="Ihre Merkliste enthält #{wishlistBean.itemCount} Hörbücher."/>
+                    <h:outputText rendered="#{meineMerkliste.anzahl > 1}"
+                                  value="Ihre Merkliste enthält #{meineMerkliste.anzahl} Hörbücher."/>
                 </h3>
             </div>
             <p></p>
             <h:form styleClass="Wishlist">
                 <h:dataTable id="bookwormBasketTable"
-                             rendered="#{wishlistBean.itemCount > 0}"
+                             rendered="#{meineMerkliste.anzahl > 0}"
                              styleClass="tab basket-table"
                              columnClasses="basket-column1,basket-column2,basket-column3,basket-column4,basket-column5"
                              rowClasses="row basket-row1,row basket-row2"
                              cellpadding="0" cellspacing="0"
-                             value="#{wishlistBean.books}" var="buch">
+                             value="#{meineMerkliste.titelnummern}" var="hoerbuch">
+                    <c:set var="hoerbuch" value="#{hoerbuchkatalogService.finde(null, hoerbuch)}"/>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titelnummer
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{buch.titelnummer}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Autor
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{buch.autor}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.autor}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titel
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{buch.titel}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.titel}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Merkliste
                         </f:facet>
-                        <h:commandLink rendered="#{!postalBasketBean.isInBasket(buch)}"
+                        <h:commandLink rendered="#{!meinWarenkorb.cd.enthalten(hoerbuch)}"
                                        styleClass="basket-order-link post"
-                                       action="#{wishlistBean.moveToPostalBasketBean(buch)}"
+                                       action="#{meineMerkliste.inCdWarenkorbVerschieben(hoerbuch)}"
                                        value="CD bestellen"/>
-                        <h:commandLink
-                                rendered="#{digitalBasketBean.canBeOrderedAsDownload(buch) and !digitalBasketBean.isInBasket(buch)}"
-                                styleClass="basket-order-link download"
-                                action="#{wishlistBean.moveToDigitalBasketBean(buch)}"
-                                value="Download"/>
-                        <h:commandLink action="#{wishlistBean.remove(buch)}"
+                        <h:commandLink rendered="#{hoerbuch.downloadbar}"
+                                       styleClass="basket-order-link download"
+                                       action="#{meineMerkliste.inDownloadWarenkorbVerschieben(hoerbuch)}"
+                                       value="Download"/>
+                        <h:commandLink action="#{meineMerkliste.entfernen(hoerbuch)}"
                                        styleClass="basket-order-link list wishlist"
                                        value="Löschen"/>
                     </h:column>

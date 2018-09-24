@@ -3,14 +3,13 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:of="http://omnifaces.org/functions"
       xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
-            <h2 class="contentheading">Detailinformationen - Onlinekatalog Suche</h2>
-            <hk:navigation/>
-            <h:form rendered="#{hoerbuchdetail.hoerbuch != null}">
+        <h:form rendered="#{hoerbuchdetail.hoerbuch != null}">
+            <div class="leading">
+                <h2 class="contentheading">Detailinformationen - Onlinekatalog Suche</h2>
+                <hk:navigation/>
                 <div class="detailpagination">
                     <div class="catalogtitle">
                         <h:outputText value="#{hoerbuchdetail.titel}"/>
@@ -27,7 +26,7 @@
                     <tr>
                         <td class="detaillabel" valign="top">Titelnummer</td>
                         <td class="detailvalue" valign="top">
-                            <h:outputText value="#{hoerbuchdetail.titelnummer}"/>
+                            <h:outputText value="#{hoerbuchdetail.titelnummern}"/>
                         </td>
                     </tr>
                     <tr>
@@ -110,8 +109,8 @@
                     </tr>
                 </table>
                 <hk:hoerbuchdetail-navigation hoerbuch="#{hoerbuchdetail.hoerbuch}"/>
-            </h:form>
-        </div>
+            </div>
+        </h:form>
         <div class="noticetext">
             <h3>Hinweise für bessere Suchergebnisse</h3>
             Die Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>Eine Suche nach »test« findet also auch »späteste«.

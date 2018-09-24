@@ -16,14 +16,14 @@
 
             <div class="download-header">
                 <h3>Auswahltitel für den Download</h3>
-                <hk:warenkorb-tabelle basket="#{digitalBasketBean}" readonly="false"/>
+                <hk:warenkorb-tabelle warenkorb="#{meinWarenkorb.download}" readonly="false"/>
             </div>
             <div class="post-header">
                 <h3>Auswahltitel für die Bestellung per CD</h3>
-                <hk:warenkorb-tabelle basket="#{postalBasketBean}" readonly="false"/>
+                <hk:warenkorb-tabelle warenkorb="#{meinWarenkorb.cd}" readonly="false"/>
             </div>
             <h:form>
-                <h:panelGrid rendered="#{orderBean.itemCount > 0}"
+                <h:panelGrid rendered="#{meineBestellung.anzahl > 0}"
                              columns="2"
                              styleClass="basket-member"
                              columnClasses="basket-order-column1,basket-order-column2"
@@ -36,9 +36,9 @@
                         <h:outputLabel for="name" value="Name"/>
                     </h:panelGroup>
                     <h:inputText id="name"
-                                 value="#{orderBean.orderDetails.name}"
+                                 value="#{meineBestellung.hoerername}"
                                  styleClass="input_hoerername"
-                                 readonly="#{null != orderBean.orderDetails.name}"
+                                 readonly="#{null != meineBestellung.hoerername}"
                                  required="true" requiredMessage="Bitte geben Sie Ihren Namen ein"
                                  validatorMessage="Bitte geben Sie mehr als 3 Zeichen ein">
                         <f:validateLength minimum="3"/>
@@ -51,9 +51,9 @@
                         <h:outputLabel for="hoerernummer" value="Hörernummer"/>
                     </h:panelGroup>
                     <h:inputText id="hoerernummer"
-                                 value="#{orderBean.orderDetails.hoerernummer}"
+                                 value="#{meineBestellung.hoerernummer}"
                                  styleClass="input_hoerernummer"
-                                 readonly="#{null != orderBean.orderDetails.hoerernummer}"
+                                 readonly="#{null != meineBestellung.hoerernummer}"
                                  required="true"
                                  requiredMessage="Bitte geben Sie Ihre Hörernummer ein"
                                  validatorMessage="Bitte geben Sie mehr als 2 Zeichen ein">
@@ -67,8 +67,8 @@
                         <h:outputLabel for="email" value="Email"/>
                     </h:panelGroup>
                     <h:inputText id="email"
-                                 value="#{orderBean.orderDetails.email}" styleClass="input_hoereremail"
-                                 readonly="#{null != orderBean.orderDetails.email}"
+                                 value="#{meineBestellung.hoereremail}" styleClass="input_hoereremail"
+                                 readonly="#{null != meineBestellung.hoereremail}"
                                  required="true"
                                  requiredMessage="Bitte geben Sie Ihre Email-Adresse ein"
                                  validatorMessage="Bitte geben Sie mehr als 5 Zeichen ein">
@@ -82,7 +82,7 @@
                         <h:outputLabel for="bemerkung" value="Bemerkung"/>
                     </h:panelGroup>
                     <h:inputTextarea id="bemerkung"
-                                     value="#{orderBean.orderDetails.bemerkung}"
+                                     value="#{meineBestellung.bemerkung}"
                                      styleClass="input_bemerkung"
                                      rows="5" cols="35"
                                      required="false"
@@ -97,7 +97,7 @@
                         <h:outputLabel for="bestellkarteMischen" value="Bestellkarte mischen?"/>
                     </h:panelGroup>
                     <h:selectBooleanCheckbox id="bestellkarteMischen"
-                                             value="#{orderBean.orderDetails.bestellkarteMischen}"
+                                             value="#{meineBestellung.bestellkarteMischen}"
                                              styleClass="input_bestellkarteMischen"
                                              required="false">
                     </h:selectBooleanCheckbox>
@@ -110,7 +110,7 @@
                                        value="Alte Bestellkarte löschen?"/>
                     </h:panelGroup>
                     <h:selectBooleanCheckbox id="alteBestellkarteLoeschen"
-                                             value="#{orderBean.orderDetails.alteBestellkarteLoeschen}"
+                                             value="#{meineBestellung.alteBestellkarteLoeschen}"
                                              styleClass="input_alteBestellkarteLoeschen"
                                              required="false">
                     </h:selectBooleanCheckbox>
@@ -118,11 +118,11 @@
                     <h:outputLabel value=" "/>
                     <h:commandButton value="Bestellen"
                                      onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);"
-                                     action="#{orderBean.placeOrder}"
+                                     action="#{meineBestellung.bestellungAbschicken}"
                                      styleClass="basketsubmit" required="true">
                         <f:ajax execute="@form" render="orderSubmitMessage"/>
                     </h:commandButton>
-                    <h:outputLabel id="orderSubmitMessage" value="#{orderBean.orderSubmitMessage}"/>
+                    <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.statusNachricht}"/>
 
                 </h:panelGrid>
             </h:form>

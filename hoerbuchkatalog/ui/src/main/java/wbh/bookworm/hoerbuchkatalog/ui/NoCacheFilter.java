@@ -15,21 +15,22 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
+import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-//@WebFilter(servletNames = "FacesServlet")
+@WebFilter(servletNames = "FacesServlet")
 public class NoCacheFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NoCacheFilter.class);
 
     @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
+    public void init(final FilterConfig filterConfig) {
     }
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse res, final FilterChain chain) throws IOException, ServletException {
-        LOGGER.debug("Setting HTTP header Cache-Control, Pragma, Expires");
+        LOGGER.trace("Setting HTTP header Cache-Control, Pragma, Expires to no-cache");
         final HttpServletResponse response = (HttpServletResponse) res;
         response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
         response.setHeader("Pragma", "no-cache"); // HTTP 1.0.

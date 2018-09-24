@@ -1,38 +1,33 @@
 /*
- * eu.artofcoding.bookworm
- *
- * Copyright (C) 2011-2017 art of coding UG, http://www.art-of-coding.eu
+ * Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
  * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
  * All rights reserved. Use is subject to license terms.
  */
 
 package wbh.bookworm.hoerbuchkatalog.app;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.RepositoryConfig;
+
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.TaskScheduler;
-import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-import wbh.bookworm.hoerbuchkatalog.domain.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.ui.NoCacheFilter;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @Configuration
-@ComponentScan({
-        "wbh.bookworm.hoerbuchkatalog.ui",
-        "wbh.bookworm.hoerbuchkatalog.repository",
-        "wbh.bookworm.hoerbuchkatalog.domain"
+@EnableConfigurationProperties
+@ComponentScan(basePackageClasses = {
+        HoerbuchkatalogService.class,
+        BestellungService.class,
+        EmailService.class,
+        RepositoryConfig.class,
+        DomainConfig.class
 })
-@EnableScheduling
 public class AppConfig {
 
     @Bean
@@ -51,33 +46,5 @@ public class AppConfig {
         return yamlPropertySourceLoader;
     }
     */
-
-    @Bean
-    public Map<Titelnummer, Hoerbuch> hoerbuchkatalogMap() {
-        return new ConcurrentHashMap<>();
-    }
-
-    @Bean
-    public TaskExecutor taskExecutor() {
-        final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(5);
-        taskExecutor.setMaxPoolSize(10);
-        taskExecutor.setThreadNamePrefix("hoerbuchkatalogExecutor-");
-        taskExecutor.initialize();
-        return taskExecutor;
-    }
-
-    @Bean
-    public TaskScheduler taskScheduler() {
-        return new ThreadPoolTaskScheduler();
-    }
-
-    @Bean
-    public FilterRegistrationBean noCacheFilter() {
-        FilterRegistrationBean registration = new FilterRegistrationBean();
-        registration.setFilter(new NoCacheFilter());
-        registration.addServletNames("FacesServlet");
-        return registration;
-    }
 
 }

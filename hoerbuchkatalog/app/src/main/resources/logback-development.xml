@@ -17,7 +17,7 @@
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="wbh.bookworm.hoerbuchkatalog.app" level="DEBUG" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.assembly" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.ui" level="DEBUG" additivity="false">
@@ -27,6 +27,12 @@
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.platform" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.platform.ddd.event" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">
@@ -44,10 +50,31 @@
     <logger name="javax.enterprise.resource.webcontainer.jsf" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.config" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.facelets" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.renderkit" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.lifecycle" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.timing" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="javax.enterprise.resource.webcontainer.jsf.application" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="org.apache.jasper" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.eclipse.jetty" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="org.springframework.beans.factory.support" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.springframework" level="INFO" additivity="false">
