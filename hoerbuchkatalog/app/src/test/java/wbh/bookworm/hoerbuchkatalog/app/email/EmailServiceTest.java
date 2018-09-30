@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
+import wbh.bookworm.hoerbuchkatalog.domain.email.EmailRepository;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.UserException;
@@ -71,11 +72,10 @@ class EmailServiceTest {
     @Test()
     @DisplayName("HTML-E-Email senden")
     void shouldSendMimeMessage() throws MessagingException, IOException {
-        final Email email = new Email();
-        email.setFrom("no-reply@memorynotfound.com");
-        email.setTo("info@memorynotfound.com");
-        email.setSubject("Spring Email Integration Testing with JUnit and GreenMail Example");
-        email.setContent("We show how to write Integration Tests using Spring and GreenMail.");
+        final Email email = new EmailRepository().erstellen(
+                "from@example.com", "to@example.com",
+                "Subject",
+                "This is an email.");
         emailService.sendSimpleMessage(email);
         assertMessageReceived(email);
     }

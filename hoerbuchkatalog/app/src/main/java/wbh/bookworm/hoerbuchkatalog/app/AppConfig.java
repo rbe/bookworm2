@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.app;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.RepositoryConfig;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;

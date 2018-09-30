@@ -6,14 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.platform.ddd.model.ValueObject;
+import wbh.bookworm.platform.ddd.model.DomainSingleValueObject;
 
 import java.util.regex.Pattern;
 
 /**
  * Value Object
  */
-public final class AghNummer extends ValueObject<AghNummer, String> {
+public final class AghNummer extends DomainSingleValueObject<AghNummer, String> {
 
     private static final long serialVersionUID = -1L;
 

@@ -8,5 +8,10 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.platform.ddd.model.DomainId;
 
-public class HoerbuchkatalogId extends DomainId<HoerbuchkatalogId> {
+public class HoerbuchkatalogId extends DomainId<String> {
+
+    public HoerbuchkatalogId(final String gesamtDatDateiname) {
+        super(gesamtDatDateiname);
+    }
+
 }

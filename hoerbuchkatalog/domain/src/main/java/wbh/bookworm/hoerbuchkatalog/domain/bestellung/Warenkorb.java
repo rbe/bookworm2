@@ -9,7 +9,6 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
-import wbh.bookworm.platform.ddd.model.DomainId;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,26 +17,37 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
+import java.util.TreeSet;
 
-public abstract class Warenkorb extends DomainAggregate<Warenkorb> {
+public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> {
 
     private static final long serialVersionUID = 1L;
 
     protected final Logger logger = LoggerFactory.getLogger(Warenkorb.class);
 
+    @JsonProperty
     protected final Hoerernummer hoerernummer;
 
     protected Set<Titelnummer> titelnummern;
 
+    public Warenkorb(final Warenkorb warenkorb) {
+        this.domainId = new WarenkorbId(warenkorb.domainId.getValue());
+        this.hoerernummer = new Hoerernummer(warenkorb.hoerernummer.getValue());
+        this.titelnummern = new TreeSet<>();
+        warenkorb.titelnummern.forEach(titelnummer ->
+                this.titelnummern.add(new Titelnummer(titelnummer.getValue())));
+    }
+
     @JsonCreator
-    public Warenkorb(final @JsonProperty("domainId") Hoerernummer hoerernummer,
+    public Warenkorb(final @JsonProperty("domainId") WarenkorbId warenkorbId,
+                     final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
                      final @JsonProperty("titelnummern") Set<Titelnummer> titelnummern) {
-        super(new DomainId<>(hoerernummer.getValue()));
+        super(warenkorbId);
         this.hoerernummer = hoerernummer;
         this.titelnummern = titelnummern;
     }
 
-    protected Hoerernummer getHoerernummer() {
+    public Hoerernummer getHoerernummer() {
         return hoerernummer;
     }
 
@@ -69,8 +79,8 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb> {
     public abstract void bestellen();
 
     @Override
-    public int compareTo(final Warenkorb o) {
-        /* TODO Comparable */return 0;
+    public int compareTo(final Warenkorb other) {
+        /* TODO Comparable */return other.domainId.compareTo(this.domainId.getValue());
     }
 
 }

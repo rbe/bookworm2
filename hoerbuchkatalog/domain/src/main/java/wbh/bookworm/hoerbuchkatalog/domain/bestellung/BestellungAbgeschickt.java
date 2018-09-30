@@ -7,10 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.event.DomainEvent;
-
-import java.util.Set;
 
 /**
  * Event
@@ -19,30 +16,37 @@ public class BestellungAbgeschickt extends DomainEvent {
 
     private static final long serialVersionUID = -1L;
 
+    private final BestellungId bestellungId;
+
     private final Hoerernummer hoerernummer;
 
-    private final Set<Titelnummer> cdTitelnummern;
+    private final WarenkorbId cdWarenkorbId;
 
-    private final Set<Titelnummer> downloadTitelnummern;
+    private final WarenkorbId downloadWarenkorbId;
 
-    public BestellungAbgeschickt(final Hoerernummer hoerernummer,
-                                 final Set<Titelnummer> cdTitelnummern,
-                                 final Set<Titelnummer> downloadTitelnummern) {
+    public BestellungAbgeschickt(final BestellungId bestellungId, final Hoerernummer hoerernummer,
+                                 final WarenkorbId cdWarenkorbId,
+                                 final WarenkorbId downloadWarenkorbId) {
+        this.bestellungId = bestellungId;
         this.hoerernummer = hoerernummer;
-        this.cdTitelnummern = cdTitelnummern;
-        this.downloadTitelnummern = downloadTitelnummern;
+        this.cdWarenkorbId = cdWarenkorbId;
+        this.downloadWarenkorbId = downloadWarenkorbId;
+    }
+
+    public BestellungId getBestellungId() {
+        return bestellungId;
     }
 
     public Hoerernummer getHoerernummer() {
         return hoerernummer;
     }
 
-    public Set<Titelnummer> getCdTitelnummern() {
-        return cdTitelnummern;
+    public WarenkorbId getCdWarenkorbId() {
+        return cdWarenkorbId;
     }
 
-    public Set<Titelnummer> getDownloadTitelnummern() {
-        return downloadTitelnummern;
+    public WarenkorbId getDownloadWarenkorbId() {
+        return downloadWarenkorbId;
     }
 
 }

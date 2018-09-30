@@ -9,7 +9,6 @@ package wbh.bookworm.hoerbuchkatalog.ui;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.LieferungService;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungFactory;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
 import org.springframework.boot.web.servlet.ServletComponentScan;
@@ -27,7 +26,6 @@ import javax.servlet.http.HttpSession;
         UiConfig.class,
         HoerbuchkatalogService.class,
         BestellungService.class,
-        BestellungFactory.class,
         LieferungService.class
 })
 @ServletComponentScan(basePackageClasses = {

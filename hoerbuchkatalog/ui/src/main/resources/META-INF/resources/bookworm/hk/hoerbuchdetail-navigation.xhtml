@@ -5,41 +5,43 @@
       xmlns:h="http://java.sun.com/jsf/html">
 
 <cc:interface>
-    <cc:attribute name="hoerbuch" required="true" type="wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch"/>
+    <cc:attribute name="titelnummer"
+                  required="true"
+                  type="wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer"/>
 </cc:interface>
 
 <cc:implementation>
     <div class="itemtobasket">
-        <h:commandLink rendered="#{!cdWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+        <h:commandLink rendered="#{!meinWarenkorb.cdEnthalten(cc.attrs.titelnummer)}"
                        styleClass="basket-order-link"
-                       action="#{cdWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
+                       action="#{meinWarenkorb.cdHinzufuegen(cc.attrs.titelnummer)}"
                        value="CD bestellen"/>
-        <h:commandLink rendered="#{cdWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+        <h:commandLink rendered="#{meinWarenkorb.cdEnthalten(cc.attrs.titelnummer)}"
                        styleClass="basket-remove-link"
-                       action="#{cdWarenkorb.entfernen(cc.attrs.hoerbuch)}"
+                       action="#{meinWarenkorb.cdEntfernen(cc.attrs.titelnummer)}"
                        value="CD Bestellung löschen"/>
 
         <!--digitalBasketBean.canBeOrderedAsDownload(hoerbuch)-->
-        <h:commandLink rendered="#{cc.attrs.hoerbuch.downloadbar}"
+        <h:commandLink rendered="#{meinWarenkorb.downloadVerfuegbar(cc.attrs.titelnummer)}"
                        styleClass="basket-order-link"
-                       action="#{downloadWarenkorb.hinzufuegen(cc.attrs.hoerbuch)}"
+                       action="#{meinWarenkorb.downloadHinzufuegen(cc.attrs.titelnummer)}"
                        value="Download bestellen"/>
-        <h:commandLink rendered="#{downloadWarenkorb.enthalten(cc.attrs.hoerbuch)}"
+        <h:commandLink rendered="#{meinWarenkorb.downloadEnthalten(cc.attrs.titelnummer)}"
                        styleClass="basket-remove-link"
-                       action="#{downloadWarenkorb.entfernen(cc.attrs.hoerbuch)}"
+                       action="#{meinWarenkorb.downloadEntfernen(cc.attrs.titelnummer)}"
                        value="Download löschen"/>
    </div>
     <div class="nextdetail">
         <h:commandLink value="vorheriger Titel"
-                       rendered="#{katalogsuchergebnis.vorherigesBuchVorhanden(cc.attrs.hoerbuch)}"
-                       action="#{katalogsuchergebnis.vorherigesHoerbuchAnsehen(cc.attrs.hoerbuch)}"/>
+                       rendered="#{katalogsuchergebnis.vorherigesBuchVorhanden(cc.attrs.titelnummer)}"
+                       action="#{katalogsuchergebnis.vorherigesHoerbuchAnsehen(cc.attrs.titelnummer)}"/>
         &nbsp;Titel Nr.
-        <h:outputText value="#{katalogsuchergebnis.position(cc.attrs.hoerbuch)}"/>
+        <h:outputText value="#{katalogsuchergebnis.position(cc.attrs.titelnummer)}"/>
         von <h:outputText value="#{katalogsuchergebnis.anzahl}"/>
         &nbsp;
         <h:commandLink value="nächster Titel"
-                       rendered="#{katalogsuchergebnis.naechstesBuchVorhanden(cc.attrs.hoerbuch)}"
-                       action="#{katalogsuchergebnis.naechstesHoerbuchAnsehen(cc.attrs.hoerbuch)}"/>
+                       rendered="#{katalogsuchergebnis.naechstesBuchVorhanden(cc.attrs.titelnummer)}"
+                       action="#{katalogsuchergebnis.naechstesHoerbuchAnsehen(cc.attrs.titelnummer)}"/>
         <br/><br/>
     </div>
 </cc:implementation>

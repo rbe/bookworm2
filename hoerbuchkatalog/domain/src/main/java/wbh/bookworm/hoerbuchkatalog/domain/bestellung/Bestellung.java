@@ -7,53 +7,54 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public final class Bestellung extends DomainAggregate<Bestellung> {
+import java.util.Objects;
+
+public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> {
 
     private static final long serialVersionUID = -1L;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Bestellung.class);
 
-    private Hoerernummer hoerernummer;
+    private final Hoerernummer hoerernummer;
 
-    private String hoerername;
+    private final String hoerername;
 
-    private String hoereremail;
+    private final String hoereremail;
 
-    private String bemerkung;
+    private final String bemerkung;
 
-    private Boolean bestellkarteMischen;
+    private final Boolean bestellkarteMischen;
 
-    private Boolean alteBestellkarteLoeschen;
+    private final Boolean alteBestellkarteLoeschen;
 
-    private final CdWarenkorb cdWarenkorb;
-    private final DownloadWarenkorb downloadWarenkorb;
+    private final WarenkorbId cdWarenkorbId;
 
-    public Bestellung(final String hoerername, final Hoerernummer hoerernummer,
-                      final String hoereremail, final String bemerkung,
+    private final WarenkorbId downloadWarenkorbId;
+
+    public Bestellung(final BestellungId bestellungId,
+                      final Hoerernummer hoerernummer,
+                      final String hoerername, final String hoereremail,
+                      final String bemerkung,
                       final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
-                      final CdWarenkorb cdWarenkorb, final DownloadWarenkorb downloadWarenkorb) {
+                      final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
+        super(bestellungId);
         this.hoerername = hoerername;
         this.hoerernummer = hoerernummer;
         this.hoereremail = hoereremail;
         this.bemerkung = bemerkung;
         this.bestellkarteMischen = bestellkarteMischen;
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
-        this.cdWarenkorb = cdWarenkorb;
-        this.downloadWarenkorb = downloadWarenkorb;
+        this.cdWarenkorbId = cdWarenkorbId;
+        this.downloadWarenkorbId = downloadWarenkorbId;
     }
 
     public Hoerernummer getHoerernummer() {
         return hoerernummer;
-    }
-
-    public void setHoerernummer(final Hoerernummer hoerernummer) {
-        this.hoerernummer = hoerernummer;
     }
 
     public String getHoerername() {
@@ -76,31 +77,30 @@ public final class Bestellung extends DomainAggregate<Bestellung> {
         return alteBestellkarteLoeschen;
     }
 
-    /**
-     * TODO Command
-     */
-    public void abschicken() {
-        LOGGER.trace("Bestellung {} für {} wird abgeschickt!", this, hoerernummer);
-        DomainEventPublisher.global()
-                .publish(new BestellungAbgeschickt(hoerernummer,
-                        cdWarenkorb.getTitelnummern(), downloadWarenkorb.getTitelnummern()));
-        LOGGER.info("Bestellung {} für {} wurde abgeschickt!", this, hoerernummer);
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        final Bestellung that = (Bestellung) other;
+        return Objects.equals(hoerernummer, that.hoerernummer) &&
+                Objects.equals(cdWarenkorbId, that.cdWarenkorbId) &&
+                Objects.equals(downloadWarenkorbId, that.downloadWarenkorbId);
     }
 
     @Override
-    public int compareTo(final Bestellung o) {
-        /* TODO Comparable */return o.hoerernummer.compareTo(this.hoerernummer);
+    public int hashCode() {
+        return Objects.hash(hoerernummer, cdWarenkorbId, downloadWarenkorbId);
+    }
+
+    @Override
+    public int compareTo(final Bestellung other) {
+        /* TODO Comparable */return other.hoerernummer.compareTo(this.hoerernummer.getValue());
     }
 
     @Override
     public String toString() {
-        return String.format("Bestellung{" +
-                        "hoerernummer=%s," +
-                        " bemerkung='%s'," +
-                        " bestellkarteMischen=%s," +
-                        " alteBestellkarteLoeschen=%s" +
-                        "}",
-                hoerernummer, bemerkung, bestellkarteMischen, alteBestellkarteLoeschen);
+        return String.format("Bestellung{domainId=%s, hoerernummer=%s, cdWarenkorbId=%s, downloadWarenkorbId=%s}",
+                domainId, hoerernummer, cdWarenkorbId, downloadWarenkorbId);
     }
 
 }

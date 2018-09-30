@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.ui;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
@@ -27,41 +27,46 @@ class MeineMerkliste {
 
     private final Hoerernummer hoerernummer;
 
+    private final MerklisteService merklisteService;
+
     private final BestellungService bestellungService;
 
     @Autowired
     MeineMerkliste(final Hoerernummer hoerernummer,
-                   final BestellungService bestellungService) {
+                   final MerklisteService merklisteService, final BestellungService bestellungService) {
         this.hoerernummer = hoerernummer;
+        this.merklisteService = merklisteService;
         this.bestellungService = bestellungService;
     }
 
     public int getAnzahl() {
-        return bestellungService.anzahlAufMerkliste(hoerernummer);
+        return merklisteService.anzahl(hoerernummer);
     }
 
     public Set<Titelnummer> getTitelnummern() {
-            return bestellungService.titelnummernAufMerkliste(hoerernummer);
+        return merklisteService.titelnummernAufMerkliste(hoerernummer);
     }
 
     public boolean enthalten(final Titelnummer titelnummer) {
-        return bestellungService.titelnummerAufMerklisteEnthalten(titelnummer);
+        return merklisteService.enthalten(hoerernummer, titelnummer);
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
-        merkliste.hinzufuegen(titelnummer);
+        merklisteService.hinzufuegen(hoerernummer, titelnummer);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
-        merkliste.entfernen(titelnummer);
+        merklisteService.entfernen(hoerernummer, titelnummer);
     }
 
     public void inCdWarenkorbVerschieben(final Titelnummer titelnummer) {
-        LOGGER.warn("NOT IMPLEMENTED YET");
+        bestellungService.inDenCdWarenkorb(hoerernummer, titelnummer);
+        merklisteService.entfernen(hoerernummer, titelnummer);
     }
 
     public void inDownloadWarenkorbVerschieben(final Titelnummer titelnummer) {
-        LOGGER.warn("NOT IMPLEMENTED YET");
+        bestellungService.inDenDownloadWarenkorb(hoerernummer, titelnummer);
+        merklisteService.entfernen(hoerernummer, titelnummer);
     }
 
 }

@@ -19,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {TestAppConfig.class})
+@SpringBootTest(classes = {SearchTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 @FixMethodOrder(MethodSorters.JVM)
 class LuceneIndexTest {

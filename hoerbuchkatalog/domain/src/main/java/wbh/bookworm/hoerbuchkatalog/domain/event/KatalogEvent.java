@@ -4,29 +4,21 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain.katalog;
+package wbh.bookworm.hoerbuchkatalog.domain.event;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.platform.ddd.event.DomainEvent;
 
-public class CdInDenWarenkorbGelegt extends DomainEvent {
+public abstract class KatalogEvent extends DomainEvent {
 
     private final Hoerernummer hoerernummer;
 
-    private final Titelnummer titelnummer;
-
-    public CdInDenWarenkorbGelegt(final Hoerernummer hoerernummer,
-                                  final Titelnummer titelnummer) {
+    public KatalogEvent(final Hoerernummer hoerernummer) {
         this.hoerernummer = hoerernummer;
-        this.titelnummer = titelnummer;
     }
 
     public Hoerernummer getHoerernummer() {
         return hoerernummer;
-    }
-
-    public Titelnummer getTitelnummer() {
-        return titelnummer;
     }
 
 }

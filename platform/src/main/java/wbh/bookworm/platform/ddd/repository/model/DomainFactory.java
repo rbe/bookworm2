@@ -4,10 +4,12 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.platform.ddd.repository;
+package wbh.bookworm.platform.ddd.repository.model;
 
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
+import wbh.bookworm.platform.ddd.model.DomainId;
 
 @DomainFactoryComponent
-public interface DomainFactory<T extends DomainAggregate<T>> {
+public interface DomainFactory
+        <T extends DomainAggregate<T, ID>, ID extends DomainId<String>> {
 }

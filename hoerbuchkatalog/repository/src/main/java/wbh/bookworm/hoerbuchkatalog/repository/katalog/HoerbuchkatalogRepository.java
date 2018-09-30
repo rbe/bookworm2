@@ -8,10 +8,11 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.DomainRepository;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+import wbh.bookworm.platform.ddd.repository.model.DomainRespositoryComponent;
+import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Repository
  */
 @DomainRespositoryComponent
-class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
+class HoerbuchkatalogRepository extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 
@@ -60,6 +61,8 @@ class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
                               final HoerbuchkatalogMapper hoerbuchkatalogMapper,
                               final AghNummernRepository aghNummernRepository,
                               final RepositoryArchiv repositoryArchiv) {
+        super(Hoerbuchkatalog.class, HoerbuchkatalogId.class,
+                hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());
         this.applicationContext = applicationContext;
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
         this.taskScheduler = taskScheduler;
@@ -92,8 +95,8 @@ class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
                 @SuppressWarnings({"unchecked"})
                 final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
                         applicationContext.getBean("hoerbuchkatalogMap", Map.class);
-                final DomainId<String> hoerbuchkatalogDomainId =
-                        new DomainId<>(gesamtDat.getFileName().toString());
+                final HoerbuchkatalogId hoerbuchkatalogDomainId =
+                        new HoerbuchkatalogId(gesamtDat.getFileName().toString());
                 final Hoerbuchkatalog neuerKatalog = new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
                 verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                 sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
@@ -116,7 +119,7 @@ class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
     private void verheiraten(final Hoerbuchkatalog hoerbuchkatalog,
                              final Set<Hoerbuch> hoerbuecher, final Set<AghNummer> aghNummern) {
         hoerbuecher.forEach(hoerbuch -> {
-            hoerbuchDownloadbar(hoerbuch, aghNummern);
+            istHoerbuchDownloadbar(hoerbuch, aghNummern);
             hoerbuchkatalog.hinzufuegen(hoerbuch);
         });
         LOGGER.info("{} von {} Hörbüchern sind im Download-Katalog vorhanden",
@@ -124,7 +127,7 @@ class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
                 hoerbuchkatalog.anzahlHoerbuecherGesamt());
     }
 
-    private void hoerbuchDownloadbar(final Hoerbuch hoerbuch, final Set<AghNummer> aghNummern) {
+    private void istHoerbuchDownloadbar(final Hoerbuch hoerbuch, final Set<AghNummer> aghNummern) {
         boolean aghNummernVorhanden = !aghNummern.isEmpty();
         final AghNummer aghNummer = hoerbuch.getAghNummer();
         final boolean aghVorhanden = aghNummernVorhanden
@@ -193,26 +196,6 @@ class HoerbuchkatalogRepository implements DomainRepository<Hoerbuchkatalog> {
             LOGGER.error("Unbekannter Fehler beim Importieren der AGH Nummern aus dem Archiv", e);
         }
         return null != aghNummern ? aghNummern : Collections.emptySet();
-    }
-
-    @Override
-    public void saveAll(final Set<Hoerbuchkatalog> aggregates) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public void save(final Hoerbuchkatalog aggregate) {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public Optional<Hoerbuchkatalog> load(final DomainId<?> domainId) {
-        return Optional.empty();
-    }
-
-    @Override
-    public Optional<Set<Hoerbuchkatalog>> loadAll() {
-        return Optional.empty();
     }
 
 }

@@ -6,11 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import wbh.bookworm.platform.ddd.model.DomainEntity;
+import wbh.bookworm.platform.ddd.model.DomainAggregate;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-public final class Email extends DomainEntity<Email> {
+public final class Email extends DomainAggregate<Email, EmailId> {
 
     private static final long serialVersionUID = -1L;
 
@@ -22,10 +25,17 @@ public final class Email extends DomainEntity<Email> {
 
     private String content;
 
-    public Email() {
+    public Email(final EmailId emailId) {
+        super(emailId);
     }
 
-    public Email(String from, String to, String subject, String content) {
+    @JsonCreator
+    public Email(final @JsonProperty("domainId") EmailId emailId,
+                 final @JsonProperty String from,
+                 final @JsonProperty String to,
+                 final @JsonProperty String subject,
+                 final @JsonProperty String content) {
+        super(emailId);
         this.from = from;
         this.to = to;
         this.subject = subject;
@@ -65,10 +75,10 @@ public final class Email extends DomainEntity<Email> {
     }
 
     @Override
-    public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        final Email email = (Email) o;
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        final Email email = (Email) other;
         return Objects.equals(from, email.from) &&
                 Objects.equals(to, email.to) &&
                 Objects.equals(subject, email.subject) &&
@@ -82,17 +92,13 @@ public final class Email extends DomainEntity<Email> {
 
     @Override
     public int compareTo(final Email o) {
-        /* TODO Comparable */return o.from.compareTo(this.from);
+        return o.domainId.compareTo(this.domainId.getValue());
     }
 
     @Override
     public String toString() {
-        return "Email{" +
-                "from='" + from + '\'' +
-                ", to='" + to + '\'' +
-                ", subject='" + subject + '\'' +
-                ", content='" + content + '\'' +
-                '}';
+        return String.format("Email{domainId='%s', from='%s', to='%s', subject='%s', content='%s'}",
+                domainId, from, to, subject, content);
     }
 
 }

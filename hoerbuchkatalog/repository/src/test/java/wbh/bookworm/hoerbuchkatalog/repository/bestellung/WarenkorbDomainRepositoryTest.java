@@ -4,16 +4,16 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.repository.warenkorb;
+package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.TestAppConfig;
-import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.config.TestAppConfig;
+import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
 
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;
@@ -26,7 +26,6 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.file.Paths;
 import java.util.Optional;
-import java.util.TreeSet;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -41,40 +40,42 @@ class WarenkorbDomainRepositoryTest {
     @Test
     void shouldPersistAndLoadCdWarenkorb() {
         final Hoerernummer hoerernummer = new Hoerernummer("12345");
-        final DomainId<String> domainId = new DomainId<>("12345");
+        final WarenkorbId warenkorbId = new WarenkorbId("CD-12345");
 
-        final Warenkorb cdWarenkorb1 = new CdWarenkorb(hoerernummer, new TreeSet<>());
+        final Warenkorb cdWarenkorb1 = new CdWarenkorb(warenkorbId, hoerernummer);
         cdWarenkorb1.hinzufuegen(new Titelnummer("123"));
         new WarenkorbDomainRepository().save(cdWarenkorb1);
 
         final Optional<CdWarenkorb> cdWarenkorb2 =
-                new WarenkorbDomainRepository().load(domainId, CdWarenkorb.class);
+                new WarenkorbDomainRepository().load(warenkorbId, CdWarenkorb.class);
         assertTrue(cdWarenkorb2.isPresent());
-        assertEquals(domainId, cdWarenkorb2.get().getDomainId());
+        assertEquals(warenkorbId, cdWarenkorb2.get().getDomainId());
+        assertEquals(hoerernummer, cdWarenkorb2.get().getHoerernummer());
         assertTrue(cdWarenkorb2.get().enthalten(new Titelnummer("123")));
     }
 
     @Test
     void shouldPersistAndLoadDownloadWarenkorb() {
         final Hoerernummer hoerernummer = new Hoerernummer("12345");
-        final DomainId<String> domainId = new DomainId<>("12345");
+        final WarenkorbId warenkorbId = new WarenkorbId("Download-12345");
 
         final Warenkorb downloadWarenkorb1 =
-                new DownloadWarenkorb(hoerernummer, new TreeSet<>(), 0);
+                new DownloadWarenkorb(warenkorbId, hoerernummer);
         downloadWarenkorb1.hinzufuegen(new Titelnummer("456"));
         new WarenkorbDomainRepository().save(downloadWarenkorb1);
 
         final Optional<DownloadWarenkorb> downloadWarenkorb2 =
-                new WarenkorbDomainRepository().load(domainId, DownloadWarenkorb.class);
+                new WarenkorbDomainRepository().load(warenkorbId, DownloadWarenkorb.class);
         assertTrue(downloadWarenkorb2.isPresent());
-        assertEquals(domainId, downloadWarenkorb2.get().getDomainId());
+        assertEquals(warenkorbId, downloadWarenkorb2.get().getDomainId());
+        assertEquals(hoerernummer, downloadWarenkorb2.get().getHoerernummer());
         assertTrue(downloadWarenkorb2.get().enthalten(new Titelnummer("456")));
     }
 
-    private static class WarenkorbDomainRepository extends JsonDomainRepository<Warenkorb> {
+    private static class WarenkorbDomainRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
 
         WarenkorbDomainRepository() {
-            super(Warenkorb.class, Paths.get("target"));
+            super(Warenkorb.class, WarenkorbId.class, Paths.get("target"));
         }
 
     }

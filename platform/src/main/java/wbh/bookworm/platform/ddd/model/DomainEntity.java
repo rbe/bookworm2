@@ -6,26 +6,53 @@
 
 package wbh.bookworm.platform.ddd.model;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
 import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class DomainEntity<T extends Serializable & Comparable<T>>
+@SuppressWarnings({"squid:S00119"})
+public abstract class DomainEntity
+        <T extends DomainEntity/*Serializable & Comparable<T>*/, ID extends DomainId<String>>
         implements Serializable, Comparable<T> {
 
-    protected DomainId<String> domainId;
+    @JsonSerialize(using = DomainIdJacksonSupport.DomainIdSerializer.class
+            /* TODO , typing = JsonSerialize.Typing.STATIC*/)
+    @JsonDeserialize(using = DomainIdJacksonSupport.DomainIdDeserializer.class)
+    protected ID domainId;
 
     protected DomainEntity() {
     }
 
-    protected DomainEntity(final DomainId<String> domainId) {
+    protected DomainEntity(final ID domainId) {
         Objects.requireNonNull(domainId, "DomainId needs to be set");
-        this.domainId = new DomainId<>(domainId);
+        this.domainId = domainId;
+    }
+
+    protected DomainEntity(final T entity) {
+        Objects.requireNonNull(entity);
+        throw new UnsupportedOperationException("Copy constructor not implemented");
     }
 
     @SuppressWarnings({"unchecked"})
-    public <T extends DomainId<String>> T getDomainId() {
+    public ID getDomainId() {
         Objects.requireNonNull(domainId, "DomainId needs to be set");
-        return (T) domainId;
+        return domainId;
+    }
+
+    @Override
+    public abstract int hashCode();
+
+    @Override
+    public abstract boolean equals(final Object other);
+
+    @Override
+    public abstract String toString();
+
+    @Override
+    public int compareTo(final T other) {
+        return this.domainId.value.compareTo((String) other.domainId.value);
     }
 
 }

@@ -18,8 +18,8 @@ public final class CdWarenkorbBestellt extends WarenkorbBestellt {
 
     private static final long serialVersionUID = -1L;
 
-    public CdWarenkorbBestellt(final Hoerernummer hoerernummer,
-                               final Set<Titelnummer> titelnummern) {
+    CdWarenkorbBestellt(final Hoerernummer hoerernummer,
+                        final Set<Titelnummer> titelnummern) {
         super(hoerernummer, titelnummern);
     }
 

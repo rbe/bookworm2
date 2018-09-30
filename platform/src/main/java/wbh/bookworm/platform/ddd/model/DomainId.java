@@ -6,17 +6,29 @@
 
 package wbh.bookworm.platform.ddd.model;
 
-import java.io.Serializable;
-import java.util.UUID;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-public class DomainId<T extends Serializable & Comparable<T>> extends ValueObject<T, String> {
+import java.io.Serializable;
+
+@JsonTypeInfo(
+        use = JsonTypeInfo.Id.MINIMAL_CLASS,
+        include = JsonTypeInfo.As.PROPERTY,
+        property = "@class"
+)
+//@JsonTypeName("DomainId")
+public class DomainId
+        <T extends Serializable & Comparable<T>>
+        extends DomainSingleValueObject<T, String> {
 
     private static final long serialVersionUID = -1L;
 
     protected DomainId() {
     }
 
-    public DomainId(final String value) {
+    @JsonCreator
+    public DomainId(final @JsonProperty("value") String value) {
         super(value);
     }
 
@@ -36,10 +48,6 @@ public class DomainId<T extends Serializable & Comparable<T>> extends ValueObjec
     public boolean checkValue(final String value) {
         /* TODO ID must be filesystem compatible: no space, slash, ... */
         return super.checkValue(value);
-    }
-
-    public static DomainId createDefault() {
-        return new DomainId(UUID.randomUUID().toString());
     }
 
 }

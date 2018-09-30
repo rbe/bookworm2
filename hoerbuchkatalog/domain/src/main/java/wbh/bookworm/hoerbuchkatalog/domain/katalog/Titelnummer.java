@@ -14,7 +14,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 /**
  * DomainId / Value Object
  */
-public final class Titelnummer extends DomainId<Titelnummer> {
+public final class Titelnummer extends DomainId<String> {
 
     private static final long serialVersionUID = -1L;
 
@@ -25,10 +25,6 @@ public final class Titelnummer extends DomainId<Titelnummer> {
 
     public Titelnummer(final Integer value) {
         super(value);
-    }
-
-    public Titelnummer(final DomainId<Titelnummer> titelnummer) {
-        this(titelnummer.getValue());
     }
 
     public Titelnummer(final Titelnummer titelnummer) {

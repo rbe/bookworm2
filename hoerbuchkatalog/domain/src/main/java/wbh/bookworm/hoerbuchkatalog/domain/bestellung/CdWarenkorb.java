@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.CdInDenWarenkorbGelegt;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 import wbh.bookworm.platform.ddd.event.DomainEventSubscriber;
@@ -15,6 +14,7 @@ import wbh.bookworm.platform.ddd.event.DomainEventSubscriber;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -22,15 +22,20 @@ public final class CdWarenkorb extends Warenkorb {
 
     private static final long serialVersionUID = -1L;
 
-    public CdWarenkorb(final Hoerernummer hoerernummer) {
-        super(hoerernummer, new TreeSet<>());
+    public CdWarenkorb(final CdWarenkorb cdWarenkorb) {
+        super(cdWarenkorb);
+    }
+
+    public CdWarenkorb(final WarenkorbId warenkorbId, final Hoerernummer hoerernummer) {
+        super(warenkorbId, hoerernummer, new TreeSet<>());
         subscribeToDomainEvents();
     }
 
     @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
-    public CdWarenkorb(final @JsonProperty("domainId") Hoerernummer hoerernummer,
+    public CdWarenkorb(final @JsonProperty("domainId") WarenkorbId warenkorbId,
+                       final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
                        final @JsonProperty("titelnummern") Set<Titelnummer> titelnummern) {
-        super(hoerernummer, titelnummern);
+        super(warenkorbId, hoerernummer, titelnummern);
         subscribeToDomainEvents();
     }
 
@@ -63,6 +68,25 @@ public final class CdWarenkorb extends Warenkorb {
         logger.info("");
         DomainEventPublisher.global()
                 .publish(new HoerbuecherAlsCdBestellt(hoerernummer, titelnummern));
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(domainId);
+    }
+
+    @Override
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        final CdWarenkorb that = (CdWarenkorb) other;
+        return Objects.equals(domainId, that.domainId);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("CdWarenkorb{hoerernummer=%s, titelnummern=%s, domainId=%s}",
+                hoerernummer, titelnummern, domainId);
     }
 
 }

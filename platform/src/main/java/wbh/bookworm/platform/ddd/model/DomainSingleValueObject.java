@@ -9,22 +9,19 @@ package wbh.bookworm.platform.ddd.model;
 import java.io.Serializable;
 import java.util.Objects;
 
-/**
- *
- * @param <T>
- * @param <V>
- */
-public abstract class ValueObject<T extends Serializable & Comparable<T>,
-        V extends Serializable & Comparable<V>> implements Serializable, Comparable<T> {
+@SuppressWarnings({"squid:S00119"})
+public abstract class DomainSingleValueObject
+        <TYPE extends Serializable & Comparable<TYPE>, VALUE extends Serializable & Comparable<VALUE>>
+        implements Serializable, Comparable<TYPE> {
 
-    protected static final long serialVersionUID = -1L;
+    private static final long serialVersionUID = -1L;
 
-    protected V value;
+    protected VALUE value;
 
-    protected ValueObject() {
+    protected DomainSingleValueObject() {
     }
 
-    public ValueObject(final V value) {
+    public DomainSingleValueObject(final VALUE value) {
         Objects.requireNonNull(value);
         if (!checkValue(value)) {
             throw new IllegalArgumentException(String.format("'%s'", value));
@@ -32,12 +29,12 @@ public abstract class ValueObject<T extends Serializable & Comparable<T>,
         this.value = value;
     }
 
-    public boolean checkValue(V value) {
+    public boolean checkValue(VALUE value) {
         Objects.requireNonNull(value);
         return true;
     }
 
-    public V getValue() {
+    public VALUE getValue() {
         return value;
     }
 
@@ -46,7 +43,7 @@ public abstract class ValueObject<T extends Serializable & Comparable<T>,
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final ValueObject<T, V> other = (ValueObject<T, V>) o;
+        final DomainSingleValueObject<TYPE, VALUE> other = (DomainSingleValueObject<TYPE, VALUE>) o;
         return Objects.equals(value, other.value);
     }
 
@@ -57,8 +54,8 @@ public abstract class ValueObject<T extends Serializable & Comparable<T>,
 
     @Override
     @SuppressWarnings({"unchecked"})
-    public int compareTo(final T other) {
-        final ValueObject<T, V> cast = (ValueObject<T, V>) other;
+    public int compareTo(final TYPE other) {
+        final DomainSingleValueObject<TYPE, VALUE> cast = (DomainSingleValueObject<TYPE, VALUE>) other;
         return cast.value.compareTo(this.value);
     }
 

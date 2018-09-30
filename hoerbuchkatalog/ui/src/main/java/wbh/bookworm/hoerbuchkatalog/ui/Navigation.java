@@ -58,7 +58,7 @@ public class Navigation {
                 && !viewId.contains(Navigation.NAV_SUCHE);
     }
 
-    public String suche() {
+    public String zurSuche() {
         return NAV_SUCHE;
     }
 
@@ -74,17 +74,17 @@ public class Navigation {
                 && !viewId.contains(Navigation.NAV_SUCHE);
     }
 
-    public String suchergebnis() {
+    public String zumSuchergebnis() {
         return NAV_SUCHERGEBNIS;
     }
 
-    public String erneuteSuche() {
+    public String zurErneutenSuche() {
         katalogsuche.leeren();
         katalogsuchergebnis.leeren();
         return NAV_SUCHE;
     }
 
-    public String hoerbuchdetail() {
+    public String zumHoerbuchdetail() {
         return NAV_HOERBUCHDETAIL;
     }
 
@@ -92,7 +92,7 @@ public class Navigation {
         return meineMerkliste.getAnzahl() > 0;
     }
 
-    public String getMeineMerkliste() {
+    public String zuMeinerMerkliste() {
         return NAV_MERKLISTE;
     }
 
@@ -100,11 +100,11 @@ public class Navigation {
         return meinWarenkorb.getTotaleAnzahl() > 0;
     }
 
-    public String getMeinWarenkorb() {
+    public String zuMeinemWarenkorb() {
         return NAV_WARENKORB;
     }
 
-    public String bestellungErfolgreich() {
+    public String zuBestellungErfolgreich() {
         return NAV_BESTELLUNG_ERFOLGREICH;
     }
 

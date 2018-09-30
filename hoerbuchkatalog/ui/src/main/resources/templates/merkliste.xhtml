@@ -29,12 +29,12 @@
                              rowClasses="row basket-row1,row basket-row2"
                              cellpadding="0" cellspacing="0"
                              value="#{meineMerkliste.titelnummern}" var="hoerbuch">
-                    <c:set var="hoerbuch" value="#{hoerbuchkatalogService.finde(null, hoerbuch)}"/>
+                    <c:set var="hoerbuch" value="#{hoerbuchkatalogService.hole(null, hoerbuch)}"/>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titelnummer
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.titelnummer}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
@@ -52,7 +52,7 @@
                         <f:facet name="header">
                             Merkliste
                         </f:facet>
-                        <h:commandLink rendered="#{!meinWarenkorb.cd.enthalten(hoerbuch)}"
+                        <h:commandLink rendered="#{!meinWarenkorb.cdEnthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link post"
                                        action="#{meineMerkliste.inCdWarenkorbVerschieben(hoerbuch)}"
                                        value="CD bestellen"/>

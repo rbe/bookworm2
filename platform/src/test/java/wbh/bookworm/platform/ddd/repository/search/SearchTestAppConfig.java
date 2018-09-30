@@ -15,5 +15,5 @@ import org.springframework.context.annotation.Configuration;
 @ComponentScan(basePackageClasses = {
         LuceneIndex.class
 })
-public class TestAppConfig {
+public class SearchTestAppConfig {
 }

@@ -6,8 +6,8 @@
 
 package wbh.bookworm.platform.ddd.repository.search;
 
-import wbh.bookworm.platform.ddd.tools.DddHelper;
 import wbh.bookworm.platform.ddd.model.DomainEntity;
+import wbh.bookworm.platform.ddd.tools.DddHelper;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -20,6 +20,7 @@ import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
+import org.apache.lucene.index.KeepOnlyLastCommitDeletionPolicy;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.MMapDirectory;
 import org.apache.lucene.util.BytesRef;
@@ -55,6 +56,8 @@ public class LuceneIndex {
 
     private IndexWriterConfig getIndexWriterConfig() {
         final IndexWriterConfig config = new IndexWriterConfig(analyzer);
+        config.setUseCompoundFile(true);
+        config.setIndexDeletionPolicy(new KeepOnlyLastCommitDeletionPolicy());
         config.setCommitOnClose(true);
         return config;
     }
@@ -80,34 +83,34 @@ public class LuceneIndex {
         indexWriter.addDocument(document);
     }
 
-    public <T extends DomainEntity<?>> boolean add(final T dddEntity,
-                                                   final String dddIdField,
+    public <T extends DomainEntity<?, ?>> boolean add(final T domainEntity,
+                                                   final String domainIdField,
                                                    final String[] stringFields,
                                                    final String[] textFields,
                                                    final String[] dateFields,
                                                    final String[] sortFields) {
-        Objects.requireNonNull(dddEntity);
-        LOGGER.trace("Füge {} zum Suchindex hinzu", dddEntity);
+        Objects.requireNonNull(domainEntity);
+        LOGGER.trace("Füge {} zum Suchindex hinzu", domainEntity);
         Document document = new Document();
         document.add(new StringField(DDD_ID,
-                DddHelper.valueAsString(dddEntity, dddIdField),
+                DddHelper.valueAsString(domainEntity, domainIdField),
                 Field.Store.YES));
         Arrays.stream(stringFields)
-                .forEach(f -> document.add(new StringField(f,
-                        DddHelper.valueAsString(dddEntity, f),
+                .forEach(f -> document.add(new StringField(f.toLowerCase(),
+                        DddHelper.valueAsString(domainEntity, f),
                         Field.Store.NO)));
         Arrays.stream(textFields)
-                .forEach(f -> document.add(new TextField(f,
-                        DddHelper.valueAsString(dddEntity, f),
+                .forEach(f -> document.add(new TextField(f.toLowerCase(),
+                        DddHelper.valueAsString(domainEntity, f),
                         Field.Store.NO)));
         Arrays.stream(dateFields)
                 .forEach(f -> {
                     final String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-                    document.add(new StringField(f, date, Field.Store.NO));
+                    document.add(new StringField(f.toLowerCase(), date, Field.Store.NO));
                 });
         Arrays.stream(sortFields)
-                .forEach(f -> document.add(new SortedDocValuesField(f,
-                        new BytesRef(DddHelper.valueAsString(dddEntity, f)))));
+                .forEach(f -> document.add(new SortedDocValuesField(f.toLowerCase(),
+                        new BytesRef(DddHelper.valueAsString(domainEntity, f)))));
         try {
             add(document);
             return true;
@@ -117,20 +120,20 @@ public class LuceneIndex {
         }
     }
 
-    public <T extends DomainEntity<?>> boolean add(final Set<T> dddEntity,
-                                                   final String dddIdField,
+    public <T extends DomainEntity<?, ?>> boolean add(final Set<T> domainEnties,
+                                                   final String domainIdField,
                                                    final String[] stringFields,
                                                    final String[] textFields,
                                                    final String[] dateFields,
                                                    final String[] sortFields) {
-        Objects.requireNonNull(dddEntity);
-        if (dddEntity.isEmpty()) {
+        Objects.requireNonNull(domainEnties);
+        if (domainEnties.isEmpty()) {
             LOGGER.warn("Keine Dokumente zum Indizieren vorhanden");
             return false;
         } else {
-            LOGGER.debug("Füge {} Dokumente zum Suchindex hinzu", dddEntity.size());
-            for (final T dddAggregate : dddEntity) {
-                if (!add(dddAggregate, dddIdField, stringFields, textFields, dateFields, sortFields)) {
+            LOGGER.debug("Füge {} Dokumente zum Suchindex hinzu", domainEnties.size());
+            for (final T domainEntity : domainEnties) {
+                if (!add(domainEntity, domainIdField, stringFields, textFields, dateFields, sortFields)) {
                     return false;
                 }
             }
@@ -140,9 +143,20 @@ public class LuceneIndex {
 
     public void build() {
         Objects.requireNonNull(indexWriter);
-        if (indexWriter.maxDoc() > 0) {
+        final boolean hasDocuments = indexWriter.maxDoc() > 0;
+        if (hasDocuments) {
             try {
                 final int maxDoc = indexWriter.maxDoc();
+                indexWriter.commit();
+                LOGGER.debug("indexWriter#hasUncommittedChanges()={}", indexWriter.hasUncommittedChanges());
+                indexWriter.deleteUnusedFiles();
+                /*
+                final double ramBytesUsed = BigDecimal.valueOf(indexWriter.ramBytesUsed()/1024.0d/1024.0d)
+                        .setScale(1, RoundingMode.HALF_UP)
+                        .round(MathContext.DECIMAL32)
+                        .doubleValue();
+                LOGGER.info("Für den Suchindex werden {} MB RAM genutzt", ramBytesUsed);
+                */
                 indexWriter.close();
                 indexReader = DirectoryReader.open(directory);
                 LOGGER.info("Suchindex erfolgreich aufgebaut, {} Einträge vorhanden", maxDoc);

@@ -7,14 +7,30 @@
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.platform.ddd.repository.model.DomainRespositoryComponent;
+import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
 
 @DomainRespositoryComponent
-public class BestellungRepository extends JsonDomainRepository<Bestellung> {
+public class BestellungRepository extends JsonDomainRepository<Bestellung, BestellungId> {
 
     public BestellungRepository() {
-        super(Bestellung.class);
+        super(Bestellung.class, BestellungId.class);
+    }
+
+    public Bestellung erstellen(final Hoerernummer hoerernummer,
+                                final String hoerername, final String hoereremail,
+                                final String bemerkung,
+                                final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
+                                final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
+        return new Bestellung(new BestellungId("Hnr" + hoerernummer + "-001"),
+                hoerernummer,
+                hoerername, hoereremail,
+                bemerkung,
+                bestellkarteMischen, alteBestellkarteLoeschen,
+                cdWarenkorbId, downloadWarenkorbId);
     }
 
 }

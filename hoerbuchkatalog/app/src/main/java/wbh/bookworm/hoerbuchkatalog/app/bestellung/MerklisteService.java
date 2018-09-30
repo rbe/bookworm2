@@ -1,0 +1,76 @@
+/*
+ * Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+ * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+ * All rights reserved. Use is subject to license terms.
+ */
+
+package wbh.bookworm.hoerbuchkatalog.app.bestellung;
+
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Set;
+
+@Service
+public class MerklisteService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MerklisteService.class);
+
+    private final HoerbuchkatalogService hoerbuchkatalogService;
+
+    private final MerklisteRepository merklisteRepository;
+
+    @Autowired
+    public MerklisteService(final HoerbuchkatalogService hoerbuchkatalogService,
+                            final MerklisteRepository merklisteRepository) {
+        this.hoerbuchkatalogService = hoerbuchkatalogService;
+        this.merklisteRepository = merklisteRepository;
+    }
+
+    private Merkliste merkliste(final Hoerernummer hoerernummer) {
+        return merklisteRepository.load(hoerernummer)
+                .orElseGet(() -> merklisteRepository.erstellen(hoerernummer));
+    }
+
+    public int anzahl(final Hoerernummer hoerernummer) {
+        return merkliste(hoerernummer).getAnzahl();
+    }
+
+    public Set<Titelnummer> titelnummernAufMerkliste(final Hoerernummer hoerernummer) {
+        return merkliste(hoerernummer).getTitelnummern();
+    }
+
+    /**
+     * Command
+     */
+    public void hinzufuegen(final Hoerernummer hoerernummer,
+                            final Titelnummer titelnummer) {
+        final Merkliste merkliste = merkliste(hoerernummer);
+        merkliste.hinzufuegen(titelnummer);
+        merklisteRepository.save(merkliste);
+    }
+
+    public boolean enthalten(final Hoerernummer hoerernummer,
+                             final Titelnummer titelnummer) {
+        return merkliste(hoerernummer).enthalten(titelnummer);
+    }
+
+    /**
+     * Command
+     */
+    public void entfernen(final Hoerernummer hoerernummer,
+                          final Titelnummer titelnummer) {
+        final Merkliste merkliste = merkliste(hoerernummer);
+        merkliste.entfernen(titelnummer);
+        merklisteRepository.save(merkliste);
+    }
+
+}

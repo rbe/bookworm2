@@ -18,6 +18,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class HoerbuchkatalogService {
 
@@ -40,8 +42,20 @@ public class HoerbuchkatalogService {
         return hoerbuchkatalog.suchen(suchparameter);
     }
 
-    public Hoerbuch finde(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return hoerbuchkatalog.finde(titelnummer);
+    public boolean hoerbuchVorhanden(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        return hoerbuchkatalog.enthaelt(titelnummer);
+    }
+
+    public boolean hoerbuchDownloadbar(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        return hoerbuchkatalog.hoerbuchDownloadbar(titelnummer);
+    }
+
+    public Hoerbuch hole(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        return hoerbuchkatalog.hole(titelnummer);
+    }
+
+    public List<Hoerbuch> hole(final Hoerernummer hoerernummer, final Titelnummer... titelnummern) {
+        return hoerbuchkatalog.hole(titelnummern);
     }
 
 }

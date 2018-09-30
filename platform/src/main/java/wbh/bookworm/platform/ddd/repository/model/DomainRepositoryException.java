@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.platform.ddd.repository;
+package wbh.bookworm.platform.ddd.repository.model;
 
 public class DomainRepositoryException extends RuntimeException {
 

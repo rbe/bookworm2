@@ -16,25 +16,25 @@
             <!-- Suchergebnis -->
             <h:commandLink rendered="#{navigation.linkZumSuchergebnisAnzeigen}"
                            styleClass="nav-link-resultlist"
-                           action="#{navigation.suchergebnis}">Zurück zum Suchergebnis</h:commandLink>
+                           action="#{navigation.zumSuchergebnis()}">Zurück zum Suchergebnis</h:commandLink>
             <!-- Suche -->
             <div class="newsearch_basket">
                 <h:commandLink rendered="#{navigation.linkZurErneutenSucheAnzeigen}"
                                styleClass="nav-link-newsearch"
-                               action="#{navigation.erneuteSuche}">Erneute Suche</h:commandLink>
+                               action="#{navigation.zurErneutenSuche()}">Erneute Suche</h:commandLink>
                 <h:commandLink rendered="#{navigation.linkZurSucheAnzeigen}"
                                styleClass="nav-link-search"
-                               action="#{navigation.erneuteSuche}">Suchen</h:commandLink>
+                               action="#{navigation.zurErneutenSuche()}">Suchen</h:commandLink>
             </div>
             <!-- Merkliste / Warenkorb -->
             <h:panelGroup layout="block" styleClass="basket-count">
                 <h:outputLink disabled="#{!navigation.linkZurMerklisteAnzeigen}"
-                              value="#{navigation.meineMerkliste}">
+                              value="#{navigation.zuMeinerMerkliste()}">
                     <h:outputText value="Merkliste (#{meineMerkliste.anzahl})"/>
                 </h:outputLink>
                 &nbsp;
                 <h:outputLink disabled="#{!navigation.linkZumWarenkorbAnzeigen}"
-                              value="#{navigation.meinWarenkorb}">
+                              value="#{navigation.zuMeinemWarenkorb()}">
                     <h:outputText value="Warenkorb (#{meinWarenkorb.totaleAnzahl})"/>
                 </h:outputLink>
             </h:panelGroup>

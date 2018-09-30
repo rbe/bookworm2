@@ -13,9 +13,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
- * DomainId / Value Object
+ * DomainId
  */
-public final class Hoerernummer extends DomainId<Hoerernummer> {
+public final class Hoerernummer extends DomainId<String> {
 
     private static final long serialVersionUID = -1L;
 

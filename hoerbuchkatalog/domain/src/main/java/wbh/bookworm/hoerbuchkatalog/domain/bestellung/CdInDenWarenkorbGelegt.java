@@ -6,14 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.event.HoerbuchEvent;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.repository.DomainFactoryComponent;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-@DomainFactoryComponent
-public class MerklisteFactory {
+public final class CdInDenWarenkorbGelegt extends HoerbuchEvent {
 
-    public Merkliste erstellen(final Hoerernummer hoerernummer) {
-        return new Merkliste(hoerernummer);
+    public CdInDenWarenkorbGelegt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        super(hoerernummer, titelnummer);
     }
 
 }

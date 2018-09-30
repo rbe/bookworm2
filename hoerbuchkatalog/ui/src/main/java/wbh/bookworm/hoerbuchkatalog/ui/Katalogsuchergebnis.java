@@ -20,9 +20,7 @@ import org.springframework.web.context.annotation.SessionScope;
 
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @SessionScope
@@ -55,119 +53,138 @@ public class Katalogsuchergebnis {
         this.navigation = navigation;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.hoerbuchdetail = hoerbuchdetail;
+        LOGGER.trace("{} initialisiert", this);
     }
 
     public int getAnzahlHoerbuecherProSeite() {
+        LOGGER.trace("");
         return ANZAHL_HOERBUECHER_PRO_SEITE;
     }
 
     void neuesSuchergebnis(final Suchergebnis suchergebnis) {
+        LOGGER.trace("Neues Suchergebnis: {}", suchergebnis);
+        leeren();
         this.suchergebnis = suchergebnis;
         seitenanzahl = (int) Math.ceil((double) suchergebnis.getAnzahl() / ANZAHL_HOERBUECHER_PRO_SEITE);
         aktuelleSeitennummer = 1;
     }
 
     public String getSuchparameterAlsText() {
-        return null != suchergebnis ? suchergebnis.getSuchparameter().getLabel() : "";
+        LOGGER.trace("");
+        return null != suchergebnis ? suchergebnis.getSuchparameter().alsText() : "";
     }
 
     public int getAnzahl() {
+        LOGGER.trace("");
         return null != suchergebnis ? suchergebnis.getAnzahl() : 0;
     }
 
     public int getSeitenanzahl() {
+        LOGGER.trace("Insgesamt {} Seiten", seitenanzahl);
         return seitenanzahl;
     }
 
     public int getAktuelleSeitennummer() {
+        LOGGER.trace("Aktuelle Seitennummer ist {}", aktuelleSeitennummer);
         return aktuelleSeitennummer;
     }
 
     public List<Hoerbuch> getAktuelleSeite() {
+        LOGGER.trace("");
         if (null == suchergebnis) {
             return Collections.emptyList();
         }
         final int skip = (aktuelleSeitennummer - 1) * ANZAHL_HOERBUECHER_PRO_SEITE;
-        LOGGER.debug("Index von {} +{} bis {}",
-                skip, ANZAHL_HOERBUECHER_PRO_SEITE, skip + ANZAHL_HOERBUECHER_PRO_SEITE);
-        return suchergebnis.getTitelnummern().stream()
-                .skip(skip)
-                .limit(ANZAHL_HOERBUECHER_PRO_SEITE)
-                .map((Titelnummer titelnummer) -> hoerbuchkatalogService.finde(hoerernummer, titelnummer))
-                .collect(Collectors.toCollection(LinkedList::new));
+        final Titelnummer[] titelnummernAktuelleSeite =
+                suchergebnis.getTitelnummern().stream()
+                        .skip(skip)
+                        .limit(ANZAHL_HOERBUECHER_PRO_SEITE)
+                        .toArray(Titelnummer[]::new);
+        LOGGER.debug("Index von {} bis {} ({} pro Seite), Titelnummern={}",
+                skip, skip + ANZAHL_HOERBUECHER_PRO_SEITE, ANZAHL_HOERBUECHER_PRO_SEITE,
+                titelnummernAktuelleSeite);
+        return hoerbuchkatalogService.hole(hoerernummer, titelnummernAktuelleSeite);
 
     }
 
     public boolean isVorherigeSeiteVorhanden() {
+        LOGGER.trace("");
         return aktuelleSeitennummer - 1 > 0;
     }
 
     public String vorherigeSeite() {
+        LOGGER.trace("");
         aktuelleSeitennummer--;
         if (aktuelleSeitennummer < 0) {
             aktuelleSeitennummer = seitenanzahl;
         }
-        return navigation.suchergebnis();
+        return navigation.zumSuchergebnis();
     }
 
     public boolean isNaechsteSeiteVorhanden() {
+        LOGGER.trace("");
         return aktuelleSeitennummer + 1 <= seitenanzahl;
     }
 
     public String naechsteSeite() {
+        LOGGER.trace("");
         aktuelleSeitennummer++;
         if (aktuelleSeitennummer > seitenanzahl) {
             aktuelleSeitennummer = 1;
         }
-        return navigation.suchergebnis();
+        return navigation.zumSuchergebnis();
     }
 
-    public String ansehen(final Hoerbuch hoerbuch) {
-        hoerbuchdetail.setHoerbuch(hoerbuch);
-        return navigation.hoerbuchdetail();
+    public String ansehen(final Titelnummer titelnummer) {
+        LOGGER.trace("");
+        hoerbuchdetail.setTitelnummer(titelnummer);
+        return navigation.zumHoerbuchdetail();
     }
 
-    public int position(final Hoerbuch hoerbuch) {
+    public int position(final Titelnummer titelnummer) {
         final int size = suchergebnis.getTitelnummern().size();
         final Iterator<Titelnummer> iterator = suchergebnis.getTitelnummern().iterator();
         for (int i = 0; i < size; i++) {
             final Titelnummer next = iterator.next();
-            if (next.equals(hoerbuch.getTitelnummer())) {
+            if (next.equals(titelnummer)) {
                 return i + 1;
             }
         }
         return 0;
     }
 
-    public boolean vorherigesBuchVorhanden(final Hoerbuch hoerbuch) {
-        if (null == hoerbuch) return false;
-        return suchergebnis.vorherigeVorhanden(hoerbuch.getTitelnummer());
+    public boolean vorherigesBuchVorhanden(final Titelnummer titelnummer) {
+        if (null == titelnummer) {
+            return false;
+        }
+        return suchergebnis.vorherigeVorhanden(titelnummer);
     }
 
-    public String vorherigesHoerbuchAnsehen(final Hoerbuch hoerbuch) {
-        final Titelnummer vorherige = suchergebnis.vorherige(hoerbuch.getTitelnummer());
-        final Hoerbuch vorherigesHoerbuch = hoerbuchkatalogService.finde(hoerernummer, vorherige);
-        hoerbuchdetail.setHoerbuch(vorherigesHoerbuch);
-        return navigation.hoerbuchdetail();
+    public String vorherigesHoerbuchAnsehen(final Titelnummer titelnummer) {
+        final Titelnummer vorherige = suchergebnis.vorherige(titelnummer);
+        hoerbuchdetail.setTitelnummer(vorherige);
+        return navigation.zumHoerbuchdetail();
     }
 
-    public boolean naechstesBuchVorhanden(final Hoerbuch hoerbuch) {
-        if (null == hoerbuch) return false;
-        return suchergebnis.naechsteVorhanden(hoerbuch.getTitelnummer());
+    public boolean naechstesBuchVorhanden(final Titelnummer titelnummer) {
+        if (null == titelnummer) {
+            return false;
+        }
+        return suchergebnis.naechsteVorhanden(titelnummer);
     }
 
-    public String naechstesHoerbuchAnsehen(final Hoerbuch hoerbuch) {
-        final Titelnummer naechste = suchergebnis.naechste(hoerbuch.getTitelnummer());
-        final Hoerbuch naechstesHoerbuch = hoerbuchkatalogService.finde(hoerernummer, naechste);
-        hoerbuchdetail.setHoerbuch(naechstesHoerbuch);
-        return navigation.hoerbuchdetail();
+    public String naechstesHoerbuchAnsehen(final Titelnummer titelnummer) {
+        final Titelnummer naechste = suchergebnis.naechste(titelnummer);
+        hoerbuchdetail.setTitelnummer(naechste);
+        return navigation.zumHoerbuchdetail();
     }
 
     void leeren() {
+        LOGGER.trace("{} wird geleert", this);
         suchergebnis = null;
         seitenanzahl = 0;
         aktuelleSeitennummer = 0;
-        hoerbuchdetail.setHoerbuch(null);
+        hoerbuchdetail.leeren();
     }
 
 }

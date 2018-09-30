@@ -7,13 +7,16 @@
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
-import wbh.bookworm.platform.ddd.model.DomainId;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -21,15 +24,15 @@ import java.util.stream.Collectors;
 /**
  * TODO ...ist eine Kombination: Set<Hoerbuch> mit LuceneIndex
  */
-public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog> {
+public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, HoerbuchkatalogId> {
 
     private final Map<Titelnummer, Hoerbuch> katalog;
 
     private HoerbuchkatalogSuche hoerbuchkatalogSuche;
 
-    public Hoerbuchkatalog(final DomainId<String> gesamtDat,
+    public Hoerbuchkatalog(final HoerbuchkatalogId hoerbuchkatalogId,
                            final Map<Titelnummer, Hoerbuch> katalog) {
-        super(gesamtDat);
+        super(hoerbuchkatalogId);
         this.katalog = katalog;
     }
 
@@ -37,7 +40,7 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog> {
         this.hoerbuchkatalogSuche = hoerbuchkatalogSuche;
     }
 
-    public void hinzufuegen(final Hoerbuch hoerbuch) {
+    void hinzufuegen(final Hoerbuch hoerbuch) {
         katalog.put(hoerbuch.getTitelnummer(), hoerbuch);
     }
 
@@ -58,8 +61,23 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog> {
         return treeSet;
     }
 
-    public Hoerbuch finde(final Titelnummer titelnummer) {
+    public boolean enthaelt(final Titelnummer titelnummer) {
+        return katalog.containsKey(titelnummer);
+    }
+
+    public boolean hoerbuchDownloadbar(final Titelnummer titelnummer) {
+        return katalog.get(titelnummer).isDownloadbar();
+    }
+
+    public Hoerbuch hole(final Titelnummer titelnummer) {
         return katalog.get(titelnummer);
+    }
+
+    public List<Hoerbuch> hole(final Titelnummer... titelnummern) {
+        return Arrays.stream(titelnummern)
+                .map(katalog::get)
+                //.collect(Collectors.toCollection(LinkedList::new))
+                .collect(Collectors.toUnmodifiableList());
     }
 
     public Suchergebnis sucheNachStichwort(final String stichwort) {
@@ -71,8 +89,26 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog> {
     }
 
     @Override
-    public int compareTo(final Hoerbuchkatalog o) {
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Hoerbuchkatalog that = (Hoerbuchkatalog) o;
+        return Objects.equals(katalog, that.katalog);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(katalog);
+    }
+
+    @Override
+    public int compareTo(final Hoerbuchkatalog other) {
         /* TODO Comparable */return 0;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Hoerbuchkatalog{domainId=%s, katalog=%s}", domainId, katalog);
     }
 
 }

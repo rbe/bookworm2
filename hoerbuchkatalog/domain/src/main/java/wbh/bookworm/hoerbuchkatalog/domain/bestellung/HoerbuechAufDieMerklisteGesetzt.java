@@ -6,27 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.event.HoerbuchEvent;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.event.DomainEvent;
 
-public class HoerbuechAufDieMerklisteGesetzt extends DomainEvent {
+public final class HoerbuechAufDieMerklisteGesetzt extends HoerbuchEvent {
 
-    private final Hoerernummer hoerernummer;
-
-    private final Titelnummer titelnummer;
+    private static final long serialVersionUID = 1L;
 
     public HoerbuechAufDieMerklisteGesetzt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        this.hoerernummer = hoerernummer;
-        this.titelnummer = titelnummer;
-    }
-
-    public Hoerernummer getHoerernummer() {
-        return hoerernummer;
-    }
-
-    public Titelnummer getTitelnummer() {
-        return titelnummer;
+        super(hoerernummer, titelnummer);
     }
 
 }

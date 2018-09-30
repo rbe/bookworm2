@@ -6,14 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.platform.ddd.model.DomainEntity;
+import wbh.bookworm.platform.ddd.model.DomainValueObject;
 
 import java.util.List;
 
 /**
- * Entity
+ * Value Object
  */
-public final class Suchergebnis extends DomainEntity<Suchergebnis> {
+public final class Suchergebnis extends DomainValueObject {
 
     private static final long serialVersionUID = -1L;
 
@@ -58,11 +58,6 @@ public final class Suchergebnis extends DomainEntity<Suchergebnis> {
     public Titelnummer naechste(final Titelnummer titelnummer) {
         int curIdx = titelnummern.indexOf(titelnummer);
         return titelnummern.get(curIdx + 1);
-    }
-
-    @Override
-    public int compareTo(final Suchergebnis o) {
-        /* TODO Comparable */return 0;
     }
 
     @Override

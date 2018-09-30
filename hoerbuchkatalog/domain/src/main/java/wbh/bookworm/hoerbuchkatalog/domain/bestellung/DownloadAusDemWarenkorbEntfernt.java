@@ -6,19 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.event.HoerbuchEvent;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.event.DomainEvent;
 
-public class DownloadAusDemWarenkorbEntfernt extends DomainEvent {
+public final class DownloadAusDemWarenkorbEntfernt extends HoerbuchEvent {
 
-    private final Hoerernummer hoerernummer;
+    private static final long serialVersionUID = -1L;
 
-    private final Titelnummer titelnummer;
-
-    public DownloadAusDemWarenkorbEntfernt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        this.hoerernummer = hoerernummer;
-        this.titelnummer = titelnummer;
+    DownloadAusDemWarenkorbEntfernt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        super(hoerernummer, titelnummer);
     }
 
 }

@@ -6,8 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungFactory;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,7 +33,7 @@ public class MeineBestellung {
 
     private final MeinWarenkorb meinWarenkorb;
 
-    private final BestellungFactory bestellungFactory;
+    private final BestellungService bestellungService;
 
     private String statusNachricht;
 
@@ -42,11 +41,11 @@ public class MeineBestellung {
     public MeineBestellung(final Hoerernummer hoerernummer,
                            final Navigation navigation,
                            final MeinWarenkorb meinWarenkorb,
-                           final BestellungFactory bestellungFactory) {
+                           final BestellungService bestellungService) {
         this.hoerernummer = hoerernummer;
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
-        this.bestellungFactory = bestellungFactory;
+        this.bestellungService = bestellungService;
     }
 
     public int getAnzahl() {
@@ -107,11 +106,11 @@ public class MeineBestellung {
 
     public String bestellungAbschicken() {
         statusNachricht = "Ihre Bestellung wird bearbeitet!";
-        final Bestellung bestellung = bestellungFactory.erstellen(hoerername, hoerernummer, hoereremail,
+        bestellungService.bestellungAufgeben(
+                hoerernummer, hoerername, hoereremail,
                 bemerkung, bestellkarteMischen, alteBestellkarteLoeschen,
-                meinWarenkorb.getCd(), meinWarenkorb.getDownload());
-        bestellung.abschicken();
-        return navigation.bestellungErfolgreich();
+                meinWarenkorb.getCd().getDomainId(), meinWarenkorb.getDownload().getDomainId());
+        return navigation.zuBestellungErfolgreich();
     }
 
     public String getStatusNachricht() {

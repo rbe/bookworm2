@@ -34,35 +34,37 @@
                          columnClasses="basket-column1,basket-column2,basket-column3,basket-column4,basket-column5"
                          rowClasses="row basket-row1,row basket-row2"
                          cellpadding="0" cellspacing="0"
-                         value="#{cc.attrs.warenkorb.titelnummern}" var="hoerbuch">
-                <c:set var="hoerbuch" value="#{hoerbuchkatalogService.finde(null, hoerbuch)}"/>
+                         value="#{cc.attrs.warenkorb.titelnummern}" var="titelnummer">
                 <h:column headerClass="basket-column-header">
                     <f:facet name="header">
                         Titelnummer
                     </f:facet>
-                    <h:outputText styleClass="basket-column-content" value="#{hoerbuch}"/>
+                    <h:outputText styleClass="basket-column-content"
+                                  value="#{titelnummer}"/>
                 </h:column>
                 <h:column headerClass="basket-column-header">
                     <f:facet name="header">
                         Autor
                     </f:facet>
-                    <h:outputText styleClass="basket-column-content" value="#{hoerbuch.autor}"/>
+                    <h:outputText styleClass="basket-column-content"
+                                  value="#{meinWarenkorb.hoerbuchAutor(titelnummer)}"/>
                 </h:column>
                 <h:column headerClass="basket-column-header">
                     <f:facet name="header">
                         Titel
                     </f:facet>
-                    <h:outputText styleClass="basket-column-content" value="#{hoerbuch.titel}"/>
+                    <h:outputText styleClass="basket-column-content"
+                                  value="#{meinWarenkorb.hoerbuchTitel(titelnummer)}"/>
                 </h:column>
                <h:column headerClass="basket-column-header" rendered="#{!cc.attrs.readonly}">
                     <f:facet name="header">
                         Warenkorb
                     </f:facet>
-                    <h:commandLink rendered="#{!cc.attrs.warenkorb.enthalten(hoerbuch)}"
-                                   action="#{cc.attrs.warenkorb.hinzufuegen(hoerbuch)}"
+                    <h:commandLink rendered="#{!cc.attrs.warenkorb.enthalten(titelnummer)}"
+                                   action="#{cc.attrs.warenkorb.hinzufuegen(titelnummer)}"
                                    value="Bestellen"/>
-                    <h:commandLink rendered="#{cc.attrs.warenkorb.enthalten(hoerbuch)}"
-                                   action="#{cc.attrs.warenkorb.entfernen(hoerbuch)}"
+                    <h:commandLink rendered="#{cc.attrs.warenkorb.enthalten(titelnummer)}"
+                                   action="#{cc.attrs.warenkorb.entfernen(titelnummer)}"
                                    value="Aus Warenkorb entfernen"/>
                 </h:column>
             </h:dataTable>

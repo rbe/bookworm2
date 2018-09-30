@@ -6,12 +6,15 @@
 
 package wbh.bookworm.platform.ddd.model;
 
-public abstract class DomainAggregate<T extends DomainAggregate<T>> extends DomainEntity<T> {
+@SuppressWarnings({"squid:S00119"})
+public abstract class DomainAggregate
+        <T extends DomainAggregate<T, ID>, ID extends DomainId<String>>
+        extends DomainEntity<T, ID> {
 
     protected DomainAggregate() {
     }
 
-    protected DomainAggregate(final DomainId<String> domainId) {
+    protected DomainAggregate(final ID domainId) {
         super(domainId);
     }
 

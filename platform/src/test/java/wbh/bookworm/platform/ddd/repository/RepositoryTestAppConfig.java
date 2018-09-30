@@ -4,9 +4,9 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.platform.repository.ddd;
+package wbh.bookworm.platform.ddd.repository;
 
-import wbh.bookworm.platform.ddd.repository.DomainRepository;
+import wbh.bookworm.platform.ddd.repository.model.DomainRepository;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -17,5 +17,5 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 })
 @SpringBootConfiguration
 @EnableConfigurationProperties
-public class TestAppConfig {
+public class RepositoryTestAppConfig {
 }

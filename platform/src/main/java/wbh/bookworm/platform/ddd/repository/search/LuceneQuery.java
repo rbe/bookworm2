@@ -39,19 +39,19 @@ public final class LuceneQuery {
         final IndexSearcher searcher = new IndexSearcher(luceneIndex.getIndexReader());
         try {
             final SortField[] sortFieldStream = Arrays.stream(sortFields)
-                    .map(f -> new SortField(f, SortField.Type.STRING_VAL))
+                    .map(f -> new SortField(f.toLowerCase(), SortField.Type.STRING_VAL))
                     .toArray(SortField[]::new);
             final Sort sort = new Sort(sortFieldStream);
             final TopDocs topDocs = searcher.search(queryBuilder.build(), Integer.MAX_VALUE, sort);
-            return topDocsToDddIds(searcher, topDocs);
+            return topDocsToDomainIds(searcher, topDocs);
         } catch (IOException e) {
             LOGGER.error("Cannot execute query", e);
             return Collections.emptyList();
         }
     }
 
-    private static List<DomainId<?>> topDocsToDddIds(final IndexSearcher searcher,
-                                                     final TopDocs topDocs) {
+    private static List<DomainId<?>> topDocsToDomainIds(final IndexSearcher searcher,
+                                                        final TopDocs topDocs) {
         return Arrays.stream(topDocs.scoreDocs)
                 .map(scoreDoc -> {
                     try {
@@ -61,8 +61,7 @@ public final class LuceneQuery {
                         return new DomainId<>(doc.get(DDD_ID));
                     } catch (IOException e) {
                         LOGGER.error("", e);
-                        /* TODO Function may return null, but it's not allowed here */
-                        return null;
+                        /* TODO Function may return null, but it's not allowed here */return null;
                     }
                 })
                 .collect(Collectors.toUnmodifiableList());

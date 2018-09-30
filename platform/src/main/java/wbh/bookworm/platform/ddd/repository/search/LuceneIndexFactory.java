@@ -6,7 +6,7 @@
 
 package wbh.bookworm.platform.ddd.repository.search;
 
-import wbh.bookworm.platform.ddd.repository.DomainFactoryComponent;
+import wbh.bookworm.platform.ddd.repository.model.DomainFactoryComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;

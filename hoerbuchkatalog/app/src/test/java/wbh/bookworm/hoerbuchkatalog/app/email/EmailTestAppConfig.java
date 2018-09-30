@@ -6,8 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
-import wbh.bookworm.hoerbuchkatalog.domain.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

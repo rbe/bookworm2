@@ -4,12 +4,11 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.repository.suche;
+package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.repository.TestAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.TestAppConfig;
 
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;

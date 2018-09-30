@@ -62,7 +62,8 @@ final class HoerbuchkatalogMapper {
                 throw new ImportFailedException(e);
             }
         } else {
-            throw new ImportFailedException(String.format("Keine neue %s gefunden", gesamtdat));
+            //throw new ImportFailedException(String.format("Keine neue %s gefunden", gesamtdat));
+            LOGGER.warn("Keine neue Gesamt.dat gefunden");
         }
     }
 

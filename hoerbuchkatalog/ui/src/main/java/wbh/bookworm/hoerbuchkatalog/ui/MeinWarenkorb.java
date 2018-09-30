@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
@@ -24,61 +25,71 @@ class MeinWarenkorb {
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    private final CdWarenkorb cdWarenkorb;
-
-    private final DownloadWarenkorb downloadWarenkorb;
+    private final BestellungService bestellungService;
 
     @Autowired
-    MeinWarenkorb(final Hoerernummer hoerernummer, final HoerbuchkatalogService hoerbuchkatalogService) {
+    MeinWarenkorb(final Hoerernummer hoerernummer,
+                  final HoerbuchkatalogService hoerbuchkatalogService,
+                  final BestellungService bestellungService) {
         this.hoerernummer = hoerernummer;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.cdWarenkorb = new CdWarenkorb(hoerernummer);
-        this.downloadWarenkorb = new DownloadWarenkorb(hoerernummer);
+        this.bestellungService = bestellungService;
     }
 
     public int getTotaleAnzahl() {
-        return cdWarenkorb.getAnzahl() + downloadWarenkorb.getAnzahl();
+        return bestellungService.anzahlHoerbuecher(hoerernummer);
     }
 
     public CdWarenkorb getCd() {
-        return cdWarenkorb;
+        return bestellungService.cdWarenkorbKopie(hoerernummer);
     }
 
     public boolean cdEnthalten(final Titelnummer titelnummer) {
-        return cdWarenkorb.enthalten(titelnummer);
+        return bestellungService.imCdWarenkorbEnthalten(hoerernummer, titelnummer);
     }
 
     public void cdHinzufuegen(final Titelnummer titelnummer) {
-        hoerbuchkatalogService.finde(hoerernummer, titelnummer).alsCdInDenWarenkorbLegen(hoerernummer);
-        cdWarenkorb.hinzufuegen(titelnummer);
+        bestellungService.inDenCdWarenkorb(hoerernummer, titelnummer);
     }
 
     public void cdEntfernen(final Titelnummer titelnummer) {
-        cdWarenkorb.entfernen(titelnummer);
+        bestellungService.ausDemCdWarenkorbEntfernen(hoerernummer, titelnummer);
     }
 
     public DownloadWarenkorb getDownload() {
-        return downloadWarenkorb;
+        return bestellungService.downloadWarenkorbKopie(hoerernummer);
+    }
+
+    public boolean downloadVerfuegbar(final Titelnummer titelnummer) {
+        return hoerbuchkatalogService.hoerbuchDownloadbar(hoerernummer, titelnummer);
     }
 
     public boolean downloadEnthalten(final Titelnummer titelnummer) {
-        return downloadWarenkorb.enthalten(titelnummer);
+        return bestellungService.imDownloadWarenkorbEnthalten(hoerernummer, titelnummer);
     }
 
     public void downloadHinzufuegen(final Titelnummer titelnummer) {
-        downloadWarenkorb.hinzufuegen(titelnummer);
+        bestellungService.inDenDownloadWarenkorb(hoerernummer, titelnummer);
     }
 
     public void downloadEntfernen(final Titelnummer titelnummer) {
-        downloadWarenkorb.entfernen(titelnummer);
+        bestellungService.ausDemDownloadWarenkorbEntfernen(hoerernummer, titelnummer);
     }
 
     public boolean isMaxDownloadsProTagErreicht() {
-        return downloadWarenkorb.isMaxDownloadsProTagErreicht();
+        return bestellungService.isMaxDownloadsProTagErreicht();
     }
 
     public boolean isMaxDownloadsProMonatErreicht() {
-        return downloadWarenkorb.isMaxDownloadsProMonatErreicht();
+        return bestellungService.isMaxDownloadsProMonatErreicht();
+    }
+
+    public String hoerbuchAutor(final Titelnummer titelnummer) {
+        return hoerbuchkatalogService.hole(hoerernummer, titelnummer).getAutor();
+    }
+
+    public String hoerbuchTitel(final Titelnummer titelnummer) {
+        return hoerbuchkatalogService.hole(hoerernummer, titelnummer).getTitel();
     }
 
 }

@@ -20,7 +20,7 @@ class SuchparameterTest {
         sp.hinzufuegen(Suchparameter.Feld.SACHGEBIET, "Z");
         sp.hinzufuegen(Suchparameter.Feld.TITEL, "Das Kapital");
         sp.hinzufuegen(Suchparameter.Feld.TITEL, "Das Kapital - II");
-        assertEquals("Sachgebiet \"Z\", Titel \"Das Kapital - II\"", sp.getLabel());
+        assertEquals("Sachgebiet \"Z\", Titel \"Das Kapital - II\"", sp.alsText());
     }
 
 }

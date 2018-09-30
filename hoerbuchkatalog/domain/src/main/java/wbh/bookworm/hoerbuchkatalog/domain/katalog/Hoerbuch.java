@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.platform.ddd.model.DomainEntity;
-import wbh.bookworm.platform.ddd.model.DomainId;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -17,7 +16,7 @@ import java.util.Objects;
 /**
  * Entity
  */
-public final class Hoerbuch extends DomainEntity<Hoerbuch> {
+public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     private static final long serialVersionUID = -1L;
 
@@ -70,9 +69,9 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch> {
                     final String prodOrt, final String prodJahr, final String suchwoerter,
                     final String anzahlCD, final String titelfamilie, final LocalDate einstelldatum,
                     final AghNummer aghNummer, final boolean downloadbar) {
-        super(new DomainId<>(titelnummer.getValue()));
-        this.sachgebiet = sachgebiet;
+        super(titelnummer);
         this.titelnummer = titelnummer;
+        this.sachgebiet = sachgebiet;
         this.autor = autor;
         this.titel = titel;
         this.untertitel = untertitel;
@@ -102,9 +101,9 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch> {
                     final String prodOrt, final String prodJahr, final String suchwoerter,
                     final String anzahlCD, final String titelfamilie, final String einstelldatum,
                     final AghNummer aghNummer, final boolean downloadbar) {
-        super(new DomainId<>(titelnummer.getValue()));
-        this.sachgebiet = sachgebiet;
+        super(titelnummer);
         this.titelnummer = titelnummer;
+        this.sachgebiet = sachgebiet;
         this.autor = autor;
         this.titel = titel;
         this.untertitel = untertitel;
