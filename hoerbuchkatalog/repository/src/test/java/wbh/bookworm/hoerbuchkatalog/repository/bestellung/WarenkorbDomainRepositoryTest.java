@@ -13,7 +13,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.config.TestAppConfig;
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
+import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;

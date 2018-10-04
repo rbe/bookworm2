@@ -16,11 +16,11 @@
 
             <div class="download-header">
                 <h3>Auswahltitel für den Download</h3>
-                <hk:warenkorb-tabelle warenkorb="#{meinWarenkorb.download}" readonly="false"/>
+                <hk:download-warenkorb-tabelle warenkorb="#{meinWarenkorb.download}" readonly="false"/>
             </div>
             <div class="post-header">
                 <h3>Auswahltitel für die Bestellung per CD</h3>
-                <hk:warenkorb-tabelle warenkorb="#{meinWarenkorb.cd}" readonly="false"/>
+                <hk:cd-warenkorb-tabelle warenkorb="#{meinWarenkorb.cd}" readonly="false"/>
             </div>
             <h:form>
                 <h:panelGrid rendered="#{meineBestellung.anzahl > 0}"
@@ -122,7 +122,7 @@
                                      styleClass="basketsubmit" required="true">
                         <f:ajax execute="@form" render="orderSubmitMessage"/>
                     </h:commandButton>
-                    <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.statusNachricht}"/>
+                    <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.bestellungStatusNachricht}"/>
 
                 </h:panelGrid>
             </h:form>

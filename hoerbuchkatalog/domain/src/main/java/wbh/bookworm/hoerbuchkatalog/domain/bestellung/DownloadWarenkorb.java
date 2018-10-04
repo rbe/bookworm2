@@ -10,7 +10,6 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
-import wbh.bookworm.platform.ddd.event.DomainEventSubscriber;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -36,17 +35,6 @@ public final class DownloadWarenkorb extends Warenkorb {
                              final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
                              final @JsonProperty("titelnummern") Set<Titelnummer> titelnummern) {
         super(warenkorbId, hoerernummer, titelnummern);
-        subscribeToDomainEvents();
-    }
-
-    private void subscribeToDomainEvents() {
-        DomainEventPublisher.global().subscribe(
-                new DomainEventSubscriber<>(BestellungAbgeschickt.class) {
-                    @Override
-                    public void handleEvent(final BestellungAbgeschickt domainEvent) {
-                        logger.info("Was sehen meine entzündeten... {}", domainEvent);
-                    }
-                });
     }
 
     @Override

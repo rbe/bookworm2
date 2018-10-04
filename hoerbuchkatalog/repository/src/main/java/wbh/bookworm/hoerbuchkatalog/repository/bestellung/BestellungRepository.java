@@ -10,8 +10,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.repository.model.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
+import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
 @DomainRespositoryComponent
 public class BestellungRepository extends JsonDomainRepository<Bestellung, BestellungId> {
@@ -25,7 +25,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                                 final String bemerkung,
                                 final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
                                 final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
-        return new Bestellung(new BestellungId("Hnr" + hoerernummer + "-001"),
+        return new Bestellung(nextId("Hnr" + hoerernummer),
                 hoerernummer,
                 hoerername, hoereremail,
                 bemerkung,

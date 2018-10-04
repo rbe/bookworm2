@@ -21,7 +21,7 @@ public abstract class DomainSingleValueObject
     protected DomainSingleValueObject() {
     }
 
-    public DomainSingleValueObject(final VALUE value) {
+    protected DomainSingleValueObject(final VALUE value) {
         Objects.requireNonNull(value);
         if (!checkValue(value)) {
             throw new IllegalArgumentException(String.format("'%s'", value));

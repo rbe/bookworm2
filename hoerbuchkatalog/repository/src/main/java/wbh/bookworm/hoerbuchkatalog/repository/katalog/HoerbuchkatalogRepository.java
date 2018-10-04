@@ -11,8 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.model.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
+import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +33,7 @@ import java.util.concurrent.atomic.AtomicReference;
  * Repository
  */
 @DomainRespositoryComponent
-class HoerbuchkatalogRepository extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId> {
+class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId>*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 
@@ -61,8 +60,8 @@ class HoerbuchkatalogRepository extends JsonDomainRepository<Hoerbuchkatalog, Ho
                               final HoerbuchkatalogMapper hoerbuchkatalogMapper,
                               final AghNummernRepository aghNummernRepository,
                               final RepositoryArchiv repositoryArchiv) {
-        super(Hoerbuchkatalog.class, HoerbuchkatalogId.class,
-                hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());
+        /*super(Hoerbuchkatalog.class, HoerbuchkatalogId.class,
+                hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());*/
         this.applicationContext = applicationContext;
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
         this.taskScheduler = taskScheduler;
@@ -92,8 +91,7 @@ class HoerbuchkatalogRepository extends JsonDomainRepository<Hoerbuchkatalog, Ho
                     throw new IllegalStateException("Import leer; Keine Hörbücher importiert");
                 }
                 final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
-                @SuppressWarnings({"unchecked"})
-                final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
+                @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
                         applicationContext.getBean("hoerbuchkatalogMap", Map.class);
                 final HoerbuchkatalogId hoerbuchkatalogDomainId =
                         new HoerbuchkatalogId(gesamtDat.getFileName().toString());
@@ -166,14 +164,12 @@ class HoerbuchkatalogRepository extends JsonDomainRepository<Hoerbuchkatalog, Ho
         try {
             hoerbuchkatalogMapper.aktualisiereKatalogImArchiv();
         } catch (ImportFailedException e) {
-            LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: {}", e.getMessage());
-            LOGGER.debug("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt", e);
+            LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: " + e.getMessage(), e);
         }
         try {
             aghNummernRepository.aktualisiereKatalogImArchiv();
         } catch (ImportFailedException e) {
-            LOGGER.warn("Aktualisierung der AGH Nummern nicht erfolgt: {}", e.getMessage());
-            LOGGER.debug("Aktualisierung der AGH Nummern nicht erfolgt", e);
+            LOGGER.warn("Aktualisierung der AGH Nummern nicht erfolgt: " + e.getMessage(), e);
         }
         hoerbuchkatalog(true);
     }

@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.RepositoryConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringBootConfiguration;

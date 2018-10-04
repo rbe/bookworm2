@@ -28,39 +28,38 @@
                              columnClasses="basket-column1,basket-column2,basket-column3,basket-column4,basket-column5"
                              rowClasses="row basket-row1,row basket-row2"
                              cellpadding="0" cellspacing="0"
-                             value="#{meineMerkliste.titelnummern}" var="hoerbuch">
-                    <c:set var="hoerbuch" value="#{hoerbuchkatalogService.hole(null, hoerbuch)}"/>
+                             value="#{meineMerkliste.titelnummern}" var="titelnummer">
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titelnummer
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.titelnummer}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{titelnummer}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Autor
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.autor}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{meineMerkliste.hoerbuchAutor(titelnummer)}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titel
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{hoerbuch.titel}"/>
+                        <h:outputText styleClass="basket-column-content" value="#{meineMerkliste.hoerbuchTitel(titelnummer)}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Merkliste
                         </f:facet>
-                        <h:commandLink rendered="#{!meinWarenkorb.cdEnthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{!meinWarenkorb.cdEnthalten(titelnummer)}"
                                        styleClass="basket-order-link post"
-                                       action="#{meineMerkliste.inCdWarenkorbVerschieben(hoerbuch)}"
+                                       action="#{meineMerkliste.inCdWarenkorbVerschieben(titelnummer)}"
                                        value="CD bestellen"/>
-                        <h:commandLink rendered="#{hoerbuch.downloadbar}"
+                        <h:commandLink rendered="#{meineMerkliste.hoerbuchDownloadbar(titelnummer)}"
                                        styleClass="basket-order-link download"
-                                       action="#{meineMerkliste.inDownloadWarenkorbVerschieben(hoerbuch)}"
+                                       action="#{meineMerkliste.inDownloadWarenkorbVerschieben(titelnummer)}"
                                        value="Download"/>
-                        <h:commandLink action="#{meineMerkliste.entfernen(hoerbuch)}"
+                        <h:commandLink action="#{meineMerkliste.entfernen(titelnummer)}"
                                        styleClass="basket-order-link list wishlist"
                                        value="Löschen"/>
                     </h:column>

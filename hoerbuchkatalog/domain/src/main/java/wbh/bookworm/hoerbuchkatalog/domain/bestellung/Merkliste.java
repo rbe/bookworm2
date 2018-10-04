@@ -12,6 +12,7 @@ import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,9 +24,6 @@ import java.util.TreeSet;
 public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Merkliste.class);
-
-    @JsonProperty
-    private final MerklisteId merklisteId;
 
     @JsonProperty
     private final Hoerernummer hoerernummer;
@@ -40,7 +38,7 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
     public Merkliste(final @JsonProperty("domainId") MerklisteId merklisteId,
                      final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
                      final @JsonProperty("titelnummern") Set<Titelnummer> titelnummern) {
-        this.merklisteId = merklisteId;
+        super(merklisteId);
         this.hoerernummer = hoerernummer;
         this.titelnummern = titelnummern;
     }
@@ -49,6 +47,7 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
         return titelnummern;
     }
 
+    @JsonIgnore
     public int getAnzahl() {
         return titelnummern.size();
     }
@@ -76,19 +75,19 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         final Merkliste merkliste = (Merkliste) other;
-        return Objects.equals(merklisteId, merkliste.merklisteId) &&
+        return Objects.equals(domainId, merkliste.domainId) &&
                 Objects.equals(hoerernummer, merkliste.hoerernummer);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(merklisteId, hoerernummer);
+        return Objects.hash(domainId, hoerernummer);
     }
 
     @Override
     public String toString() {
         return String.format("Merkliste{domainId=%s, merklisteId=%s, hoerernummer=%s, titelnummern=%s}",
-                domainId, merklisteId, hoerernummer, titelnummern);
+                domainId, domainId, hoerernummer, titelnummern);
     }
 
 }

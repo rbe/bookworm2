@@ -2,25 +2,30 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <include resource="logback-properties.xml"/>
-    <evaluator name="STACKTRACE_EVAL">
-        <expression>
-            logger.contains("wbh.bookworm.hoerbuchkatalog")
-        </expression>
-    </evaluator>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
+            <!--<pattern>
+                %clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(-&#45;&#45;){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}#%-20.20method{19}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx{full,${ignorePackages}}}
+            </pattern>-->
             <pattern>
-                %clr(%d{${LOG_DATEFORMAT_PATTERN:-yyyy-MM-dd HH:mm:ss.SSS}}){faint} %clr(${LOG_LEVEL_PATTERN:-%5p}) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx{full,${ignorePackages}}}
+                %d{yyyy-MM-dd HH:mm:ss.SSS} [%.-4thread{4} %-5level{5}] %-50.50(%logger{24}#%method{24}){50} - %msg%n%rEx{full}
             </pattern>
         </encoder>
     </appender>
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
+
+    <logger name="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" level="OFF"/>
+    <logger name="org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext" level="OFF"/>
+
     <logger name="wbh.bookworm.hoerbuchkatalog.assembly" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.ui" level="DEBUG" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.ui" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.app" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
@@ -33,6 +38,9 @@
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.platform.ddd.event" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.platform.jsf" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">

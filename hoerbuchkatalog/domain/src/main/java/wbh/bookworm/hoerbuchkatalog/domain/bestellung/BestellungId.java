@@ -8,9 +8,13 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.platform.ddd.model.DomainId;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class BestellungId extends DomainId<String> {
 
-    public BestellungId(final String value) {
+    @JsonCreator
+    public BestellungId(final @JsonProperty("value") String value) {
         super(value);
     }
 

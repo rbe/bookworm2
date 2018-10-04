@@ -6,12 +6,18 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.config;
 
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
+import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackageClasses = {
-        DomainConfig.class
+        Bestellung.class,
+        Email.class,
+        Hoerbuch.class
 })
 public class DomainConfig {
 }

@@ -12,16 +12,19 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
-import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 @Component
 @SessionScope
 public class Hoerbuchdetail {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuchdetail.class);
 
     private final Hoerernummer hoerernummer;
 
@@ -38,6 +41,7 @@ public class Hoerbuchdetail {
 
     void setTitelnummer(final Titelnummer titelnummer) {
         Objects.requireNonNull(titelnummer);
+        LOGGER.trace("");
         hoerbuch = hoerbuchkatalogService.hole(hoerernummer, titelnummer);
     }
 
@@ -126,7 +130,7 @@ public class Hoerbuchdetail {
 
     public String getEinstelldatum() {
         Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getEinstelldatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        return hoerbuch.getEinstelldatumAufDeutsch();
     }
 
 }

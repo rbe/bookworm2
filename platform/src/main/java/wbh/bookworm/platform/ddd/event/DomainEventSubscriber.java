@@ -11,11 +11,11 @@ import org.slf4j.LoggerFactory;
 
 public abstract class DomainEventSubscriber<T extends DomainEvent> {
 
-    protected final Logger logger = LoggerFactory.getLogger(DomainEventSubscriber.class);
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final Class<T> domainEvent;
+    protected final Class<T> domainEvent;
 
-    public DomainEventSubscriber(final Class<T> domainEvent) {
+    protected DomainEventSubscriber(final Class<T> domainEvent) {
         this.domainEvent = domainEvent;
     }
 

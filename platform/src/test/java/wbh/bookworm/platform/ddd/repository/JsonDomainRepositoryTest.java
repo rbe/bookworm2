@@ -9,8 +9,7 @@ package wbh.bookworm.platform.ddd.repository;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 import wbh.bookworm.platform.ddd.model.DomainEntity;
 import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
-import wbh.bookworm.platform.ddd.repository.search.SearchTestAppConfig;
+import wbh.bookworm.platform.ddd.model.search.SearchTestAppConfig;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

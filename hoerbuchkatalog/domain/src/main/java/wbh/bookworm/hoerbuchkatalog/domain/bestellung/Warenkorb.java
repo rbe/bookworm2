@@ -78,9 +78,13 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     public abstract void bestellen();
 
+    public void leeren() {
+        titelnummern.clear();
+    }
+
     @Override
     public int compareTo(final Warenkorb other) {
-        /* TODO Comparable */return other.domainId.compareTo(this.domainId.getValue());
+        return other.domainId.compareTo(this.domainId.getValue());
     }
 
 }

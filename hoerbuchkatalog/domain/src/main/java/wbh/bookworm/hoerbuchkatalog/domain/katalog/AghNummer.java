@@ -20,6 +20,7 @@ public final class AghNummer extends DomainSingleValueObject<AghNummer, String> 
     private final Pattern pattern1 = Pattern.compile("\\d-\\d{7}-\\d-(\\d|x|X)");
 
     public AghNummer(final String value) {
+        // TODO Does not work with checkValue() super(value);
         if (!checkValue(value)) {
             throw new IllegalArgumentException(String.format("'%s'", value));
         }

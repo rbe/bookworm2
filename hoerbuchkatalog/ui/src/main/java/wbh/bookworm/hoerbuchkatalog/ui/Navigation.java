@@ -41,7 +41,8 @@ public class Navigation {
     @Autowired
     public Navigation(final Katalogsuche katalogsuche,
                       final Katalogsuchergebnis katalogsuchergebnis,
-                      final MeineMerkliste meineMerkliste, final MeinWarenkorb meinWarenkorb) {
+                      final MeineMerkliste meineMerkliste,
+                      final MeinWarenkorb meinWarenkorb) {
         this.katalogsuche = katalogsuche;
         this.katalogsuchergebnis = katalogsuchergebnis;
         this.meineMerkliste = meineMerkliste;

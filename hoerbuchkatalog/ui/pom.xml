@@ -42,6 +42,10 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.platform</artifactId>
+        </dependency>
         <!-- JavaServer Faces -->
         <dependency>
             <groupId>org.joinfaces</groupId>

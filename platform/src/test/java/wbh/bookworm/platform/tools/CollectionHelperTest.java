@@ -6,7 +6,7 @@
 
 package wbh.bookworm.platform.tools;
 
-import wbh.bookworm.platform.collections.CollectionHelper;
+import wbh.bookworm.platform.tools.collections.CollectionHelper;
 
 import org.junit.jupiter.api.Test;
 

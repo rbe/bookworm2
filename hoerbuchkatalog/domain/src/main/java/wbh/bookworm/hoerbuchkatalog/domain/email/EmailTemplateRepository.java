@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
+import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Paths;
 

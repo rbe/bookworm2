@@ -20,7 +20,7 @@ public final class DomainEventPublisher {
     private static final Logger LOGGER = LoggerFactory.getLogger(DomainEventPublisher.class);
 
     @SuppressWarnings("unchecked")
-    private final List<DomainEventSubscriber> subscribers;
+    private final List<GlobalDomainEventSubscriber> subscribers;
 
     private final AtomicReference<Boolean> publishing;
 
@@ -76,7 +76,7 @@ public final class DomainEventPublisher {
             LOGGER.trace("{} is publishing {}", this, domainEvent);
             if (null != subscribers) {
                 final Class<?> eventType = domainEvent.getClass();
-                for (final DomainEventSubscriber subscriber : subscribers) {
+                for (final GlobalDomainEventSubscriber subscriber : subscribers) {
                     LOGGER.trace("{} is publishing {} to {}", this, domainEvent, subscriber);
                     final Class<?> subscribedTo = subscriber.subscribedToEventType();
                     if (subscribedTo == eventType) {
@@ -98,7 +98,7 @@ public final class DomainEventPublisher {
     }
 
     @SuppressWarnings("unchecked")
-    public void subscribe(final DomainEventSubscriber subscriber) {
+    public void subscribe(final GlobalDomainEventSubscriber subscriber) {
         LOGGER.trace("Trying to subscribe {} to {}", subscriber, this);
         if (publishing.get()) {
             LOGGER.trace("{} is currently publishing, won't subscribe {}", this, subscriber);

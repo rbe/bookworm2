@@ -6,8 +6,6 @@
 
 package wbh.bookworm.platform.ddd.repository;
 
-import wbh.bookworm.platform.ddd.repository.model.DomainRepository;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

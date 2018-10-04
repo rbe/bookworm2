@@ -14,12 +14,12 @@
             </div>
             <div class="download-header">
                 <h3>Download</h3>
-                <hk:bestellte-hoerbuecher-tabelle basket="#{orderBean.orderedDigitalBasket}"
+                <hk:bestellte-hoerbuecher-tabelle warenkorb="#{meineBestellung.bestellerDownloadWarenkorb}"
                                                   basketType="DigitalBasketBean"/>
             </div>
             <div class="post-header">
                 <h3>Bestellung auf CD</h3>
-                <hk:bestellte-hoerbuecher-tabelle basket="#{orderBean.orderedPostalBasket}"
+                <hk:bestellte-hoerbuecher-tabelle warenkorb="#{meineBestellung.bestellerCdWarenkorb}"
                                                   basketType="PostalBasketBean"/>
             </div>
         </div>

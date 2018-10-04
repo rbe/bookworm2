@@ -12,11 +12,11 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter.Feld;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.search.BooleanQueryBuilder;
-import wbh.bookworm.platform.ddd.repository.search.LuceneIndex;
-import wbh.bookworm.platform.ddd.repository.search.LuceneQuery;
-import wbh.bookworm.platform.ddd.repository.search.QueryParameters.Field;
-import wbh.bookworm.platform.ddd.repository.search.QueryParameters.Occur;
+import wbh.bookworm.platform.ddd.search.BooleanQueryBuilder;
+import wbh.bookworm.platform.ddd.search.LuceneIndex;
+import wbh.bookworm.platform.ddd.search.LuceneQuery;
+import wbh.bookworm.platform.ddd.search.QueryParameters.Field;
+import wbh.bookworm.platform.ddd.search.QueryParameters.Occur;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

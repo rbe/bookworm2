@@ -70,12 +70,10 @@ public class Katalogsuchergebnis {
     }
 
     public String getSuchparameterAlsText() {
-        LOGGER.trace("");
         return null != suchergebnis ? suchergebnis.getSuchparameter().alsText() : "";
     }
 
     public int getAnzahl() {
-        LOGGER.trace("");
         return null != suchergebnis ? suchergebnis.getAnzahl() : 0;
     }
 

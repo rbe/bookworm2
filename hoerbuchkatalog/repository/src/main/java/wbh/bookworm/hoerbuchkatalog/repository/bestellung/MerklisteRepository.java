@@ -9,8 +9,8 @@ package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.repository.model.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.model.JsonDomainRepository;
+import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
 import java.util.Optional;
 

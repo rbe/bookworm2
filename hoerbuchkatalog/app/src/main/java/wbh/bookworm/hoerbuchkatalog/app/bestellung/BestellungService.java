@@ -6,8 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
-import wbh.bookworm.hoerbuchkatalog.app.email.TemplateBuilder;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAbgeschickt;
@@ -29,6 +27,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class BestellungService {
 
@@ -40,21 +40,13 @@ public class BestellungService {
 
     private final BestellungRepository bestellungRepository;
 
-    private final TemplateBuilder templateBuilder;
-
-    private final EmailService emailService;
-
     @Autowired
     public BestellungService(final HoerbuchkatalogService hoerbuchkatalogService,
                              final WarenkorbRepository warenkorbRepository,
-                             final BestellungRepository bestellungRepository,
-                             final TemplateBuilder templateBuilder,
-                             final EmailService emailService) {
+                             final BestellungRepository bestellungRepository) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.warenkorbRepository = warenkorbRepository;
         this.bestellungRepository = bestellungRepository;
-        this.templateBuilder = templateBuilder;
-        this.emailService = emailService;
     }
 
     public CdWarenkorb cdWarenkorbKopie(final Hoerernummer hoerernummer) {
@@ -88,6 +80,10 @@ public class BestellungService {
         return cdWarenkorb(hoerernummer).enthalten(titelnummer);
     }
 
+    public int anzahlCdHoerbuecher(final Hoerernummer hoerernummer) {
+        return cdWarenkorb(hoerernummer).getAnzahl();
+    }
+
     /**
      * Command
      */
@@ -110,7 +106,7 @@ public class BestellungService {
     }
 
     private DownloadWarenkorb downloadWarenkorb(final Hoerernummer hoerernummer) {
-        return (DownloadWarenkorb) warenkorbRepository.loadDownloadWarenkorb(hoerernummer)
+        return warenkorbRepository.loadDownloadWarenkorb(hoerernummer)
                 .orElseGet(() -> warenkorbRepository.downloadWarenkorbErstellen(hoerernummer));
     }
 
@@ -151,18 +147,22 @@ public class BestellungService {
         }
     }
 
+    public int anzahlDownloadHoerbuecher(final Hoerernummer hoerernummer) {
+        return downloadWarenkorb(hoerernummer).getAnzahl();
+    }
+
     public int anzahlHoerbuecher(final Hoerernummer hoerernummer) {
-        return cdWarenkorb(hoerernummer).getAnzahl() + downloadWarenkorb(hoerernummer).getAnzahl();
+        return anzahlCdHoerbuecher(hoerernummer) + anzahlDownloadHoerbuecher(hoerernummer);
     }
 
     /**
      * Command
      */
-    public boolean bestellungAufgeben(final Hoerernummer hoerernummer,
-                                      final String hoerername, final String hoereremail,
-                                      final String bemerkung,
-                                      final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
-                                      final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
+    public Optional<BestellungId> bestellungAufgeben(final Hoerernummer hoerernummer,
+                                                     final String hoerername, final String hoereremail,
+                                                     final String bemerkung,
+                                                     final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
+                                                     final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
         LOGGER.trace("Bestellung {} für {} wird aufgegeben!", this, hoerernummer);
         final Bestellung bestellung = bestellungRepository.erstellen(hoerernummer,
                 hoerername, hoereremail,
@@ -171,15 +171,32 @@ public class BestellungService {
                 cdWarenkorbId, downloadWarenkorbId);
         final BestellungId bestellungId = bestellungRepository.save(bestellung);
         if (null != bestellungId) {
-            // TODO CD templateBuilder.build(new EmailTemplate(), "");
-            // TODO Download
+            cdWarenkorbBestellen(hoerernummer);
+            downloadWarenkorbBestellen(hoerernummer);
             DomainEventPublisher.global()
-                    .publish(new BestellungAbgeschickt(bestellungId, hoerernummer, cdWarenkorbId, downloadWarenkorbId));
-            LOGGER.info("Bestellung {} für {} wurde erfolgreich aufgegeben!", this, hoerernummer);
-            return true;
+                    .publish(new BestellungAbgeschickt(bestellungId,
+                            hoerernummer, cdWarenkorbId, downloadWarenkorbId));
+            LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben!", this, hoerernummer);
+            return Optional.of(bestellungId);
         } else {
-            return false;
+            LOGGER.error("Bestellung {} für Hörer {} konnte nicht aufgegeben werden; Speicherung fehlgeschlagen",
+                    this, hoerernummer);
+            return Optional.empty();
         }
+    }
+
+    private void downloadWarenkorbBestellen(final Hoerernummer hoerernummer) {
+        final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer);
+        downloadWarenkorb.bestellen();
+        downloadWarenkorb.leeren();
+        warenkorbRepository.save(downloadWarenkorb);
+    }
+
+    private void cdWarenkorbBestellen(final Hoerernummer hoerernummer) {
+        final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer);
+        cdWarenkorb.bestellen();
+        cdWarenkorb.leeren();
+        warenkorbRepository.save(cdWarenkorb);
     }
 
     public boolean isMaxDownloadsProTagErreicht() {

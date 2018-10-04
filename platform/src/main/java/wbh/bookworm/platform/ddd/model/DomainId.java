@@ -17,7 +17,6 @@ import java.io.Serializable;
         include = JsonTypeInfo.As.PROPERTY,
         property = "@class"
 )
-//@JsonTypeName("DomainId")
 public class DomainId
         <T extends Serializable & Comparable<T>>
         extends DomainSingleValueObject<T, String> {
@@ -46,8 +45,7 @@ public class DomainId
 
     @Override
     public boolean checkValue(final String value) {
-        /* TODO ID must be filesystem compatible: no space, slash, ... */
-        return super.checkValue(value);
+        /* TODO ID must be filesystem compatible: no space, slash, ... */return super.checkValue(value);
     }
 
 }

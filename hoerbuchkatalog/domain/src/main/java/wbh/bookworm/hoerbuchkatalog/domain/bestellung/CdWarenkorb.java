@@ -9,7 +9,6 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
-import wbh.bookworm.platform.ddd.event.DomainEventSubscriber;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -28,25 +27,13 @@ public final class CdWarenkorb extends Warenkorb {
 
     public CdWarenkorb(final WarenkorbId warenkorbId, final Hoerernummer hoerernummer) {
         super(warenkorbId, hoerernummer, new TreeSet<>());
-        subscribeToDomainEvents();
     }
 
-    @JsonCreator(mode = JsonCreator.Mode.PROPERTIES)
+    @JsonCreator/*(mode = JsonCreator.Mode.PROPERTIES)*/
     public CdWarenkorb(final @JsonProperty("domainId") WarenkorbId warenkorbId,
                        final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
                        final @JsonProperty("titelnummern") Set<Titelnummer> titelnummern) {
         super(warenkorbId, hoerernummer, titelnummern);
-        subscribeToDomainEvents();
-    }
-
-    private void subscribeToDomainEvents() {
-        DomainEventPublisher.global().subscribe(
-                new DomainEventSubscriber<>(CdInDenWarenkorbGelegt.class) {
-                    @Override
-                    public void handleEvent(final CdInDenWarenkorbGelegt domainEvent) {
-                        logger.info("Was sehen meine entzündeten... {}", domainEvent.getTitelnummer());
-                    }
-                });
     }
 
     @Override
@@ -85,8 +72,8 @@ public final class CdWarenkorb extends Warenkorb {
 
     @Override
     public String toString() {
-        return String.format("CdWarenkorb{hoerernummer=%s, titelnummern=%s, domainId=%s}",
-                hoerernummer, titelnummern, domainId);
+        return String.format("CdWarenkorb{domainId=%s, hoerernummer=%s, titelnummern=%s}",
+                domainId, hoerernummer, titelnummern);
     }
 
 }

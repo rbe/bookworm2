@@ -323,6 +323,10 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         return einstelldatum;
     }
 
+    public String getEinstelldatumAufDeutsch() {
+        return einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
 /*
     public void setEinstelldatum(LocalDate einstelldatum) {
         this.einstelldatum = einstelldatum;

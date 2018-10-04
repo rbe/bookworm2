@@ -9,6 +9,8 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,12 +38,16 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private final WarenkorbId downloadWarenkorbId;
 
-    public Bestellung(final BestellungId bestellungId,
-                      final Hoerernummer hoerernummer,
-                      final String hoerername, final String hoereremail,
-                      final String bemerkung,
-                      final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
-                      final WarenkorbId cdWarenkorbId, final WarenkorbId downloadWarenkorbId) {
+    @JsonCreator
+    public Bestellung(final @JsonProperty("domainId") BestellungId bestellungId,
+                      final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
+                      final @JsonProperty("hoerername") String hoerername,
+                      final @JsonProperty("hoereremail") String hoereremail,
+                      final @JsonProperty("bemerkung") String bemerkung,
+                      final @JsonProperty("bestellkarteMischen") Boolean bestellkarteMischen,
+                      final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
+                      final @JsonProperty("cdWarenkorbId") WarenkorbId cdWarenkorbId,
+                      final @JsonProperty("downloadWarenkorbId") WarenkorbId downloadWarenkorbId) {
         super(bestellungId);
         this.hoerername = hoerername;
         this.hoerernummer = hoerernummer;
@@ -77,6 +83,14 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         return alteBestellkarteLoeschen;
     }
 
+    public WarenkorbId getCdWarenkorbId() {
+        return cdWarenkorbId;
+    }
+
+    public WarenkorbId getDownloadWarenkorbId() {
+        return downloadWarenkorbId;
+    }
+
     @Override
     public boolean equals(final Object other) {
         if (this == other) return true;
@@ -94,7 +108,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @Override
     public int compareTo(final Bestellung other) {
-        /* TODO Comparable */return other.hoerernummer.compareTo(this.hoerernummer.getValue());
+        return other.domainId.compareTo(this.domainId.getValue());
     }
 
     @Override

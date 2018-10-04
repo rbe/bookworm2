@@ -7,15 +7,24 @@
 package wbh.bookworm.hoerbuchkatalog.ui;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.util.Optional;
+
 @Component
 @SessionScope
 public class MeineBestellung {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
 
     private Hoerernummer hoerernummer;
 
@@ -35,7 +44,11 @@ public class MeineBestellung {
 
     private final BestellungService bestellungService;
 
-    private String statusNachricht;
+    private String bestellungStatusNachricht;
+
+    private CdWarenkorb bestellerCdWarenkorb;
+
+    private DownloadWarenkorb bestellerDownloadWarenkorb;
 
     @Autowired
     public MeineBestellung(final Hoerernummer hoerernummer,
@@ -104,17 +117,47 @@ public class MeineBestellung {
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
     }
 
+    /**
+     * Command
+     */
     public String bestellungAbschicken() {
-        statusNachricht = "Ihre Bestellung wird bearbeitet!";
-        bestellungService.bestellungAufgeben(
-                hoerernummer, hoerername, hoereremail,
-                bemerkung, bestellkarteMischen, alteBestellkarteLoeschen,
+        // Warenkörbe kopieren
+        bestellerCdWarenkorb = bestellungService.cdWarenkorbKopie(hoerernummer);
+        bestellerDownloadWarenkorb = bestellungService.downloadWarenkorbKopie(hoerernummer);
+        // Bestellung aufgeben
+        final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(
+                hoerernummer,
+                hoerername, hoereremail,
+                bemerkung,
+                bestellkarteMischen, alteBestellkarteLoeschen,
                 meinWarenkorb.getCd().getDomainId(), meinWarenkorb.getDownload().getDomainId());
-        return navigation.zuBestellungErfolgreich();
+        if (bestellungId.isPresent()) {
+            // Warenkörbe leeren
+            meinWarenkorb.leeren();
+            bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
+            LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben",
+                    bestellungId.get(), hoerernummer);
+            return navigation.zuBestellungErfolgreich();
+        } else {
+            LOGGER.error("Bestellung konnte nicht aufgegeben werden!");
+            bestellerCdWarenkorb = null;
+            bestellerDownloadWarenkorb = null;
+            bestellungStatusNachricht = "Ihre Bestellung konnte leider nicht bearbeitet werden," +
+                    " bitte wenden Sie sich an die WBH.";
+            return navigation.zuMeinemWarenkorb();
+        }
     }
 
-    public String getStatusNachricht() {
-        return statusNachricht;
+    public String getBestellungStatusNachricht() {
+        return bestellungStatusNachricht;
+    }
+
+    public CdWarenkorb getBestellerCdWarenkorb() {
+        return bestellerCdWarenkorb;
+    }
+
+    public DownloadWarenkorb getBestellerDownloadWarenkorb() {
+        return bestellerDownloadWarenkorb;
     }
 
 }
