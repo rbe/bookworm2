@@ -38,6 +38,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private final WarenkorbId downloadWarenkorbId;
 
+    private boolean abgeschickt;
+
     @JsonCreator
     public Bestellung(final @JsonProperty("domainId") BestellungId bestellungId,
                       final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
@@ -47,7 +49,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final @JsonProperty("bestellkarteMischen") Boolean bestellkarteMischen,
                       final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
                       final @JsonProperty("cdWarenkorbId") WarenkorbId cdWarenkorbId,
-                      final @JsonProperty("downloadWarenkorbId") WarenkorbId downloadWarenkorbId) {
+                      final @JsonProperty("downloadWarenkorbId") WarenkorbId downloadWarenkorbId,
+                      final @JsonProperty("abgeschickt") boolean abgeschickt) {
         super(bestellungId);
         this.hoerername = hoerername;
         this.hoerernummer = hoerernummer;
@@ -57,6 +60,28 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
         this.cdWarenkorbId = cdWarenkorbId;
         this.downloadWarenkorbId = downloadWarenkorbId;
+        this.abgeschickt = abgeschickt;
+    }
+
+    public Bestellung(final BestellungId bestellungId,
+                      final Hoerernummer hoerernummer,
+                      final String hoerername,
+                      final String hoereremail,
+                      final String bemerkung,
+                      final Boolean bestellkarteMischen,
+                      final Boolean alteBestellkarteLoeschen,
+                      final WarenkorbId cdWarenkorbId,
+                      final WarenkorbId downloadWarenkorbId) {
+        super(bestellungId);
+        this.hoerername = hoerername;
+        this.hoerernummer = hoerernummer;
+        this.hoereremail = hoereremail;
+        this.bemerkung = bemerkung;
+        this.bestellkarteMischen = bestellkarteMischen;
+        this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
+        this.cdWarenkorbId = cdWarenkorbId;
+        this.downloadWarenkorbId = downloadWarenkorbId;
+        this.abgeschickt = false;
     }
 
     public Hoerernummer getHoerernummer() {
@@ -89,6 +114,10 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public WarenkorbId getDownloadWarenkorbId() {
         return downloadWarenkorbId;
+    }
+
+    public void abschicken() {
+
     }
 
     @Override

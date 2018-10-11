@@ -171,15 +171,15 @@ public class BestellungService {
                 cdWarenkorbId, downloadWarenkorbId);
         final BestellungId bestellungId = bestellungRepository.save(bestellung);
         if (null != bestellungId) {
-            cdWarenkorbBestellen(hoerernummer);
-            downloadWarenkorbBestellen(hoerernummer);
+            /* TODO In DomainEventSubscriber */cdWarenkorbBestellen(hoerernummer);
+            /* TODO In DomainEventSubscriber */downloadWarenkorbBestellen(hoerernummer);
             DomainEventPublisher.global()
                     .publish(new BestellungAbgeschickt(bestellungId,
                             hoerernummer, cdWarenkorbId, downloadWarenkorbId));
             LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben!", this, hoerernummer);
             return Optional.of(bestellungId);
         } else {
-            LOGGER.error("Bestellung {} für Hörer {} konnte nicht aufgegeben werden; Speicherung fehlgeschlagen",
+            LOGGER.error("Bestellung {} für Hörer {} konnte nicht aufgegeben werden; Speichern fehlgeschlagen",
                     this, hoerernummer);
             return Optional.empty();
         }
@@ -200,11 +200,11 @@ public class BestellungService {
     }
 
     public boolean isMaxDownloadsProTagErreicht() {
-        return false;
+        /* TODO */return false;
     }
 
     public boolean isMaxDownloadsProMonatErreicht() {
-        return false;
+        /* TODO */return false;
     }
 
 }
