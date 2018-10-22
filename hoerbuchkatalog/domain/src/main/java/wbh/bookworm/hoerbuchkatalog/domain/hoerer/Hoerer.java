@@ -12,32 +12,36 @@ import java.util.Objects;
 
 public class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 
-    private final Hoerernummer hoerernummer;
+    private Hoerername hoerername;
 
-    private String hoerername;
-
-    private String hoereremail;
+    private HoererEmail hoereremail;
 
     protected Hoerer(final Hoerernummer hoerernummer) {
         super(hoerernummer);
-        this.hoerernummer = hoerernummer;
+    }
+
+    public Hoerer(final Hoerernummer hoerernummer,
+                  final Hoerername hoerername, final HoererEmail hoereremail) {
+        super(hoerernummer);
+        this.hoerername = hoerername;
+        this.hoereremail = hoereremail;
     }
 
     public Hoerernummer getHoerernummer() {
-        return hoerernummer;
+        return domainId;
     }
 
-    public String getHoerername() {
+    public Hoerername getHoerername() {
         return hoerername;
     }
 
-    public String getHoereremail() {
+    public HoererEmail getHoereremail() {
         return hoereremail;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hoerernummer);
+        return Objects.hash(domainId);
     }
 
     @Override
@@ -45,18 +49,18 @@ public class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         final Hoerer that = (Hoerer) other;
-        return Objects.equals(that.hoerernummer, this.hoerernummer);
+        return Objects.equals(that.domainId, this.domainId);
     }
 
     @Override
     public int compareTo(final Hoerer other) {
-        return other.hoerernummer.compareTo(this.hoerernummer.getValue());
+        return other.domainId.compareTo(this.domainId.getValue());
     }
 
     @Override
     public String toString() {
-        return String.format("Hoerer{domainId=%s, hoerernummer=%s, hoerername='%s', hoereremail='%s'}",
-                domainId, hoerernummer, hoerername, hoereremail);
+        return String.format("Hoerer{hoerernummer=%s, hoerername='%s', hoereremail='%s'}",
+                domainId, hoerername, hoereremail);
     }
 
 }

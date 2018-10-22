@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechAufDieMerklisteGesetzt;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechVonDerMerklisteEntfernt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
@@ -19,18 +21,20 @@ public class MerklisteRepository extends JsonDomainRepository<Merkliste, Merklis
 
     public MerklisteRepository() {
         super(Merkliste.class, MerklisteId.class);
+        saveOnEvent(logger, HoerbuechAufDieMerklisteGesetzt.class);
+        saveOnEvent(logger, HoerbuechVonDerMerklisteEntfernt.class);
     }
 
-    private MerklisteId merklisteFuerHoerer(final Hoerernummer hoerernummer) {
-        return new MerklisteId("Hnr" + hoerernummer + "-Merkliste");
+    private MerklisteId merklisteIdFuerHoerer(final Hoerernummer hoerernummer) {
+        return new MerklisteId(hoerernummer + "-Merkliste");
     }
 
     public Merkliste erstellen(final Hoerernummer hoerernummer) {
-        return new Merkliste(merklisteFuerHoerer(hoerernummer), hoerernummer);
+        return new Merkliste(merklisteIdFuerHoerer(hoerernummer), hoerernummer);
     }
 
     public Optional<Merkliste> load(final Hoerernummer hoerernummer) {
-        return super.load(merklisteFuerHoerer(hoerernummer));
+        return super.load(merklisteIdFuerHoerer(hoerernummer));
     }
 
 }

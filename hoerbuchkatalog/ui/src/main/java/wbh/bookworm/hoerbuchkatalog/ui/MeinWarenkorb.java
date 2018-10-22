@@ -11,10 +11,11 @@ import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.jsf.ELCacheGroup;
 import wbh.bookworm.platform.jsf.ELFunctionCache;
 import wbh.bookworm.platform.jsf.ELValueCache;
+import wbh.bookworm.platform.jsf.ELValueCacheGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,21 +29,35 @@ class MeinWarenkorb {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
 
+    //
+    // Hörer
+    //
+
     private final Hoerernummer hoerernummer;
 
-    private final HoerbuchkatalogService hoerbuchkatalogService;
+    //
+    // Hörbuchkatalog
+    //
+
+    private final ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
+
+    //
+    // Bestellung
+    //
 
     private final BestellungService bestellungService;
 
-    private final ELCacheGroup cdWarenkorbCacheGroup;
+    private final ELValueCacheGroup cdWarenkorbCacheGroup;
 
-    private final ELCacheGroup downloadWarenkorbCacheGroup;
+    private final ELValueCache<CdWarenkorb> cdWarenkorbValueCache;
 
-    private final ELValueCache<Integer> cdAnzahlValueCache;
+    private final ELValueCacheGroup downloadWarenkorbCacheGroup;
 
-    private final ELValueCache<Integer> downloadAnzahlValueCache;
+    private final ELValueCache<DownloadWarenkorb> downloadWarenkorbValueCache;
 
-    private final ELFunctionCache<Titelnummer, Boolean> downloadVerfuegbarValueCache;
+    private final ELValueCache<Boolean> maxDownloadsProTagErreicht;
+
+    private final ELValueCache<Boolean> maxDownloadsProMonatErreicht;
 
     @Autowired
     MeinWarenkorb(final Hoerernummer hoerernummer,
@@ -50,56 +65,60 @@ class MeinWarenkorb {
                   final BestellungService bestellungService) {
         LOGGER.trace("Initializing");
         this.hoerernummer = hoerernummer;
-        this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.bestellungService = bestellungService;
         // CD Warenkorb
-        cdWarenkorbCacheGroup = new ELCacheGroup();
+        cdWarenkorbValueCache = new ELValueCache<>(null,
+                () -> bestellungService.cdWarenkorbKopie(hoerernummer));
+        cdWarenkorbCacheGroup = new ELValueCacheGroup(cdWarenkorbValueCache);
         // Download Warenkorb
-        downloadWarenkorbCacheGroup = new ELCacheGroup();
-        //
-        cdAnzahlValueCache = new ELValueCache<>(0,
-                () -> bestellungService.anzahlCdHoerbuecher(hoerernummer));
-        downloadAnzahlValueCache = new ELValueCache<>(0,
-                () -> bestellungService.anzahlDownloadHoerbuecher(hoerernummer));
-        //
-        downloadVerfuegbarValueCache = new ELFunctionCache<>(
-                (titelnummer) -> hoerbuchkatalogService.hoerbuchDownloadbar(hoerernummer, titelnummer));
+        downloadWarenkorbValueCache = new ELValueCache<>(null,
+                () -> bestellungService.downloadWarenkorbKopie(hoerernummer));
+        maxDownloadsProTagErreicht = new ELValueCache<>(Boolean.FALSE,
+                () -> bestellungService.isMaxDownloadsProTagErreicht(hoerernummer));
+        maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE,
+                () -> bestellungService.isMaxDownloadsProMonatErreicht(hoerernummer));
+        downloadWarenkorbCacheGroup = new ELValueCacheGroup(downloadWarenkorbValueCache,
+                maxDownloadsProTagErreicht, maxDownloadsProMonatErreicht);
+        // Hörbuch
+        hoerbuchValueCache = new ELFunctionCache<>(
+                titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer));
     }
 
-    public void leeren() {
-        cdAnzahlValueCache.invalidate();
-        downloadAnzahlValueCache.invalidate();
+    public void bestellungAufgegeben() {
+        cdWarenkorbCacheGroup.invalidateAll();
+        downloadWarenkorbCacheGroup.invalidateAll();
+        hoerbuchValueCache.invalidateAll();
     }
 
-    public int getTotaleAnzahl() {
+    public int getAnzahl() {
         LOGGER.trace("");
-        return cdAnzahlValueCache.get() + downloadAnzahlValueCache.get();
+        return cdWarenkorbValueCache.get().getAnzahl() +
+                downloadWarenkorbValueCache.get().getAnzahl();
     }
 
     //
     // CD Warenkorb
     //
 
-
-    public CdWarenkorb getCd() {
+    public CdWarenkorb getCds() {
         LOGGER.trace("");
-        return bestellungService.cdWarenkorbKopie(hoerernummer);
+        return cdWarenkorbValueCache.get();
     }
 
     public boolean cdEnthalten(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return bestellungService.imCdWarenkorbEnthalten(hoerernummer, titelnummer);
+        return cdWarenkorbValueCache.get().enthalten(titelnummer);
     }
 
     public void cdHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        cdAnzahlValueCache.invalidate();
+        cdWarenkorbCacheGroup.invalidateAll();
         bestellungService.inDenCdWarenkorb(hoerernummer, titelnummer);
     }
 
     public void cdEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        cdAnzahlValueCache.invalidate();
+        cdWarenkorbCacheGroup.invalidateAll();
         bestellungService.ausDemCdWarenkorbEntfernen(hoerernummer, titelnummer);
     }
 
@@ -107,56 +126,59 @@ class MeinWarenkorb {
     // Download Warenkorb
     //
 
-    public DownloadWarenkorb getDownload() {
+    public DownloadWarenkorb getDownloads() {
         LOGGER.trace("");
-        return bestellungService.downloadWarenkorbKopie(hoerernummer);
-    }
-
-    public boolean downloadVerfuegbar(final Titelnummer titelnummer) {
-        LOGGER.trace("");
-        return downloadVerfuegbarValueCache.get(titelnummer);
+        return downloadWarenkorbValueCache.get();
     }
 
     public boolean downloadEnthalten(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return bestellungService.imDownloadWarenkorbEnthalten(hoerernummer, titelnummer);
+        return downloadWarenkorbValueCache.get().enthalten(titelnummer);
     }
 
     public void downloadHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        downloadAnzahlValueCache.invalidate();
+        downloadWarenkorbCacheGroup.invalidateAll();
         bestellungService.inDenDownloadWarenkorb(hoerernummer, titelnummer);
     }
 
     public void downloadEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        downloadAnzahlValueCache.invalidate();
+        downloadWarenkorbCacheGroup.invalidateAll();
         bestellungService.ausDemDownloadWarenkorbEntfernen(hoerernummer, titelnummer);
     }
 
     public boolean isMaxDownloadsProTagErreicht() {
         LOGGER.trace("");
-        return bestellungService.isMaxDownloadsProTagErreicht();
+        return maxDownloadsProTagErreicht.get();
     }
 
     public boolean isMaxDownloadsProMonatErreicht() {
         LOGGER.trace("");
-        return bestellungService.isMaxDownloadsProMonatErreicht();
+        return maxDownloadsProMonatErreicht.get();
     }
 
     //
     // Hörbuch
     //
 
+    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
+        LOGGER.trace("{}", titelnummer);
+        final boolean b = !isMaxDownloadsProTagErreicht()
+                && !isMaxDownloadsProMonatErreicht()
+                && hoerbuchValueCache.get(titelnummer).isDownloadbar();
+        LOGGER.debug("{} = {}", titelnummer, b);
+        return b;
+    }
 
     public String hoerbuchAutor(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoerbuchkatalogService.hole(hoerernummer, titelnummer).getAutor();
+        return hoerbuchValueCache.get(titelnummer).getAutor();
     }
 
     public String hoerbuchTitel(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoerbuchkatalogService.hole(hoerernummer, titelnummer).getTitel();
+        return hoerbuchValueCache.get(titelnummer).getTitel();
     }
 
 }

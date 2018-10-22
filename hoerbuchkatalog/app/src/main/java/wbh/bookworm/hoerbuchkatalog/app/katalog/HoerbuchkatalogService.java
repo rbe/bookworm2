@@ -33,28 +33,38 @@ public class HoerbuchkatalogService {
     }
 
     public Suchergebnis sucheNachStichwort(final Hoerernummer hoerernummer, final String stichwort) {
-        LOGGER.info("Suche {}", stichwort);
-        return hoerbuchkatalog.sucheNachStichwort(stichwort);
+        LOGGER.trace("");
+        final Suchergebnis suchergebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
+        LOGGER.info("Hörer {}: Suche nach Stichwort {} ergab {} Treffer",
+                hoerernummer, stichwort, suchergebnis.getAnzahl());
+        return suchergebnis;
     }
 
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
-        LOGGER.info("Suche {}", suchparameter);
-        return hoerbuchkatalog.suchen(suchparameter);
+        LOGGER.trace("");
+        final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
+        LOGGER.info("Hörer {}: Suche nach {} ergab {} Treffer",
+                hoerernummer, suchparameter, suchergebnis.getAnzahl());
+        return suchergebnis;
     }
 
     public boolean hoerbuchVorhanden(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        LOGGER.trace("");
         return hoerbuchkatalog.enthaelt(titelnummer);
     }
 
     public boolean hoerbuchDownloadbar(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        LOGGER.trace("");
         return hoerbuchkatalog.hoerbuchDownloadbar(titelnummer);
     }
 
     public Hoerbuch hole(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+        LOGGER.trace("");
         return hoerbuchkatalog.hole(titelnummer);
     }
 
     public List<Hoerbuch> hole(final Hoerernummer hoerernummer, final Titelnummer... titelnummern) {
+        LOGGER.trace("");
         return hoerbuchkatalog.hole(titelnummern);
     }
 

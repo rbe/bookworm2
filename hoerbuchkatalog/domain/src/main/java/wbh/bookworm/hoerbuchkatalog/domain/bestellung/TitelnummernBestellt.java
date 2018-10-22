@@ -15,7 +15,7 @@ import java.util.Set;
 /**
  * Event
  */
-public abstract class WarenkorbBestellt extends DomainEvent {
+public abstract class TitelnummernBestellt extends DomainEvent {
 
     private static final long serialVersionUID = -1L;
 
@@ -23,8 +23,8 @@ public abstract class WarenkorbBestellt extends DomainEvent {
 
     protected final Set<Titelnummer> titelnummern;
 
-    WarenkorbBestellt(final Hoerernummer hoerernummer,
-                      final Set<Titelnummer> titelnummern) {
+    TitelnummernBestellt(final Hoerernummer hoerernummer,
+                         final Set<Titelnummer> titelnummern) {
         this.hoerernummer = hoerernummer;
         this.titelnummern = titelnummern;
     }

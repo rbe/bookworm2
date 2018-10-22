@@ -40,21 +40,14 @@ public final class CdWarenkorb extends Warenkorb {
     public void hinzufuegen(final Titelnummer titelnummer) {
         super.hinzufuegen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new CdInDenWarenkorbGelegt(hoerernummer, titelnummer));
+                .publish(new CdInDenWarenkorbGelegt(hoerernummer, this, titelnummer));
     }
 
     @Override
     public void entfernen(final Titelnummer titelnummer) {
         super.entfernen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new CdAusDemWarenkorbEntfernt(hoerernummer, titelnummer));
-    }
-
-    @Override
-    public void bestellen() {
-        logger.info("");
-        DomainEventPublisher.global()
-                .publish(new HoerbuecherAlsCdBestellt(hoerernummer, titelnummern));
+                .publish(new CdAusDemWarenkorbEntfernt(hoerernummer, this, titelnummer));
     }
 
     @Override

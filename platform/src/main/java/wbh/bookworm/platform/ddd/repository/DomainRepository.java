@@ -6,9 +6,16 @@
 
 package wbh.bookworm.platform.ddd.repository;
 
+import wbh.bookworm.platform.ddd.event.DomainAggregateWriteEvent;
+import wbh.bookworm.platform.ddd.event.DomainEvent;
+import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
+import wbh.bookworm.platform.ddd.event.DomainEventSubscriber;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 import wbh.bookworm.platform.ddd.model.DomainId;
 
+import org.slf4j.Logger;
+
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
@@ -16,45 +23,101 @@ import java.util.function.Consumer;
 @DomainRespositoryComponent
 @SuppressWarnings({"squid:S00119"})
 public interface DomainRepository
-        <T extends DomainAggregate<T, ID>, ID extends DomainId<String>> {
+        <AGG extends DomainAggregate<AGG, ID>, ID extends DomainId<String>> {
 
-    ID nextId();
+    ID nextIdentity();
 
-    ID nextId(String prefix);
+    ID nextIdentity(String prefix);
 
-    default ID save(T aggregate) {
+    AGG create();
+
+    default AGG save(AGG aggregate) {
         throw new UnsupportedOperationException();
     }
 
-    default Set<ID> saveAll(Set<T> aggregates) {
+    default Set<AGG> saveAll(Set<AGG> aggregates) {
         throw new UnsupportedOperationException();
     }
 
-    default Optional<T> load(ID domainId) {
+    default Optional<AGG> load(ID domainId) {
         return Optional.empty();
     }
 
-    default <SUBT extends T> Optional<SUBT> load(ID domainId, final Class<SUBT> klass) {
+    default <SUBT extends AGG> Optional<SUBT> load(ID domainId, final Class<SUBT> klass) {
         return Optional.empty();
     }
 
-    default Optional<Set<T>> loadAll() {
+    default Optional<Set<AGG>> loadAll() {
         return Optional.empty();
     }
 
-    default boolean withTransaction(ID domainId, Consumer<T> body) {
-        final Optional<T> aggregate = load(domainId);
-        if (aggregate.isPresent()) {
-            body.accept(aggregate.get());
-            save(aggregate.get());
-            return true;
+    default Optional<Set<AGG>> find(Predicate... predicates) {
+        return Optional.empty();
+    }
+
+    /**
+     * Transaction with optimistic locking.
+     */
+    default AGG withTransaction(AGG aggregate, Consumer<AGG> body) {
+        final Optional<AGG> loadedAggregate = load(aggregate.getDomainId());
+        if (loadedAggregate.isPresent()) {
+            if (loadedAggregate.get().getVersion() == aggregate.getVersion()) {
+                body.accept(aggregate);
+                return save(aggregate);
+            } else {
+                throw new DomainRepositoryException();
+            }
         } else {
             throw new DomainRepositoryException();
         }
     }
 
     default long countAll() {
-        return -1;
+        return loadAll().orElseThrow(DomainRepositoryException::new).size();
+    }
+
+    @SuppressWarnings({"unchecked"})
+    default <E extends DomainEvent> void registerEventHandler(Logger logger, Class<E> domainEvent, Consumer<E> consumer) {
+        Objects.requireNonNull(logger);
+        Objects.requireNonNull(domainEvent);
+        Objects.requireNonNull(consumer);
+        final DomainEventSubscriber<E> subscriber = new DomainEventSubscriber<>(domainEvent) {
+
+            @Override
+            public void handleEvent(final E domainEvent) {
+                logger.trace("{} handling received event {} with {}", this, domainEvent, consumer);
+                consumer.accept(domainEvent);
+                logger.debug("{} handled received event {} with {}", this, domainEvent, consumer);
+            }
+
+            @Override
+            public String toString() {
+                return "registerEventHandler{" + domainEvent + ", consumer=" + consumer + "}";
+            }
+
+        };
+        DomainEventPublisher.global().subscribe(subscriber);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    default <E extends DomainAggregateWriteEvent<AGG, ID>> void saveOnEvent(Logger logger, Class<E> domainEvent) {
+        Objects.requireNonNull(logger);
+        Objects.requireNonNull(domainEvent);
+        DomainEventPublisher.global().subscribe(new DomainEventSubscriber<>(domainEvent) {
+
+            @Override
+            public void handleEvent(final E domainEvent) {
+                logger.trace("{}/saveOnEvent handling received event: {}", this, domainEvent);
+                save((AGG) domainEvent.getDomainAggregate());
+                logger.debug("{}/saveOnEvent handled received event: {}", this, domainEvent);
+            }
+
+            @Override
+            public String toString() {
+                return "saveOnEvent(" + domainEvent + ')';
+            }
+
+        });
     }
 
 }

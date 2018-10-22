@@ -65,8 +65,16 @@ final class HoerbuchkatalogSuche {
                         .stream()
                         .map(dddId -> new Titelnummer(dddId.getValue()))
                         .collect(Collectors.toUnmodifiableList());
-        return new Suchergebnis(new Suchparameter().hinzufuegen(Feld.STICHWORT, stichwort),
-                titelnummern);
+/*
+       TODO if (titelnummern.size() <= 1000) {
+*/
+            return new Suchergebnis(new Suchparameter().hinzufuegen(Feld.STICHWORT, stichwort),
+                    titelnummern);
+/*
+        } else {
+            return Optional.empty();
+        }
+*/
     }
 
     Suchergebnis suchen(final Suchparameter suchparameter) {

@@ -22,9 +22,6 @@ public abstract class DomainEntity
     @JsonDeserialize(using = DomainIdJacksonSupport.DomainIdDeserializer.class)
     protected ID domainId;
 
-    protected DomainEntity() {
-    }
-
     protected DomainEntity(final ID domainId) {
         Objects.requireNonNull(domainId, "DomainId needs to be set");
         this.domainId = domainId;
@@ -42,13 +39,18 @@ public abstract class DomainEntity
     }
 
     @Override
-    public abstract int hashCode();
+    public int hashCode() {
+        return Objects.hash(domainId);
+    }
 
     @Override
-    public abstract boolean equals(final Object other);
-
-    @Override
-    public abstract String toString();
+    @SuppressWarnings({"unchecked"})
+    public boolean equals(final Object other) {
+        if (this == other) return true;
+        if (other == null || getClass() != other.getClass()) return false;
+        final DomainEntity<T, ID> that = (DomainEntity<T, ID>) other;
+        return Objects.equals(that.domainId, this.domainId);
+    }
 
     @Override
     public int compareTo(final T other) {

@@ -20,7 +20,7 @@ public final class DomainEventPublisher {
     private static final Logger LOGGER = LoggerFactory.getLogger(DomainEventPublisher.class);
 
     @SuppressWarnings("unchecked")
-    private final List<GlobalDomainEventSubscriber> subscribers;
+    private final List<DomainEventSubscriber> subscribers;
 
     private final AtomicReference<Boolean> publishing;
 
@@ -76,13 +76,18 @@ public final class DomainEventPublisher {
             LOGGER.trace("{} is publishing {}", this, domainEvent);
             if (null != subscribers) {
                 final Class<?> eventType = domainEvent.getClass();
-                for (final GlobalDomainEventSubscriber subscriber : subscribers) {
+                for (final DomainEventSubscriber subscriber : subscribers) {
                     LOGGER.trace("{} is publishing {} to {}", this, domainEvent, subscriber);
-                    final Class<?> subscribedTo = subscriber.subscribedToEventType();
-                    if (subscribedTo == eventType) {
+                    final Class<?> subscribedToEventType = subscriber.subscribedToEventType();
+                    if (subscribedToEventType == eventType) {
                         subscriber.handleEvent(domainEvent);
                         LOGGER.debug("{} published {} to {}", this, domainEvent, subscriber);
-                    } else if (subscribedTo == DomainEvent.class) {
+                    } else if (subscribedToEventType == DomainAggregateWriteEvent.class
+                            && domainEvent instanceof DomainAggregateWriteEvent) {
+                        subscriber.handleEvent(domainEvent);
+                        LOGGER.debug("{} published {} to {} as it's interested in DomainAggregateUpdateEventS",
+                                this, domainEvent, subscriber);
+                    } else if (subscribedToEventType == DomainEvent.class) {
                         subscriber.handleEvent(domainEvent);
                         LOGGER.debug("{} published {} to {} as it's interested in DomainEventS",
                                 this, domainEvent, subscriber);
@@ -98,7 +103,7 @@ public final class DomainEventPublisher {
     }
 
     @SuppressWarnings("unchecked")
-    public void subscribe(final GlobalDomainEventSubscriber subscriber) {
+    public void subscribe(final DomainEventSubscriber subscriber) {
         LOGGER.trace("Trying to subscribe {} to {}", subscriber, this);
         if (publishing.get()) {
             LOGGER.trace("{} is currently publishing, won't subscribe {}", this, subscriber);

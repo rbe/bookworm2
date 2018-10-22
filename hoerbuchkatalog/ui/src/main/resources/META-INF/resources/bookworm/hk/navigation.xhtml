@@ -35,16 +35,16 @@
                 &nbsp;
                 <h:outputLink disabled="#{!navigation.linkZumWarenkorbAnzeigen}"
                               value="#{navigation.zuMeinemWarenkorb()}">
-                    <h:outputText value="Warenkorb (#{meinWarenkorb.totaleAnzahl})"/>
+                    <h:outputText value="Warenkorb (#{meinWarenkorb.anzahl})"/>
                 </h:outputLink>
             </h:panelGroup>
             <h:panelGroup rendered="#{meinWarenkorb.maxDownloadsProTagErreicht}"
                           layout="block" styleClass="basket-count">
-                Sie haben Ihr Limit für die Bestellung von Downloads für heute erreicht!
+                Sie haben Ihr Limit für die Bestellung von Downloads (inkl. Warenkorb) für heute erreicht!
             </h:panelGroup>
             <h:panelGroup rendered="#{meinWarenkorb.maxDownloadsProMonatErreicht}"
                           layout="block" styleClass="basket-count">
-                Sie haben Ihr Limit für die Bestellung von Downloads für diesen Monat erreicht!
+                Sie haben Ihr Limit für die Bestellung von Downloads (inkl. Warenkorb) für diesen Monat erreicht!
             </h:panelGroup>
         </h:form>
     </div>

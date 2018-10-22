@@ -36,6 +36,18 @@
                     <groupId>wbh.bookworm</groupId>
                     <artifactId>wbh.bookworm.hoerbuchkatalog.repository</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.thymeleaf</groupId>
+                    <artifactId>thymeleaf-spring5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-mail</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>

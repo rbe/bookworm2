@@ -34,6 +34,11 @@ public abstract class DomainSingleValueObject
         return true;
     }
 
+    /**
+     * Is used when persisting objects through Jackson;
+     * inheriting classes need combination field/getter;
+     * do not rename to get().
+     */
     public VALUE getValue() {
         return value;
     }

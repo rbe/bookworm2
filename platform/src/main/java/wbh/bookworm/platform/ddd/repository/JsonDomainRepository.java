@@ -10,21 +10,28 @@ import wbh.bookworm.platform.ddd.model.DomainAggregate;
 import wbh.bookworm.platform.ddd.model.DomainId;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @SuppressWarnings({"squid:S00119"})
@@ -32,11 +39,11 @@ public abstract class JsonDomainRepository
         <AGG extends DomainAggregate<AGG, ID>, ID extends DomainId<String>>
         implements DomainRepository<AGG, ID> {
 
-    protected final Logger LOGGER = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final Class<AGG> klass;
+    private final Class<AGG> aggClass;
 
-    private final Class<ID> idKlass;
+    private final Class<ID> idClass;
 
     private final Path idSequenceFilename;
 
@@ -44,30 +51,40 @@ public abstract class JsonDomainRepository
 
     private final ObjectMapper objectMapper;
 
-    public JsonDomainRepository(final Class<AGG> klass, final Class<ID> idKlass) {
-        this(klass, idKlass, Paths.get("."));
+    private final ReentrantLock idSequenceLock = new ReentrantLock();
+
+    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+
+    private final ReentrantReadWriteLock.ReadLock readLock = new ReentrantReadWriteLock().readLock();
+
+    private final ReentrantReadWriteLock.WriteLock writeLock = new ReentrantReadWriteLock().writeLock();
+
+    public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass) {
+        this(aggClass, idClass, Paths.get("."));
     }
 
-    public JsonDomainRepository(final Class<AGG> klass, final Class<ID> idKlass,
+    public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass,
                                 final Path defaultStoragePath) {
-        Objects.requireNonNull(klass);
-        this.klass = klass;
-        Objects.requireNonNull(idKlass);
-        this.idKlass = idKlass;
+        Objects.requireNonNull(aggClass);
+        this.aggClass = aggClass;
+        Objects.requireNonNull(idClass);
+        this.idClass = idClass;
         idSequenceFilename = Paths.get("idsequence.json");
         Objects.requireNonNull(defaultStoragePath);
-        LOGGER.trace("Initizialing with default storage path {}", defaultStoragePath.toAbsolutePath());
+        logger.trace("Initizialing with default storage path '{}'", defaultStoragePath.toAbsolutePath());
         aggregateStoragePath = defaultStoragePath
                 .resolve(this.getClass().getSimpleName())
-                .resolve(Paths.get(String.format("%s/%s", klass.getPackageName(), klass.getSimpleName())));
+                .resolve(Paths.get(String.format("%s/%s", aggClass.getPackageName(), aggClass.getSimpleName())));
         try {
             Files.createDirectories(aggregateStoragePath);
         } catch (IOException e) {
             throw new DomainRepositoryException("Cannot create storage directory " + aggregateStoragePath, e);
         }
         this.objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         /* TODO objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);*/
-        LOGGER.info("Initialized with aggregate storage path {}", aggregateStoragePath.toAbsolutePath());
+        logger.info("Initialized with aggregate storage path {}", aggregateStoragePath.toAbsolutePath());
     }
 
     private Path makeStorageFilename(final ID domainId) {
@@ -76,41 +93,58 @@ public abstract class JsonDomainRepository
         return Paths.get(String.format("%s.json", sane));
     }
 
-    private Path fullyQualifiedAggregatePath(final ID domainId) {
+    private ID makeIDFromStorageFilename(final Path path) {
+        final String[] sane = path.getFileName().toString().split("[.]");
+        try {
+            return idClass.getDeclaredConstructor(String.class).newInstance(sane[0]);
+        } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            throw new DomainRepositoryException("", e);
+        }
+    }
+
+    private Path fullyQualifiedAggregateStoragePath(final ID domainId) {
         return aggregateStoragePath.resolve(makeStorageFilename(domainId));
     }
 
-    @Override
-    public ID nextId() {
-        return nextId("");
+    private Stream<Path> getStorageStream() throws IOException {
+        return Files.list(aggregateStoragePath)
+                .filter(p -> !p.getFileName().equals(idSequenceFilename));
     }
 
     @Override
-    public ID nextId(final String prefix) {
+    public ID nextIdentity() {
+        return nextIdentity("");
+    }
+
+    @Override
+    public ID nextIdentity(final String prefix) {
         Objects.requireNonNull(prefix);
-        LOGGER.trace("Generating next id for aggregate {}", klass);
+        logger.trace("Generating next id for aggregate {}", aggClass);
         final Path idSequencePath = aggregateStoragePath.resolve(idSequenceFilename);
-        synchronized (klass) {
-            final IdSequence idSequence;
+        synchronized (aggClass) {
+            final DomainIdSequence domainIdSequence;
             if (!Files.exists(idSequencePath)) {
-                // TODO Strategy idSequence = new IdSequence(0);
-                idSequence = initializeIdSequenceCountingExistingAggregates(idSequencePath);
+                // TODO Strategy domainIdSequence = new DomainIdSequence(0);
+                domainIdSequence = initializeDomainIdCountingExistingAggregates(idSequencePath);
             } else {
-                LOGGER.trace("Loading existing IdSequence for {}", klass);
+                logger.trace("Loading existing IdSequence for {}", aggClass);
                 try {
-                    idSequence = objectMapper.readValue(idSequencePath.toFile(), IdSequence.class);
+                    domainIdSequence = objectMapper.readValue(idSequencePath.toFile(), DomainIdSequence.class);
                 } catch (IOException e) {
                     throw new DomainRepositoryException("Could not initialize idSequence file " +
                             idSequencePath, e);
                 }
             }
             try {
-                final Constructor<ID> declaredConstructor = idKlass.getDeclaredConstructor(String.class);
+                final Constructor<ID> declaredConstructor = idClass.getDeclaredConstructor(String.class);
                 declaredConstructor.setAccessible(true);
-                final ID id = declaredConstructor.newInstance(
-                        String.format("%s_%s", prefix, idSequence.incrementAndGetAsHex()));
-                objectMapper.writeValue(idSequencePath.toFile(), idSequence);
-                LOGGER.debug("Generated next id '{}'", id);
+                final String trim = prefix.trim();
+                final String prefixAndId = trim.length() > 1
+                        ? String.format("%s_%s", trim, domainIdSequence.incrementAndGetAsHex())
+                        : domainIdSequence.incrementAndGetAsHex();
+                final ID id = declaredConstructor.newInstance(prefixAndId);
+                objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
+                logger.debug("Generated next id '{}'", id);
                 return id;
             } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
                 throw new DomainRepositoryException(e);
@@ -120,16 +154,16 @@ public abstract class JsonDomainRepository
         }
     }
 
-    private IdSequence initializeIdSequenceCountingExistingAggregates(final Path idSequencePath) {
-        LOGGER.trace("Initializing IdSequence at '{}' with count of existing aggregates",
+    private DomainIdSequence initializeDomainIdCountingExistingAggregates(final Path idSequencePath) {
+        logger.trace("Initializing IdSequence at '{}' with count of existing aggregates",
                 idSequencePath);
         try {
             Files.createFile(idSequencePath);
-            final IdSequence idSequence = new IdSequence(countAll());
-            objectMapper.writeValue(idSequencePath.toFile(), idSequence);
-            LOGGER.debug("Initialized IdSequence at '{}' counting existing aggregates, {}",
-                    idSequencePath, idSequence);
-            return idSequence;
+            final DomainIdSequence domainIdSequence = new DomainIdSequence(countAll());
+            objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
+            logger.debug("Initialized IdSequence at '{}' counting existing aggregates, {}",
+                    idSequencePath, domainIdSequence);
+            return domainIdSequence;
         } catch (IOException e) {
             throw new DomainRepositoryException("Could not initialize IdSequence at " +
                     idSequencePath, e);
@@ -137,86 +171,150 @@ public abstract class JsonDomainRepository
     }
 
     @Override
-    public ID save(final AGG aggregate) {
-        Objects.requireNonNull(aggregate);
-        LOGGER.trace("Saving aggregate {} with domain id '{}'", aggregate, aggregate.getDomainId());
+    public AGG create() {
         try {
+            return aggClass.getDeclaredConstructor(idClass).newInstance(nextIdentity());
+        } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+            throw new DomainRepositoryException(e);
+        }
+    }
+
+    private AGG create(final ID domainId) {
+        if (load(domainId).isPresent()) {
+            throw new DomainRepositoryException("ID " + domainId + " already exists");
+        } else {
+            try {
+                return aggClass.getDeclaredConstructor(idClass).newInstance(domainId);
+            } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
+                throw new DomainRepositoryException(e);
+            }
+        }
+    }
+
+    @Override
+    public AGG save(final AGG aggregate) {
+        Objects.requireNonNull(aggregate);
+        try {
+            final long version = aggregate.incVersion();
+            final Path path = fullyQualifiedAggregateStoragePath(aggregate.getDomainId());
+            logger.trace("Saving aggregate {} with id '{}@{}' at '{}'",
+                    aggClass, aggregate.getDomainId(), version, path);
             final byte[] bytes = objectMapper.writeValueAsBytes(aggregate);
-            final Path path = fullyQualifiedAggregatePath(aggregate.getDomainId());
             Files.write(path, bytes,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
-            LOGGER.debug("Saved aggregate with domain id '{}' and data: {}", aggregate.getDomainId(), aggregate);
-            return aggregate.getDomainId();
+            logger.debug("Saved aggregate {} with id '{}@{}' and data: {} at '{}'",
+                    aggClass, aggregate.getDomainId(), version, aggregate, path);
+            return aggregate;
         } catch (IOException e) {
             throw new DomainRepositoryException(e);
         }
     }
 
     @Override
-    public Set<ID> saveAll(final Set<AGG> aggregates) {
+    public Set<AGG> saveAll(final Set<AGG> aggregates) {
         Objects.requireNonNull(aggregates);
-        LOGGER.trace("Saving {} aggregates", aggregates.size());
-        final Set<ID> ids = new TreeSet<>();
+        logger.trace("Saving {} aggregates", aggregates.size());
+        final Set<AGG> ids = new TreeSet<>();
         for (final AGG aggregate : aggregates) {
             ids.add(save(aggregate));
         }
-        LOGGER.debug("Saved {} aggregates", aggregates.size());
+        logger.debug("Saved {} aggregates", aggregates.size());
         return ids;
     }
 
     @Override
     public Optional<AGG> load(final ID domainId) {
         Objects.requireNonNull(domainId);
-        LOGGER.trace("Loading aggregate {} with domain id '{}'", klass, domainId);
-        final Path path = fullyQualifiedAggregatePath(domainId);
+        logger.trace("Loading aggregate {} with id '{}'", aggClass, domainId);
+        final Path storagePath = fullyQualifiedAggregateStoragePath(domainId);
         try {
-            final byte[] bytes = Files.readAllBytes(path);
-            final AGG aggregate = objectMapper.readValue(bytes, klass);
-            LOGGER.debug("Loaded aggregate {} with domain id '{}' and data: {}",
-                    klass, aggregate.getDomainId(), aggregate);
+            final byte[] bytes = Files.readAllBytes(storagePath);
+            final AGG aggregate = objectMapper.readValue(bytes, aggClass);
+            logger.debug("Loaded aggregate {} with id '{}@{}' and data: {}",
+                    aggClass, aggregate.getDomainId(), aggregate.getVersion(), aggregate);
             return Optional.of(aggregate);
         } catch (NoSuchFileException e) {
-            LOGGER.warn("Domain id '{}' for {} not found", domainId, klass);
+            logger.warn("Domain id '{}' for {} not found", domainId, aggClass);
             return Optional.empty();
         } catch (IOException e) {
             throw new DomainRepositoryException(e);
         }
+    }
+
+    private Optional<AGG> load(final Path path) {
+        return load(makeIDFromStorageFilename(path));
+    }
+
+    //@Override
+    public AGG loadOrCreate(final ID domainId) {
+        return load(domainId).orElseGet(() -> create(domainId));
     }
 
     @Override
     public <SUBT extends AGG> Optional<SUBT> load(final ID domainId, final Class<SUBT> subklass) {
         Objects.requireNonNull(domainId);
         Objects.requireNonNull(subklass);
-        LOGGER.trace("Loading {} with domain id '{}'", subklass, domainId);
-        final Path path = fullyQualifiedAggregatePath(domainId);
-        try {
-            final byte[] bytes = Files.readAllBytes(path);
-            final SUBT aggregate = objectMapper.readValue(bytes, subklass);
-            LOGGER.debug("Loaded aggregate {} with domain id '{}', data: {}",
-                    klass, aggregate.getDomainId(), aggregate);
-            return Optional.of(aggregate);
-        } catch (NoSuchFileException e) {
-            LOGGER.warn("Domain id '{}' for {} not found", domainId, klass);
+        logger.trace("Loading {} with domain id '{}'", subklass, domainId);
+        final Path storagePath = fullyQualifiedAggregateStoragePath(domainId);
+        if (Files.exists(storagePath)) {
+            try {
+                final byte[] bytes = Files.readAllBytes(storagePath);
+                final SUBT aggregate = objectMapper.readValue(bytes, subklass);
+                logger.debug("Loaded aggregate {} with domain id '{}', data: {}",
+                        aggClass, aggregate.getDomainId(), aggregate);
+                return Optional.of(aggregate);
+            } catch (IOException e) {
+                throw new DomainRepositoryException(e);
+            }
+        } else {
+            logger.warn("Domain id '{}' for {} not found", domainId, aggClass);
             return Optional.empty();
-        } catch (IOException e) {
-            throw new DomainRepositoryException(e);
         }
     }
 
     @Override
     public Optional<Set<AGG>> loadAll() {
-        throw new UnsupportedOperationException();
+        try (final Stream<Path> stream = getStorageStream()) {
+            return Optional.of(stream
+                    .map(this::load)
+                    .filter(Optional::isPresent)
+                    .map(Optional::get)
+                    .collect(Collectors.toSet()));
+        } catch (IOException e) {
+            throw new DomainRepositoryException("Cannot load all aggregates of type " + aggClass, e);
+        }
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public final Optional<Set<AGG>> find(final Predicate... predicates) {
+        return Optional.of(loadAll()
+                .orElseThrow()
+                .stream()
+                .filter(agg -> Arrays.stream(predicates).anyMatch(predicate -> {
+                            try {
+                                final String fieldName = predicate.getField();
+                                final String getter = "get" + fieldName.substring(0, 1).toUpperCase()
+                                        + fieldName.substring(1);
+                                final Method method = agg.getClass().getMethod(getter);
+                                final Object value = method.invoke(agg);
+                                logger.trace("{}.equals({})", value, predicate.getValue());
+                                return predicate.isSatisfied(value.toString());
+                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                                logger.error("", e);
+                                return false;
+                            }
+                        }))
+                .collect(Collectors.toSet()));
     }
 
     @Override
     public long countAll() {
-        try (final Stream<Path> stream = Files.list(aggregateStoragePath)) {
-            return stream
-                    .filter(p -> !p.getFileName().equals(idSequenceFilename))
-                    .count();
+        try (final Stream<Path> stream = getStorageStream()) {
+            return stream.count();
         } catch (IOException e) {
             throw new DomainRepositoryException("Cannot count all instances of aggregate " +
-                    klass, e);
+                    aggClass, e);
         }
     }
 

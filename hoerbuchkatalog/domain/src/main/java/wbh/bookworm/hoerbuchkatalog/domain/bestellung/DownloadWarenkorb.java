@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 
@@ -41,22 +40,14 @@ public final class DownloadWarenkorb extends Warenkorb {
     public void hinzufuegen(final Titelnummer titelnummer) {
         super.hinzufuegen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new DownloadInDenWarenkorbGelegt(hoerernummer, titelnummer));
+                .publish(new DownloadInDenWarenkorbGelegt(hoerernummer, this, titelnummer));
     }
 
     @Override
     public void entfernen(final Titelnummer titelnummer) {
         super.entfernen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new DownloadAusDemWarenkorbEntfernt(hoerernummer, titelnummer));
-    }
-
-    @Override
-    public void bestellen() {
-        logger.info("");
-        /* TODO titelnummern -> aghNummern */final Set<AghNummer> aghNummern = null;
-        DomainEventPublisher.global()
-                .publish(new HoerbuecherAlsDownloadBestellt(hoerernummer, aghNummern));
+                .publish(new DownloadAusDemWarenkorbEntfernt(hoerernummer, this, titelnummer));
     }
 
     @Override

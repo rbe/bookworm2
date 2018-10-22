@@ -20,11 +20,11 @@ import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 @ExtendWith({SpringExtension.class})
 class TemplateBuilderTest {
 
-    private final TemplateBuilder templateBuilder;
+    private final EmailTemplateBuilder emailTemplateBuilder;
 
     @Autowired
-    TemplateBuilderTest(final TemplateBuilder templateBuilder) {
-        this.templateBuilder = templateBuilder;
+    TemplateBuilderTest(final EmailTemplateBuilder emailTemplateBuilder) {
+        this.emailTemplateBuilder = emailTemplateBuilder;
     }
 
     @Test
@@ -39,7 +39,7 @@ class TemplateBuilderTest {
                         "</body>",
                         "</html>"),
                 Arrays.asList(
-                        templateBuilder.buildSimple("This is a test message.")
+                        emailTemplateBuilder.buildSimple("This is a test message.")
                                 .split("\n"))
         );
     }

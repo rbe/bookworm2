@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.email;
 
 import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class EmailRepository extends JsonDomainRepository<Email, EmailId> {
@@ -16,8 +17,12 @@ public class EmailRepository extends JsonDomainRepository<Email, EmailId> {
         super(Email.class, EmailId.class, Paths.get("."));
     }
 
+    public EmailRepository(final Path storagePath) {
+        super(Email.class, EmailId.class, storagePath);
+    }
+
     public Email erstellen(final String from, final String to, final String subject, final String content) {
-        return new Email(nextId(), from, to, subject, content);
+        return new Email(nextIdentity(), from, to, subject, content);
     }
 
 }

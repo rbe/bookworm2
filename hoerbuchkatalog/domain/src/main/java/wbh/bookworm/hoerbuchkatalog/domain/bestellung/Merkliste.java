@@ -30,6 +30,15 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
 
     private final Set<Titelnummer> titelnummern;
 
+    /** Copy constructor */
+    public Merkliste(final Merkliste merkliste) {
+        super(new MerklisteId(merkliste.domainId.getValue()));
+        this.hoerernummer = new Hoerernummer(merkliste.hoerernummer.getValue());
+        this.titelnummern = new TreeSet<>();
+        merkliste.titelnummern.forEach(titelnummer ->
+                this.titelnummern.add(new Titelnummer(titelnummer.getValue())));
+    }
+
     public Merkliste(final MerklisteId merklisteId, final Hoerernummer hoerernummer) {
         this(merklisteId, hoerernummer, new TreeSet<>());
     }
@@ -53,35 +62,38 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
     }
 
     public boolean enthalten(final Titelnummer titelnummer) {
-        return titelnummern.contains(titelnummer);
+        final boolean bereitsVorhanden = titelnummern.contains(titelnummer);
+        LOGGER.trace("Merkliste {} enthält Hörbuch {}: {}", this, titelnummer, bereitsVorhanden);
+        return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.add(titelnummer);
-        LOGGER.info("Hörbuch#{} zum Warenkorb {} hinzugefügt", titelnummer, this);
+        LOGGER.info("Hörbuch {} zum Warenkorb {} hinzugefügt", titelnummer, this);
         DomainEventPublisher.global()
-                .publish(new HoerbuechAufDieMerklisteGesetzt(hoerernummer, titelnummer));
+                .publish(new HoerbuechAufDieMerklisteGesetzt(hoerernummer, this, titelnummer));
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch#{} aus dem Warenkorb {} entfernt", titelnummer, this);
+        LOGGER.info("Hörbuch {} aus dem Warenkorb {} entfernt", titelnummer, this);
         DomainEventPublisher.global()
-                .publish(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, titelnummer));
+                .publish(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, this, titelnummer));
     }
 
     @Override
-    public boolean equals(final Object other) {
-        if (this == other) return true;
-        if (other == null || getClass() != other.getClass()) return false;
-        final Merkliste merkliste = (Merkliste) other;
-        return Objects.equals(domainId, merkliste.domainId) &&
-                Objects.equals(hoerernummer, merkliste.hoerernummer);
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final Merkliste merkliste = (Merkliste) o;
+        return Objects.equals(hoerernummer, merkliste.hoerernummer) &&
+                Objects.equals(titelnummern, merkliste.titelnummern);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(domainId, hoerernummer);
+        return Objects.hash(super.hashCode(), hoerernummer, titelnummern);
     }
 
     @Override

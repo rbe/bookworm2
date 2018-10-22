@@ -69,8 +69,6 @@
                             Aktion
                         </f:facet>
 
-                        <!-- cdWarenkorb -->
-                        <!-- action="{meinWarenkorb.cdHinzufuegen(titelnummer.titelnummer)}" -->
                         <h:commandLink id="cdWarenkorbHinzufuegenButton"
                                        rendered="#{!meinWarenkorb.cdEnthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link post"
@@ -85,8 +83,7 @@
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <!--digitalWarenkorb.canBeRemovedFromBasket(buch)-->
-                        <h:commandLink rendered="#{hoerbuch.downloadbar and !meinWarenkorb.downloadEnthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{hoerbuch.downloadbar and meinWarenkorb.downloadFuerHoererVerfuegbar(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link download"
                                        action="#{meinWarenkorb.downloadHinzufuegen(hoerbuch.titelnummer)}"
                                        value="Download">
@@ -99,7 +96,6 @@
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <!--wishlistBean.canBePutToWishlist()-->
                         <h:commandLink rendered="#{!meineMerkliste.enthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link wishlist"
                                        action="#{meineMerkliste.hinzufuegen(hoerbuch.titelnummer)}" value="Merken">

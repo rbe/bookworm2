@@ -13,47 +13,45 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.Objects;
 
-public final class EmailTemplate extends DomainAggregate<EmailTemplate, EmailTemplateId> {
+public final class HtmlEmailTemplate extends DomainAggregate<HtmlEmailTemplate, EmailTemplateId> {
 
     private static final long serialVersionUID = -1L;
 
-    private final EmailTemplateId emailTemplateId;
-
-    private final String text;
+    private final String html;
 
     @JsonCreator
-    public EmailTemplate(final @JsonProperty("domainId") EmailTemplateId emailTemplateId,
-                         final @JsonProperty String text) {
-        this.emailTemplateId = emailTemplateId;
-        this.text = text;
+    HtmlEmailTemplate(final @JsonProperty("domainId") EmailTemplateId emailTemplateId,
+                      final @JsonProperty("html") String html) {
+        super(emailTemplateId);
+        this.html = html;
     }
 
-    public String getText() {
-        return text;
+    public String getHtml() {
+        return html;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(emailTemplateId, text);
+        return Objects.hash(domainId, html);
     }
 
     @Override
     public boolean equals(final Object other) {
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
-        final EmailTemplate that = (EmailTemplate) other;
-        return Objects.equals(text, that.text);
+        final HtmlEmailTemplate that = (HtmlEmailTemplate) other;
+        return Objects.equals(html, that.html);
     }
 
     @Override
-    public int compareTo(final EmailTemplate other) {
-        return other.text.compareTo(this.text);
+    public int compareTo(final HtmlEmailTemplate other) {
+        return other.html.compareTo(this.html);
     }
 
     @Override
     public String toString() {
-        return String.format("EmailTemplate{emailTemplateId=%s, text='%s'}",
-                emailTemplateId, text);
+        return String.format("HtmlEmailTemplate{domainId=%s, text='%s'}",
+                domainId, html);
     }
 
 }

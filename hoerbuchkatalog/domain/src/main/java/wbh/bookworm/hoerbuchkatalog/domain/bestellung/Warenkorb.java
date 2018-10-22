@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -16,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -30,12 +32,17 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     protected Set<Titelnummer> titelnummern;
 
+    /** Copy constructor */
     public Warenkorb(final Warenkorb warenkorb) {
-        this.domainId = new WarenkorbId(warenkorb.domainId.getValue());
+        super(new WarenkorbId(warenkorb.domainId.getValue()));
         this.hoerernummer = new Hoerernummer(warenkorb.hoerernummer.getValue());
         this.titelnummern = new TreeSet<>();
         warenkorb.titelnummern.forEach(titelnummer ->
                 this.titelnummern.add(new Titelnummer(titelnummer.getValue())));
+    }
+
+    public Warenkorb(final WarenkorbId warenkorbId, final Hoerernummer hoerernummer) {
+        this(warenkorbId, hoerernummer, new TreeSet<>());
     }
 
     @JsonCreator
@@ -62,24 +69,39 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.contains(titelnummer);
-        logger.trace("Warenkorb {} enthält Hörbuch#{}: {}", this, titelnummer, bereitsVorhanden);
+        logger.trace("Warenkorb {} enthält Hörbuch {}: {}", this, titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.add(titelnummer);
-        logger.info("Hörbuch#{} zum Warenkorb {} hinzugefügt", titelnummer, this);
+        logger.info("Hörbuch {} zum Warenkorb {} hinzugefügt", titelnummer, this);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        logger.info("Hörbuch#{} aus dem Warenkorb {} entfernt", titelnummer, this);
+        logger.info("Hörbuch {} aus dem Warenkorb {} entfernt", titelnummer, this);
     }
-
-    public abstract void bestellen();
 
     public void leeren() {
         titelnummern.clear();
+        DomainEventPublisher.global()
+                .publish(new WarenkorbGeleert(hoerernummer, this));
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final Warenkorb warenkorb = (Warenkorb) o;
+        return Objects.equals(hoerernummer, warenkorb.hoerernummer) &&
+                Objects.equals(titelnummern, warenkorb.titelnummern);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), hoerernummer, titelnummern);
     }
 
     @Override

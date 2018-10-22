@@ -4,15 +4,15 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.app.lieferung;
+package wbh.bookworm.hoerbuchkatalog.app.lieferung.hoerer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class LieferungService {
+public class HoererLieferungService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(LieferungService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HoererLieferungService.class);
 
 }

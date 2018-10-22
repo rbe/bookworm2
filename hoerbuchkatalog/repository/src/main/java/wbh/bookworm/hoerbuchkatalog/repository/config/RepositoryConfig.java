@@ -9,6 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.config;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
 import wbh.bookworm.platform.ddd.search.LuceneIndex;
 
 import org.springframework.context.annotation.Bean;
@@ -29,6 +30,7 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Configuration
 @ComponentScan(basePackageClasses = {
         BestellungRepository.class,
+        HoerbuchkatalogRepository.class,
         LuceneIndex.class
 })
 @EnableScheduling

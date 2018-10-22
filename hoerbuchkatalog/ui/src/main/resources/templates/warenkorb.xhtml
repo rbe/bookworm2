@@ -16,14 +16,14 @@
 
             <div class="download-header">
                 <h3>Auswahltitel für den Download</h3>
-                <hk:download-warenkorb-tabelle warenkorb="#{meinWarenkorb.download}" readonly="false"/>
+                <hk:download-warenkorb-tabelle warenkorb="#{meinWarenkorb.downloads}" readonly="false"/>
             </div>
             <div class="post-header">
                 <h3>Auswahltitel für die Bestellung per CD</h3>
-                <hk:cd-warenkorb-tabelle warenkorb="#{meinWarenkorb.cd}" readonly="false"/>
+                <hk:cd-warenkorb-tabelle warenkorb="#{meinWarenkorb.cds}" readonly="false"/>
             </div>
             <h:form>
-                <h:panelGrid rendered="#{meineBestellung.anzahl > 0}"
+                <h:panelGrid rendered="#{meineBestellung.anzahlImWarenkorb > 0}"
                              columns="2"
                              styleClass="basket-member"
                              columnClasses="basket-order-column1,basket-order-column2"

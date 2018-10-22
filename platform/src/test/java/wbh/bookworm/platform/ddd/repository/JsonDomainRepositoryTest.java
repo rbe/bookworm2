@@ -17,13 +17,19 @@ import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.runners.MethodSorters;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.file.Paths;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThanOrEqualTo;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,42 +38,70 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class JsonDomainRepositoryTest {
 
-    @Test
-    void should0PersistAndLoadAggregateWithGeneratedDomainId() {
-        final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
+    private static final Logger LOGGER = LoggerFactory.getLogger(JsonDomainRepositoryTest.class);
 
-        final AnEntity anEntity = new AnEntity(new AnEntityDomainId("Nancy"), "Huhu Swietbert");
-        final AnAggregateDomainId domainId = anAggregateRepository.nextId();
-        final AnAggregate anAggregate = new AnAggregate(domainId, anEntity);
+    @Test
+    void testA_persistAndLoadAggregateWithGeneratedDomainId() {
+        final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
+        final AnAggregateDomainId anAggregateDomainId = anAggregateRepository.nextIdentity();
+
+        final AnEntityDomainId anEntityDomainId = new AnEntityDomainId("Nancy");
+        final AnEntity anEntity = new AnEntity(anEntityDomainId, "Huhu Swietbert " + anAggregateDomainId);
+
+        final AnAggregate anAggregate = new AnAggregate(anAggregateDomainId, anEntity);
         anAggregateRepository.save(anAggregate);
 
-        final Optional<AnAggregate> loadedAggregate = anAggregateRepository.load(domainId);
+        final Optional<AnAggregate> loadedAggregate = anAggregateRepository.load(anAggregateDomainId);
         assertTrue(loadedAggregate.isPresent());
-        assertEquals(domainId, loadedAggregate.get().getDomainId());
-        assertEquals(loadedAggregate.get().getAnEntity().getBla(), "Huhu Swietbert");
+        assertEquals(anAggregateDomainId, loadedAggregate.get().getDomainId());
+        assertEquals(loadedAggregate.get().getAnEntity().getBla(), "Huhu Swietbert " + anAggregateDomainId);
     }
 
     @Test
-    void should1PersistDomainAggregate() {
+    void testB_persistDomainAggregate() {
         final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
-        final AnEntity anEntity = new AnEntity(new AnEntityDomainId("Nancy"), "Huhu Swietbert");
+
+        final AnEntityDomainId domainId = new AnEntityDomainId("Nancy");
+        final AnEntity anEntity = new AnEntity(domainId, "Huhu Swietbert");
+
         final AnAggregate anAggregate = new AnAggregate(new AnAggregateDomainId("Ralf"), anEntity);
         anAggregateRepository.save(anAggregate);
     }
 
     @Test
-    void should2LoadDomainAggregate() {
+    void testC_loadDomainAggregate() {
+        final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
+
         final AnAggregateDomainId domainId = new AnAggregateDomainId("Ralf");
-        final Optional<AnAggregate> anAggregate = new AnAggregateRepository().load(domainId);
+        final Optional<AnAggregate> anAggregate = anAggregateRepository.load(domainId);
         assertTrue(anAggregate.isPresent());
         assertEquals(domainId, anAggregate.get().getDomainId());
         assertEquals(anAggregate.get().getAnEntity().getBla(), "Huhu Swietbert");
     }
 
     @Test
-    void should3CountAllAggregates() {
+    void testD_countAllAggregates() {
         final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
-        assertEquals(1, anAggregateRepository.countAll());
+        assertThat(anAggregateRepository.countAll(), is(greaterThanOrEqualTo(1L)));
+    }
+
+    @Test
+    void testE_loadAllAggregates() {
+        final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
+        final Optional<Set<AnAggregate>> aggregates = anAggregateRepository.loadAll();
+        assertTrue(aggregates.isPresent());
+        aggregates.get().forEach(a -> LOGGER.info("{}", a));
+        //assertEquals(2, aggregates.get().size());
+    }
+
+    @Test
+    void testF_loadAllAggregates() {
+        final AnAggregateRepository anAggregateRepository = new AnAggregateRepository();
+        final Optional<Set<AnAggregate>> aggregates =
+                anAggregateRepository.find(Predicate.Equals.of("domainId", "Ralf"));
+        assertTrue(aggregates.isPresent());
+        aggregates.get().forEach(a -> LOGGER.info("{}", a));
+        //assertEquals(2, aggregates.get().size());
     }
 
     private static class AnAggregateRepository extends JsonDomainRepository<AnAggregate, AnAggregateDomainId> {
@@ -78,8 +112,6 @@ class JsonDomainRepositoryTest {
 
     }
 
-    //@JsonTypeInfo(use = JsonTypeInfo.Id.CLASS, include = JsonTypeInfo.As.PROPERTY, property = "@class")
-    //@JsonTypeName("ADomainId")
     private static class AnAggregateDomainId extends DomainId<String> {
 
         @JsonCreator

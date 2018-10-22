@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.app.config;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.LieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.hoerer.HoererLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 
@@ -30,8 +30,8 @@ import org.springframework.core.io.ClassPathResource;
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        LieferungService.class,
-        EmailService.class,
+        HoererLieferungService.class,
+        EmailService.class
 })
 public class AppConfig {
 

@@ -8,15 +8,18 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.event.DomainEvent;
+import wbh.bookworm.platform.ddd.event.DomainAggregateWriteEvent;
 
-public class HoerbuechVonDerMerklisteEntfernt extends DomainEvent {
+public final class HoerbuechVonDerMerklisteEntfernt
+        extends DomainAggregateWriteEvent<Merkliste, MerklisteId> {
 
     private final Hoerernummer hoerernummer;
 
     private final Titelnummer titelnummer;
 
-    public HoerbuechVonDerMerklisteEntfernt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+    HoerbuechVonDerMerklisteEntfernt(final Hoerernummer hoerernummer, final Merkliste merkliste,
+                                     final Titelnummer titelnummer) {
+        super(merkliste);
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
     }

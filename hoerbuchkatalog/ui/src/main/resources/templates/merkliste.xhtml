@@ -33,19 +33,22 @@
                         <f:facet name="header">
                             Titelnummer
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{titelnummer}"/>
+                        <h:outputText styleClass="basket-column-content"
+                                      value="#{titelnummer}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Autor
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{meineMerkliste.hoerbuchAutor(titelnummer)}"/>
+                        <h:outputText styleClass="basket-column-content"
+                                      value="#{meineMerkliste.hoerbuchAutor(titelnummer)}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
                             Titel
                         </f:facet>
-                        <h:outputText styleClass="basket-column-content" value="#{meineMerkliste.hoerbuchTitel(titelnummer)}"/>
+                        <h:outputText styleClass="basket-column-content"
+                                      value="#{meineMerkliste.hoerbuchTitel(titelnummer)}"/>
                     </h:column>
                     <h:column headerClass="basket-column-header">
                         <f:facet name="header">
@@ -55,7 +58,7 @@
                                        styleClass="basket-order-link post"
                                        action="#{meineMerkliste.inCdWarenkorbVerschieben(titelnummer)}"
                                        value="CD bestellen"/>
-                        <h:commandLink rendered="#{meineMerkliste.hoerbuchDownloadbar(titelnummer)}"
+                        <h:commandLink rendered="#{meineMerkliste.downloadFuerHoererVerfuegbar(titelnummer)}"
                                        styleClass="basket-order-link download"
                                        action="#{meineMerkliste.inDownloadWarenkorbVerschieben(titelnummer)}"
                                        value="Download"/>

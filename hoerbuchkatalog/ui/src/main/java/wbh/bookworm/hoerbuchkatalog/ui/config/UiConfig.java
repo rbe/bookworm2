@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.ui.config;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.LieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.hoerer.HoererLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.ui.Navigation;
 import wbh.bookworm.hoerbuchkatalog.ui.http.NoCacheFilter;
@@ -27,7 +27,7 @@ import javax.servlet.http.HttpSession;
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        LieferungService.class,
+        HoererLieferungService.class,
         Navigation.class
 })
 @ServletComponentScan(basePackageClasses = {

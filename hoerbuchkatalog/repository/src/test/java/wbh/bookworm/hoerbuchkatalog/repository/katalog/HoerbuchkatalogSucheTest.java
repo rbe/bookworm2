@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.repository.config.TestAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryTestAppConfig;
 
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(classes = {TestAppConfig.class})
+@SpringBootTest(classes = {RepositoryTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 @FixMethodOrder(MethodSorters.JVM)
 @Ignore("TODO Neu mit Factory; Integration in HörbuchkatalogTest")

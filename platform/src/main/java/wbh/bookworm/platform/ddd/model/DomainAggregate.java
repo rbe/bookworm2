@@ -6,16 +6,26 @@
 
 package wbh.bookworm.platform.ddd.model;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @SuppressWarnings({"squid:S00119"})
 public abstract class DomainAggregate
-        <T extends DomainAggregate<T, ID>, ID extends DomainId<String>>
-        extends DomainEntity<T, ID> {
+        <AGG extends DomainAggregate<AGG, ID>, ID extends DomainId<String>>
+        extends DomainEntity<AGG, ID> {
 
-    protected DomainAggregate() {
-    }
+    protected final AtomicLong version;
 
     protected DomainAggregate(final ID domainId) {
         super(domainId);
+        this.version = new AtomicLong();
+    }
+
+    public long getVersion() {
+        return version.get();
+    }
+
+    public long incVersion() {
+        return version.incrementAndGet();
     }
 
 }

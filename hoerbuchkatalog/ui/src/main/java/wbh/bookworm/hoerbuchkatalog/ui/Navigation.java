@@ -98,7 +98,7 @@ public class Navigation {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return meinWarenkorb.getTotaleAnzahl() > 0;
+        return meinWarenkorb.getAnzahl() > 0;
     }
 
     public String zuMeinemWarenkorb() {

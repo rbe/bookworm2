@@ -6,14 +6,20 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdAusDemWarenkorbEntfernt;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdInDenWarenkorbGelegt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadAusDemWarenkorbEntfernt;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadInDenWarenkorbGelegt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbGeleert;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
 import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 @DomainRespositoryComponent
@@ -21,10 +27,19 @@ public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, Warenko
 
     public WarenkorbRepository() {
         super(Warenkorb.class, WarenkorbId.class);
+        saveOnEvent(logger, CdInDenWarenkorbGelegt.class);
+        saveOnEvent(logger, CdAusDemWarenkorbEntfernt.class);
+        saveOnEvent(logger, DownloadInDenWarenkorbGelegt.class);
+        saveOnEvent(logger, DownloadAusDemWarenkorbEntfernt.class);
+        saveOnEvent(logger, WarenkorbGeleert.class);
+    }
+
+    public WarenkorbRepository(final Path storagePath) {
+        super(Warenkorb.class, WarenkorbId.class, storagePath);
     }
 
     private WarenkorbId cdWarenkorbIdFuerHoerer(final Hoerernummer hoerernummer) {
-        return new WarenkorbId("Hnr" + hoerernummer + "-CD");
+        return new WarenkorbId(hoerernummer + "-CD");
     }
 
     public CdWarenkorb cdWarenkorbErstellen(final Hoerernummer hoerernummer) {
@@ -36,7 +51,7 @@ public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, Warenko
     }
 
     private WarenkorbId downloadWarenkorbIdFuerHoerer(final Hoerernummer hoerernummer) {
-        return new WarenkorbId("Hnr" + hoerernummer + "-Download");
+        return new WarenkorbId(hoerernummer + "-Download");
     }
 
     public DownloadWarenkorb downloadWarenkorbErstellen(final Hoerernummer hoerernummer) {

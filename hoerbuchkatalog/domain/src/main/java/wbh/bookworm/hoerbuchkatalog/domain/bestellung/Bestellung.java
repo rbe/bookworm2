@@ -7,6 +7,8 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
 import wbh.bookworm.platform.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -14,7 +16,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> {
 
@@ -34,9 +39,11 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private final Boolean alteBestellkarteLoeschen;
 
-    private final WarenkorbId cdWarenkorbId;
+    private final Set<Titelnummer> cdTitelnummern;
 
-    private final WarenkorbId downloadWarenkorbId;
+    private final Set<Titelnummer> downloadTitelnummern;
+
+    private LocalDateTime zeitpunktAbgeschickt;
 
     private boolean abgeschickt;
 
@@ -48,8 +55,9 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final @JsonProperty("bemerkung") String bemerkung,
                       final @JsonProperty("bestellkarteMischen") Boolean bestellkarteMischen,
                       final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
-                      final @JsonProperty("cdWarenkorbId") WarenkorbId cdWarenkorbId,
-                      final @JsonProperty("downloadWarenkorbId") WarenkorbId downloadWarenkorbId,
+                      final @JsonProperty("cdTitelnummern") Set<Titelnummer> cdTitelnummern,
+                      final @JsonProperty("downloadTitelnummern") Set<Titelnummer> downloadTitelnummern,
+                      final @JsonProperty("zeitpunktAbgeschickt") LocalDateTime zeitpunktAbgeschickt,
                       final @JsonProperty("abgeschickt") boolean abgeschickt) {
         super(bestellungId);
         this.hoerername = hoerername;
@@ -58,8 +66,9 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         this.bemerkung = bemerkung;
         this.bestellkarteMischen = bestellkarteMischen;
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
-        this.cdWarenkorbId = cdWarenkorbId;
-        this.downloadWarenkorbId = downloadWarenkorbId;
+        this.cdTitelnummern = cdTitelnummern;
+        this.downloadTitelnummern = downloadTitelnummern;
+        this.zeitpunktAbgeschickt = zeitpunktAbgeschickt;
         this.abgeschickt = abgeschickt;
     }
 
@@ -70,18 +79,13 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final String bemerkung,
                       final Boolean bestellkarteMischen,
                       final Boolean alteBestellkarteLoeschen,
-                      final WarenkorbId cdWarenkorbId,
-                      final WarenkorbId downloadWarenkorbId) {
-        super(bestellungId);
-        this.hoerername = hoerername;
-        this.hoerernummer = hoerernummer;
-        this.hoereremail = hoereremail;
-        this.bemerkung = bemerkung;
-        this.bestellkarteMischen = bestellkarteMischen;
-        this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
-        this.cdWarenkorbId = cdWarenkorbId;
-        this.downloadWarenkorbId = downloadWarenkorbId;
-        this.abgeschickt = false;
+                      final Set<Titelnummer> cdTitelnummern, final Set<Titelnummer> downloadTitelnummern) {
+        this(bestellungId,
+                hoerernummer, hoerername, hoereremail,
+                bemerkung,
+                bestellkarteMischen, alteBestellkarteLoeschen,
+                new TreeSet<>(cdTitelnummern), new TreeSet<>(downloadTitelnummern),
+                null, false);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -108,16 +112,55 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         return alteBestellkarteLoeschen;
     }
 
-    public WarenkorbId getCdWarenkorbId() {
-        return cdWarenkorbId;
+    public Set<Titelnummer> getCdTitelnummern() {
+        return cdTitelnummern;
     }
 
-    public WarenkorbId getDownloadWarenkorbId() {
-        return downloadWarenkorbId;
+    public boolean hatCdTitelnummern() {
+        return !cdTitelnummern.isEmpty();
     }
 
-    public void abschicken() {
+    public Set<Titelnummer> getDownloadTitelnummern() {
+        return downloadTitelnummern;
+    }
 
+    public boolean hatDownloadTitelnummern() {
+        return !downloadTitelnummern.isEmpty();
+    }
+
+    public void aufgeben() {
+        if (!abgeschickt) {
+            LOGGER.info("Bestellung {} für Hörer {} wird aufgegeben", domainId, hoerernummer);
+            zeitpunktAbgeschickt = LocalDateTime.now();
+            abgeschickt = true;
+            DomainEventPublisher.global()
+                    .publish(new BestellungAufgegeben(hoerernummer, this));
+        } else {
+            LOGGER.error("Bestellung {} für Hörer {} wurde bereits abgeschickt", domainId, hoerernummer);
+        }
+    }
+
+    public LocalDateTime getZeitpunktAbgeschickt() {
+        return zeitpunktAbgeschickt;
+    }
+
+    public boolean inAktuellemMonatAbgeschickt() {
+        if (!abgeschickt) return false;
+        final LocalDateTime now = LocalDateTime.now();
+        return zeitpunktAbgeschickt.getYear() == now.getYear()
+                && zeitpunktAbgeschickt.getMonth() == now.getMonth();
+    }
+
+    public boolean heuteAbgeschickt() {
+        if (!abgeschickt) return false;
+        final LocalDateTime now = LocalDateTime.now();
+        return zeitpunktAbgeschickt.getYear() == now.getYear()
+                && zeitpunktAbgeschickt.getMonth() == now.getMonth()
+                && zeitpunktAbgeschickt.getDayOfMonth() == now.getDayOfMonth();
+    }
+
+    public boolean isAbgeschickt() {
+        return abgeschickt;
     }
 
     @Override
@@ -125,14 +168,12 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         if (this == other) return true;
         if (other == null || getClass() != other.getClass()) return false;
         final Bestellung that = (Bestellung) other;
-        return Objects.equals(hoerernummer, that.hoerernummer) &&
-                Objects.equals(cdWarenkorbId, that.cdWarenkorbId) &&
-                Objects.equals(downloadWarenkorbId, that.downloadWarenkorbId);
+        return Objects.equals(domainId, that.domainId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hoerernummer, cdWarenkorbId, downloadWarenkorbId);
+        return Objects.hash(hoerernummer, cdTitelnummern, downloadTitelnummern);
     }
 
     @Override
@@ -142,8 +183,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @Override
     public String toString() {
-        return String.format("Bestellung{domainId=%s, hoerernummer=%s, cdWarenkorbId=%s, downloadWarenkorbId=%s}",
-                domainId, hoerernummer, cdWarenkorbId, downloadWarenkorbId);
+        return String.format("Bestellung{domainId=%s, hoerernummer=%s, cdTitelnummern=%s, downloadTitelnummern=%s}",
+                domainId, hoerernummer, cdTitelnummern, downloadTitelnummern);
     }
 
 }

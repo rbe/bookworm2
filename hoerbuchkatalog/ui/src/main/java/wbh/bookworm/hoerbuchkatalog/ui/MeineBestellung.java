@@ -11,6 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.platform.jsf.ELValueCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,11 +27,25 @@ public class MeineBestellung {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
 
+    private final Navigation navigation;
+
+    //
+    // Hörer
+    //
+
     private Hoerernummer hoerernummer;
 
     private String hoerername;
 
     private String hoereremail;
+
+    //
+    // Bestellung
+    //
+
+    private final MeinWarenkorb meinWarenkorb;
+
+    private final BestellungService bestellungService;
 
     private String bemerkung;
 
@@ -38,31 +53,35 @@ public class MeineBestellung {
 
     private Boolean alteBestellkarteLoeschen;
 
-    private final Navigation navigation;
-
-    private final MeinWarenkorb meinWarenkorb;
-
-    private final BestellungService bestellungService;
-
     private String bestellungStatusNachricht;
 
-    private CdWarenkorb bestellerCdWarenkorb;
+    private CdWarenkorb bestellterCdWarenkorb;
 
-    private DownloadWarenkorb bestellerDownloadWarenkorb;
+    private DownloadWarenkorb bestellterDownloadWarenkorb;
+
+    private final ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
 
     @Autowired
-    public MeineBestellung(final Hoerernummer hoerernummer,
-                           final Navigation navigation,
+    public MeineBestellung(final Navigation navigation,
+                           final Hoerernummer hoerernummer,
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService) {
-        this.hoerernummer = hoerernummer;
         this.navigation = navigation;
+        this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
-    }
-
-    public int getAnzahl() {
-        return meinWarenkorb.getTotaleAnzahl();
+        anzahlBestellterHoerbuecherValueCache = new ELValueCache<>(0,
+                () -> {
+                    final int anzahlCDs =
+                            null != bestellterCdWarenkorb
+                                    ? bestellterCdWarenkorb.getAnzahl()
+                                    : 0;
+                    final int anzahlDownloads =
+                            null != bestellterDownloadWarenkorb
+                                    ? bestellterDownloadWarenkorb.getAnzahl()
+                                    : 0;
+                    return anzahlCDs + anzahlDownloads;
+                });
     }
 
     public Hoerernummer getHoerernummer() {
@@ -70,10 +89,11 @@ public class MeineBestellung {
     }
 
     public void setHoerernummer(final Hoerernummer hoerernummer) {
+        LOGGER.trace("{}", hoerernummer);
         if (Hoerernummer.UNBEKANNT == hoerernummer) {
             this.hoerernummer = hoerernummer;
         } else {
-            throw new UnsupportedOperationException();
+            /*TODO Bekannte Hörernummer*/throw new UnsupportedOperationException();
         }
     }
 
@@ -91,6 +111,15 @@ public class MeineBestellung {
 
     public void setHoereremail(final String hoereremail) {
         this.hoereremail = hoereremail;
+    }
+
+    //
+    // Bestellung
+    //
+
+    public int getAnzahlImWarenkorb() {
+        LOGGER.trace("");
+        return meinWarenkorb.getAnzahl();
     }
 
     public String getBemerkung() {
@@ -121,30 +150,28 @@ public class MeineBestellung {
      * Command
      */
     public String bestellungAbschicken() {
+        bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
         // Warenkörbe kopieren
-        bestellerCdWarenkorb = bestellungService.cdWarenkorbKopie(hoerernummer);
-        bestellerDownloadWarenkorb = bestellungService.downloadWarenkorbKopie(hoerernummer);
+        bestellterCdWarenkorb = bestellungService.cdWarenkorbKopie(hoerernummer);
+        bestellterDownloadWarenkorb = bestellungService.downloadWarenkorbKopie(hoerernummer);
         // Bestellung aufgeben
         final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(
                 hoerernummer,
                 hoerername, hoereremail,
                 bemerkung,
-                bestellkarteMischen, alteBestellkarteLoeschen,
-                meinWarenkorb.getCd().getDomainId(), meinWarenkorb.getDownload().getDomainId());
+                bestellkarteMischen, alteBestellkarteLoeschen);
         if (bestellungId.isPresent()) {
-            // Warenkörbe leeren
-            meinWarenkorb.leeren();
-            bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
+            meinWarenkorb.bestellungAufgegeben();
             LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben",
                     bestellungId.get(), hoerernummer);
             return navigation.zuBestellungErfolgreich();
         } else {
-            LOGGER.error("Bestellung konnte nicht aufgegeben werden!");
-            bestellerCdWarenkorb = null;
-            bestellerDownloadWarenkorb = null;
+            LOGGER.error("Bestellung für Hörer {} konnte nicht aufgegeben werden!", hoerernummer);
+            bestellterCdWarenkorb = null;
+            bestellterDownloadWarenkorb = null;
             bestellungStatusNachricht = "Ihre Bestellung konnte leider nicht bearbeitet werden," +
                     " bitte wenden Sie sich an die WBH.";
-            return navigation.zuMeinemWarenkorb();
+            return null; //navigation.zuMeinemWarenkorb();
         }
     }
 
@@ -152,12 +179,17 @@ public class MeineBestellung {
         return bestellungStatusNachricht;
     }
 
-    public CdWarenkorb getBestellerCdWarenkorb() {
-        return bestellerCdWarenkorb;
+    public int getBestellteAnzahl() {
+        LOGGER.trace("");
+        return anzahlBestellterHoerbuecherValueCache.get();
     }
 
-    public DownloadWarenkorb getBestellerDownloadWarenkorb() {
-        return bestellerDownloadWarenkorb;
+    public CdWarenkorb getBestellterCdWarenkorb() {
+        return bestellterCdWarenkorb;
+    }
+
+    public DownloadWarenkorb getBestellterDownloadWarenkorb() {
+        return bestellterDownloadWarenkorb;
     }
 
 }

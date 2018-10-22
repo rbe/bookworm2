@@ -43,7 +43,7 @@
         <lucene-core.version>7.4.0</lucene-core.version>
         <lucene-analyzers.version>3.6.2</lucene-analyzers.version>
         <!-- Jackson -->
-        <jackson-databind.version>2.9.6</jackson-databind.version>
+        <jackson.version>2.9.6</jackson.version>
         <!-- Spring -->
         <spring-boot.version>2.0.5.RELEASE</spring-boot.version>
         <spring.version>5.1.0.RELEASE</spring.version>
@@ -102,9 +102,29 @@
             </dependency>
             <!-- Jackson -->
             <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-jsr310</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.dataformat</groupId>
+                <artifactId>jackson-dataformat-xml</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>
                 <artifactId>jackson-databind</artifactId>
-                <version>${jackson-databind.version}</version>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-annotations</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-core</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <!-- Spring Boot -->
             <dependency>

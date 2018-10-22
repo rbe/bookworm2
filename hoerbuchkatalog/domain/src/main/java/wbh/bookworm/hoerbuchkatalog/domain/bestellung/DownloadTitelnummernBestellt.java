@@ -14,12 +14,12 @@ import java.util.Set;
 /**
  * Event
  */
-public final class DownloadWarenkorbBestellt extends WarenkorbBestellt {
+public final class DownloadTitelnummernBestellt extends TitelnummernBestellt {
 
     private static final long serialVersionUID = -1L;
 
-    public DownloadWarenkorbBestellt(final Hoerernummer hoerernummer,
-                                     final Set<Titelnummer> titelnummern) {
+    public DownloadTitelnummernBestellt(final Hoerernummer hoerernummer,
+                                        final Set<Titelnummer> titelnummern) {
         super(hoerernummer, titelnummern);
     }
 

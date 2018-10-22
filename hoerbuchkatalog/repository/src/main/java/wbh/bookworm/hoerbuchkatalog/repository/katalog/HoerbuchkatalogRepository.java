@@ -33,7 +33,8 @@ import java.util.concurrent.atomic.AtomicReference;
  * Repository
  */
 @DomainRespositoryComponent
-class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId>*/ {
+public final class HoerbuchkatalogRepository
+        /* TODO extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId>*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 

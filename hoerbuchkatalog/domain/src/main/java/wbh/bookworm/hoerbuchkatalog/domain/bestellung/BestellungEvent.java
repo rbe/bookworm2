@@ -7,20 +7,20 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.platform.ddd.event.DomainEvent;
 
-import java.util.Set;
-
-/**
- * Event
- */
-public final class CdWarenkorbBestellt extends WarenkorbBestellt {
+public abstract class BestellungEvent extends DomainEvent {
 
     private static final long serialVersionUID = -1L;
 
-    CdWarenkorbBestellt(final Hoerernummer hoerernummer,
-                        final Set<Titelnummer> titelnummern) {
-        super(hoerernummer, titelnummern);
+    private final Hoerernummer hoerernummer;
+
+    public BestellungEvent(final Hoerernummer hoerernummer) {
+        this.hoerernummer = hoerernummer;
+    }
+
+    public Hoerernummer getHoerernummer() {
+        return hoerernummer;
     }
 
 }

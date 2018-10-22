@@ -8,6 +8,9 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.platform.ddd.model.DomainEntity;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -19,6 +22,8 @@ import java.util.Objects;
 public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     private static final long serialVersionUID = -1L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
 
     private Titelnummer titelnummer; // 6 0 (nummerisch)
 
@@ -251,14 +256,18 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getSpieldauer() {
-        String _spieldauer = null;
-        if (null != spieldauer) {
-            String[] parts = spieldauer.split(",");
+        String _spieldauer = "unbekannt";
+        if (null != spieldauer
+                && (spieldauer.contains(",") || spieldauer.contains("."))) {
+            String[] parts = spieldauer.split("[.,]");
             if (!"00".equals(parts[1])) {
                 _spieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
             } else {
                 _spieldauer = String.format("%s Stunden", parts[0]);
             }
+        }
+        if ("unbekannt".equalsIgnoreCase(spieldauer)) {
+            LOGGER.warn("Spieldauer ({}) von Hörbuch {} unbekannt", spieldauer, titelnummer);
         }
         return _spieldauer;
     }

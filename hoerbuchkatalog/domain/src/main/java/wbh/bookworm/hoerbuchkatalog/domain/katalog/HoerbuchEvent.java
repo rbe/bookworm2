@@ -4,12 +4,13 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain.event;
+package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-public abstract class HoerbuchEvent extends KatalogEvent {
+public abstract class HoerbuchEvent extends HoerbuchkatalogEvent {
+
+    private static final long serialVersionUID = -1L;
 
     private final Titelnummer titelnummer;
 

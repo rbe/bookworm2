@@ -6,7 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
@@ -24,15 +23,15 @@ public class MerklisteService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MerklisteService.class);
 
-    private final HoerbuchkatalogService hoerbuchkatalogService;
-
     private final MerklisteRepository merklisteRepository;
 
     @Autowired
-    public MerklisteService(final HoerbuchkatalogService hoerbuchkatalogService,
-                            final MerklisteRepository merklisteRepository) {
-        this.hoerbuchkatalogService = hoerbuchkatalogService;
+    public MerklisteService(final MerklisteRepository merklisteRepository) {
         this.merklisteRepository = merklisteRepository;
+    }
+
+    public Merkliste merklisteKopie(final Hoerernummer hoerernummer) {
+        return new Merkliste(merkliste(hoerernummer));
     }
 
     private Merkliste merkliste(final Hoerernummer hoerernummer) {
@@ -51,23 +50,20 @@ public class MerklisteService {
     /**
      * Command
      */
-    public void hinzufuegen(final Hoerernummer hoerernummer,
-                            final Titelnummer titelnummer) {
+    public void hinzufuegen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         final Merkliste merkliste = merkliste(hoerernummer);
         merkliste.hinzufuegen(titelnummer);
         merklisteRepository.save(merkliste);
     }
 
-    public boolean enthalten(final Hoerernummer hoerernummer,
-                             final Titelnummer titelnummer) {
+    public boolean enthalten(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         return merkliste(hoerernummer).enthalten(titelnummer);
     }
 
     /**
      * Command
      */
-    public void entfernen(final Hoerernummer hoerernummer,
-                          final Titelnummer titelnummer) {
+    public void entfernen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         final Merkliste merkliste = merkliste(hoerernummer);
         merkliste.entfernen(titelnummer);
         merklisteRepository.save(merkliste);

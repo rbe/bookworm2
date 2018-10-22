@@ -22,7 +22,7 @@
                        value="CD Bestellung löschen"/>
 
         <!--digitalBasketBean.canBeOrderedAsDownload(hoerbuch)-->
-        <h:commandLink rendered="#{meinWarenkorb.downloadVerfuegbar(cc.attrs.titelnummer)}"
+        <h:commandLink rendered="#{meinWarenkorb.downloadFuerHoererVerfuegbar(cc.attrs.titelnummer)}"
                        styleClass="basket-order-link"
                        action="#{meinWarenkorb.downloadHinzufuegen(cc.attrs.titelnummer)}"
                        value="Download bestellen"/>

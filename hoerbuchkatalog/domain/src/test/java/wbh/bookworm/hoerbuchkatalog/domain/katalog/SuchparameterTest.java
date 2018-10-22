@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain;
+package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 

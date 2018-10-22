@@ -8,14 +8,19 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
-import wbh.bookworm.platform.tools.http.DownloadHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import javax.net.ssl.HttpsURLConnection;
+import java.io.IOException;
+import java.net.URL;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -84,6 +89,63 @@ class AghNummernRepository {
             throw new ImportFailedException(e);
         }
         return aghNummern;
+    }
+
+    private static final class DownloadHelper {
+
+        private DownloadHelper() {
+            throw new AssertionError();
+        }
+
+        static List<String> extractLinesFromPathInZip(final Path download, final String pathToExtract) {
+            List<String> strings;
+            try (FileSystem zipFileSystem = FileSystems.newFileSystem(download, null)) {
+                final Path path = zipFileSystem.getPath(pathToExtract);
+                strings = Files.readAllLines(path);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+            return strings;
+        }
+
+        static Path downloadUsingHttpsURLConnection(final String urlStr) throws IOException {
+            final HttpsURLConnection httpsURLConnection = connect(urlStr);
+            final Path tempFile = Files.createTempFile("blista", ".zip");
+            tempFile.toFile().deleteOnExit();
+            Files.copy(httpsURLConnection.getInputStream(), tempFile, StandardCopyOption.REPLACE_EXISTING);
+            httpsURLConnection.disconnect();
+            return tempFile;
+        }
+
+        private static HttpsURLConnection connect(final String urlStr) throws IOException {
+            final URL url = new URL(urlStr);
+            final HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection.setInstanceFollowRedirects(true);
+            urlConnection.connect();
+            return urlConnection;
+        }
+
+    /*
+        static Path downloadUsingNIO(final String urlStr) throws IOException {
+            final Path tempFile = Files.createTempFile("blista", ".zip");
+            tempFile.toFile().deleteOnExit();
+            final EnumSet<StandardOpenOption> options = EnumSet.of(StandardOpenOption.CREATE, StandardOpenOption.APPEND);
+            final HttpsURLConnection httpsURLConnection = connect(urlStr);
+            try (final ReadableByteChannel rbc = Channels.newChannel(httpsURLConnection.getInputStream());
+                 final FileChannel fileChannel = (FileChannel) Files.newByteChannel(tempFile, options)) {
+                final ByteBuffer byteBuffer = ByteBuffer.allocate(1440);
+                while (rbc.read(byteBuffer) > -1) {
+                    byteBuffer.flip();
+                    fileChannel.write(byteBuffer);
+                    byteBuffer.clear();
+                }
+            } finally {
+                httpsURLConnection.disconnect();
+            }
+            return tempFile;
+        }
+    */
+
     }
 
 }

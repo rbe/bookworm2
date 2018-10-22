@@ -7,12 +7,16 @@
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.domain.email.EmailRepository;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+
+import java.nio.file.Paths;
 
 @SpringBootApplication
 @SpringBootConfiguration
@@ -20,7 +24,14 @@ import org.springframework.context.annotation.Configuration;
 @EnableConfigurationProperties
 @ComponentScan(basePackageClasses = {
         EmailService.class,
+        EmailRepository.class,
         DomainConfig.class
 })
 public class EmailTestAppConfig {
+
+    @Bean
+    public EmailRepository emailRepository() {
+        return new EmailRepository(Paths.get("target"));
+    }
+
 }

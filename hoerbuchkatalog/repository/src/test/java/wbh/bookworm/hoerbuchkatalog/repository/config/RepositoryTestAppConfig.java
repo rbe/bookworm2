@@ -9,6 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.config;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringBootConfiguration;
@@ -21,6 +22,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.nio.file.Paths;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,7 +32,7 @@ import java.util.concurrent.ConcurrentHashMap;
 })
 @SpringBootConfiguration
 @EnableConfigurationProperties
-public class TestAppConfig {
+public class RepositoryTestAppConfig {
 
     @Bean
     static PropertyPlaceholderConfigurer bookwormProperties() {
@@ -57,6 +59,11 @@ public class TestAppConfig {
     @Bean
     public TaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
+    }
+
+    @Bean
+    public WarenkorbRepository warenkorbRepository() {
+        return new WarenkorbRepository(Paths.get("target"));
     }
 
 }

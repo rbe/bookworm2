@@ -11,17 +11,17 @@ import com.fasterxml.jackson.annotation.JsonValue;
 import java.io.Serializable;
 import java.util.concurrent.atomic.AtomicLong;
 
-final class IdSequence implements Serializable {
+final class DomainIdSequence implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
     private final AtomicLong counter;
 
-    IdSequence() {
+    DomainIdSequence() {
         this(0L);
     }
 
-    IdSequence(final long counter) {
+    DomainIdSequence(final long counter) {
         this.counter = new AtomicLong(counter);
     }
 
@@ -40,12 +40,12 @@ final class IdSequence implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("IdSequence{counter=%s}", counter);
+        return String.format("DomainIdSequence{counter=%s}", counter);
     }
 
 /*
     public static void main(String[] args) {
-        final IdSequence idSequence = new IdSequence(10);
+        final DomainIdSequence idSequence = new DomainIdSequence(10);
         //             2_500_011
         for (int i=0;i<2_500_000;i++) System.out.println(idSequence.incrementAndGetAsHex());
         System.out.println(idSequence.incrementAndGet());
