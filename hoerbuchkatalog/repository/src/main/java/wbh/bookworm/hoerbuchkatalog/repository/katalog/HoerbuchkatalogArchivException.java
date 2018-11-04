@@ -6,17 +6,17 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-final class ImportFailedException extends Exception {
+public class HoerbuchkatalogArchivException extends RuntimeException {
 
-    ImportFailedException(final String message) {
+    public HoerbuchkatalogArchivException(final String message) {
         super(message);
     }
 
-    ImportFailedException(final String message, final Throwable cause) {
+    public HoerbuchkatalogArchivException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    ImportFailedException(final Throwable cause) {
+    public HoerbuchkatalogArchivException(final Throwable cause) {
         super(cause);
     }
 

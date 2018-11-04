@@ -29,9 +29,6 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
-/**
- * Repository
- */
 @DomainRespositoryComponent
 public final class HoerbuchkatalogRepository
         /* TODO extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId>*/ {
@@ -44,13 +41,13 @@ public final class HoerbuchkatalogRepository
 
     private final TaskScheduler taskScheduler;
 
-    private ScheduledFuture<?> katalogeImportierenScheduledFuture;
+    private ScheduledFuture<?> katalogeAktualisierenScheduledFuture;
 
     private final HoerbuchkatalogMapper hoerbuchkatalogMapper;
 
     private final AghNummernRepository aghNummernRepository;
 
-    private final RepositoryArchiv repositoryArchiv;
+    private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
     private AtomicReference<Hoerbuchkatalog> aktuellerHoerbuchkatalog;
 
@@ -60,7 +57,7 @@ public final class HoerbuchkatalogRepository
                               final TaskScheduler taskScheduler,
                               final HoerbuchkatalogMapper hoerbuchkatalogMapper,
                               final AghNummernRepository aghNummernRepository,
-                              final RepositoryArchiv repositoryArchiv) {
+                              final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
         /*super(Hoerbuchkatalog.class, HoerbuchkatalogId.class,
                 hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());*/
         this.applicationContext = applicationContext;
@@ -68,7 +65,7 @@ public final class HoerbuchkatalogRepository
         this.taskScheduler = taskScheduler;
         this.hoerbuchkatalogMapper = hoerbuchkatalogMapper;
         this.aghNummernRepository = aghNummernRepository;
-        this.repositoryArchiv = repositoryArchiv;
+        this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
         this.aktuellerHoerbuchkatalog = new AtomicReference<>();
         archivRegelmaessigAktualisieren();
     }
@@ -79,31 +76,34 @@ public final class HoerbuchkatalogRepository
     }
 
     /**
-     * TODO Logik nach load("Gesamt.dat-Datum") inkl. Selektion LuceneIndex
+     * TODO Logik nach GesamtDatRepository#load("Datum") inkl. Selektion LuceneIndex
      */
     private Hoerbuchkatalog hoerbuchkatalog(final boolean neu) {
         if (null == aktuellerHoerbuchkatalog.get() || neu) {
             LOGGER.trace("Erzeuge neuen Hörbuchkatalog");
-            final Optional<Path> _gesamtDat = repositoryArchiv.findeAktuellstenKatalog("Gesamt.dat");
-            _gesamtDat.ifPresent(gesamtDat -> {
-                LOGGER.debug("Erzeuge neuen Hörbuchkatalog aus {}", gesamtDat);
-                final Set<Hoerbuch> hoerbuecher = importiereHoerbuchkatalogAusArchiv(gesamtDat);
-                if (hoerbuecher.isEmpty()) {
-                    throw new IllegalStateException("Import leer; Keine Hörbücher importiert");
-                }
-                final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
-                @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
-                        applicationContext.getBean("hoerbuchkatalogMap", Map.class);
-                final HoerbuchkatalogId hoerbuchkatalogDomainId =
-                        new HoerbuchkatalogId(gesamtDat.getFileName().toString());
-                final Hoerbuchkatalog neuerKatalog = new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
-                verheiraten(neuerKatalog, hoerbuecher, aghNummern);
-                sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
-                aktuellerHoerbuchkatalog.set(neuerKatalog);
-                LOGGER.trace("Hörbuchkatalog erzeugt, {}", aktuellerHoerbuchkatalog.get());
-            });
+            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog("Gesamt.dat");
+            gesamtDat.ifPresentOrElse(gd -> {
+                        LOGGER.trace("Erzeuge neuen Hörbuchkatalog aus '{}'", gd);
+                        final Set<Hoerbuch> hoerbuecher = importiereHoerbuchkatalogAusArchiv(gd);
+                        if (hoerbuecher.isEmpty()) {
+                            throw new IllegalStateException("Import leer; Keine Hörbücher importiert");
+                        } else {
+                            final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
+                            @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
+                                    applicationContext.getBean("hoerbuchkatalogMap", Map.class);
+                            final HoerbuchkatalogId hoerbuchkatalogDomainId =
+                                    new HoerbuchkatalogId(gd.getFileName().toString());
+                            final Hoerbuchkatalog neuerKatalog = new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
+                            verheiraten(neuerKatalog, hoerbuecher, aghNummern);
+                            sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
+                            aktuellerHoerbuchkatalog.set(neuerKatalog);
+                            LOGGER.debug("Hörbuchkatalog {} aus '{}' erzeugt", aktuellerHoerbuchkatalog.get(), gd);
+                        }
+                    },
+                    () -> {
+                    });
         }
-        LOGGER.trace("Hörbuchkatalog bereits erzeugt, {}", aktuellerHoerbuchkatalog.get());
+        LOGGER.debug("Hörbuchkatalog bereits erzeugt, {}", aktuellerHoerbuchkatalog.get());
         return aktuellerHoerbuchkatalog.get();
     }
 
@@ -150,26 +150,26 @@ public final class HoerbuchkatalogRepository
     }
 
     private void archivRegelmaessigAktualisieren() {
-        final CronTrigger katalogeImportierenCronTrigger =
-                new CronTrigger(hoerbuchkatalogConfig.getHoerbuchkatalogCronExpression());
+        final CronTrigger cronTrigger = new CronTrigger(
+                hoerbuchkatalogConfig.getHoerbuchkatalogCronExpression());
         LOGGER.info("Hörbuchkatalog wird regelmäßig aktualisiert, Cron={}",
-                katalogeImportierenCronTrigger.getExpression());
-        if (null != katalogeImportierenScheduledFuture) {
-            katalogeImportierenScheduledFuture.cancel(true);
+                cronTrigger.getExpression());
+        if (null != katalogeAktualisierenScheduledFuture) {
+            katalogeAktualisierenScheduledFuture.cancel(true);
         }
-        katalogeImportierenScheduledFuture =
-                taskScheduler.schedule(this::aktualisiereArchiv, katalogeImportierenCronTrigger);
+        katalogeAktualisierenScheduledFuture = taskScheduler.schedule(
+                this::aktualisiereArchiv, cronTrigger);
     }
 
     private void aktualisiereArchiv() {
         try {
             hoerbuchkatalogMapper.aktualisiereKatalogImArchiv();
-        } catch (ImportFailedException e) {
+        } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: " + e.getMessage(), e);
         }
         try {
             aghNummernRepository.aktualisiereKatalogImArchiv();
-        } catch (ImportFailedException e) {
+        } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung der AGH Nummern nicht erfolgt: " + e.getMessage(), e);
         }
         hoerbuchkatalog(true);
@@ -179,7 +179,7 @@ public final class HoerbuchkatalogRepository
         Set<Hoerbuch> hoerbuecher = null;
         try {
             hoerbuecher = hoerbuchkatalogMapper.importiereKatalogAusArchiv(fileName);
-        } catch (ImportFailedException e) {
+        } catch (HoerbuchkatalogArchivException e) {
             LOGGER.error("Unbekannter Fehler beim Importieren des Hörbuchkatalogs aus dem Archiv", e);
         }
         return null != hoerbuecher ? hoerbuecher : Collections.emptySet();
@@ -189,7 +189,7 @@ public final class HoerbuchkatalogRepository
         Set<AghNummer> aghNummern = null;
         try {
             aghNummern = aghNummernRepository.importiereKatalogAusArchiv();
-        } catch (ImportFailedException e) {
+        } catch (HoerbuchkatalogArchivException e) {
             LOGGER.error("Unbekannter Fehler beim Importieren der AGH Nummern aus dem Archiv", e);
         }
         return null != aghNummern ? aghNummern : Collections.emptySet();

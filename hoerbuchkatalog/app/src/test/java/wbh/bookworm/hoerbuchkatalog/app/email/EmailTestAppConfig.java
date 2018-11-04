@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 @SpringBootApplication
 @SpringBootConfiguration
@@ -31,7 +31,7 @@ public class EmailTestAppConfig {
 
     @Bean
     public EmailRepository emailRepository() {
-        return new EmailRepository(Paths.get("target"));
+        return new EmailRepository(Path.of("target"));
     }
 
 }

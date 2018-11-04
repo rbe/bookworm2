@@ -38,7 +38,10 @@ public class AppConfig {
     @Bean
     static PropertyPlaceholderConfigurer bookwormProperties() {
         final PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
-        propertyPlaceholderConfigurer.setLocations(new ClassPathResource("/conf/hoerbuchkatalog.properties"));
+        propertyPlaceholderConfigurer.setLocations(
+                new ClassPathResource("/conf/hoerbuchkatalog.properties"),
+                new ClassPathResource("/conf/blista-dls.properties")
+        );
         return propertyPlaceholderConfigurer;
     }
 

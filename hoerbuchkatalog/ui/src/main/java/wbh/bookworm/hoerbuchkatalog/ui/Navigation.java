@@ -24,9 +24,9 @@ public class Navigation {
 
     static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml?faces-redirect=true";
 
-    static final String NAV_MERKLISTE = "merkliste.xhtml?faces-redirect=true";
+    static final String NAV_MERKLISTE = "meinemerkliste.xhtml?faces-redirect=true";
 
-    static final String NAV_WARENKORB = "warenkorb.xhtml?faces-redirect=true";
+    static final String NAV_WARENKORB = "meinwarenkorb.xhtml?faces-redirect=true";
 
     private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml?faces-redirect=true";
 

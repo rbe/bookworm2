@@ -9,7 +9,12 @@ package wbh.bookworm.hoerbuchkatalog.ui.config;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.hoerer.HoererLieferungService;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 import wbh.bookworm.hoerbuchkatalog.ui.Navigation;
 import wbh.bookworm.hoerbuchkatalog.ui.http.NoCacheFilter;
 
@@ -41,6 +46,14 @@ public class UiConfig {
     @Lazy
     public Hoerernummer hoerernummer() {
         return (Hoerernummer) getSession().getAttribute(HOERERNUMMER);
+    }
+
+    @Bean
+    @Lazy
+    public Hoerer hoerer() {
+        return new Hoerer(hoerernummer(),
+                new Hoerername(new Vorname("VORNAME"), new Nachname("NACHNAME")),
+                new HoererEmail("hoerer@example.com"));
     }
 
     private HttpSession getSession() {

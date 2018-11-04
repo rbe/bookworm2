@@ -22,13 +22,13 @@ import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
@@ -53,28 +53,29 @@ public abstract class JsonDomainRepository
 
     private final ReentrantLock idSequenceLock = new ReentrantLock();
 
-    private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
 
-    private final ReentrantReadWriteLock.ReadLock readLock = new ReentrantReadWriteLock().readLock();
+    private final ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
 
-    private final ReentrantReadWriteLock.WriteLock writeLock = new ReentrantReadWriteLock().writeLock();
+    private final ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
 
+    // TODO @Deprecated define storagePath
     public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass) {
-        this(aggClass, idClass, Paths.get("."));
+        this(aggClass, idClass, Path.of("."));
     }
 
     public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass,
-                                final Path defaultStoragePath) {
+                                final Path storagePath) {
         Objects.requireNonNull(aggClass);
         this.aggClass = aggClass;
         Objects.requireNonNull(idClass);
         this.idClass = idClass;
-        idSequenceFilename = Paths.get("idsequence.json");
-        Objects.requireNonNull(defaultStoragePath);
-        logger.trace("Initizialing with default storage path '{}'", defaultStoragePath.toAbsolutePath());
-        aggregateStoragePath = defaultStoragePath
+        idSequenceFilename = Path.of("idsequence.json");
+        Objects.requireNonNull(storagePath);
+        logger.trace("Initizialing with default storage path '{}'", storagePath.toAbsolutePath());
+        aggregateStoragePath = storagePath
                 .resolve(this.getClass().getSimpleName())
-                .resolve(Paths.get(String.format("%s/%s", aggClass.getPackageName(), aggClass.getSimpleName())));
+                .resolve(Path.of(String.format("%s/%s", aggClass.getPackageName(), aggClass.getSimpleName())));
         try {
             Files.createDirectories(aggregateStoragePath);
         } catch (IOException e) {
@@ -90,7 +91,7 @@ public abstract class JsonDomainRepository
     private Path makeStorageFilename(final ID domainId) {
         final String sane = domainId.getValue()
                 .replaceAll("[^a-zA-Z0-9., ]+", "_");
-        return Paths.get(String.format("%s.json", sane));
+        return Path.of(String.format("%s.json", sane));
     }
 
     private ID makeIDFromStorageFilename(final Path path) {
@@ -121,7 +122,9 @@ public abstract class JsonDomainRepository
         Objects.requireNonNull(prefix);
         logger.trace("Generating next id for aggregate {}", aggClass);
         final Path idSequencePath = aggregateStoragePath.resolve(idSequenceFilename);
-        synchronized (aggClass) {
+        try {
+            idSequenceLock.tryLock(1, TimeUnit.SECONDS);
+            //synchronized (aggClass) {
             final DomainIdSequence domainIdSequence;
             if (!Files.exists(idSequencePath)) {
                 // TODO Strategy domainIdSequence = new DomainIdSequence(0);
@@ -129,14 +132,17 @@ public abstract class JsonDomainRepository
             } else {
                 logger.trace("Loading existing IdSequence for {}", aggClass);
                 try {
-                    domainIdSequence = objectMapper.readValue(idSequencePath.toFile(), DomainIdSequence.class);
+                    domainIdSequence = objectMapper.readValue(
+                            idSequencePath.toFile(), DomainIdSequence.class);
                 } catch (IOException e) {
+                    idSequenceLock.unlock();
                     throw new DomainRepositoryException("Could not initialize idSequence file " +
                             idSequencePath, e);
                 }
             }
             try {
-                final Constructor<ID> declaredConstructor = idClass.getDeclaredConstructor(String.class);
+                final Constructor<ID> declaredConstructor =
+                        idClass.getDeclaredConstructor(String.class);
                 declaredConstructor.setAccessible(true);
                 final String trim = prefix.trim();
                 final String prefixAndId = trim.length() > 1
@@ -144,13 +150,20 @@ public abstract class JsonDomainRepository
                         : domainIdSequence.incrementAndGetAsHex();
                 final ID id = declaredConstructor.newInstance(prefixAndId);
                 objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
+                idSequenceLock.unlock();
                 logger.debug("Generated next id '{}'", id);
                 return id;
-            } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
+            } catch (InstantiationException | IllegalAccessException
+                    | InvocationTargetException | NoSuchMethodException e) {
+                idSequenceLock.unlock();
                 throw new DomainRepositoryException(e);
             } catch (IOException e) {
+                idSequenceLock.unlock();
                 throw new DomainRepositoryException("Could not store next id", e);
             }
+        } catch (InterruptedException e) {
+            idSequenceLock.unlock();
+            throw new DomainRepositoryException(e);
         }
     }
 
@@ -158,15 +171,21 @@ public abstract class JsonDomainRepository
         logger.trace("Initializing IdSequence at '{}' with count of existing aggregates",
                 idSequencePath);
         try {
+            idSequenceLock.tryLock(1, TimeUnit.SECONDS);
             Files.createFile(idSequencePath);
             final DomainIdSequence domainIdSequence = new DomainIdSequence(countAll());
             objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
+            idSequenceLock.unlock();
             logger.debug("Initialized IdSequence at '{}' counting existing aggregates, {}",
                     idSequencePath, domainIdSequence);
             return domainIdSequence;
         } catch (IOException e) {
+            idSequenceLock.unlock();
             throw new DomainRepositoryException("Could not initialize IdSequence at " +
                     idSequencePath, e);
+        } catch (InterruptedException e) {
+            idSequenceLock.unlock();
+            throw new DomainRepositoryException(e);
         }
     }
 
@@ -292,19 +311,19 @@ public abstract class JsonDomainRepository
                 .orElseThrow()
                 .stream()
                 .filter(agg -> Arrays.stream(predicates).anyMatch(predicate -> {
-                            try {
-                                final String fieldName = predicate.getField();
-                                final String getter = "get" + fieldName.substring(0, 1).toUpperCase()
-                                        + fieldName.substring(1);
-                                final Method method = agg.getClass().getMethod(getter);
-                                final Object value = method.invoke(agg);
-                                logger.trace("{}.equals({})", value, predicate.getValue());
-                                return predicate.isSatisfied(value.toString());
-                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                                logger.error("", e);
-                                return false;
-                            }
-                        }))
+                    try {
+                        final String fieldName = predicate.getField();
+                        final String getter = "get" + fieldName.substring(0, 1).toUpperCase()
+                                + fieldName.substring(1);
+                        final Method method = agg.getClass().getMethod(getter);
+                        final Object value = method.invoke(agg);
+                        logger.trace("{}.equals({})", value, predicate.getValue());
+                        return predicate.isSatisfied(value.toString());
+                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                        logger.error("", e);
+                        return false;
+                    }
+                }))
                 .collect(Collectors.toSet()));
     }
 

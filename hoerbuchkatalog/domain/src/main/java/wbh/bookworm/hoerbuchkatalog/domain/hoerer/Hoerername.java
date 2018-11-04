@@ -6,7 +6,25 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import wbh.bookworm.platform.ddd.model.DomainSingleValueObject;
+import wbh.bookworm.platform.ddd.model.DomainValueObject;
 
-public class Hoerername extends DomainSingleValueObject<Hoerername, String> {
+public class Hoerername extends DomainValueObject {
+
+    private final Vorname vorname;
+
+    private final Nachname nachname;
+
+    public Hoerername(final Vorname vorname, final Nachname nachname) {
+        this.vorname = vorname;
+        this.nachname = nachname;
+    }
+
+    public Vorname getVorname() {
+        return vorname;
+    }
+
+    public Nachname getNachname() {
+        return nachname;
+    }
+
 }

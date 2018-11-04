@@ -31,8 +31,12 @@ public class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         return domainId;
     }
 
-    public Hoerername getHoerername() {
-        return hoerername;
+    public Vorname getVorname() {
+        return hoerername.getVorname();
+    }
+
+    public Nachname getNachname() {
+        return hoerername.getNachname();
     }
 
     public HoererEmail getHoereremail() {

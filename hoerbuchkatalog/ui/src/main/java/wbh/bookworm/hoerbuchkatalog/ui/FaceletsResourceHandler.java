@@ -16,7 +16,7 @@ import javax.faces.application.ViewResource;
 import javax.faces.context.FacesContext;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
 
@@ -35,7 +35,7 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
                 @Override
                 public URL getURL() {
                     try {
-                        return Paths.get(WebFilesystem.BASE_PATH, name).toUri().toURL();
+                        return Path.of(WebFilesystem.BASE_PATH, name).toUri().toURL();
                     } catch (MalformedURLException e) {
                         throw new FacesException(e);
                     }

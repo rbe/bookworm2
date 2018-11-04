@@ -82,7 +82,7 @@ class WarenkorbDomainRepositoryTest {
     private static class WarenkorbDomainRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
 
         WarenkorbDomainRepository() {
-            super(Warenkorb.class, WarenkorbId.class, Paths.get("target"));
+            super(Warenkorb.class, WarenkorbId.class, Path.of("target"));
         }
 
     }

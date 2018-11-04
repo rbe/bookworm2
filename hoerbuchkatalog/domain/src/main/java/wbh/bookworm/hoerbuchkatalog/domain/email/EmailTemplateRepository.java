@@ -10,13 +10,13 @@ import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
 
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 @Component
 public class EmailTemplateRepository extends JsonDomainRepository<HtmlEmailTemplate, EmailTemplateId> {
 
     public EmailTemplateRepository() {
-        super(HtmlEmailTemplate.class, EmailTemplateId.class, Paths.get("."));
+        super(HtmlEmailTemplate.class, EmailTemplateId.class, Path.of("."));
     }
 
     public HtmlEmailTemplate erstellen(final String html) {

@@ -32,52 +32,42 @@ final class HoerbuchkatalogMapper {
 
     private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
 
-    private final RepositoryArchiv repositoryArchiv;
+    private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
     @Autowired
     HoerbuchkatalogMapper(final HoerbuchkatalogConfig hoerbuchkatalogConfig,
-                          final RepositoryArchiv repositoryArchiv) {
+                          final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
-        this.repositoryArchiv = repositoryArchiv;
+        this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
     }
 
-    Set<Hoerbuch> importiereKatalogAusArchiv(final Path fileName) throws ImportFailedException {
-        Set<Hoerbuch> hoerbuecher = null;
-        if (null != fileName) {
-            hoerbuecher = importiereKatalog(fileName.getFileName());
-        } else {
-            LOGGER.warn("Kein Hörbuchkatalog im Archiv gefunden");
-        }
-        return null != hoerbuecher ? hoerbuecher : Collections.emptySet();
-    }
-
-    void aktualisiereKatalogImArchiv() throws ImportFailedException {
+    void aktualisiereKatalogImArchiv() {
         LOGGER.info("Aktualisiere Hörbuchkatalog");
         final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
         final Path gesamtdat = hoerbuchkatalogDirectory.resolve(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
         if (Files.exists(gesamtdat)) {
-            try {
-                repositoryArchiv.archiviereKatalog(gesamtdat);
-            } catch (ArchiveFailedException e) {
-                throw new ImportFailedException(e);
-            }
+            hoerbuchkatalogArchiv.archiviereKatalog(gesamtdat);
         } else {
-            //throw new ImportFailedException(String.format("Keine neue %s gefunden", gesamtdat));
-            LOGGER.warn("Keine neue Gesamt.dat gefunden");
+            LOGGER.info("Keine neue Gesamt.dat gefunden");
         }
     }
 
-    private Set<Hoerbuch> importiereKatalog(final Path fileName) throws ImportFailedException {
-        final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
-        final Path gesamtDat = hoerbuchkatalogDirectory.resolve(fileName);
-        final Charset wbhGesamtdatCharset = hoerbuchkatalogConfig.getWbhGesamtdatCharset();
-        LOGGER.info("Importiere Hörbücher aus {}", gesamtDat);
-        try {
-            final Set<Hoerbuch> hoerbuecher = gesamtDatEinlesen(gesamtDat, wbhGesamtdatCharset);
-            LOGGER.info("Insgesamt {} Hörbücher importiert", hoerbuecher.size());
-            return hoerbuecher;
-        } catch (IOException e) {
-            throw new ImportFailedException(e);
+    Set<Hoerbuch> importiereKatalogAusArchiv(final Path fileName) {
+        if (null != fileName) {
+            final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
+            final Path gesamtDat = hoerbuchkatalogDirectory.resolve(fileName);
+            final Charset wbhGesamtdatCharset = hoerbuchkatalogConfig.getWbhGesamtdatCharset();
+            LOGGER.info("Importiere Hörbücher aus {}", gesamtDat);
+            try {
+                final Set<Hoerbuch> hoerbuecher = gesamtDatEinlesen(gesamtDat, wbhGesamtdatCharset);
+                LOGGER.info("Insgesamt {} Hörbücher importiert", hoerbuecher.size());
+                return hoerbuecher;
+            } catch (IOException e) {
+                throw new HoerbuchkatalogArchivException(e);
+            }
+        } else {
+            LOGGER.warn("Keinen Hörbuchkatalog im Archiv gefunden");
+            return Collections.emptySet();
         }
     }
 

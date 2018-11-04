@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -107,7 +107,7 @@ class JsonDomainRepositoryTest {
     private static class AnAggregateRepository extends JsonDomainRepository<AnAggregate, AnAggregateDomainId> {
 
         AnAggregateRepository() {
-            super(AnAggregate.class, AnAggregateDomainId.class, Paths.get("target"));
+            super(AnAggregate.class, AnAggregateDomainId.class, Path.of("target"));
         }
 
     }

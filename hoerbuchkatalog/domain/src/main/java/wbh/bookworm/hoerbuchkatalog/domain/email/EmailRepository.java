@@ -14,7 +14,7 @@ import java.nio.file.Paths;
 public class EmailRepository extends JsonDomainRepository<Email, EmailId> {
 
     public EmailRepository() {
-        super(Email.class, EmailId.class, Paths.get("."));
+        super(Email.class, EmailId.class, Path.of("."));
     }
 
     public EmailRepository(final Path storagePath) {

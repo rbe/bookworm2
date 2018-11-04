@@ -8,10 +8,10 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import wbh.bookworm.platform.ddd.model.DomainSingleValueObject;
 
-public class HoererEmail extends DomainSingleValueObject<HoererEmail, String> {
+public class Nachname extends DomainSingleValueObject<Nachname, String> {
 
-    public HoererEmail(final String hoereremail) {
-        super(hoereremail);
+    public Nachname(final String nachname) {
+        super(nachname);
     }
 
 }

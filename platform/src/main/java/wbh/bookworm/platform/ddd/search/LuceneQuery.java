@@ -65,7 +65,7 @@ public final class LuceneQuery {
                 .map(scoreDoc -> {
                     try {
                         final Document doc = searcher.doc(scoreDoc.doc);
-                        LOGGER.debug("Document#{} DomainId#{} im Index gefunden",
+                        LOGGER.trace("Document#{} DomainId#{} im Index gefunden",
                                 scoreDoc.doc, doc.get(DOMAIN_ID));
                         return new DomainId<>(doc.get(DOMAIN_ID));
                     } catch (IOException e) {

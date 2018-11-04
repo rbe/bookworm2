@@ -45,14 +45,7 @@ public class HoerernummerFilter implements Filter {
                 session.invalidate();
                 LOGGER.debug("HttpSession {} invalidiert", session.getId());
             } else if (null == sessionHnr) {
-                final String requestHnr = request.getParameter(HNR_KEY);
-                if (null != requestHnr) {
-                    session.setAttribute(HNR_KEY, new Hoerernummer(requestHnr));
-                    LOGGER.debug("Hörernummer {} für HttpSession {} gesetzt", requestHnr, session.getId());
-                } else {
-                    session.setAttribute(HNR_KEY, Hoerernummer.UNBEKANNT);
-                    LOGGER.debug("Unbekannter Hörer für HttpSession {} gesetzt", session.getId());
-                }
+                hoerernummerInSessionSetzen(request, session);
             } else {
                 LOGGER.trace("Hörernummer {} in HttpSession {} bereits gesetzt", sessionHnr, session.getId());
             }
@@ -60,6 +53,17 @@ public class HoerernummerFilter implements Filter {
             LOGGER.warn("Keine HttpSession");
         }
         chain.doFilter(req, res);
+    }
+
+    private void hoerernummerInSessionSetzen(final HttpServletRequest request, final HttpSession session) {
+        final String requestHnr = request.getParameter(HNR_KEY);
+        if (null != requestHnr) {
+            session.setAttribute(HNR_KEY, new Hoerernummer(requestHnr));
+            LOGGER.debug("Hörernummer {} für HttpSession {} gesetzt", requestHnr, session.getId());
+        } else {
+            session.setAttribute(HNR_KEY, Hoerernummer.UNBEKANNT);
+            LOGGER.debug("Unbekannter Hörer für HttpSession {} gesetzt", session.getId());
+        }
     }
 
     @Override

@@ -22,7 +22,7 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -63,7 +63,7 @@ public class RepositoryTestAppConfig {
 
     @Bean
     public WarenkorbRepository warenkorbRepository() {
-        return new WarenkorbRepository(Paths.get("target"));
+        return new WarenkorbRepository(Path.of("target"));
     }
 
 }

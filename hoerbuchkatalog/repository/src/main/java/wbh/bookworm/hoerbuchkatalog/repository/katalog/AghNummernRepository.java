@@ -34,17 +34,17 @@ class AghNummernRepository {
 
     private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
 
-    private final RepositoryArchiv repositoryArchiv;
+    private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
     @Autowired
     AghNummernRepository(final HoerbuchkatalogConfig hoerbuchkatalogConfig,
-                         final RepositoryArchiv repositoryArchiv) {
+                         final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
-        this.repositoryArchiv = repositoryArchiv;
+        this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
     }
 
-    Set<AghNummer> importiereKatalogAusArchiv() throws ImportFailedException {
-        final Optional<Path> fileName = repositoryArchiv.findeAktuellstenKatalog("isofiles.zip");
+    Set<AghNummer> importiereKatalogAusArchiv() {
+        final Optional<Path> fileName = hoerbuchkatalogArchiv.findeAktuellstenKatalog("isofiles.zip");
         if (fileName.isPresent()) {
             return importiereKatalog(fileName.get());
         } else {
@@ -53,7 +53,7 @@ class AghNummernRepository {
         }
     }
 
-    void aktualisiereKatalogImArchiv() throws ImportFailedException {
+    void aktualisiereKatalogImArchiv() {
         final String url = hoerbuchkatalogConfig.getBlistaDlsCatalogRestUrl();
         LOGGER.info("Aktualisiere AGH Nummern von {}", url);
         try {
@@ -61,19 +61,19 @@ class AghNummernRepository {
             if (Files.exists(downloadPath)) {
                 final Path isofilesZip = downloadPath.getParent().resolve("isofiles.zip");
                 Files.move(downloadPath, isofilesZip);
-                repositoryArchiv.archiviereKatalog(isofilesZip);
+                hoerbuchkatalogArchiv.archiviereKatalog(isofilesZip);
             } else {
                 final String message =
                         String.format("Datei (%s) mit AGH Nummern existiert nach Download nicht",
                                 downloadPath);
-                throw new ImportFailedException(message);
+                throw new HoerbuchkatalogArchivException(message);
             }
         } catch (Exception e) {
-            throw new ImportFailedException("Kann AGH Nummern nicht aktualisieren", e);
+            throw new HoerbuchkatalogArchivException("Kann AGH Nummern nicht aktualisieren", e);
         }
     }
 
-    private Set<AghNummer> importiereKatalog(final Path katalogZip) throws ImportFailedException {
+    private Set<AghNummer> importiereKatalog(final Path katalogZip) {
         LOGGER.info("Importiere AGH Nummern aus {}", katalogZip);
         final Set<AghNummer> aghNummern = new TreeSet<>(AghNummer::compareTo);
         try {
@@ -86,7 +86,7 @@ class AghNummernRepository {
             });
             LOGGER.info("Insgesamt {} AGH Nummern importiert", aghNummern.size());
         } catch (Exception e) {
-            throw new ImportFailedException(e);
+            throw new HoerbuchkatalogArchivException(e);
         }
         return aghNummern;
     }

@@ -7,9 +7,11 @@
 package wbh.bookworm.platform.ddd.spring;
 
 import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
 
 import static org.springframework.beans.factory.config.BeanDefinition.SCOPE_SINGLETON;
 
 @Scope(SCOPE_SINGLETON)
+@Component
 public @interface Singleton {
 }
