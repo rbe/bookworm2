@@ -6,9 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.platform.ddd.repository.RepositoryArchive;
-import wbh.bookworm.platform.ddd.repository.RepositoryArchiveException;
-import wbh.bookworm.platform.ddd.spring.Singleton;
+import aoc.ddd.repository.RepositoryArchive;
+import aoc.ddd.repository.RepositoryArchiveException;
+import aoc.ddd.spring.Singleton;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

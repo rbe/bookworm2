@@ -7,7 +7,8 @@
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+
+import aoc.ddd.repository.DomainRespositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

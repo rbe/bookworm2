@@ -7,7 +7,8 @@
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.event.DomainEvent;
+
+import aoc.ddd.event.DomainEvent;
 
 public abstract class HoerbuchkatalogEvent extends DomainEvent {
 

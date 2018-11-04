@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import wbh.bookworm.platform.ddd.model.DomainAggregate;
+import aoc.ddd.model.DomainAggregate;
 
 import java.util.Objects;
 

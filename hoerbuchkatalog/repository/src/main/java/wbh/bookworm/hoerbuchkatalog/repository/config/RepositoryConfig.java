@@ -10,7 +10,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
-import wbh.bookworm.platform.ddd.search.LuceneIndex;
+
+import aoc.ddd.search.LuceneIndex;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;

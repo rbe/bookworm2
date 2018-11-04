@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import wbh.bookworm.platform.ddd.model.DomainId;
+import aoc.ddd.model.DomainId;
 
 public class EmailId extends DomainId<String> {
 

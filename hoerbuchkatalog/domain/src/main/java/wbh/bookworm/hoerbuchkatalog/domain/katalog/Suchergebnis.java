@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.platform.ddd.model.DomainValueObject;
+import aoc.ddd.model.DomainValueObject;
 
 import java.util.List;
 

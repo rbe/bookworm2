@@ -11,8 +11,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechVonDerMerklisteEn
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
+
+import aoc.ddd.repository.DomainRespositoryComponent;
+import aoc.ddd.repository.JsonDomainRepository;
 
 import java.util.Optional;
 

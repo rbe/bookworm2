@@ -9,14 +9,13 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter.Feld;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.search.BooleanQueryBuilder;
-import wbh.bookworm.platform.ddd.search.LuceneIndex;
-import wbh.bookworm.platform.ddd.search.LuceneQuery;
-import wbh.bookworm.platform.ddd.search.QueryParameters.Field;
-import wbh.bookworm.platform.ddd.search.QueryParameters.Occur;
+
+import aoc.ddd.model.DomainId;
+import aoc.ddd.search.BooleanQueryBuilder;
+import aoc.ddd.search.LuceneIndex;
+import aoc.ddd.search.LuceneQuery;
+import aoc.ddd.search.QueryParameters;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,21 +53,21 @@ final class HoerbuchkatalogSuche {
         //final String stichwort = suchparameter.wert(Feld.STICHWORT);
         LOGGER.info("Suche nach Stichwort '{}'", stichwort);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
-                .add(new Field(Feld.AUTOR.name(), Occur.SHOULD), stichwort)
-                .add(new Field(Feld.TITEL.name(), Occur.SHOULD), stichwort)
-                .add(new Field(Feld.UNTERTITEL.name(), Occur.SHOULD), stichwort)
-                .add(new Field(Feld.ERLAEUTERUNG.name(), Occur.SHOULD), stichwort)
-                .add(new Field(Feld.SUCHWOERTER.name(), Occur.SHOULD), stichwort);
+                .add(new QueryParameters.Field(Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .add(new QueryParameters.Field(Suchparameter.Feld.TITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .add(new QueryParameters.Field(Suchparameter.Feld.UNTERTITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .add(new QueryParameters.Field(Suchparameter.Feld.ERLAEUTERUNG.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .add(new QueryParameters.Field(Suchparameter.Feld.SUCHWOERTER.name(), QueryParameters.Occur.SHOULD), stichwort);
         final List<Titelnummer> titelnummern =
                 LuceneQuery.query(this.luceneIndex, booleanQueryBuilder,
-                        Feld.AUTOR.name(), Feld.TITEL.name())
+                        Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name())
                         .stream()
                         .map(dddId -> new Titelnummer(dddId.getValue()))
                         .collect(Collectors.toUnmodifiableList());
 /*
        TODO if (titelnummern.size() <= 1000) {
 */
-            return new Suchergebnis(new Suchparameter().hinzufuegen(Feld.STICHWORT, stichwort),
+            return new Suchergebnis(new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort),
                     titelnummern);
 /*
         } else {
@@ -80,11 +79,11 @@ final class HoerbuchkatalogSuche {
     Suchergebnis suchen(final Suchparameter suchparameter) {
         LOGGER.info("Suche nach {}", suchparameter);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
-                .add(new Field(Feld.SACHGEBIET.name(), Occur.SHOULD), suchparameter.wert(Feld.SACHGEBIET));
+                .add(new QueryParameters.Field(Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.SHOULD), suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
         suchparameter.getFelderMitWerten().keySet()
-                .forEach(k -> booleanQueryBuilder.add(new Field(k.name(), Occur.MUST), suchparameter.wert(k)));
+                .forEach(k -> booleanQueryBuilder.add(new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST), suchparameter.wert(k)));
         final List<DomainId<?>> result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder,
-                Feld.AUTOR.name(), Feld.TITEL.name());
+                Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         return new Suchergebnis(suchparameter, result.stream()
                 .map(dddId -> new Titelnummer(dddId.getValue()))
                 .collect(Collectors.toList())

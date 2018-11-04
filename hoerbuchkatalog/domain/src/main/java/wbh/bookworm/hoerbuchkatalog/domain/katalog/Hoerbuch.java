@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.platform.ddd.model.DomainEntity;
+import aoc.ddd.model.DomainEntity;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

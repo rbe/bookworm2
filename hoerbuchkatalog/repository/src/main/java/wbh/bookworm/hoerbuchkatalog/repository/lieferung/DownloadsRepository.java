@@ -10,7 +10,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDlsDownload;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.VerfuegbareDownloads;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+
+import aoc.ddd.repository.DomainRespositoryComponent;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

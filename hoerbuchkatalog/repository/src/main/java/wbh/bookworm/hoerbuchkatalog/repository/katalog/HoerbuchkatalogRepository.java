@@ -10,8 +10,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.model.DomainId;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
+
+import aoc.ddd.model.DomainId;
+import aoc.ddd.repository.DomainRespositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

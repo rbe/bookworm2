@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
+import aoc.ddd.repository.JsonDomainRepository;
 
 import org.springframework.stereotype.Component;
 

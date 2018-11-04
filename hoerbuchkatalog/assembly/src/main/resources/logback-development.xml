@@ -37,10 +37,10 @@
     <logger name="wbh.bookworm.platform" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.platform.ddd.event" level="TRACE" additivity="false">
+    <logger name="aoc.ddd.event" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.platform.jsf" level="TRACE" additivity="false">
+    <logger name="aoc.jsf" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">

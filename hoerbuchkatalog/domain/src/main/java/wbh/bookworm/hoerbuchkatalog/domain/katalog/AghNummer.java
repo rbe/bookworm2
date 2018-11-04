@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.platform.ddd.model.DomainSingleValueObject;
+import aoc.ddd.model.DomainSingleValueObject;
 
 import java.util.regex.Pattern;
 

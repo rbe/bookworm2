@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import wbh.bookworm.platform.ddd.model.DomainAggregate;
+import aoc.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

@@ -8,8 +8,9 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.event.DomainEventPublisher;
-import wbh.bookworm.platform.ddd.model.DomainAggregate;
+
+import aoc.ddd.event.DomainEventPublisher;
+import aoc.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

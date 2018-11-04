@@ -11,9 +11,10 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.repository.DomainRespositoryComponent;
-import wbh.bookworm.platform.ddd.repository.JsonDomainRepository;
-import wbh.bookworm.platform.ddd.repository.Predicate;
+
+import aoc.ddd.repository.DomainRespositoryComponent;
+import aoc.ddd.repository.JsonDomainRepository;
+import aoc.ddd.repository.Predicate;
 
 import java.util.Collection;
 import java.util.Collections;

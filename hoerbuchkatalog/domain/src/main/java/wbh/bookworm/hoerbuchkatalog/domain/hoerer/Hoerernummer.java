@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import wbh.bookworm.platform.ddd.model.DomainId;
+import aoc.ddd.model.DomainId;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;

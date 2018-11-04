@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import wbh.bookworm.platform.ddd.model.DomainSingleValueObject;
+import aoc.ddd.model.DomainSingleValueObject;
 
 public class HoererEmail extends DomainSingleValueObject<HoererEmail, String> {
 

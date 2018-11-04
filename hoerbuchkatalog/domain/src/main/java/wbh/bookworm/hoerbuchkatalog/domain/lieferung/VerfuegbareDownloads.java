@@ -7,7 +7,8 @@
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.ddd.model.DomainValueObject;
+
+import aoc.ddd.model.DomainValueObject;
 
 import java.time.LocalDateTime;
 import java.util.List;

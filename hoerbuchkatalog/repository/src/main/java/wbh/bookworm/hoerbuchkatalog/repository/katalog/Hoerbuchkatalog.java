@@ -11,7 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.ddd.model.DomainAggregate;
+
+import aoc.ddd.model.DomainAggregate;
 
 import java.util.Arrays;
 import java.util.List;
