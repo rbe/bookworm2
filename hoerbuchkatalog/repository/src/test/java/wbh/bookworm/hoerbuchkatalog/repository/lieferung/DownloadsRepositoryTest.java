@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.VerfuegbareDownloads;
 
 import org.junit.jupiter.api.Test;

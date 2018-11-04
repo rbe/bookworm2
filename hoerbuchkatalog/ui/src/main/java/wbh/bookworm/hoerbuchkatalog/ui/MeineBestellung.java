@@ -11,7 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.platform.jsf.ELValueCache;
+
+import aoc.jsf.ELValueCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

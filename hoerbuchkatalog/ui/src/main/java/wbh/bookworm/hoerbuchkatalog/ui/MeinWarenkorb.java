@@ -13,9 +13,10 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.platform.jsf.ELFunctionCache;
-import wbh.bookworm.platform.jsf.ELValueCache;
-import wbh.bookworm.platform.jsf.ELValueCacheGroup;
+
+import aoc.jsf.ELFunctionCache;
+import aoc.jsf.ELValueCache;
+import aoc.jsf.ELValueCacheGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
