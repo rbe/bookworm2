@@ -15,13 +15,14 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
 
+import java.nio.file.Path;
 import java.util.Optional;
 
 @DomainRespositoryComponent
 public class MerklisteRepository extends JsonDomainRepository<Merkliste, MerklisteId> {
 
-    public MerklisteRepository() {
-        super(Merkliste.class, MerklisteId.class);
+    public MerklisteRepository(final Path storagePath) {
+        super(Merkliste.class, MerklisteId.class, storagePath);
         saveOnEvent(logger, HoerbuechAufDieMerklisteGesetzt.class);
         saveOnEvent(logger, HoerbuechVonDerMerklisteEntfernt.class);
     }

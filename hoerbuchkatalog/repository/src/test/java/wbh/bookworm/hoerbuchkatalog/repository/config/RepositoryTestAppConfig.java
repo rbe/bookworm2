@@ -7,8 +7,11 @@
 package wbh.bookworm.hoerbuchkatalog.repository.config;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateRepository;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 
 import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
@@ -37,7 +40,9 @@ public class RepositoryTestAppConfig {
     @Bean
     static PropertyPlaceholderConfigurer bookwormProperties() {
         final PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
-        propertyPlaceholderConfigurer.setLocations(new ClassPathResource("/conf/hoerbuchkatalog.properties"));
+        propertyPlaceholderConfigurer.setLocations(
+                new ClassPathResource("/conf/hoerbuchkatalog.properties")
+        );
         return propertyPlaceholderConfigurer;
     }
 
@@ -63,7 +68,22 @@ public class RepositoryTestAppConfig {
 
     @Bean
     public WarenkorbRepository warenkorbRepository() {
-        return new WarenkorbRepository(Path.of("target"));
+        return new WarenkorbRepository(Path.of("target/var"));
+    }
+
+    @Bean
+    public MerklisteRepository merklisteRepository() {
+        return new MerklisteRepository(Path.of("target/var"));
+    }
+
+    @Bean
+    public BestellungRepository bestellungRepository() {
+        return new BestellungRepository(Path.of("target/var"));
+    }
+
+    @Bean
+    public EmailTemplateRepository emailTemplateRepository() {
+        return new EmailTemplateRepository(Path.of("target/var"));
     }
 
 }

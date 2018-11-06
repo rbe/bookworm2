@@ -51,7 +51,7 @@ public interface DomainRepository
         return Optional.empty();
     }
 
-    default Optional<Set<AGG>> find(Predicate... predicates) {
+    default Optional<Set<AGG>> find(QueryPredicate... queryPredicates) {
         return Optional.empty();
     }
 
@@ -73,6 +73,7 @@ public interface DomainRepository
     }
 
     default long countAll() {
+        // TODO Performance: count all files, do not load all
         return loadAll().orElseThrow(DomainRepositoryException::new).size();
     }
 

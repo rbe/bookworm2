@@ -27,10 +27,10 @@ final class HoerbuchkatalogConfig {
     @Value("${wbh.gesamtdat.charset}")
     private String wbhGesamtdatCharset;
 
-    @Value("${blista.dlscatalog.rest.url}")
+    @Value("${blista.katalog.rest.url}")
     private String blistaDlsCatalogRestUrl;
 
-    @Value("${blista.dlscatalog.aghnummern.path_in_zip}")
+    @Value("${blista.katalog.aghnummern.path_in_zip}")
     private String blistaDlsCatalogAghNummernPathInZip;
 
     Path getHoerbuchkatalogDirectory() {
@@ -49,11 +49,11 @@ final class HoerbuchkatalogConfig {
         return hoerbuchkatalogCronExpression;
     }
 
-    String getBlistaDlsCatalogRestUrl() {
+    String getBlistaKatalogRestUrl() {
         return blistaDlsCatalogRestUrl;
     }
 
-    String getBlistaDlsCatalogAghNummernPathInZip() {
+    String getBlistaKatalogAghNummernPathInZip() {
         return blistaDlsCatalogAghNummernPathInZip;
     }
 

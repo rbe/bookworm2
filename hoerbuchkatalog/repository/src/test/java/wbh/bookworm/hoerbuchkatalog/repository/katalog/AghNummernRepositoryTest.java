@@ -34,7 +34,7 @@ class AghNummernRepositoryTest {
 
     @Test
     void shouldFindeImportierteAghNummern() {
-        final Set<AghNummer> aghNummern = aghNummernRepository.importiereKatalogAusArchiv();
+        final Set<AghNummer> aghNummern = aghNummernRepository.importiere();
         aghNummern.forEach(a -> {
             LOGGER.info("AGH Nummer {} in Set enthalten: {}", a, aghNummern.contains(a));
         });

@@ -59,11 +59,6 @@ public abstract class JsonDomainRepository
 
     private final ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
 
-    // TODO @Deprecated define storagePath
-    public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass) {
-        this(aggClass, idClass, Path.of("."));
-    }
-
     public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass,
                                 final Path storagePath) {
         Objects.requireNonNull(aggClass);
@@ -74,8 +69,8 @@ public abstract class JsonDomainRepository
         Objects.requireNonNull(storagePath);
         logger.trace("Initizialing with default storage path '{}'", storagePath.toAbsolutePath());
         aggregateStoragePath = storagePath
-                .resolve(this.getClass().getSimpleName())
-                .resolve(Path.of(String.format("%s/%s", aggClass.getPackageName(), aggClass.getSimpleName())));
+                //.resolve(this.getClass().getSimpleName())
+                .resolve(Path.of(String.format("%s.%s", aggClass.getPackageName(), aggClass.getSimpleName())));
         try {
             Files.createDirectories(aggregateStoragePath);
         } catch (IOException e) {
@@ -306,11 +301,11 @@ public abstract class JsonDomainRepository
 
     @Override
     @SuppressWarnings({"unchecked"})
-    public final Optional<Set<AGG>> find(final Predicate... predicates) {
+    public final Optional<Set<AGG>> find(final QueryPredicate... queryPredicates) {
         return Optional.of(loadAll()
                 .orElseThrow()
                 .stream()
-                .filter(agg -> Arrays.stream(predicates).anyMatch(predicate -> {
+                .filter(agg -> Arrays.stream(queryPredicates).anyMatch(predicate -> {
                     try {
                         final String fieldName = predicate.getField();
                         final String getter = "get" + fieldName.substring(0, 1).toUpperCase()

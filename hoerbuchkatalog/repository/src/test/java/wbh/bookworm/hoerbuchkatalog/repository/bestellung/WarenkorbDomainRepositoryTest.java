@@ -78,14 +78,4 @@ class WarenkorbDomainRepositoryTest {
         assertTrue(downloadWarenkorb2.get().enthalten(new Titelnummer("456")));
     }
 
-/*
-    private static class WarenkorbDomainRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
-
-        WarenkorbDomainRepository() {
-            super(Warenkorb.class, WarenkorbId.class, Path.of("target"));
-        }
-
-    }
-*/
-
 }

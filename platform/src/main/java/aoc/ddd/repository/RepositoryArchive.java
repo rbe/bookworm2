@@ -54,7 +54,7 @@ public final class RepositoryArchive {
         return new String[]{name, extension};
     }
 
-    public void archive(final Path fromFile) throws RepositoryArchiveException {
+    public Path archive(final Path fromFile) throws RepositoryArchiveException {
         final String[] fext = filenameAndExtension(fromFile.getFileName().toString());
         final String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
@@ -65,6 +65,7 @@ public final class RepositoryArchive {
         try {
             Files.move(fromFile, archivedFile, StandardCopyOption.REPLACE_EXISTING);
             LOGGER.info("Archived file '{}' to '{}'", fromFile, archivedFile);
+            return archivedFile;
         } catch (IOException e) {
             throw new RepositoryArchiveException(String.format("Canot archive file '%s'", fromFile), e);
         }

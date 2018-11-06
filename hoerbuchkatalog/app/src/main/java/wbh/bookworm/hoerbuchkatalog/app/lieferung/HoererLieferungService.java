@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.app.lieferung.hoerer;
+package wbh.bookworm.hoerbuchkatalog.app.lieferung;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -54,12 +54,6 @@ public class DownloadsRepository {
 
     private static final int PUSHBACK_BUFFER_SIZE = 80;
 
-    private static final String DLS_KATALOG_URL = "https://rest-dls-katalog.blista.de:443/v1/werke";
-
-    private static final String BIBLIOTHEK = "wbh06";
-
-    private static final String BIBKENNWORT = "qWr!by5FbaPzb8XaQ";
-
     private static class TrimmingStringDeserializer extends FromStringDeserializer<String> {
 
         private static final long serialVersionUID = 1L;
@@ -233,6 +227,12 @@ public class DownloadsRepository {
 
     }
 
+    private final DownloadsConfig downloadsConfig;
+
+    public DownloadsRepository(final DownloadsConfig downloadsConfig) {
+        this.downloadsConfig = downloadsConfig;
+    }
+
     private Class<? extends DlsAntwort>
     errateAntworttyp(final PushbackInputStream inputStream) throws IOException {
         final byte[] b = new byte[PUSHBACK_BUFFER_SIZE];
@@ -275,8 +275,8 @@ public class DownloadsRepository {
                           final String typ, final URL url) throws IOException {
         final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setInstanceFollowRedirects(true);
-        connection.addRequestProperty("bibliothek", BIBLIOTHEK);
-        connection.addRequestProperty("bibkennwort", BIBKENNWORT);
+        connection.addRequestProperty("bibliothek", downloadsConfig.getBibliothek());
+        connection.addRequestProperty("bibkennwort", downloadsConfig.getBibkennwort());
         connection.addRequestProperty("Accept", "text/xml;charset=UTF-8");
         final String filename = String.format("%s-%s-%s.xml", hoerernummer, typ,
                 LocalDateTime.now()
@@ -287,9 +287,9 @@ public class DownloadsRepository {
         return Path.of(filename);
     }
 
-    Optional<DlsWerke> werke(final Hoerernummer hoerernummer) {
+    Optional<DlsWerke> alleWerkeLaden(final Hoerernummer hoerernummer) {
         try {
-            final URL url = new URL(String.format("%s/%s", DLS_KATALOG_URL,
+            final URL url = new URL(String.format("%s/%s", downloadsConfig.getBlistaDlsRestUrl(),
                     hoerernummer.getValue()));
             final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(download(hoerernummer, "werke", url)));
@@ -308,10 +308,10 @@ public class DownloadsRepository {
         }
     }
 
-    Optional<DlsBestellung> bestellung(final Hoerernummer hoerernummer, final AghNummer aghNummer) {
+    Optional<DlsBestellung> bestellungLaden(final Hoerernummer hoerernummer, final AghNummer aghNummer) {
         final long startBook = System.nanoTime();
         try {
-            final URL url = new URL(String.format("%s/%s/%s", DLS_KATALOG_URL,
+            final URL url = new URL(String.format("%s/%s/%s", downloadsConfig.getBlistaDlsRestUrl(),
                     hoerernummer.getValue(), aghNummer.getValue()));
             final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(download(hoerernummer, "bestellung-" + aghNummer, url)));
@@ -334,13 +334,13 @@ public class DownloadsRepository {
 
     public VerfuegbareDownloads lieferungen(final Hoerernummer hoerernummer) {
         long startWerke = System.nanoTime();
-        final Optional<DlsWerke> werke = werke(hoerernummer);
+        final Optional<DlsWerke> werke = alleWerkeLaden(hoerernummer);
         if (werke.isPresent()) {
             final List<BlistaDlsDownload> bereitgestellteDownloads = werke.get()
                     .books.parallelStream()
                     .map(book -> {
                         final AghNummer aghNummer = new AghNummer(book.Aghnummer);
-                        final Optional<DlsBestellung> bestellung = bestellung(hoerernummer, aghNummer);
+                        final Optional<DlsBestellung> bestellung = bestellungLaden(hoerernummer, aghNummer);
                         if (bestellung.isPresent()) {
                             final DlsBestellung dlsBestellung = bestellung.get();
                             return new BlistaDlsDownload(

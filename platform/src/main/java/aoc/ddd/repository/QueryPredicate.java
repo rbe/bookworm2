@@ -6,18 +6,18 @@
 
 package aoc.ddd.repository;
 
-public abstract class Predicate {
+public abstract class QueryPredicate {
 
     protected final String field;
 
     protected final String value;
 
-    private Predicate(final String field, final String value) {
+    private QueryPredicate(final String field, final String value) {
         this.field = field;
         this.value = value;
     }
 
-    public static final class Equals extends Predicate {
+    public static final class Equals extends QueryPredicate {
 
         private Equals(final String field, final String value) {
             super(field, value);

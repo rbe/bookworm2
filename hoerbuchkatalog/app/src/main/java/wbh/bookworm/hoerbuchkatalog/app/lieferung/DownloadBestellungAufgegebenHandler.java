@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.app.lieferung.download;
+package wbh.bookworm.hoerbuchkatalog.app.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailTemplateBuilder;

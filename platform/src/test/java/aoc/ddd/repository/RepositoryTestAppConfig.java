@@ -9,6 +9,9 @@ package aoc.ddd.repository;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+
+import java.nio.file.Path;
 
 @SpringBootApplication(scanBasePackageClasses = {
         DomainRepository.class
@@ -16,4 +19,10 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @SpringBootConfiguration
 @EnableConfigurationProperties
 public class RepositoryTestAppConfig {
+
+    @Bean
+    public AnAggregateRepository anAggregateRepository() {
+        return new AnAggregateRepository(Path.of("target/var"));
+    }
+
 }

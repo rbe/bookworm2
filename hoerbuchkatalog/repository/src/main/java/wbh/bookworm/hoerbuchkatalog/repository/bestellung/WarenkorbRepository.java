@@ -26,17 +26,13 @@ import java.util.Optional;
 @DomainRespositoryComponent
 public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
 
-    public WarenkorbRepository() {
-        super(Warenkorb.class, WarenkorbId.class);
+    public WarenkorbRepository(final Path storagePath) {
+        super(Warenkorb.class, WarenkorbId.class, storagePath);
         saveOnEvent(logger, CdInDenWarenkorbGelegt.class);
         saveOnEvent(logger, CdAusDemWarenkorbEntfernt.class);
         saveOnEvent(logger, DownloadInDenWarenkorbGelegt.class);
         saveOnEvent(logger, DownloadAusDemWarenkorbEntfernt.class);
         saveOnEvent(logger, WarenkorbGeleert.class);
-    }
-
-    public WarenkorbRepository(final Path storagePath) {
-        super(Warenkorb.class, WarenkorbId.class, storagePath);
     }
 
     private WarenkorbId cdWarenkorbIdFuerHoerer(final Hoerernummer hoerernummer) {

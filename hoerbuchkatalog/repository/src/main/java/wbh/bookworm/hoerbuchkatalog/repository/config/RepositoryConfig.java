@@ -9,6 +9,8 @@ package wbh.bookworm.hoerbuchkatalog.repository.config;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
 
 import aoc.ddd.search.LuceneIndex;
@@ -23,6 +25,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -56,6 +59,21 @@ public class RepositoryConfig {
     @Bean
     public TaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
+    }
+
+    @Bean
+    public WarenkorbRepository warenkorbRepository() {
+        return new WarenkorbRepository(Path.of("var"));
+    }
+
+    @Bean
+    public MerklisteRepository merklisteRepository() {
+        return new MerklisteRepository(Path.of("var"));
+    }
+
+    @Bean
+    public BestellungRepository bestellungRepository() {
+        return new BestellungRepository(Path.of("var"));
     }
 
     /*

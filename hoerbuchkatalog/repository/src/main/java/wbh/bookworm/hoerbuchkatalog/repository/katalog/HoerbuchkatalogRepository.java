@@ -59,8 +59,7 @@ public final class HoerbuchkatalogRepository
                               final HoerbuchkatalogMapper hoerbuchkatalogMapper,
                               final AghNummernRepository aghNummernRepository,
                               final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
-        /*super(Hoerbuchkatalog.class, HoerbuchkatalogId.class,
-                hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());*/
+        /* TODO super(Hoerbuchkatalog.class, HoerbuchkatalogId.class, hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());*/
         this.applicationContext = applicationContext;
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
         this.taskScheduler = taskScheduler;
@@ -164,22 +163,22 @@ public final class HoerbuchkatalogRepository
 
     private void aktualisiereArchiv() {
         try {
-            hoerbuchkatalogMapper.aktualisiereKatalogImArchiv();
+            hoerbuchkatalogMapper.aktualisiereArchiv();
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: " + e.getMessage(), e);
         }
         try {
-            aghNummernRepository.aktualisiereKatalogImArchiv();
+            aghNummernRepository.aktualisiereArchiv();
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung der AGH Nummern nicht erfolgt: " + e.getMessage(), e);
         }
         hoerbuchkatalog(true);
     }
 
-    private Set<Hoerbuch> importiereHoerbuchkatalogAusArchiv(final Path fileName) {
+    private Set<Hoerbuch> importiereHoerbuchkatalogAusArchiv(final Path gesamtDat) {
         Set<Hoerbuch> hoerbuecher = null;
         try {
-            hoerbuecher = hoerbuchkatalogMapper.importiereKatalogAusArchiv(fileName);
+            hoerbuecher = hoerbuchkatalogMapper.importiereAusArchiv(gesamtDat);
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.error("Unbekannter Fehler beim Importieren des Hörbuchkatalogs aus dem Archiv", e);
         }
@@ -189,7 +188,7 @@ public final class HoerbuchkatalogRepository
     private Set<AghNummer> importiereAghNummernAusArchiv() {
         Set<AghNummer> aghNummern = null;
         try {
-            aghNummern = aghNummernRepository.importiereKatalogAusArchiv();
+            aghNummern = aghNummernRepository.importiere();
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.error("Unbekannter Fehler beim Importieren der AGH Nummern aus dem Archiv", e);
         }

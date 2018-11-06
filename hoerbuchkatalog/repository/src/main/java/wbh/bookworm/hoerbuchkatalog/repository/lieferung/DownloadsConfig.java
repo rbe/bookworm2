@@ -17,15 +17,29 @@ final class DownloadsConfig {
     @Value("${blista.dls.directory}")
     private Path blistaDlsDirectory;
 
-    @Value("${blista.dlscatalog.rest.url}")
-    private String blistaDlsCatalogRestUrl;
+    @Value("${blista.dls.rest.url}")
+    private String blistaDlsRestUrl;
+
+    @Value("${blista.dls.rest.bibliothek}")
+    private String bibliothek;
+
+    @Value("${blista.dls.rest.bibkennwort}")
+    private String bibkennwort;
 
     Path getBlistaDlsDirectory() {
         return blistaDlsDirectory;
     }
 
-    String getBlistaDlsCatalogRestUrl() {
-        return blistaDlsCatalogRestUrl;
+    String getBlistaDlsRestUrl() {
+        return blistaDlsRestUrl;
+    }
+
+    String getBibliothek() {
+        return bibliothek;
+    }
+
+    String getBibkennwort() {
+        return bibkennwort;
     }
 
 }

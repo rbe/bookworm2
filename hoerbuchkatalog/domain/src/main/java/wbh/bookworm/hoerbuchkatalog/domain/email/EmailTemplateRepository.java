@@ -6,17 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
+import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
-
-import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
 
-@Component
+@DomainRespositoryComponent
 public class EmailTemplateRepository extends JsonDomainRepository<HtmlEmailTemplate, EmailTemplateId> {
 
-    public EmailTemplateRepository() {
-        super(HtmlEmailTemplate.class, EmailTemplateId.class, Path.of("."));
+    public EmailTemplateRepository(final Path storagePath) {
+        super(HtmlEmailTemplate.class, EmailTemplateId.class, storagePath);
     }
 
     public HtmlEmailTemplate erstellen(final String html) {

@@ -46,8 +46,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private LocalDateTime zeitpunktAbgeschickt;
 
-    private boolean abgeschickt;
-
     @JsonCreator
     public Bestellung(final @JsonProperty("domainId") BestellungId bestellungId,
                       final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
@@ -58,8 +56,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
                       final @JsonProperty("cdTitelnummern") Set<Titelnummer> cdTitelnummern,
                       final @JsonProperty("downloadTitelnummern") Set<Titelnummer> downloadTitelnummern,
-                      final @JsonProperty("zeitpunktAbgeschickt") LocalDateTime zeitpunktAbgeschickt,
-                      final @JsonProperty("abgeschickt") boolean abgeschickt) {
+                      final @JsonProperty("zeitpunktAbgeschickt") LocalDateTime zeitpunktAbgeschickt) {
         super(bestellungId);
         this.hoerername = hoerername;
         this.hoerernummer = hoerernummer;
@@ -70,7 +67,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         this.cdTitelnummern = cdTitelnummern;
         this.downloadTitelnummern = downloadTitelnummern;
         this.zeitpunktAbgeschickt = zeitpunktAbgeschickt;
-        this.abgeschickt = abgeschickt;
     }
 
     public Bestellung(final BestellungId bestellungId,
@@ -86,7 +82,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                 bemerkung,
                 bestellkarteMischen, alteBestellkarteLoeschen,
                 new TreeSet<>(cdTitelnummern), new TreeSet<>(downloadTitelnummern),
-                null, false);
+                null);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -129,16 +125,16 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         return !downloadTitelnummern.isEmpty();
     }
 
-    public void aufgeben() {
-        if (!abgeschickt) {
+    public LocalDateTime aufgeben() {
+        if (null == zeitpunktAbgeschickt) {
             LOGGER.info("Bestellung {} für Hörer {} wird aufgegeben", domainId, hoerernummer);
             zeitpunktAbgeschickt = LocalDateTime.now();
-            abgeschickt = true;
             DomainEventPublisher.global()
                     .publish(new BestellungAufgegeben(hoerernummer, this));
         } else {
             LOGGER.error("Bestellung {} für Hörer {} wurde bereits abgeschickt", domainId, hoerernummer);
         }
+        return zeitpunktAbgeschickt;
     }
 
     public LocalDateTime getZeitpunktAbgeschickt() {
@@ -146,22 +142,24 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
     }
 
     public boolean inAktuellemMonatAbgeschickt() {
-        if (!abgeschickt) return false;
-        final LocalDateTime now = LocalDateTime.now();
-        return zeitpunktAbgeschickt.getYear() == now.getYear()
-                && zeitpunktAbgeschickt.getMonth() == now.getMonth();
+        if (null != zeitpunktAbgeschickt) {
+            return false;
+        } else {
+            final LocalDateTime now = LocalDateTime.now();
+            return zeitpunktAbgeschickt.getYear() == now.getYear()
+                    && zeitpunktAbgeschickt.getMonth() == now.getMonth();
+        }
     }
 
     public boolean heuteAbgeschickt() {
-        if (!abgeschickt) return false;
-        final LocalDateTime now = LocalDateTime.now();
-        return zeitpunktAbgeschickt.getYear() == now.getYear()
-                && zeitpunktAbgeschickt.getMonth() == now.getMonth()
-                && zeitpunktAbgeschickt.getDayOfMonth() == now.getDayOfMonth();
-    }
-
-    public boolean isAbgeschickt() {
-        return abgeschickt;
+        if (null != zeitpunktAbgeschickt) {
+            return false;
+        } else {
+            final LocalDateTime now = LocalDateTime.now();
+            return zeitpunktAbgeschickt.getYear() == now.getYear()
+                    && zeitpunktAbgeschickt.getMonth() == now.getMonth()
+                    && zeitpunktAbgeschickt.getDayOfMonth() == now.getDayOfMonth();
+        }
     }
 
     @Override

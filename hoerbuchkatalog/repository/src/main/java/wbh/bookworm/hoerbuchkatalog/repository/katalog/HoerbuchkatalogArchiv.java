@@ -26,9 +26,9 @@ final class HoerbuchkatalogArchiv {
                 hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());
     }
 
-    void archiviereKatalog(final Path katalogDatei) {
+    Path archiviereKatalog(final Path katalogDatei) {
         try {
-            repositoryArchive.archive(katalogDatei);
+            return repositoryArchive.archive(katalogDatei);
         } catch (RepositoryArchiveException e) {
             throw new HoerbuchkatalogArchivException(String.format(
                     "Kann Katalog '%s' nicht archivieren", katalogDatei), e);

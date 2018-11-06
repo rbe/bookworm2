@@ -18,10 +18,9 @@ import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.util.Collections;
+import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -41,38 +40,36 @@ final class HoerbuchkatalogMapper {
         this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
     }
 
-    void aktualisiereKatalogImArchiv() {
-        LOGGER.info("Aktualisiere Hörbuchkatalog");
+    void aktualisiereArchiv() {
         final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
-        final Path gesamtdat = hoerbuchkatalogDirectory.resolve(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
-        if (Files.exists(gesamtdat)) {
-            hoerbuchkatalogArchiv.archiviereKatalog(gesamtdat);
+        final Path gesamtDat = hoerbuchkatalogDirectory.resolve(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
+        if (Files.exists(gesamtDat)) {
+            LOGGER.info("Aktualisiere Hörbuchkatalog aus Archiv '{}'", gesamtDat);
+            hoerbuchkatalogArchiv.archiviereKatalog(gesamtDat);
         } else {
-            LOGGER.info("Keine neue Gesamt.dat gefunden");
+            LOGGER.info("'{}' nicht gefunden", gesamtDat);
         }
     }
 
-    Set<Hoerbuch> importiereKatalogAusArchiv(final Path fileName) {
-        if (null != fileName) {
-            final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
-            final Path gesamtDat = hoerbuchkatalogDirectory.resolve(fileName);
-            final Charset wbhGesamtdatCharset = hoerbuchkatalogConfig.getWbhGesamtdatCharset();
-            LOGGER.info("Importiere Hörbücher aus {}", gesamtDat);
-            try {
-                final Set<Hoerbuch> hoerbuecher = gesamtDatEinlesen(gesamtDat, wbhGesamtdatCharset);
-                LOGGER.info("Insgesamt {} Hörbücher importiert", hoerbuecher.size());
-                return hoerbuecher;
-            } catch (IOException e) {
-                throw new HoerbuchkatalogArchivException(e);
-            }
-        } else {
-            LOGGER.warn("Keinen Hörbuchkatalog im Archiv gefunden");
-            return Collections.emptySet();
+    Set<Hoerbuch> importiereAusArchiv(final Path gesamtDat) {
+        Objects.requireNonNull(gesamtDat);
+        LOGGER.info("Importiere Hörbücher aus Archiv '{}'", gesamtDat);
+        try {
+            final Set<Hoerbuch> hoerbuecher = gesamtDatEinlesen(gesamtDat);
+            LOGGER.info("Insgesamt {} Hörbücher aus Archiv '{}' importiert", gesamtDat, hoerbuecher.size());
+            return hoerbuecher;
+        } catch (IOException e) {
+            throw new HoerbuchkatalogArchivException(e);
         }
+//        } else {
+//            LOGGER.warn("Keinen Hörbuchkatalog im Archiv gefunden");
+//            return Collections.emptySet();
+//        }
     }
 
-    private Set<Hoerbuch> gesamtDatEinlesen(final Path gesamtDat, final Charset charset) throws IOException {
-        try (final BufferedReader reader = Files.newBufferedReader(gesamtDat, charset)) {
+    private Set<Hoerbuch> gesamtDatEinlesen(final Path gesamtDat) throws IOException {
+        try (final BufferedReader reader = Files.newBufferedReader(
+                gesamtDat, hoerbuchkatalogConfig.getWbhGesamtdatCharset())) {
             final Set<Hoerbuch> hoerbuecher = new TreeSet<>();
             String line;
             while (null != (line = reader.readLine()) && line.trim().length() > 1) {
@@ -107,7 +104,7 @@ final class HoerbuchkatalogMapper {
 
     private Hoerbuch ausGesamtDatEintrag(final String zeile) {
         LOGGER.trace("Erzeuge Hörbuch aus Gesamt.dat: {}", zeile);
-        String[] arr = new String[COLUMN_POSITIONS.length / 2];
+        final String[] arr = new String[COLUMN_POSITIONS.length / 2];
         for (int cp = 0; cp < COLUMN_POSITIONS.length; cp += 2) {
             int from = COLUMN_POSITIONS[cp];
             int to = COLUMN_POSITIONS[cp + 1];

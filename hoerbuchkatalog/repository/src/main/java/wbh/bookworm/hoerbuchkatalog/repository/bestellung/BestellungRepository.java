@@ -14,8 +14,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
-import aoc.ddd.repository.Predicate;
+import aoc.ddd.repository.QueryPredicate;
 
+import java.nio.file.Path;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Set;
@@ -24,8 +25,8 @@ import java.util.stream.Collectors;
 @DomainRespositoryComponent
 public class BestellungRepository extends JsonDomainRepository<Bestellung, BestellungId> {
 
-    public BestellungRepository() {
-        super(Bestellung.class, BestellungId.class);
+    public BestellungRepository(final Path storagePath) {
+        super(Bestellung.class, BestellungId.class, storagePath);
         saveOnEvent(logger, BestellungAufgegeben.class);
     }
 
@@ -43,7 +44,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
     }
 
     public Set<Bestellung> alleMitDownloads(final Hoerernummer hoerernummer) {
-        return find(Predicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::hatDownloadTitelnummern)
@@ -59,7 +60,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
     }
 
     public Set<Bestellung> alleVonHeuteMitDownloads(final Hoerernummer hoerernummer) {
-        return find(Predicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::heuteAbgeschickt)
@@ -76,7 +77,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
     }
 
     public Set<Bestellung> alleInDiesemMonatMitDownloads(final Hoerernummer hoerernummer) {
-        return find(Predicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::inAktuellemMonatAbgeschickt)
