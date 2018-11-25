@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryTestAppConfig;
 
 import org.junit.FixMethodOrder;
 import org.junit.Ignore;
@@ -22,7 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(classes = {RepositoryTestAppConfig.class})
+@SpringBootTest(classes = {KatalogTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 @FixMethodOrder(MethodSorters.JVM)
 @Ignore("TODO Neu mit Factory; Integration in HörbuchkatalogTest")
@@ -44,7 +43,7 @@ class HoerbuchkatalogSucheTest {
         final String stichwort = "Kapital";
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
-        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
         Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
@@ -57,7 +56,7 @@ class HoerbuchkatalogSucheTest {
         final String stichwort = "Adler";
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
-        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
         Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
@@ -70,7 +69,7 @@ class HoerbuchkatalogSucheTest {
         final String wert = "Alfred Hitchcock";
         suchparameter.hinzufuegen(Suchparameter.Feld.AUTOR, wert);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
         Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,

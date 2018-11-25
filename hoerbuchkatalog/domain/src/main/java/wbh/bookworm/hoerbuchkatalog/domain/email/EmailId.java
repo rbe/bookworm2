@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.email;
 
 import aoc.ddd.model.DomainId;
 
-public class EmailId extends DomainId<String> {
+public final class EmailId extends DomainId<String> {
 
     public EmailId(final String value) {
         super(value);

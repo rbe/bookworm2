@@ -41,6 +41,10 @@ server:
     enabled: true
   servlet:
     context-path: /hoerbuchkatalog
+    session:
+      cookie:
+        http-only: true
+        secure: true
 
 logging:
   config: classpath:logback-production.xml

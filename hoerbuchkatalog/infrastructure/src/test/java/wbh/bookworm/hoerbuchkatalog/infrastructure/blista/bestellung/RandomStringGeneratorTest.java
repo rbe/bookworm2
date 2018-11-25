@@ -1,0 +1,23 @@
+/*
+ * Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+ * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+ * All rights reserved. Use is subject to license terms.
+ */
+
+package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
+
+import org.junit.jupiter.api.Test;
+
+import static org.junit.Assert.assertNotNull;
+
+class RandomStringGeneratorTest {
+
+    @Test
+    void next() {
+        for (int i = 0; i < 1_000; i++) {
+            final String next = RandomStringGenerator.next();
+            assertNotNull(next);
+        }
+    }
+
+}

@@ -6,21 +6,84 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui;
 
-import org.springframework.stereotype.Component;
+import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
-import javax.faces.event.ActionEvent;
+import aoc.jsf.ELValueCache;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
+
+import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Component
+@SessionScope
 public class MeineDownloads {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
+
+    private final MeineBestellung meineBestellung;
+
+    private final ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
+
     private String stichwort;
+
+    private List<BlistaDownload> nachStichwortGefilterteDownloads;
+
+    @Autowired
+    public MeineDownloads(final Hoerernummer hoerernummer,
+                          final DownloadsLieferungService downloadsLieferungService,
+                          final MeineBestellung meineBestellung) {
+        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
+        this.meineBestellung = meineBestellung;
+        this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
+                () -> downloadsLieferungService.lieferungen(hoerernummer));
+        nachStichwortGefilterteDownloads = Collections.emptyList();
+    }
 
     public String getStichwort() {
         return stichwort;
     }
 
-    public void sucheNachStichwort(ActionEvent actionEvent) {
+    public void setStichwort(final String stichwort) {
+        this.stichwort = stichwort;
+        if (null != stichwort && stichwort.isBlank()) {
+            nachStichwortGefilterteDownloads = Collections.emptyList();
+        }
+    }
 
+    public void sucheNachStichwort() {
+        nachStichwortGefilterteDownloads = verfuegbareDownloadsELCache.get().alle()
+                .stream()
+                .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
+                        || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
+                .collect(Collectors.toList());
+    }
+
+    public boolean isStichwortHatTreffer() {
+        return !nachStichwortGefilterteDownloads.isEmpty();
+    }
+
+    public LocalDateTime standVom() {
+        return verfuegbareDownloadsELCache.get().getStandVom();
+    }
+
+    public List<BlistaDownload> getDownloads() {
+        return nachStichwortGefilterteDownloads.isEmpty()
+                ? verfuegbareDownloadsELCache.get().alle()
+                : nachStichwortGefilterteDownloads;
+    }
+
+    public boolean isHoerbuecherAnzeigen() {
+        return meineBestellung.isBestellungenVorhanden() || !nachStichwortGefilterteDownloads.isEmpty();
     }
 
 }

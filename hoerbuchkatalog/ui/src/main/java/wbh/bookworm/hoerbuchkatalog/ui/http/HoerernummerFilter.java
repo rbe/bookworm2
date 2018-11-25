@@ -21,6 +21,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.Date;
 
 @WebFilter(servletNames = "FacesServlet")
 public class HoerernummerFilter implements Filter {
@@ -40,6 +41,9 @@ public class HoerernummerFilter implements Filter {
         LOGGER.trace("Suche Hoerernummer in HTTP-Anfrage '{}'", request.getRequestURI());
         final HttpSession session = request.getSession(true);
         if (null != session) {
+            LOGGER.info("Session {} is {}, last accessed {}",
+                    session.getId(), session.isNew() ? "new" : "not new",
+                    new Date(session.getLastAccessedTime()));
             final Hoerernummer sessionHnr = (Hoerernummer) session.getAttribute(HNR_KEY);
             if (request.getRequestURI().endsWith("logout")) {
                 session.invalidate();

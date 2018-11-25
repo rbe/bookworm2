@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+  ~ All rights reserved. Use is subject to license terms.
+  -->
+
+<dls>
+<version>1.4</version>
+<fehler>
+<fehlercode>207</fehlercode>
+<fehlermeldung>Dieser Download ist dem Dispatcher nicht bekannt.</fehlermeldung>
+</fehler>
+</dls>

@@ -22,10 +22,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
 
 @Component
-@SessionScope
+@org.springframework.web.context.annotation.SessionScope
+//@org.springframework.context.annotation.Scope("session")
+//@javax.enterprise.context.SessionScoped
 class MeinWarenkorb {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
@@ -64,7 +65,7 @@ class MeinWarenkorb {
     MeinWarenkorb(final Hoerernummer hoerernummer,
                   final HoerbuchkatalogService hoerbuchkatalogService,
                   final BestellungService bestellungService) {
-        LOGGER.trace("Initializing");
+        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.hoerernummer = hoerernummer;
         this.bestellungService = bestellungService;
         // CD Warenkorb

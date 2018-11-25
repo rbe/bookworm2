@@ -11,7 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import java.io.Serializable;
 import java.util.List;
 
-public class HoerbuchListeDTO implements Serializable {
+public final class HoerbuchListeDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

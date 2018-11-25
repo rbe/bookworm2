@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateId;
-import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
 import wbh.bookworm.hoerbuchkatalog.domain.email.HtmlEmailTemplate;
 
 import org.springframework.beans.factory.annotation.Autowired;

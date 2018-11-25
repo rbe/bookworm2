@@ -1,0 +1,33 @@
+<!--
+  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+  ~ All rights reserved. Use is subject to license terms.
+  -->
+
+<included>
+    <property name="ignorePackages" value="
+          java.lang.reflect.Method,
+          java.lang.Thread,
+          java.lang.Class,
+          java.util.concurrent,
+          jdk.internal,
+          com.sun.faces.application,
+          com.sun.faces.lifecycle,
+          com.sun.faces.facelets,
+          javax.faces.webapp,
+          javax.faces.component,
+          org.apache.el,
+          org.eclipse.jetty,
+          org.springframework.aop,
+          org.springframework.beans,
+          org.springframework.context,
+          org.springframework.cglib,
+          org.springframework.security,
+          org.springframework.transaction,
+          org.springframework.scheduling,
+          org.springframework.web,
+          org.springframework.boot,
+          sun.reflect,
+          net.sf.cglib,
+          BySpringCGLIB"/>
+</included>

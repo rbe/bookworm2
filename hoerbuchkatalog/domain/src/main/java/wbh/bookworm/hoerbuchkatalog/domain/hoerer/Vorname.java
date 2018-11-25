@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import aoc.ddd.model.DomainSingleValueObject;
 
-public class Vorname extends DomainSingleValueObject<Vorname, String> {
+public final class Vorname extends DomainSingleValueObject<Vorname, String> {
 
     public Vorname(final String vorname) {
         super(vorname);

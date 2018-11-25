@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import aoc.ddd.model.DomainValueObject;
 
-public class Hoerername extends DomainValueObject {
+public final class Hoerername extends DomainValueObject {
 
     private final Vorname vorname;
 

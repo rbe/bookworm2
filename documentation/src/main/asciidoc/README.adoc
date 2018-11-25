@@ -1,0 +1,7 @@
+.Java Flight Recorder
+----
+-Xlog:gc*=debug:file=gc.log:utctime,uptime,tid,level:filecount=10,filesize=128m
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=heapdump.hprof
+-XX:StartFlightRecording=disk=true,dumponexit=true,filename=recording.jfr,maxsize=1024m,maxage=1d,settings=profile,path-to-gc-roots=true
+----

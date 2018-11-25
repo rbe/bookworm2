@@ -20,8 +20,8 @@ public final class HtmlEmailTemplate extends DomainAggregate<HtmlEmailTemplate, 
     private final String html;
 
     @JsonCreator
-    HtmlEmailTemplate(final @JsonProperty("domainId") EmailTemplateId emailTemplateId,
-                      final @JsonProperty("html") String html) {
+    public HtmlEmailTemplate(final @JsonProperty("domainId") EmailTemplateId emailTemplateId,
+                             final @JsonProperty("html") String html) {
         super(emailTemplateId);
         this.html = html;
     }

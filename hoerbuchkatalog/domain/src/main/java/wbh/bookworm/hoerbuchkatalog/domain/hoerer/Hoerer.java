@@ -10,6 +10,9 @@ import aoc.ddd.model.DomainAggregate;
 
 import java.util.Objects;
 
+/**
+ * (Spring AOP) Class cannot be final.
+ */
 public class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 
     private Hoerername hoerername;

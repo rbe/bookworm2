@@ -7,10 +7,10 @@
 <!DOCTYPE html>
 <html lang="de"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:of="http://omnifaces.org/functions"
-      xmlns:f="http://java.sun.com/jsf/core">
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
 
     <ui:define name="container">
@@ -24,92 +24,90 @@
                 </div>
             </div>
 
-            <h:form>
+            <h:form id="meineDownloads">
                 <h:panelGroup layout="block" styleClass="searchrow">
                     <h3>Suchen Sie einen Titel innerhalb Ihrer Downloads</h3>
-                    <h:inputText class="searchtitle"
-                                 value="#{meineDownloads.stichwort}"/>
-                    <h:commandButton value="Suchen" styleClass="searchbutton"
-                                     actionListener="#{meineDownloads.sucheNachStichwort}">
-                        <f:ajax execute="@form" render="@all"/>
+                    <h:inputText id="stichwort" value="#{meineDownloads.stichwort}"
+                                 styleClass="searchtitle"/>
+                    <h:commandButton id="downloadsDurchsuchen" value="Suchen"
+                                     action="#{meineDownloads.sucheNachStichwort}"
+                                     styleClass="searchbutton">
+                        <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
                 </h:panelGroup>
-                <h:panelGroup rendered="#{!meineBestellung.hasBlistaOrders() and !hoererBlistaAusleihe.hasSearchTerms()}"
+                <h:panelGroup rendered="#{!meineBestellung.bestellungenVorhanden}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen!
                 </h:panelGroup>
-                <h:panelGroup rendered="#{!hoererBlistaAusleihe.hasBlistaOrders() and hoererBlistaAusleihe.hasSearchTerms()}"
+                <h:panelGroup rendered="#{!meineDownloads.stichwortHatTreffer}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen, die Ihrer Suche entsprechen!
                 </h:panelGroup>
-                <h:panelGroup rendered="#{meineDownloads.hasBlistaOrders()}" id="archivTabelle"
+                <h:panelGroup id="archivTabelle"
+                              rendered="#{meineDownloads.hoerbuecherAnzeigen}"
                               layout="block" styleClass="row">
                     <div class="col-lg-12">
                         <table class="table table-striped">
                             <tbody>
                             <tr>
-                                <th>Nr./Datum</th>
+                                <th>Titelnr./Bestelldatum</th>
                                 <th>Titel/Autor/Dauer</th>
                                 <th style="text-align:center;">Download</th>
                                 <th style="text-align:center;">Verfügbar</th>
                             </tr>
-                            <ui:repeat value="#{meineDownloads.blistaOrders}"
-                                       var="blistaOrder" varStatus="blistaOrderStatus">
-                                <ui:repeat value="#{blistaOrder.books}" var="book" varStatus="bookStatus">
-                                    <h:outputFormat rendered="#{blistaOrderStatus.last and bookStatus.last}">
-                                        <tr>
-                                            <td class="lastrow" colspan="4">Hinweis: Es folgt der letzte Datensatz
-                                            </td>
-                                        </tr>
-                                    </h:outputFormat>
+                            <!-- TODO h:dataTable? Siehe katalogsuchergebnis.xhtml -->
+                            <ui:repeat value="#{meineDownloads.downloads}"
+                                       var="download" varStatus="downloadStatus">
+                                <h:outputFormat rendered="#{downloadStatus.last}">
                                     <tr>
-                                        <td class="date">
-                                            <table class="table-striped-title">
+                                        <td class="lastrow" colspan="4">Hinweis: Es folgt der letzte Datensatz
+                                        </td>
+                                    </tr>
+                                </h:outputFormat>
+                                <tr>
+                                    <td class="date">
+                                        <table class="table-striped-title">
+                                            <tbody>
+                                            <tr>
+                                                <td headers="Buchnummer">#{download.titelnummer}</td>
+                                            </tr>
+                                            <tr>
+                                                <td headers="Ausleihdatum">#{of:formatDate(download.bestelldatumAsDate, 'dd.MM.yyyy')}</td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                    <td class="title-data">
+                                        <h:panelGroup>
+                                            <table class="table-striped-data">
                                                 <tbody>
                                                 <tr>
-                                                    <td headers="Buchnummer">#{book.titelnummer}</td>
+                                                    <td headers="Buchtitel">#{download.titel}</td>
                                                 </tr>
                                                 <tr>
-                                                    <td headers="Ausleihdatum">#{of:formatDate(blistaOrder.ausleihdatum, 'dd.MM.yyyy')}</td>
+                                                    <td headers="Autor">#{download.autor}</td>
+                                                </tr>
+                                                <tr>
+                                                    <td headers="Spieldauer">#{download.spieldauer}</td>
                                                 </tr>
                                                 </tbody>
                                             </table>
-                                        </td>
-                                        <td class="title-data">
-                                            <h:panelGroup rendered="#{null != book}">
-                                                <table class="table-striped-data">
-                                                    <tbody>
-                                                    <tr>
-                                                        <td headers="Buchtitel">#{book.titel}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td headers="Autor">#{book.autor}</td>
-                                                    </tr>
-                                                    <tr>
-                                                        <td headers="Spieldauer">#{book.spieldauer}</td>
-                                                    </tr>
-                                                    </tbody>
-                                                </table>
-                                            </h:panelGroup>
-                                        </td>
-                                        <td class="bereitstellung">
-                                            <div class="status">
-                                                <h:outputText
-                                                        value="#{meineDownloads.getStatusText(blistaOrder, book)}"/>
-                                            </div>
-                                            <div class="link">
-                                                <h:outputLink
-                                                        rendered="#{meineDownloads.isDownloadable(blistaOrder, book)}"
-                                                        value="#{meineDownloads.getDownloadLink(blistaOrder, book)}"
-                                                        target="_blank">Herunterladen</h:outputLink>
-                                            </div>
-                                        </td>
-                                        <td class="download-count">
-                                            <h:outputText
-                                                    value="#{meineDownloads.getDownloadCount(blistaOrder, book)}"/>
-                                        </td>
-                                    </tr>
-                                </ui:repeat>
+                                        </h:panelGroup>
+                                    </td>
+                                    <td class="bereitstellung">
+                                        <div class="status">
+                                            <h:outputText value="#{download.statusText}"/>
+                                        </div>
+                                        <div class="link">
+                                            <h:outputLink rendered="#{download.bezugsfaehig}"
+                                                          value="#{download.downloadLink}"
+                                                          target="_blank">Herunterladen</h:outputLink>
+                                        </div>
+                                    </td>
+                                    <td class="download-count">
+                                        <h:outputText value="#{download.getaetigteDownloads} / #{download.maxDownload}"/>
+                                    </td>
+                                </tr>
                             </ui:repeat>
                             </tbody>
                         </table>

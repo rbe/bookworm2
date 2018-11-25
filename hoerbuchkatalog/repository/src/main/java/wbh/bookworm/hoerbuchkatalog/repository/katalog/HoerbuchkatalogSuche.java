@@ -33,19 +33,30 @@ final class HoerbuchkatalogSuche {
 
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
                          final DomainId<String> hoerbuchkatalogDomainId) {
-        this.luceneIndex = applicationContext.getBean(LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
+        this.luceneIndex = applicationContext.getBean(
+                LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
     }
 
     void indiziere(final Set<Hoerbuch> hoerbuecher) {
         LOGGER.trace("Indiziere {} Hörbücher", hoerbuecher.size());
-        luceneIndex.deleteIndex();
-        luceneIndex.add(hoerbuecher,
-                "titelnummer",
-                new String[]{"sachgebiet"},
-                new String[]{"autor", "titel", "untertitel", "erlaeuterung", "sprecher1", "suchwoerter"},
-                new String[]{"einstelldatum"},
-                new String[]{"autor", "titel"});
-        luceneIndex.build();
+        luceneIndex.deleteIndex()
+                .add(hoerbuecher,
+                        "titelnummer",
+                        new String[]{Suchparameter.Feld.SACHGEBIET.luceneName()},
+                        new String[]{
+                                Suchparameter.Feld.AUTOR.luceneName(),
+                                Suchparameter.Feld.TITEL.luceneName(),
+                                Suchparameter.Feld.UNTERTITEL.luceneName(),
+                                Suchparameter.Feld.ERLAEUTERUNG.luceneName(),
+                                Suchparameter.Feld.SPRECHER1.luceneName(),
+                                Suchparameter.Feld.SUCHWOERTER.luceneName()
+                        },
+                        new String[]{Suchparameter.Feld.EINSTELLDATUM.luceneName()},
+                        new String[]{
+                                Suchparameter.Feld.AUTOR.luceneName(),
+                                Suchparameter.Feld.TITEL.luceneName()
+                        })
+                .build();
         LOGGER.info("Hörbuchkatalog mit {} Einträgen indiziert", hoerbuecher.size());
     }
 
@@ -67,8 +78,8 @@ final class HoerbuchkatalogSuche {
 /*
        TODO if (titelnummern.size() <= 1000) {
 */
-            return new Suchergebnis(new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort),
-                    titelnummern);
+        return new Suchergebnis(new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort),
+                titelnummern);
 /*
         } else {
             return Optional.empty();

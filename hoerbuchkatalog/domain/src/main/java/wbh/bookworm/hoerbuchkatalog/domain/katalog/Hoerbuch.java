@@ -354,6 +354,11 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         return aghNummer;
     }
 
+    public boolean hatAghNummer(final AghNummer aghNummer) {
+        Objects.requireNonNull(aghNummer);
+        return null != this.aghNummer && this.aghNummer.equals(aghNummer);
+    }
+
 /*
     public void setAghNummer(final AghNummer aghNummer) {
         this.aghNummer = aghNummer;

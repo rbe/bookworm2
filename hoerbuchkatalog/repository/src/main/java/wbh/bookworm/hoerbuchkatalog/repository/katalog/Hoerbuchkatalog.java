@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
@@ -18,6 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
@@ -81,6 +83,12 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    public Optional<Hoerbuch> hole(final AghNummer aghNummer) {
+        return katalog.values().stream()
+                .filter(e -> e.hatAghNummer(aghNummer))
+                .findFirst();
+    }
+
     public Suchergebnis sucheNachStichwort(final String stichwort) {
         return hoerbuchkatalogSuche.sucheNachStichwort(stichwort);
     }
@@ -104,7 +112,8 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
 
     @Override
     public int compareTo(final Hoerbuchkatalog other) {
-        /* TODO Comparable */return 0;
+        /* TODO Comparable */
+        return 0;
     }
 
     @Override

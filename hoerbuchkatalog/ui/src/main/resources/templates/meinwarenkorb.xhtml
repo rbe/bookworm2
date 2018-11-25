@@ -1,13 +1,19 @@
+<!--
+  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+  ~ All rights reserved. Use is subject to license terms.
+  -->
+
 <!DOCTYPE html [
         <!ENTITY nbsp "&#160;">
         <!ENTITY copy "&#169;">
         ]>
 <html lang="de"
       xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:f="http://java.sun.com/jsf/core"
-      xmlns:hk="http://java.sun.com/jsf/composite/bookworm/hk">
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:hk="http://xmlns.jcp.org/jsf/composite/bookworm/hk">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
         <div class="leading">
@@ -22,7 +28,7 @@
                 <h3>Auswahltitel für die Bestellung per CD</h3>
                 <hk:cd-warenkorb-tabelle warenkorb="#{meinWarenkorb.cds}" readonly="false"/>
             </div>
-            <h:form>
+            <h:form id="bestellung">
                 <h:panelGrid rendered="#{meineBestellung.anzahlImWarenkorb > 0}"
                              columns="2"
                              styleClass="basket-member"
@@ -38,7 +44,7 @@
                     <h:inputText id="name"
                                  value="#{meineBestellung.hoerername}"
                                  styleClass="input_hoerername"
-                                 readonly="#{null != meineBestellung.hoerername}"
+                                 readonly="#{meineBestellung.hasHoerername()}"
                                  required="true" requiredMessage="Bitte geben Sie Ihren Namen ein"
                                  validatorMessage="Bitte geben Sie mehr als 3 Zeichen ein">
                         <f:validateLength minimum="3"/>
@@ -68,7 +74,7 @@
                     </h:panelGroup>
                     <h:inputText id="email"
                                  value="#{meineBestellung.hoereremail}" styleClass="input_hoereremail"
-                                 readonly="#{null != meineBestellung.hoereremail}"
+                                 readonly="#{meineBestellung.hasHoereremail()}"
                                  required="true"
                                  requiredMessage="Bitte geben Sie Ihre Email-Adresse ein"
                                  validatorMessage="Bitte geben Sie mehr als 5 Zeichen ein">
@@ -116,11 +122,11 @@
                     </h:selectBooleanCheckbox>
 
                     <h:outputLabel value=" "/>
+                    <!--onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);"-->
                     <h:commandButton value="Bestellen"
-                                     onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);"
                                      action="#{meineBestellung.bestellungAbschicken}"
-                                     styleClass="basketsubmit" required="true">
-                        <f:ajax execute="@form" render="orderSubmitMessage"/>
+                                     styleClass="basketsubmit">
+                        <f:ajax execute="@form" render="@all"/>
                     </h:commandButton>
                     <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.bestellungStatusNachricht}"/>
 

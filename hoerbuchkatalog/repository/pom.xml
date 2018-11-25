@@ -1,4 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+  ~ All rights reserved. Use is subject to license terms.
+  -->
+
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -14,11 +20,16 @@
         <!-- Bookworm -->
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.platform</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
+        </dependency>
+        <!-- aoc -->
+        <dependency>
+            <groupId>aoc.platform</groupId>
+            <artifactId>aoc.platform</artifactId>
         </dependency>
         <!-- Jackson -->
         <dependency>
@@ -41,14 +52,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
         </dependency>
     </dependencies>
     <profiles>

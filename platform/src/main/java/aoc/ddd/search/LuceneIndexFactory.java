@@ -30,7 +30,7 @@ public class LuceneIndexFactory {
     @Bean
     @Scope(SCOPE_PROTOTYPE)
     public LuceneIndex luceneIndex(final String name) throws IOException {
-        final Path path = luceneIndexConfig.getIndex().getDirectory().resolve(name);
+        final Path path = luceneIndexConfig.getDirectory().resolve(name);
         return new LuceneIndex(path);
     }
 

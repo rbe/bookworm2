@@ -12,7 +12,6 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryTestAppConfig;
 
 import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;
@@ -29,7 +28,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {RepositoryTestAppConfig.class})
+@SpringBootTest(classes = {BestellungAppConfig.class})
 @ExtendWith(SpringExtension.class)
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class WarenkorbDomainRepositoryTest {

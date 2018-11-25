@@ -30,6 +30,8 @@ public class Navigation {
 
     private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml?faces-redirect=true";
 
+    static final String NAV_DOWNLOADS = "meinedownloads.xhtml";
+
     private final Katalogsuche katalogsuche;
 
     private final Katalogsuchergebnis katalogsuchergebnis;

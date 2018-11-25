@@ -7,8 +7,8 @@
 package wbh.bookworm.hoerbuchkatalog.ui.config;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.HoererLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
@@ -22,8 +22,9 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Lazy;
+import org.springframework.web.context.annotation.SessionScope;
 
+import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -32,7 +33,7 @@ import javax.servlet.http.HttpSession;
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        HoererLieferungService.class,
+        DownloadsLieferungService.class,
         Navigation.class
 })
 @ServletComponentScan(basePackageClasses = {
@@ -43,13 +44,15 @@ public class UiConfig {
     private static final String HOERERNUMMER = "hnr";
 
     @Bean
-    @Lazy
+    //@Lazy
+    @SessionScope
     public Hoerernummer hoerernummer() {
         return (Hoerernummer) getSession().getAttribute(HOERERNUMMER);
     }
 
     @Bean
-    @Lazy
+    //@Lazy
+    @SessionScope
     public Hoerer hoerer() {
         return new Hoerer(hoerernummer(),
                 new Hoerername(new Vorname("VORNAME"), new Nachname("NACHNAME")),
@@ -57,10 +60,11 @@ public class UiConfig {
     }
 
     private HttpSession getSession() {
-        return ((HttpServletRequest) FacesContext.getCurrentInstance()
-                .getExternalContext()
-                .getRequest())
-                .getSession();
+        final ExternalContext externalContext = FacesContext.getCurrentInstance()
+                .getExternalContext();
+        final HttpServletRequest request = (HttpServletRequest) externalContext
+                .getRequest();
+        return request.getSession(false);
     }
 
 }

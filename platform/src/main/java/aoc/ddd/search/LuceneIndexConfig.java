@@ -6,7 +6,7 @@
 
 package aoc.ddd.search;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 
@@ -14,31 +14,13 @@ import java.nio.file.Path;
 
 @Configuration
 @PropertySource(value = "classpath:/conf/lucene.properties")
-@ConfigurationProperties(prefix = "lucene")
 public class LuceneIndexConfig {
 
-    public static class Index {
+    @Value("${lucene.index.directory}")
+    private Path directory;
 
-        private Path directory;
-
-        public Path getDirectory() {
-            return directory;
-        }
-
-        public void setDirectory(final Path directory) {
-            this.directory = directory;
-        }
-
-    }
-
-    private Index index;
-
-    public Index getIndex() {
-        return index;
-    }
-
-    public void setIndex(final Index index) {
-        this.index = index;
+    public Path getDirectory() {
+        return directory;
     }
 
 }

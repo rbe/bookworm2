@@ -14,8 +14,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**
  * DomainId
+ * (Spring AOP) Class cannot be final.
  */
-public final class Hoerernummer extends DomainId<String> {
+public class Hoerernummer extends DomainId<String> {
 
     private static final long serialVersionUID = -1L;
 

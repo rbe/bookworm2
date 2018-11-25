@@ -57,7 +57,7 @@ class MeineMerkliste {
                    final MerklisteService merklisteService,
                    final MeinWarenkorb meinWarenkorb,
                    final HoerbuchkatalogService hoerbuchkatalogService) {
-        LOGGER.trace("Initializing");
+        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;
         this.merklisteService = merklisteService;

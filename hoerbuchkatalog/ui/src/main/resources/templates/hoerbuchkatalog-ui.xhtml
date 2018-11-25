@@ -1,3 +1,9 @@
+<!--
+  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+  ~ All rights reserved. Use is subject to license terms.
+  -->
+
 <!DOCTYPE html [
         <!ENTITY nbsp "&#160;">
         <!ENTITY copy "&#169;">
@@ -5,11 +11,11 @@
 <html lang="de"
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:c="http://xmlns.jcp.org/jsp/jstl/core"
       xmlns:o="http://omnifaces.org/ui"
-      xmlns:of="http://omnifaces.org/functions"
-      xmlns:c="http://java.sun.com/jsp/jstl/core">
+      xmlns:of="http://omnifaces.org/functions">
 <h:head>
     <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
     <meta name="robots" content="index, follow"/>
@@ -31,8 +37,9 @@
     <o:conditionalComment if="lte IE 9">
         <link href="js/html5shiv.js" rel="stylesheet" type="text/css"/>
     </o:conditionalComment>
-    <h:outputScript name="jsf.js" library="javax.faces" target="head"/>
+    <h:outputScript library="javax.faces" name="jsf.js" target="head"/>
     <h:outputScript library="js" name="jquery-3.1.1.min.js" target="head"/>
+    <h:outputScript library="js" name="wbh.js" target="body"/>
 </h:head>
 <h:body>
     <f:view transient="true">
@@ -59,30 +66,6 @@
                             <h2 class="unsichtbar">Abmelden/Logout</h2>
                             <h:panelGroup layout="block"
                                           styleClass="logout button btn btn-primary">Ausloggen</h:panelGroup>
-                            <script language="JavaScript" type="text/javascript">
-                                //<![CDATA[
-                                $(document).ready(function ($) {
-                                    $("div.logout").click(function () {
-                                        $.when($.get("/hoerbuchkatalog/logout", function (data) {
-                                                console.log("Catalog logout was performed.");
-                                            }),
-                                            $.get("/hoererdaten/logout", function (data) {
-                                                console.log("Customer logout was performed.");
-                                            }),
-                                            $.get("/index.php?option=com_comprofiler&task=logout", function (data) {
-                                                console.log("Joomla logout was performed.");
-                                            }))
-                                            .then(function () {
-                                                console.log("redirect");
-                                                window.location.replace("/");
-                                            }, function () {
-                                                console.log("error");
-                                                window.location.replace("/");
-                                            });
-                                    });
-                                });
-                                //]]>
-                            </script>
                         </ui:fragment>
                     </div>
                 </header>
@@ -106,19 +89,20 @@
                             <li><a href="https://www.wbh-online.de/">Startseite</a></li>
                             <li><h:outputLink value="katalogsuche.xhtml">Onlinekatalog</h:outputLink></li>
                             <c:if test="#{hoerernummer.bekannt}">
-                                <li><h:outputLink value="/hoererdaten/hoererblistaausleihe.xhtml">Downloads</h:outputLink></li>
-                                <li><h:outputLink value="/hoerbuchkatalog/merkliste.xhtml">Merkliste</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/hoererdaten.xhtml">Hörerdaten</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/hoererbuchausleihe.xhtml">Ausleihe</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/hoererbestellkarte.xhtml">Bestellkarte</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/hoererbucharchiv.xhtml">Archiv</h:outputLink></li>
+                                <li><h:outputLink value="/hoerbuchkatalog/meinedownloads.xhtml">Downloads</h:outputLink></li>
+                                <li><h:outputLink value="/hoerbuchkatalog/meinemerkliste.xhtml">Merkliste</h:outputLink></li>
+                                <li><h:outputLink value="/hoerbuchkatalog/meinwarenkorb.xhtml">Warenkorb</h:outputLink></li>
+                                <!--
+                                <li><h:outputLink value="/hoererdaten/meinedaten.xhtml">Hörerdaten</h:outputLink></li>
+                                <li><h:outputLink value="/hoererdaten/meineausleihe.xhtml">Ausleihe</h:outputLink></li>
+                                <li><h:outputLink value="/hoererdaten/meinebestellkarte.xhtml">Bestellkarte</h:outputLink></li>
+                                <li><h:outputLink value="/hoererdaten/meinarchiv.xhtml">Archiv</h:outputLink></li>
+                                -->
                             </c:if>
-                            <!-- no display @login -->
                             <c:if test="#{hoerernummer.unbekannt}">
                                 <li><h:outputLink value="https://www.wbh-online.de/kontakt.html">Kontakt</h:outputLink></li>
                                 <li><h:outputLink value="https://www.wbh-online.de/bhb-stiftung.html">BHB-Stiftung</h:outputLink></li>
                             </c:if>
-
                         </ul>
                     </h:form>
                 </div>

@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
-import wbh.bookworm.hoerbuchkatalog.domain.email.EmailRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.UserException;

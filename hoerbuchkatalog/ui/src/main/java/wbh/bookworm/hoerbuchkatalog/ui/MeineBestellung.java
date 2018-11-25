@@ -7,10 +7,12 @@
 package wbh.bookworm.hoerbuchkatalog.ui;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
 import aoc.jsf.ELValueCache;
 
@@ -62,11 +64,18 @@ public class MeineBestellung {
 
     private final ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
 
+    private final DownloadsLieferungService downloadsLieferungService;
+
+    private final ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
+
     @Autowired
     public MeineBestellung(final Navigation navigation,
                            final Hoerernummer hoerernummer,
                            final MeinWarenkorb meinWarenkorb,
-                           final BestellungService bestellungService) {
+                           final BestellungService bestellungService,
+                           final DownloadsLieferungService downloadsLieferungService) {
+        this.downloadsLieferungService = downloadsLieferungService;
+        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.navigation = navigation;
         this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;
@@ -83,6 +92,8 @@ public class MeineBestellung {
                                     : 0;
                     return anzahlCDs + anzahlDownloads;
                 });
+        this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
+                () -> this.downloadsLieferungService.lieferungen(hoerernummer));
     }
 
     public Hoerernummer getHoerernummer() {
@@ -94,8 +105,13 @@ public class MeineBestellung {
         if (Hoerernummer.UNBEKANNT == hoerernummer) {
             this.hoerernummer = hoerernummer;
         } else {
-            /*TODO Bekannte Hörernummer*/throw new UnsupportedOperationException();
+            /*TODO Bekannte Hörernummer*/
+            throw new UnsupportedOperationException();
         }
+    }
+
+    public boolean hasHoerername() {
+        return null != hoerername && !hoerername.trim().isEmpty();
     }
 
     public String getHoerername() {
@@ -104,6 +120,10 @@ public class MeineBestellung {
 
     public void setHoerername(final String hoerername) {
         this.hoerername = hoerername;
+    }
+
+    public boolean hasHoereremail() {
+        return null != hoereremail && !hoereremail.trim().isEmpty();
     }
 
     public String getHoereremail() {
@@ -191,6 +211,11 @@ public class MeineBestellung {
 
     public DownloadWarenkorb getBestellterDownloadWarenkorb() {
         return bestellterDownloadWarenkorb;
+    }
+
+    public boolean isBestellungenVorhanden() {
+        return bestellungService.anzahlBestellungen(hoerernummer) > 0
+                || !verfuegbareDownloadsELCache.get().alle().isEmpty();
     }
 
 }

@@ -16,11 +16,14 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 
+import aoc.ddd.repository.QueryPredicate;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Service
@@ -176,6 +179,13 @@ public class BestellungService {
     public boolean isMaxDownloadsProMonatErreicht(final Hoerernummer hoerernummer) {
         return (bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer) +
                 downloadWarenkorb(hoerernummer).getAnzahl()) >= 10;
+    }
+
+    public long anzahlBestellungen(final Hoerernummer hoerernummer) {
+        return bestellungRepository
+                .find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+                .orElseGet(Collections::emptySet)
+                .size();
     }
 
 }

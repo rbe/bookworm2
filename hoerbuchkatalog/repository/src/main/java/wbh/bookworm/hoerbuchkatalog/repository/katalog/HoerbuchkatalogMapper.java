@@ -56,7 +56,7 @@ final class HoerbuchkatalogMapper {
         LOGGER.info("Importiere Hörbücher aus Archiv '{}'", gesamtDat);
         try {
             final Set<Hoerbuch> hoerbuecher = gesamtDatEinlesen(gesamtDat);
-            LOGGER.info("Insgesamt {} Hörbücher aus Archiv '{}' importiert", gesamtDat, hoerbuecher.size());
+            LOGGER.info("Insgesamt {} Hörbücher aus Archiv '{}' importiert", hoerbuecher.size(), gesamtDat);
             return hoerbuecher;
         } catch (IOException e) {
             throw new HoerbuchkatalogArchivException(e);

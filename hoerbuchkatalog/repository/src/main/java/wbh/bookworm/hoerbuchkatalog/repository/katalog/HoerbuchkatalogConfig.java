@@ -7,12 +7,14 @@
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
 @Component
+@PropertySource({"classpath:/conf/hoerbuchkatalog.properties"})
 final class HoerbuchkatalogConfig {
 
     @Value("${hoerbuchkatalog.directory}")
@@ -27,7 +29,10 @@ final class HoerbuchkatalogConfig {
     @Value("${wbh.gesamtdat.charset}")
     private String wbhGesamtdatCharset;
 
-    @Value("${blista.katalog.rest.url}")
+    //@Value("${blista.katalog.rest.url}")
+    @Value("${blista.katalog.rest.scheme}://" +
+            "${blista.katalog.rest.host}:${blista.katalog.rest.port}" +
+            "${blista.katalog.rest.path}")
     private String blistaDlsCatalogRestUrl;
 
     @Value("${blista.katalog.aghnummern.path_in_zip}")

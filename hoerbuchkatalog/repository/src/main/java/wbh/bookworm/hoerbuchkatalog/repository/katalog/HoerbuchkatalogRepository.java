@@ -97,13 +97,14 @@ public final class HoerbuchkatalogRepository
                             verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                             sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
                             aktuellerHoerbuchkatalog.set(neuerKatalog);
-                            LOGGER.debug("Hörbuchkatalog {} aus '{}' erzeugt", aktuellerHoerbuchkatalog.get(), gd);
+                            LOGGER.debug("Hörbuchkatalog aus '{}' erzeugt", gd);
                         }
                     },
                     () -> {
                     });
+        } else {
+            LOGGER.debug("Hörbuchkatalog bereits erzeugt");
         }
-        LOGGER.debug("Hörbuchkatalog bereits erzeugt, {}", aktuellerHoerbuchkatalog.get());
         return aktuellerHoerbuchkatalog.get();
     }
 

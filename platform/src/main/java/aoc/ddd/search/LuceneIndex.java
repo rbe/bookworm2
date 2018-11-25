@@ -49,9 +49,10 @@ public class LuceneIndex {
 
     private IndexReader indexReader;
 
-    public LuceneIndex(final Path path) throws IOException {
+    LuceneIndex(final Path path) throws IOException {
         this.analyzer = new StandardAnalyzer();
         this.directory = new MMapDirectory(path);
+        // TODO indexReader = DirectoryReader.open(directory);
     }
 
     private IndexWriterConfig getIndexWriterConfig() {
@@ -62,20 +63,19 @@ public class LuceneIndex {
         return config;
     }
 
-    public boolean deleteIndex() {
+    public LuceneIndex deleteIndex() {
         try {
             if (null != indexReader) {
                 indexReader.close();
             }
             indexWriter = new IndexWriter(directory, getIndexWriterConfig());
-            LOGGER.debug("Lösche {} Einträge aus dem Index {}", indexWriter.numDocs(), directory);
+            LOGGER.debug("Deleting {} entries from index at '{}'", indexWriter.numDocs(), directory);
             indexWriter.deleteAll();
             indexWriter.commit();
-            return true;
         } catch (IOException e) {
             LOGGER.error("Could not delete index", e);
-            return false;
         }
+        return this;
     }
 
     private void add(final Document document) throws IOException {
@@ -83,15 +83,15 @@ public class LuceneIndex {
         indexWriter.addDocument(document);
     }
 
-    public <T extends DomainEntity<?, ?>> boolean add(final T domainEntity,
-                                                      final String domainIdField,
-                                                      final String[] stringFields,
-                                                      final String[] textFields,
-                                                      final String[] dateFields,
-                                                      final String[] sortFields) {
+    public <T extends DomainEntity<?, ?>> LuceneIndex add(final T domainEntity,
+                                                          final String domainIdField,
+                                                          final String[] stringFields,
+                                                          final String[] textFields,
+                                                          final String[] dateFields,
+                                                          final String[] sortFields) {
         Objects.requireNonNull(domainEntity);
         LOGGER.trace("Füge {} zum Suchindex hinzu", domainEntity);
-        Document document = new Document();
+        final Document document = new Document();
         document.add(new StringField(DOMAIN_ID,
                 DddHelper.valueAsString(domainEntity, domainIdField),
                 Field.Store.YES));
@@ -113,32 +113,29 @@ public class LuceneIndex {
                         new BytesRef(DddHelper.valueAsString(domainEntity, f)))));
         try {
             add(document);
-            return true;
+            LOGGER.trace("Added document {}", document);
         } catch (IOException e) {
-            LOGGER.error("", e);
-            return false;
+            LOGGER.error("Cannot add document", e);
         }
+        return this;
     }
 
-    public <T extends DomainEntity<?, ?>> boolean add(final Set<T> domainEnties,
-                                                   final String domainIdField,
-                                                   final String[] stringFields,
-                                                   final String[] textFields,
-                                                   final String[] dateFields,
-                                                   final String[] sortFields) {
+    public <T extends DomainEntity<?, ?>> LuceneIndex add(final Set<T> domainEnties,
+                                                          final String domainIdField,
+                                                          final String[] stringFields,
+                                                          final String[] textFields,
+                                                          final String[] dateFields,
+                                                          final String[] sortFields) {
         Objects.requireNonNull(domainEnties);
         if (domainEnties.isEmpty()) {
             LOGGER.warn("Keine Dokumente zum Indizieren vorhanden");
-            return false;
         } else {
             LOGGER.debug("Füge {} Dokumente zum Suchindex hinzu", domainEnties.size());
             for (final T domainEntity : domainEnties) {
-                if (!add(domainEntity, domainIdField, stringFields, textFields, dateFields, sortFields)) {
-                    return false;
-                }
+                add(domainEntity, domainIdField, stringFields, textFields, dateFields, sortFields);
             }
-            return true;
         }
+        return this;
     }
 
     public void build() {

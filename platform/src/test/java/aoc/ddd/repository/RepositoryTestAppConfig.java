@@ -6,18 +6,12 @@
 
 package aoc.ddd.repository;
 
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.Path;
 
-@SpringBootApplication(scanBasePackageClasses = {
-        DomainRepository.class
-})
-@SpringBootConfiguration
-@EnableConfigurationProperties
+@Configuration
 public class RepositoryTestAppConfig {
 
     @Bean

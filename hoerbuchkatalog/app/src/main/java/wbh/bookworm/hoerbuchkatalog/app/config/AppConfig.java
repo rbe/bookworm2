@@ -7,23 +7,22 @@
 package wbh.bookworm.hoerbuchkatalog.app.config;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.HoererLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.nio.file.Path;
 
@@ -32,34 +31,19 @@ import java.nio.file.Path;
         RepositoryConfig.class,
         DomainConfig.class
 })
-@EnableConfigurationProperties
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        HoererLieferungService.class,
+        DownloadsLieferungService.class,
         EmailService.class
 })
+@EnableConfigurationProperties
 public class AppConfig {
 
     @Bean
-    static PropertyPlaceholderConfigurer bookwormProperties() {
-        final PropertyPlaceholderConfigurer propertyPlaceholderConfigurer = new PropertyPlaceholderConfigurer();
-        propertyPlaceholderConfigurer.setLocations(
-                new ClassPathResource("/conf/hoerbuchkatalog.properties"),
-                new ClassPathResource("/conf/blista-dls.properties")
-        );
-        return propertyPlaceholderConfigurer;
+    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+        return new PropertySourcesPlaceholderConfigurer();
     }
-
-    /*
-    @Bean
-    static YamlPropertySourceLoader bookwormYaml() throws IOException {
-        YamlPropertySourceLoader yamlPropertySourceLoader = new YamlPropertySourceLoader();
-        final List<PropertySource<?>> bookworm =
-            yamlPropertySourceLoader.load("bookworm", new ClassPathResource("/conf/hoerbuchkatalog.yaml"));
-        return yamlPropertySourceLoader;
-    }
-    */
 
     @Bean
     public WarenkorbRepository warenkorbRepository() {

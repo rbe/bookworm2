@@ -21,24 +21,31 @@ public final class Suchparameter extends DomainValueObject {
 
     public enum Feld {
 
-        STICHWORT("Stichwort"),
-        SACHGEBIET("Sachgebiet"),
-        AUTOR("Autor"),
-        TITEL("Titel"),
-        ERLAEUTERUNG("Erläuterung"),
-        SUCHWOERTER("Suchwörter"),
-        UNTERTITEL("Untertitel"),
-        SPRECHER("Sprecher"),
-        EINSTELLDATUM("Einstelldatum");
+        STICHWORT("Stichwort", "stichwort"),
+        SACHGEBIET("Sachgebiet", "sachgebiet"),
+        AUTOR("Autor", "autor"),
+        TITEL("Titel", "titel"),
+        ERLAEUTERUNG("Erläuterung", "erlaeuterung"),
+        SUCHWOERTER("Suchwörter", "suchwoerter"),
+        UNTERTITEL("Untertitel", "untertitel"),
+        SPRECHER("Sprecher", "sprecher"),
+        SPRECHER1("Sprecher1", "sprecher1"),
+        EINSTELLDATUM("Einstelldatum", "einstelldatum");
 
         private final String label;
+        private final String luceneName;
 
-        Feld(final String label) {
+        Feld(final String label, final String luceneName) {
             this.label = label;
+            this.luceneName = luceneName;
         }
 
         public String getLabel() {
             return label;
+        }
+
+        public String luceneName() {
+            return luceneName;
         }
 
     }

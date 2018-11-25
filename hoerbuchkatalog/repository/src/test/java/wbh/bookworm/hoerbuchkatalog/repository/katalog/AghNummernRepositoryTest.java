@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryTestAppConfig;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +18,9 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.Set;
 
-@SpringBootTest(classes = {RepositoryTestAppConfig.class})
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+@SpringBootTest(classes = {KatalogTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 class AghNummernRepositoryTest {
 
@@ -36,8 +37,9 @@ class AghNummernRepositoryTest {
     void shouldFindeImportierteAghNummern() {
         final Set<AghNummer> aghNummern = aghNummernRepository.importiere();
         aghNummern.forEach(a -> {
-            LOGGER.info("AGH Nummer {} in Set enthalten: {}", a, aghNummern.contains(a));
+            LOGGER.trace("AGH Nummer {} in Set enthalten: {}", a, aghNummern.contains(a));
         });
+        assertTrue(aghNummern.size() > 0);
     }
 
 }
