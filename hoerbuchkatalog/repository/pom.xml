@@ -20,11 +20,11 @@
         <!-- Bookworm -->
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
         </dependency>
         <!-- aoc -->
         <dependency>

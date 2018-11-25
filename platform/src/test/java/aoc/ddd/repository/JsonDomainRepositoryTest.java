@@ -6,11 +6,9 @@
 
 package aoc.ddd.repository;
 
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = RepositoryTestAppConfig.class, loader = AnnotationConfigContextLoader.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class JsonDomainRepositoryTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(JsonDomainRepositoryTest.class);

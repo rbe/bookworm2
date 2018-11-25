@@ -8,10 +8,8 @@ package aoc.ddd.model.search;
 
 import aoc.ddd.search.LuceneIndex;
 
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +19,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SearchTestAppConfig.class/*, loader = AnnotationConfigContextLoader.class*/)
-@FixMethodOrder(MethodSorters.JVM)
+//@FixMethodOrder(MethodSorters.JVM)
 class LuceneIndexTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneIndexTest.class);

@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 class RandomStringGeneratorTest {
 

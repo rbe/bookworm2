@@ -9,12 +9,10 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 
-import org.junit.FixMethodOrder;
-import org.junit.Ignore;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,8 +21,8 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 @SpringBootTest(classes = {KatalogTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
-@FixMethodOrder(MethodSorters.JVM)
-@Ignore("TODO Neu mit Factory; Integration in HörbuchkatalogTest")
+//@FixMethodOrder(MethodSorters.JVM)
+@Disabled("TODO Neu mit Factory; Integration in HörbuchkatalogTest")
 @SuppressWarnings({"squid:S1192"})
 class HoerbuchkatalogSucheTest {
 

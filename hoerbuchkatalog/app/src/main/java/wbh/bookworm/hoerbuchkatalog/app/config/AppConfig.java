@@ -23,6 +23,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.thymeleaf.TemplateEngine;
 
 import java.nio.file.Path;
 
@@ -35,9 +36,11 @@ import java.nio.file.Path;
         HoerbuchkatalogService.class,
         BestellungService.class,
         DownloadsLieferungService.class,
-        EmailService.class
+        EmailService.class,
+        TemplateEngine.class
 })
 @EnableConfigurationProperties
+//@ThymeleafAutoConfiguration
 public class AppConfig {
 
     @Bean

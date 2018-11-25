@@ -6,13 +6,13 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 
 /*
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = AppConfig.class)
 */
-@Ignore
+@Disabled
 class SftpClientTest {
 
 /*

@@ -41,8 +41,8 @@ public class HoerernummerFilter implements Filter {
         LOGGER.trace("Suche Hoerernummer in HTTP-Anfrage '{}'", request.getRequestURI());
         final HttpSession session = request.getSession(true);
         if (null != session) {
-            LOGGER.info("Session {} is {}, last accessed {}",
-                    session.getId(), session.isNew() ? "new" : "not new",
+            LOGGER.debug("Session {} ist {}, lastAccessedTime={}",
+                    session.getId(), session.isNew() ? "neu" : "nicht neu",
                     new Date(session.getLastAccessedTime()));
             final Hoerernummer sessionHnr = (Hoerernummer) session.getAttribute(HNR_KEY);
             if (request.getRequestURI().endsWith("logout")) {

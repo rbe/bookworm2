@@ -13,10 +13,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import org.junit.FixMethodOrder;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.runners.MethodSorters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {BestellungAppConfig.class})
 @ExtendWith(SpringExtension.class)
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+//@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 class WarenkorbDomainRepositoryTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WarenkorbDomainRepositoryTest.class);
