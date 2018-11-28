@@ -35,12 +35,13 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                                 final String bemerkung,
                                 final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
                                 final Set<Titelnummer> cdTitelnummern, final Set<Titelnummer> downloadTitelnummern) {
-        return save(new Bestellung(nextIdentity(hoerernummer.getValue()),
-                hoerernummer,
-                hoerername, hoereremail,
+        final Bestellung aggregate = new Bestellung(
+                nextIdentity(hoerernummer.getValue()),
+                hoerernummer, hoerername, hoereremail,
                 bemerkung,
                 bestellkarteMischen, alteBestellkarteLoeschen,
-                cdTitelnummern, downloadTitelnummern));
+                cdTitelnummern, downloadTitelnummern);
+        return save(aggregate);
     }
 
     public Set<Bestellung> alleMitDownloads(final Hoerernummer hoerernummer) {

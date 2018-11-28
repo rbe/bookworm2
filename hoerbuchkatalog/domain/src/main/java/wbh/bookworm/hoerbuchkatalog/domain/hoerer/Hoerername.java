@@ -27,4 +27,9 @@ public final class Hoerername extends DomainValueObject {
         return nachname;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s %s", vorname, nachname);
+    }
+
 }

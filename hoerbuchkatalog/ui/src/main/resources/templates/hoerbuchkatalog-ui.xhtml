@@ -33,10 +33,6 @@
     <link type="text/css" rel="stylesheet" href="templates/oneweb/css/style.css"/>
     <link type="text/css" rel="stylesheet" href="templates/oneweb/css/bookworm.css"/>
     <link type="text/css" rel="stylesheet" href="app/search.css"/>
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <o:conditionalComment if="lte IE 9">
-        <link href="js/html5shiv.js" rel="stylesheet" type="text/css"/>
-    </o:conditionalComment>
     <h:outputScript library="javax.faces" name="jsf.js" target="head"/>
     <h:outputScript library="js" name="jquery-3.1.1.min.js" target="head"/>
     <h:outputScript library="js" name="wbh.js" target="body"/>
@@ -88,7 +84,7 @@
                         <ul class="nav menu">
                             <li><a href="https://www.wbh-online.de/">Startseite</a></li>
                             <li><h:outputLink value="katalogsuche.xhtml">Onlinekatalog</h:outputLink></li>
-                            <c:if test="#{hoerernummer.bekannt}">
+                            <c:if test="#{hoererSession.hoererIstBekannt}">
                                 <li><h:outputLink value="/hoerbuchkatalog/meinedownloads.xhtml">Downloads</h:outputLink></li>
                                 <li><h:outputLink value="/hoerbuchkatalog/meinemerkliste.xhtml">Merkliste</h:outputLink></li>
                                 <li><h:outputLink value="/hoerbuchkatalog/meinwarenkorb.xhtml">Warenkorb</h:outputLink></li>
@@ -99,7 +95,7 @@
                                 <li><h:outputLink value="/hoererdaten/meinarchiv.xhtml">Archiv</h:outputLink></li>
                                 -->
                             </c:if>
-                            <c:if test="#{hoerernummer.unbekannt}">
+                            <c:if test="#{hoererSession.hoererIstUnbekannt}">
                                 <li><h:outputLink value="https://www.wbh-online.de/kontakt.html">Kontakt</h:outputLink></li>
                                 <li><h:outputLink value="https://www.wbh-online.de/bhb-stiftung.html">BHB-Stiftung</h:outputLink></li>
                             </c:if>

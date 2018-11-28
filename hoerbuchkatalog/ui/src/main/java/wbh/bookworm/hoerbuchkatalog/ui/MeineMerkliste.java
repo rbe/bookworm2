@@ -30,6 +30,10 @@ class MeineMerkliste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
 
+    //
+    // Hörer
+    //
+
     private final Hoerernummer hoerernummer;
 
     //
@@ -53,10 +57,11 @@ class MeineMerkliste {
     private final ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
 
     @Autowired
-    MeineMerkliste(final Hoerernummer hoerernummer,
+    MeineMerkliste(final HoererSession hoererSession,
                    final MerklisteService merklisteService,
                    final MeinWarenkorb meinWarenkorb,
                    final HoerbuchkatalogService hoerbuchkatalogService) {
+        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;

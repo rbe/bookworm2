@@ -39,9 +39,10 @@ public class MeineDownloads {
     private List<BlistaDownload> nachStichwortGefilterteDownloads;
 
     @Autowired
-    public MeineDownloads(final Hoerernummer hoerernummer,
+    public MeineDownloads(final HoererSession hoererSession,
                           final DownloadsLieferungService downloadsLieferungService,
                           final MeineBestellung meineBestellung) {
+        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.meineBestellung = meineBestellung;
         this.verfuegbareDownloadsELCache = new ELValueCache<>(null,

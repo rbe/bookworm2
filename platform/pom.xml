@@ -42,7 +42,7 @@
         <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
         <jib-maven-plugin.version>0.9.7</jib-maven-plugin.version>
         <!-- Lucene -->
-        <lucene-core.version>7.4.0</lucene-core.version>
+        <lucene-core.version>7.5.0</lucene-core.version>
         <lucene-analyzers.version>3.6.2</lucene-analyzers.version>
         <!-- Jackson -->
         <jackson.version>2.9.6</jackson.version>
@@ -50,7 +50,7 @@
         <spring.version>5.0.9.RELEASE</spring.version>
         <janino.version>3.0.8</janino.version>
         <!-- Test -->
-        <junit-jupiter.version>5.2.0</junit-jupiter.version>
+        <junit-jupiter.version>5.3.2</junit-jupiter.version>
         <archunit.version>0.8.2</archunit.version>
         <skipTests>true</skipTests>
         <!-- Logging -->

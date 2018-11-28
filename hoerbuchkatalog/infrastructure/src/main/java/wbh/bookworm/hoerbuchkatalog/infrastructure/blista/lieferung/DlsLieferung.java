@@ -26,6 +26,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
@@ -307,13 +308,21 @@ public class DlsLieferung {
 
     private byte[] download(final URL url) throws IOException {
         final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
+        connection.setConnectTimeout(3 * 1_000);
+        connection.setReadTimeout(5 * 1_000);
         connection.setInstanceFollowRedirects(true);
         connection.addRequestProperty("bibliothek", dlsLieferungConfig.getBibliothek());
         connection.addRequestProperty("bibkennwort", dlsLieferungConfig.getBibkennwort());
         connection.addRequestProperty("Accept", "text/xml;charset=UTF-8");
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-        connection.getInputStream().transferTo(bytes);
-        connection.disconnect();
+        try {
+            // TODO java.net.ConnectException: Operation timed out (Connection timed out)
+            connection.getInputStream().transferTo(bytes);
+        } catch (SocketTimeoutException e) {
+            LOGGER.error("", e);
+        } finally {
+            connection.disconnect();
+        }
         return bytes.toByteArray();
     }
 
@@ -323,7 +332,9 @@ public class DlsLieferung {
                     hoerernummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "werke", url)));*/
-            final DlsAntwort dlsAntwort = werteAntwortAus(download(url));
+            final byte[] antwort = download(url);
+            // TODO antwort.length == 0
+            final DlsAntwort dlsAntwort = werteAntwortAus(antwort);
             if (dlsAntwort instanceof DlsWerke) {
                 return Optional.of((DlsWerke) dlsAntwort);
             } else if (dlsAntwort instanceof DlsFehlermeldung) {

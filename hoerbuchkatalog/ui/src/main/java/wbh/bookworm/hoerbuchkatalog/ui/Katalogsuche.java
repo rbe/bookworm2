@@ -35,10 +35,10 @@ public class Katalogsuche {
     private Suchparameter suchparameter;
 
     @Autowired
-    public Katalogsuche(final Hoerernummer hoerernummer,
+    public Katalogsuche(final HoererSession hoererSession,
                         final HoerbuchkatalogService hoerbuchkatalogService,
                         final Katalogsuchergebnis katalogsuchergebnis) {
-        this.hoerernummer = hoerernummer;
+        this.hoerernummer = hoererSession.hoerernummer();
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.katalogsuchergebnis = katalogsuchergebnis;
         this.suchparameter = new Suchparameter();

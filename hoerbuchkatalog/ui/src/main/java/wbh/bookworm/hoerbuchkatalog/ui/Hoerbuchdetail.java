@@ -33,9 +33,9 @@ public class Hoerbuchdetail {
     private Hoerbuch hoerbuch;
 
     @Autowired
-    public Hoerbuchdetail(final Hoerernummer hoerernummer,
+    public Hoerbuchdetail(final HoererSession hoererSession,
                           final HoerbuchkatalogService hoerbuchkatalogService) {
-        this.hoerernummer = hoerernummer;
+        this.hoerernummer = hoererSession.hoerernummer();
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 

@@ -14,7 +14,6 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.faces.context.ExternalContext;
@@ -22,7 +21,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-@Configuration
+//@Configuration
 public class MeineSessionConfig {
 
     private static final String HOERERNUMMER = "hnr";

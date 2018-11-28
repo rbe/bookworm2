@@ -45,11 +45,11 @@ public class Katalogsuchergebnis {
     private final Hoerbuchdetail hoerbuchdetail;
 
     @Autowired
-    public Katalogsuchergebnis(final Hoerernummer hoerernummer,
+    public Katalogsuchergebnis(final HoererSession hoererSession,
                                final Navigation navigation,
                                final HoerbuchkatalogService hoerbuchkatalogService,
                                final Hoerbuchdetail hoerbuchdetail) {
-        this.hoerernummer = hoerernummer;
+        this.hoerernummer = hoererSession.hoerernummer();
         this.navigation = navigation;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.hoerbuchdetail = hoerbuchdetail;

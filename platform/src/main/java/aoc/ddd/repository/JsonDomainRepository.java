@@ -125,41 +125,53 @@ public abstract class JsonDomainRepository
                 // TODO Strategy domainIdSequence = new DomainIdSequence(0);
                 domainIdSequence = initializeDomainIdCountingExistingAggregates(idSequencePath);
             } else {
-                logger.trace("Loading existing IdSequence for {}", aggClass);
-                try {
-                    domainIdSequence = objectMapper.readValue(
-                            idSequencePath.toFile(), DomainIdSequence.class);
-                } catch (IOException e) {
-                    idSequenceLock.unlock();
-                    throw new DomainRepositoryException("Could not initialize idSequence file " +
-                            idSequencePath, e);
-                }
+                domainIdSequence = loadExistingIdSequence(idSequencePath);
             }
-            try {
-                final Constructor<ID> declaredConstructor =
-                        idClass.getDeclaredConstructor(String.class);
-                declaredConstructor.setAccessible(true);
-                final String trim = prefix.trim();
-                final String prefixAndId = trim.length() > 1
-                        ? String.format("%s_%s", trim, domainIdSequence.incrementAndGetAsHex())
-                        : domainIdSequence.incrementAndGetAsHex();
-                final ID id = declaredConstructor.newInstance(prefixAndId);
-                objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
-                idSequenceLock.unlock();
-                logger.debug("Generated next id '{}'", id);
-                return id;
-            } catch (InstantiationException | IllegalAccessException
-                    | InvocationTargetException | NoSuchMethodException e) {
-                idSequenceLock.unlock();
-                throw new DomainRepositoryException(e);
-            } catch (IOException e) {
-                idSequenceLock.unlock();
-                throw new DomainRepositoryException("Could not store next id", e);
-            }
+            return incrementAndStoreIdSequence(prefix, idSequencePath, domainIdSequence);
         } catch (InterruptedException e) {
             idSequenceLock.unlock();
+            Thread.currentThread().interrupt();
             throw new DomainRepositoryException(e);
         }
+    }
+
+    private ID incrementAndStoreIdSequence(final String prefix, final Path idSequencePath,
+                                           final DomainIdSequence domainIdSequence) {
+        try {
+            final Constructor<ID> declaredConstructor =
+                    idClass.getDeclaredConstructor(String.class);
+            declaredConstructor.setAccessible(true);
+            final String trim = prefix.trim();
+            final String prefixAndId = trim.length() > 1
+                    ? String.format("%s_%s", trim, domainIdSequence.incrementAndGetAsHex())
+                    : domainIdSequence.incrementAndGetAsHex();
+            final ID id = declaredConstructor.newInstance(prefixAndId);
+            objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
+            idSequenceLock.unlock();
+            logger.debug("Generated next id '{}'", id);
+            return id;
+        } catch (InstantiationException | IllegalAccessException
+                | InvocationTargetException | NoSuchMethodException e) {
+            idSequenceLock.unlock();
+            throw new DomainRepositoryException(e);
+        } catch (IOException e) {
+            idSequenceLock.unlock();
+            throw new DomainRepositoryException("Could not store next id", e);
+        }
+    }
+
+    private DomainIdSequence loadExistingIdSequence(final Path idSequencePath) {
+        final DomainIdSequence domainIdSequence;
+        logger.trace("Loading existing IdSequence for {}", aggClass);
+        try {
+            domainIdSequence = objectMapper.readValue(
+                    idSequencePath.toFile(), DomainIdSequence.class);
+        } catch (IOException e) {
+            idSequenceLock.unlock();
+            throw new DomainRepositoryException("Could not initialize idSequence file " +
+                    idSequencePath, e);
+        }
+        return domainIdSequence;
     }
 
     private DomainIdSequence initializeDomainIdCountingExistingAggregates(final Path idSequencePath) {

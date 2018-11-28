@@ -11,6 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungSer
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
@@ -38,9 +40,7 @@ public class MeineBestellung {
 
     private Hoerernummer hoerernummer;
 
-    private String hoerername;
-
-    private String hoereremail;
+    private Hoerer hoerer;
 
     //
     // Bestellung
@@ -70,16 +70,17 @@ public class MeineBestellung {
 
     @Autowired
     public MeineBestellung(final Navigation navigation,
-                           final Hoerernummer hoerernummer,
+                           final HoererSession hoererSession,
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService,
                            final DownloadsLieferungService downloadsLieferungService) {
-        this.downloadsLieferungService = downloadsLieferungService;
+        this.hoerernummer = hoererSession.hoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
+        this.hoerer=hoererSession.hoerer();
         this.navigation = navigation;
-        this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
+        this.downloadsLieferungService = downloadsLieferungService;
         anzahlBestellterHoerbuecherValueCache = new ELValueCache<>(0,
                 () -> {
                     final int anzahlCDs =
@@ -111,27 +112,19 @@ public class MeineBestellung {
     }
 
     public boolean hasHoerername() {
-        return null != hoerername && !hoerername.trim().isEmpty();
+        return null != hoerer.hoerername;
     }
 
     public String getHoerername() {
-        return hoerername;
-    }
-
-    public void setHoerername(final String hoerername) {
-        this.hoerername = hoerername;
+        return String.format("%s %s", hoerer.getVorname(), hoerer.getNachname());
     }
 
     public boolean hasHoereremail() {
-        return null != hoereremail && !hoereremail.trim().isEmpty();
+        return null != hoerer.getHoereremail();
     }
 
-    public String getHoereremail() {
-        return hoereremail;
-    }
-
-    public void setHoereremail(final String hoereremail) {
-        this.hoereremail = hoereremail;
+    public HoererEmail getHoereremail() {
+        return hoerer.getHoereremail();
     }
 
     //

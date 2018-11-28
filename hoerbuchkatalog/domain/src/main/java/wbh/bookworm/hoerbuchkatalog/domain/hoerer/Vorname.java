@@ -14,4 +14,6 @@ public final class Vorname extends DomainSingleValueObject<Vorname, String> {
         super(vorname);
     }
 
+    // TODO checkValue .trim() !.isBlank() !.isEmpty()
+
 }

@@ -62,9 +62,10 @@ class MeinWarenkorb {
     private final ELValueCache<Boolean> maxDownloadsProMonatErreicht;
 
     @Autowired
-    MeinWarenkorb(final Hoerernummer hoerernummer,
+    MeinWarenkorb(final HoererSession hoererSession,
                   final HoerbuchkatalogService hoerbuchkatalogService,
                   final BestellungService bestellungService) {
+        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.hoerernummer = hoerernummer;
         this.bestellungService = bestellungService;

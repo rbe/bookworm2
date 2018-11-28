@@ -120,16 +120,14 @@
                                              styleClass="input_alteBestellkarteLoeschen"
                                              required="false">
                     </h:selectBooleanCheckbox>
-
                     <h:outputLabel value=" "/>
                     <!--onclick="setTimeout('document.getElementById(\'' + this.id + '\').disabled=true;', 50);"-->
                     <h:commandButton value="Bestellen"
                                      action="#{meineBestellung.bestellungAbschicken}"
                                      styleClass="basketsubmit">
-                        <f:ajax execute="@form" render="@all"/>
+                        <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
                     <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.bestellungStatusNachricht}"/>
-
                 </h:panelGrid>
             </h:form>
         </div>
