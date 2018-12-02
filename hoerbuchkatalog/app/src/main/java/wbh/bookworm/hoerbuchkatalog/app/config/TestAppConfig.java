@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.app;
+package wbh.bookworm.hoerbuchkatalog.app.config;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
@@ -15,11 +15,11 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
 
 @SpringBootApplication
 @SpringBootConfiguration
-@ComponentScan(basePackageClasses = {
+@Import({
         RepositoryConfig.class,
         DomainConfig.class,
         InfrastructureBlistaConfig.class

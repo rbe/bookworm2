@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
@@ -30,9 +32,9 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private final Hoerernummer hoerernummer;
 
-    private final String hoerername;
+    private final Hoerername hoerername;
 
-    private final String hoereremail;
+    private final HoererEmail hoereremail;
 
     private final String bemerkung;
 
@@ -49,8 +51,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
     @JsonCreator
     public Bestellung(final @JsonProperty("domainId") BestellungId bestellungId,
                       final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
-                      final @JsonProperty("hoerername") String hoerername,
-                      final @JsonProperty("hoereremail") String hoereremail,
+                      final @JsonProperty("hoerername") Hoerername hoerername,
+                      final @JsonProperty("hoereremail") HoererEmail hoereremail,
                       final @JsonProperty("bemerkung") String bemerkung,
                       final @JsonProperty("bestellkarteMischen") Boolean bestellkarteMischen,
                       final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
@@ -71,8 +73,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public Bestellung(final BestellungId bestellungId,
                       final Hoerernummer hoerernummer,
-                      final String hoerername,
-                      final String hoereremail,
+                      final Hoerername hoerername,
+                      final HoererEmail hoereremail,
                       final String bemerkung,
                       final Boolean bestellkarteMischen,
                       final Boolean alteBestellkarteLoeschen,
@@ -89,12 +91,16 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         return hoerernummer;
     }
 
-    public String getHoerername() {
+    public Hoerername getHoerername() {
         return hoerername;
     }
 
-    public String getHoereremail() {
+    public HoererEmail getHoereremail() {
         return hoereremail;
+    }
+
+    public boolean hasBemerkung() {
+        return null != bemerkung && !bemerkung.isBlank();
     }
 
     public String getBemerkung() {

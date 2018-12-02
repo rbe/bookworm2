@@ -35,7 +35,7 @@ final class DownloadsArchiv {
         }
     }
 
-    Optional<Path> findeAktuellstenKatalog(final String katalog) {
+    Optional<Path> findeAktuellstenKatalog(final Path katalog) {
         try {
             return repositoryArchive.find(katalog);
         } catch (RepositoryArchiveException e) {

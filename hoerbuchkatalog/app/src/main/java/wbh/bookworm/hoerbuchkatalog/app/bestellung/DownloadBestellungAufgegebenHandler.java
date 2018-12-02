@@ -4,16 +4,17 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.app.download.bestellung;
+package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailTemplateBuilder;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
 import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.event.DomainEventSubscriber;
@@ -24,25 +25,25 @@ import org.springframework.stereotype.Component;
 import java.util.Set;
 
 @Component
-public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
+public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
 
     private final BestellungRepository bestellungRepository;
 
-    private final WarenkorbRepository warenkorbRepository;
+    private final Hoerbuchkatalog hoerbuchkatalog;
 
     private final EmailTemplateBuilder emailTemplateBuilder;
 
     private final EmailService emailService;
 
     @Autowired
-    public CdBestellungAufgegebenHandler(final BestellungRepository bestellungRepository,
-                                         final WarenkorbRepository warenkorbRepository,
-                                         final EmailTemplateBuilder emailTemplateBuilder,
-                                         final EmailService emailService) {
+    public DownloadBestellungAufgegebenHandler(final BestellungRepository bestellungRepository,
+                                               final Hoerbuchkatalog hoerbuchkatalog,
+                                               final EmailTemplateBuilder emailTemplateBuilder,
+                                               final EmailService emailService) {
         super(BestellungAufgegeben.class);
         logger.trace("Initializing");
         this.bestellungRepository = bestellungRepository;
-        this.warenkorbRepository = warenkorbRepository;
+        this.hoerbuchkatalog = hoerbuchkatalog;
         this.emailTemplateBuilder = emailTemplateBuilder;
         this.emailService = emailService;
         DomainEventPublisher.global().subscribe(this);
@@ -52,9 +53,12 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
     public void handleEvent(final BestellungAufgegeben domainEvent) {
         final Hoerernummer hoerernummer = domainEvent.getHoerernummer();
         final Bestellung bestellung = (Bestellung) domainEvent.getDomainAggregate();
-        final Set<Titelnummer> cdTitelnummern = bestellung.getCdTitelnummern();
-        logger.info("Hörer {} hat folgende CDs bestellt: {}", hoerernummer, cdTitelnummern);
-        // TODO emailTemplateBuilder.build(new EmailTemplateId(""), null);
+        final Set<Titelnummer> downloadTitelnummern = bestellung.getDownloadTitelnummern();
+        final AghNummer[] aghNummern = downloadTitelnummern.stream()
+                .map(tn -> hoerbuchkatalog.hole(tn).getAghNummer())
+                .toArray(AghNummer[]::new);
+        logger.info("Hörer {} hat folgende Downloads bestellt: {}", hoerernummer, aghNummern);
+        // TODO blista
     }
 
 }

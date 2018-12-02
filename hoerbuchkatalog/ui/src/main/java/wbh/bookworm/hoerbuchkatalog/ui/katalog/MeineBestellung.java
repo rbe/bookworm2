@@ -4,10 +4,10 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.ui;
+package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
@@ -76,7 +76,7 @@ public class MeineBestellung {
                            final DownloadsLieferungService downloadsLieferungService) {
         this.hoerernummer = hoererSession.hoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
-        this.hoerer=hoererSession.hoerer();
+        this.hoerer = hoererSession.hoerer();
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
@@ -112,15 +112,17 @@ public class MeineBestellung {
     }
 
     public boolean hasHoerername() {
-        return null != hoerer.hoerername;
+        return hoerer.hasHoerername();
     }
 
     public String getHoerername() {
-        return String.format("%s %s", hoerer.getVorname(), hoerer.getNachname());
+        return String.format("%s %s",
+                hoerer.hasVorname() ? hoerer.getVorname() : "Unbekannt",
+                hoerer.hasNachname() ? hoerer.getNachname() : "Unbekann");
     }
 
     public boolean hasHoereremail() {
-        return null != hoerer.getHoereremail();
+        return hoerer.hasHoereremail();
     }
 
     public HoererEmail getHoereremail() {
@@ -171,7 +173,7 @@ public class MeineBestellung {
         // Bestellung aufgeben
         final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(
                 hoerernummer,
-                hoerername, hoereremail,
+                hoerer.getHoerername(), hoerer.getHoereremail(),
                 bemerkung,
                 bestellkarteMischen, alteBestellkarteLoeschen);
         if (bestellungId.isPresent()) {

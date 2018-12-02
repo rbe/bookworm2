@@ -35,6 +35,9 @@
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="org.thymeleaf" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="com.hazelcast" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

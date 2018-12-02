@@ -31,24 +31,9 @@ final class HoerbuchkatalogMapper {
 
     private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
 
-    private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
-
     @Autowired
-    HoerbuchkatalogMapper(final HoerbuchkatalogConfig hoerbuchkatalogConfig,
-                          final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
+    HoerbuchkatalogMapper(final HoerbuchkatalogConfig hoerbuchkatalogConfig) {
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
-        this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
-    }
-
-    void aktualisiereArchiv() {
-        final Path hoerbuchkatalogDirectory = hoerbuchkatalogConfig.getHoerbuchkatalogDirectory();
-        final Path gesamtDat = hoerbuchkatalogDirectory.resolve(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
-        if (Files.exists(gesamtDat)) {
-            LOGGER.info("Aktualisiere Hörbuchkatalog aus Archiv '{}'", gesamtDat);
-            hoerbuchkatalogArchiv.archiviereKatalog(gesamtDat);
-        } else {
-            LOGGER.info("'{}' nicht gefunden", gesamtDat);
-        }
     }
 
     Set<Hoerbuch> importiereAusArchiv(final Path gesamtDat) {

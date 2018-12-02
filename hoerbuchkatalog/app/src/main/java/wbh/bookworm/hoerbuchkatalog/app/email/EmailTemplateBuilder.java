@@ -6,19 +6,22 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
-import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateId;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
-import wbh.bookworm.hoerbuchkatalog.domain.email.HtmlEmailTemplate;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
 
 import java.util.Locale;
+import java.util.Map;
 
 @Component
 public final class EmailTemplateBuilder {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailTemplateBuilder.class);
 
     private final EmailTemplateRepository emailTemplateRepository;
 
@@ -37,13 +40,21 @@ public final class EmailTemplateBuilder {
         return templateEngine.process("mailTemplate", context);
     }
 
-    public String build(final EmailTemplateId emailTemplateId, final String message) {
-        final HtmlEmailTemplate htmlEmailTemplate =
-                emailTemplateRepository.load(emailTemplateId)
+    /* TODO
+    public String build(final EmailTemplateId emailTemplateId, final Map<String, Object> contextVariables) {
+        final HtmlEmailTemplate htmlEmailTemplate = emailTemplateRepository
+                .load(emailTemplateId)
                 .orElseThrow(EmailServiceException::new);
         final Context context = new Context(Locale.GERMANY);
-        context.setVariable("message", message);
+        context.setVariables(contextVariables);
         return templateEngine.process(htmlEmailTemplate.getHtml(), context);
+    }
+    */
+
+    public String build(final String emailTemplate, final Map<String, Object> contextVariables) {
+        final Context context = new Context(Locale.GERMANY);
+        context.setVariables(contextVariables);
+        return templateEngine.process(emailTemplate, context);
     }
 
 }

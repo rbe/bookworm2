@@ -36,6 +36,8 @@ public final class HoerbuchkatalogRepository
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 
+    private static final Path WBH_KATALOG_DATEINAME = Path.of("Gesamt.dat");
+
     private final ApplicationContext applicationContext;
 
     private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
@@ -81,8 +83,9 @@ public final class HoerbuchkatalogRepository
     private Hoerbuchkatalog hoerbuchkatalog(final boolean neu) {
         if (null == aktuellerHoerbuchkatalog.get() || neu) {
             LOGGER.trace("Erzeuge neuen Hörbuchkatalog");
-            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog("Gesamt.dat");
-            gesamtDat.ifPresentOrElse(gd -> {
+            hoerbuchkatalogArchiv.archiviereNeuenKatalog(WBH_KATALOG_DATEINAME);
+            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog(WBH_KATALOG_DATEINAME);
+            gesamtDat.ifPresent(gd -> {
                         LOGGER.trace("Erzeuge neuen Hörbuchkatalog aus '{}'", gd);
                         final Set<Hoerbuch> hoerbuecher = importiereHoerbuchkatalogAusArchiv(gd);
                         if (hoerbuecher.isEmpty()) {
@@ -97,13 +100,11 @@ public final class HoerbuchkatalogRepository
                             verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                             sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
                             aktuellerHoerbuchkatalog.set(neuerKatalog);
-                            LOGGER.debug("Hörbuchkatalog aus '{}' erzeugt", gd);
+                            LOGGER.info("Hörbuchkatalog erfolgreich erzeugt");
                         }
-                    },
-                    () -> {
                     });
         } else {
-            LOGGER.debug("Hörbuchkatalog bereits erzeugt");
+            LOGGER.trace("Hörbuchkatalog bereits erzeugt");
         }
         return aktuellerHoerbuchkatalog.get();
     }
@@ -164,7 +165,7 @@ public final class HoerbuchkatalogRepository
 
     private void aktualisiereArchiv() {
         try {
-            hoerbuchkatalogMapper.aktualisiereArchiv();
+            hoerbuchkatalogArchiv.archiviereNeuenKatalog(WBH_KATALOG_DATEINAME);
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: " + e.getMessage(), e);
         }

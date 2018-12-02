@@ -9,6 +9,8 @@ package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
@@ -31,7 +33,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
     }
 
     public Bestellung erstellen(final Hoerernummer hoerernummer,
-                                final String hoerername, final String hoereremail,
+                                final Hoerername hoerername, final HoererEmail hoereremail,
                                 final String bemerkung,
                                 final Boolean bestellkarteMischen, final Boolean alteBestellkarteLoeschen,
                                 final Set<Titelnummer> cdTitelnummern, final Set<Titelnummer> downloadTitelnummern) {

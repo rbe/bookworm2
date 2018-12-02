@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.ui;
+package wbh.bookworm.hoerbuchkatalog.ui.jsftest;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;

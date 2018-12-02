@@ -10,6 +10,8 @@ import aoc.ddd.repository.RepositoryArchive;
 import aoc.ddd.repository.RepositoryArchiveException;
 import aoc.ddd.spring.Singleton;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.file.Path;
@@ -17,6 +19,8 @@ import java.util.Optional;
 
 @Singleton
 final class HoerbuchkatalogArchiv {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogArchiv.class);
 
     private final RepositoryArchive repositoryArchive;
 
@@ -35,12 +39,19 @@ final class HoerbuchkatalogArchiv {
         }
     }
 
-    Optional<Path> findeAktuellstenKatalog(final String katalog) {
+    Optional<Path> findeAktuellstenKatalog(final Path filename) {
         try {
-            return repositoryArchive.find(katalog);
+            return repositoryArchive.find(filename);
         } catch (RepositoryArchiveException e) {
             throw new HoerbuchkatalogArchivException(String.format(
-                    "Kann Katalog '%s' nicht im Archiv finden", katalog), e);
+                    "Kann Katalog '%s' nicht im Archiv finden", filename), e);
+        }
+    }
+
+    void archiviereNeuenKatalog(final Path filename) {
+        if (repositoryArchive.exists(filename)) {
+            LOGGER.info("Aktualisiere Archiv des Hörbuchkatalogs mit '{}'", filename);
+            archiviereKatalog(filename);
         }
     }
 

@@ -8,6 +8,8 @@ package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -20,24 +22,13 @@ import javax.mail.internet.MimeMessage;
 @Component
 public final class EmailService {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
+
     private final JavaMailSender javaMailSender;
 
     @Autowired
     public EmailService(final JavaMailSender javaMailSender) {
         this.javaMailSender = javaMailSender;
-    }
-
-    public void send(final String to, final String subject, String text) {
-        final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-        try {
-            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
-            helper.setTo(to);
-            helper.setSubject(subject);
-            helper.setText(text);
-            javaMailSender.send(mimeMessage);
-        } catch (MessagingException e) {
-            e.printStackTrace();
-        }
     }
 
     public void sendSimpleMessage(final Email email) {
@@ -47,6 +38,20 @@ public final class EmailService {
         message.setTo(email.getTo());
         message.setFrom(email.getFrom());
         javaMailSender.send(message);
+    }
+
+    public void send(final String to, final String cc, final String subject, String text) {
+        final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
+        try {
+            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            helper.setTo(to);
+            helper.setCc(cc);
+            helper.setSubject(subject);
+            helper.setText(text);
+            javaMailSender.send(mimeMessage);
+        } catch (MessagingException e) {
+            LOGGER.error("", e);
+        }
     }
 
 }

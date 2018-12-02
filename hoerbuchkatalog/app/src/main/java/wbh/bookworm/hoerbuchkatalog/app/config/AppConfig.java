@@ -6,41 +6,36 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.config;
 
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.app.download.lieferung.DownloadsLieferungService;
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.thymeleaf.TemplateEngine;
 
 import java.nio.file.Path;
 
 @Configuration
 @Import({
         RepositoryConfig.class,
-        DomainConfig.class
+        DomainConfig.class,
+        InfrastructureBlistaConfig.class
 })
-@ComponentScan(basePackageClasses = {
+/*@ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
         DownloadsLieferungService.class,
         EmailService.class,
         TemplateEngine.class
-})
+})*/
 @EnableConfigurationProperties
-//@ThymeleafAutoConfiguration
 public class AppConfig {
 
     @Bean

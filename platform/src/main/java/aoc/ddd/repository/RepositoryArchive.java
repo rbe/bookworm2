@@ -46,8 +46,8 @@ public final class RepositoryArchive {
         LOGGER.info("Archive directory is '{}'", archiveDirectory.toAbsolutePath());
     }
 
-    private String[] filenameAndExtension(final String filename) {
-        final String[] splitByDot = filename.split("[.]");
+    private String[] filenameAndExtension(final Path filename) {
+        final String[] splitByDot = filename.getFileName().toString().split("[.]");
         final String name = String.join(".",
                 Arrays.copyOfRange(splitByDot, 0, splitByDot.length - 1));
         final String extension = splitByDot[splitByDot.length - 1];
@@ -55,7 +55,7 @@ public final class RepositoryArchive {
     }
 
     public Path archive(final Path fromFile) throws RepositoryArchiveException {
-        final String[] fext = filenameAndExtension(fromFile.getFileName().toString());
+        final String[] fext = filenameAndExtension(fromFile);
         final String timestamp = LocalDateTime.now()
                 .format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
                 .replaceAll("[.]", "-")
@@ -71,7 +71,11 @@ public final class RepositoryArchive {
         }
     }
 
-    public Optional<Path> find(final String name) throws RepositoryArchiveException {
+    public boolean exists(final Path name) {
+        return Files.exists(archiveDirectory.resolve(name));
+    }
+
+    public Optional<Path> find(final Path name) throws RepositoryArchiveException {
         final String[] fext = filenameAndExtension(name);
         try (final Stream<Path> paths = Files.list(archiveDirectory)
                 .filter(p -> p.getFileName().toString().startsWith(fext[0])
@@ -92,7 +96,8 @@ public final class RepositoryArchive {
 
     public static void main(String[] args) throws RepositoryArchiveException {
         final RepositoryArchive repositoryArchive = new RepositoryArchive(Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/assembly/var/hoerbuchkatalog"));
-        repositoryArchive.find("Gesamt.dat");
+        System.out.printf("%s%n", repositoryArchive.find(Path.of("Gesamt.dat")));
+        System.out.printf("%s%n", repositoryArchive.exists(Path.of("Gesamt.dat")));
     }
 
 }

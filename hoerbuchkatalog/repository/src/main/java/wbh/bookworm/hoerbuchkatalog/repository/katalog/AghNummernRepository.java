@@ -45,7 +45,8 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
     }
 
     Set<AghNummer> importiere() {
-        final Optional<Path> fileName = hoerbuchkatalogArchiv.findeAktuellstenKatalog("isofiles.zip");
+        final Optional<Path> fileName = hoerbuchkatalogArchiv.
+                findeAktuellstenKatalog(Path.of("isofiles.zip"));
         if (fileName.isPresent()) {
             return importiere(fileName.get());
         } else {

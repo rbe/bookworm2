@@ -6,13 +6,33 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 
@@ -42,6 +62,40 @@ class TemplateBuilderTest {
                         emailTemplateBuilder.buildSimple("This is a test message.")
                                 .split("\n"))
         );
+    }
+
+    @Test
+    void shouldBuildBestellbestaetigungCd() throws IOException {
+        final Bestellung bestellung = new Bestellung(
+                new BestellungId("1234567890"),
+                new Hoerernummer("80170"),
+                new Hoerername(new Vorname("Herbert"), new Nachname("Hörer")),
+                new HoererEmail("herbert.hoerer@example.com"),
+                "Bemerkung",
+                Boolean.FALSE, Boolean.FALSE,
+                Set.of(new Titelnummer("123456"), new Titelnummer("789012")),
+                null,
+                LocalDateTime.now()
+        );
+        final Set<Hoerbuch> hoerbucher = Set.of(
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("123456"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("234567"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("345678"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false));
+        final String build = emailTemplateBuilder.build("BestellbestaetigungCd.html",
+                Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
+        Files.write(Path.of("BestellbestaetigungCd-test.html"), build.getBytes(StandardCharsets.UTF_8));
     }
 
 }

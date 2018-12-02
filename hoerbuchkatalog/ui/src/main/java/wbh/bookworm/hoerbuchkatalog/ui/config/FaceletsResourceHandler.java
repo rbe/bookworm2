@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.ui;
+package wbh.bookworm.hoerbuchkatalog.ui.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,7 +30,7 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
     @Override
     public ViewResource createViewResource(FacesContext context, final String name) {
         ViewResource resource = super.createViewResource(context, name);
-        if (resource == null) {
+        if (null == resource) {
             resource = new ViewResource() {
                 @Override
                 public URL getURL() {
