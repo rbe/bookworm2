@@ -7,31 +7,45 @@
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
 
+import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.Import;
+import org.thymeleaf.TemplateEngine;
 
 import java.nio.file.Path;
 
 @SpringBootApplication
 @SpringBootConfiguration
 @EnableConfigurationProperties
+@Import({
+        RepositoryConfig.class,
+        DomainConfig.class,
+        InfrastructureBlistaConfig.class
+})
 @ComponentScan(basePackageClasses = {
-        CdBestellungAufgegebenHandler.class,
+        HoerbuchkatalogService.class,
+        BestellungService.class,
+        DownloadsLieferungService.class,
         EmailService.class,
-        Hoerbuchkatalog.class,
-        HoerbuchkatalogRepository.class,
-        DomainConfig.class
+        TemplateEngine.class
 })
 public class CdBestellungTestAppConfig {
+
+    @Bean
+    static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
+        return new PropertyPlaceholderConfigurer();
+    }
 
     @Bean
     public EmailRepository emailRepository() {

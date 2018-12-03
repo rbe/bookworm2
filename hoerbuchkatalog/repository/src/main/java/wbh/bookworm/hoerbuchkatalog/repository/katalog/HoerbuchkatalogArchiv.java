@@ -50,7 +50,7 @@ final class HoerbuchkatalogArchiv {
 
     void archiviereNeuenKatalog(final Path filename) {
         if (repositoryArchive.exists(filename)) {
-            LOGGER.info("Aktualisiere Archiv des Hörbuchkatalogs mit '{}'", filename);
+            LOGGER.info("Aktualisiere Archiv des Hörbuchkatalogs mit '{}'", filename.toAbsolutePath());
             archiviereKatalog(filename);
         }
     }

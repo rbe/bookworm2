@@ -59,9 +59,9 @@ class CdBestellungAufgegebenHandlerTest {
                 new Hoerernummer("80170"),
                 new Hoerername(new Vorname("Herbert"), new Nachname("Hörer")),
                 new HoererEmail("herbert.hoerer@example.com"),
-                "Bemerkung",
+                "Hier wurde eine Bemerkung eingegeben.",
                 Boolean.FALSE, Boolean.FALSE,
-                Set.of(new Titelnummer("123456"), new Titelnummer("789012")),
+                Set.of(new Titelnummer("69404")/* TODO null, new Titelnummer("789012")*/),
                 null,
                 LocalDateTime.now()
         );

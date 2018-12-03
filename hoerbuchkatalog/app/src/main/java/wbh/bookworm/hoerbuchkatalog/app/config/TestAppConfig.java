@@ -6,6 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.config;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
@@ -15,16 +19,25 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
+import org.thymeleaf.TemplateEngine;
 
 @SpringBootApplication
 @SpringBootConfiguration
+@EnableConfigurationProperties
 @Import({
         RepositoryConfig.class,
         DomainConfig.class,
         InfrastructureBlistaConfig.class
 })
-@EnableConfigurationProperties
+@ComponentScan(basePackageClasses = {
+        HoerbuchkatalogService.class,
+        BestellungService.class,
+        DownloadsLieferungService.class,
+        EmailService.class,
+        TemplateEngine.class
+})
 public class TestAppConfig {
 
     @Bean

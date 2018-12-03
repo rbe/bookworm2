@@ -61,9 +61,10 @@ public final class RepositoryArchive {
                 .replaceAll("[.]", "-")
                 .replaceAll(":", "-");
         final String archivedFilename = String.format("%s-%s.%s", fext[0], timestamp, fext[1]);
+        final Path resolvedFromFile = archiveDirectory.resolve(fromFile).toAbsolutePath();
         final Path archivedFile = archiveDirectory.resolve(archivedFilename).toAbsolutePath();
         try {
-            Files.move(fromFile, archivedFile, StandardCopyOption.REPLACE_EXISTING);
+            Files.move(resolvedFromFile, archivedFile, StandardCopyOption.REPLACE_EXISTING);
             LOGGER.info("Archived file '{}' to '{}'", fromFile, archivedFile);
             return archivedFile;
         } catch (IOException e) {
@@ -94,6 +95,7 @@ public final class RepositoryArchive {
         }
     }
 
+    /** TODO Test */
     public static void main(String[] args) throws RepositoryArchiveException {
         final RepositoryArchive repositoryArchive = new RepositoryArchive(Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/assembly/var/hoerbuchkatalog"));
         System.out.printf("%s%n", repositoryArchive.find(Path.of("Gesamt.dat")));
