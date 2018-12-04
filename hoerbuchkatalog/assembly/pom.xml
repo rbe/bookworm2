@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-  ~ All rights reserved. Use is subject to license terms.
-  -->
-
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -38,12 +32,7 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
         </dependency>
-        <!-- Hazelcast -->
-        <dependency>
-            <groupId>com.hazelcast</groupId>
-            <artifactId>hazelcast</artifactId>
-        </dependency>
-        <!-- Spring -->
+        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-mail</artifactId>
@@ -55,6 +44,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-configuration-processor</artifactId>
+            <optional>true</optional>
         </dependency>
         <!-- Test -->
         <dependency>
@@ -79,7 +73,35 @@
             <id>bookworm.assembly</id>
             <build>
                 <plugins>
+                    <!--<plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-jar-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>jar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>-->
                     <plugin>
+                        <groupId>org.springframework.boot</groupId>
+                        <artifactId>spring-boot-maven-plugin</artifactId>
+                        <configuration>
+                            <layout>ZIP</layout>
+                            <excludeDevtools>true</excludeDevtools>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <phase>package</phase>
+                                <goals>
+                                    <goal>repackage</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <!--<plugin>
                         <groupId>com.google.cloud.tools</groupId>
                         <artifactId>jib-maven-plugin</artifactId>
                         <configuration>
@@ -87,7 +109,7 @@
                                 <image>myimage</image>
                             </to>
                         </configuration>
-                    </plugin>
+                    </plugin>-->
                 </plugins>
             </build>
         </profile>

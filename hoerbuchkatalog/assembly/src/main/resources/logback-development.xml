@@ -15,10 +15,6 @@
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
-
-    <logger name="org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor" level="OFF"/>
-    <logger name="org.springframework.boot.web.servlet.context.AnnotationConfigServletWebServerApplicationContext" level="OFF"/>
-
     <logger name="wbh.bookworm.hoerbuchkatalog.assembly" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
@@ -85,7 +81,7 @@
     <logger name="org.springframework.beans.factory.support" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="org.springframework" level="INFO" additivity="false">
+    <logger name="org.springframework" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.reflections" level="ERROR" additivity="false">

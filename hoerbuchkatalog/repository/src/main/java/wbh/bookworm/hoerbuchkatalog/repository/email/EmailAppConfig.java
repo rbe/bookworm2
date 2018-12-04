@@ -6,10 +6,21 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.email;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.file.Path;
+
 @Configuration
-@ComponentScan
+@ComponentScan(basePackageClasses = {
+        EmailRepository.class
+})
 public class EmailAppConfig {
+
+    @Bean
+    public EmailTemplateRepository emailTemplateRepository() {
+        return new EmailTemplateRepository(Path.of("target/var"));
+    }
+
 }

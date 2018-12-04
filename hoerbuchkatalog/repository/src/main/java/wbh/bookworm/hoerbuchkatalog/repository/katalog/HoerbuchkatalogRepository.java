@@ -19,6 +19,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
@@ -30,13 +31,14 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+@Configuration
 @DomainRespositoryComponent
-public final class HoerbuchkatalogRepository
+public class HoerbuchkatalogRepository
         /* TODO extends JsonDomainRepository<Hoerbuchkatalog, HoerbuchkatalogId>*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 
-    private static final Path WBH_KATALOG_DATEINAME = Path.of("Gesamt.dat");
+    private final Path wbhKatalogDateiname;
 
     private final ApplicationContext applicationContext;
 
@@ -61,9 +63,10 @@ public final class HoerbuchkatalogRepository
                               final HoerbuchkatalogMapper hoerbuchkatalogMapper,
                               final AghNummernRepository aghNummernRepository,
                               final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
-        /* TODO super(Hoerbuchkatalog.class, HoerbuchkatalogId.class, hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());*/
+        /* TODO super(Hoerbuchkatalog.class, HoerbuchkatalogId.class, hoerbuchkatalogConfig.getDirectory());*/
         this.applicationContext = applicationContext;
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
+        wbhKatalogDateiname = Path.of(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
         this.taskScheduler = taskScheduler;
         this.hoerbuchkatalogMapper = hoerbuchkatalogMapper;
         this.aghNummernRepository = aghNummernRepository;
@@ -83,9 +86,9 @@ public final class HoerbuchkatalogRepository
     private Hoerbuchkatalog hoerbuchkatalog(final boolean neu) {
         if (null == aktuellerHoerbuchkatalog.get() || neu) {
             LOGGER.trace("Erzeuge neuen Hörbuchkatalog");
-            hoerbuchkatalogArchiv.archiviereNeuenKatalog(WBH_KATALOG_DATEINAME);
-            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog(WBH_KATALOG_DATEINAME);
-            gesamtDat.ifPresent(gd -> {
+            hoerbuchkatalogArchiv.archiviereNeuenKatalog(wbhKatalogDateiname);
+            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog(wbhKatalogDateiname);
+            gesamtDat.ifPresentOrElse(gd -> {
                         LOGGER.trace("Erzeuge neuen Hörbuchkatalog aus '{}'", gd);
                         final Set<Hoerbuch> hoerbuecher = importiereHoerbuchkatalogAusArchiv(gd);
                         if (hoerbuecher.isEmpty()) {
@@ -96,15 +99,22 @@ public final class HoerbuchkatalogRepository
                                     applicationContext.getBean("hoerbuchkatalogMap", Map.class);
                             final HoerbuchkatalogId hoerbuchkatalogDomainId =
                                     new HoerbuchkatalogId(gd.getFileName().toString());
-                            final Hoerbuchkatalog neuerKatalog = new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
+                            final Hoerbuchkatalog neuerKatalog =
+                                    new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
+                            LOGGER.debug("Hörbuchkatalog aus '{}' erfolgreich erzeugt", gd);
                             verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                             sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
                             aktuellerHoerbuchkatalog.set(neuerKatalog);
-                            LOGGER.info("Hörbuchkatalog erfolgreich erzeugt");
+                            LOGGER.info("Hörbuchkatalog erfolgreich initialisiert");
                         }
-                    });
+                    },
+                    () -> LOGGER.error("Es wurde kein Hörbuchkatalog '{}/{}' gefunden",
+                            hoerbuchkatalogConfig.getDirectory().toAbsolutePath(), wbhKatalogDateiname));
         } else {
             LOGGER.trace("Hörbuchkatalog bereits erzeugt");
+        }
+        if (null == aktuellerHoerbuchkatalog.get()) {
+            throw new IllegalStateException("null == aktuellerHoerbuchkatalog");
         }
         return aktuellerHoerbuchkatalog.get();
     }
@@ -113,6 +123,7 @@ public final class HoerbuchkatalogRepository
                                      final Hoerbuchkatalog hoerbuchkatalog) {
         final HoerbuchkatalogSuche hoerbuchkatalogSuche =
                 new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogDomainId);
+        // TODO Nur on-demand, wenn kein Index besteht
         hoerbuchkatalogSuche.indiziere(hoerbuchkatalog.alle());
         hoerbuchkatalog.setHoerbuchkatalogSuche(hoerbuchkatalogSuche);
     }
@@ -153,7 +164,7 @@ public final class HoerbuchkatalogRepository
 
     private void archivRegelmaessigAktualisieren() {
         final CronTrigger cronTrigger = new CronTrigger(
-                hoerbuchkatalogConfig.getHoerbuchkatalogCronExpression());
+                hoerbuchkatalogConfig.getCronExpression());
         LOGGER.info("Hörbuchkatalog wird regelmäßig aktualisiert, Cron={}",
                 cronTrigger.getExpression());
         if (null != katalogeAktualisierenScheduledFuture) {
@@ -165,7 +176,7 @@ public final class HoerbuchkatalogRepository
 
     private void aktualisiereArchiv() {
         try {
-            hoerbuchkatalogArchiv.archiviereNeuenKatalog(WBH_KATALOG_DATEINAME);
+            hoerbuchkatalogArchiv.archiviereNeuenKatalog(wbhKatalogDateiname);
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.warn("Aktualisierung des WBH Hörbuchkatalogs nicht erfolgt: " + e.getMessage(), e);
         }

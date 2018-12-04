@@ -43,7 +43,7 @@ class SftpClient {
         final JSch jsch = new JSch();
         try {
             session = jsch.getSession(dlsBestellungConfig.getBibliothek(),
-                    dlsBestellungConfig.getSftpHost(), dlsBestellungConfig.getSftpPort());
+                    dlsBestellungConfig.getHost(), dlsBestellungConfig.getPort());
             session.setPassword(dlsBestellungConfig.getBibkennwort());
             session.setConfig(getSessionConfig());
             session.connect();

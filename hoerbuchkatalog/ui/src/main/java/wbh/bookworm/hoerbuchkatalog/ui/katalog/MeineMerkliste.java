@@ -26,7 +26,7 @@ import java.util.Set;
 
 @Component
 @SessionScope
-class MeineMerkliste {
+public class MeineMerkliste {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
 

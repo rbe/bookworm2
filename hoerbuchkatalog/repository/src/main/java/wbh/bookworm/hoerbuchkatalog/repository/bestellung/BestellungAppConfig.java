@@ -9,7 +9,6 @@ package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.nio.file.Path;
 
@@ -18,11 +17,6 @@ import java.nio.file.Path;
         BestellungRepository.class
 })
 public class BestellungAppConfig {
-
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
 
     @Bean
     public WarenkorbRepository warenkorbRepository() {

@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 @org.springframework.web.context.annotation.SessionScope
 //@org.springframework.context.annotation.Scope("session")
 //@javax.enterprise.context.SessionScoped
-class MeinWarenkorb {
+public class MeinWarenkorb {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
 

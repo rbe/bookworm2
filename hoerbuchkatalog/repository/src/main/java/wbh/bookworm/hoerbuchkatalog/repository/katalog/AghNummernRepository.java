@@ -33,14 +33,14 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AghNummernRepository.class);
 
-    private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
+    private final BlistaConfig blistaConfig;
 
     private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
     @Autowired
-    AghNummernRepository(final HoerbuchkatalogConfig hoerbuchkatalogConfig,
+    AghNummernRepository(final BlistaConfig blistaConfig,
                          final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
-        this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
+        this.blistaConfig = blistaConfig;
         this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
     }
 
@@ -61,10 +61,10 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
     }
 
     private Set<AghNummer> importiere(final Path katalogZip) {
-        LOGGER.info("Importiere AGH Nummern aus {}", katalogZip);
+        LOGGER.info("Importiere AGH Nummern aus '{}'", katalogZip);
         final Set<AghNummer> aghNummern = new TreeSet<>(AghNummer::compareTo);
         try {
-            final String pathInZip = hoerbuchkatalogConfig.getBlistaKatalogAghNummernPathInZip();
+            final String pathInZip = blistaConfig.getAghNummernPathInZip();
             final List<String> neueAghNummern = DownloadHelper.extractLinesFromPathInZip(katalogZip, pathInZip);
             final List<String> aghNummernOhneErsteZeile = neueAghNummern.subList(1, neueAghNummern.size());
             aghNummernOhneErsteZeile.forEach(a -> {
@@ -79,10 +79,10 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
     }
 
     Path aktualisiereArchiv() {
-        final String url = hoerbuchkatalogConfig.getBlistaKatalogRestUrl();
+        final String url = blistaConfig.getKatalogRestUrl();
         LOGGER.info("Aktualisiere AGH Nummern von {}", url);
         try {
-            final Path downloadPath = DownloadHelper.downloadUsingHttpsURLConnection(url);
+            final Path downloadPath = DownloadHelper.getAndSave(url);
             if (Files.exists(downloadPath)) {
                 final Path isofilesZip = downloadPath.getParent().resolve("isofiles.zip");
                 Files.move(downloadPath, isofilesZip);
@@ -115,7 +115,7 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
             return strings;
         }
 
-        static Path downloadUsingHttpsURLConnection(final String urlStr) throws IOException {
+        static Path getAndSave(final String urlStr) throws IOException {
             final HttpsURLConnection httpsURLConnection = connect(urlStr);
             final Path tempFile = Files.createTempFile("blista", ".zip");
             tempFile.toFile().deleteOnExit();
@@ -133,7 +133,7 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
         }
 
     /*
-        static Path downloadUsingNIO(final String urlStr) throws IOException {
+        static Path getAndSave(final String urlStr) throws IOException {
             final Path tempFile = Files.createTempFile("blista", ".zip");
             tempFile.toFile().deleteOnExit();
             final EnumSet<StandardOpenOption> options =

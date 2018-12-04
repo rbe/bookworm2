@@ -24,7 +24,8 @@ import java.io.Serializable;
 
 @Component
 @SessionScope
-class HoererSession implements Serializable {
+// org.springframework.aop.framework.AopConfigException: Could not generate CGLIB subclass of class wbh.bookworm.hoerbuchkatalog.ui.katalog.HoererSession: Common causes of this problem include using a final class or a non-visible class; nested exception is org.springframework.cglib.core.CodeGenerationException: java.lang.reflect.InvocationTargetException-->null
+public class HoererSession implements Serializable {
 
     private static final String HOERERNUMMER = "hnr";
 

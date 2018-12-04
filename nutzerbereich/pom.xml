@@ -8,14 +8,13 @@
         <artifactId>wbh.bookworm</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.kundendaten</artifactId>
+    <artifactId>wbh.bookworm.nutzerbereich</artifactId>
     <packaging>pom</packaging>
-    <profiles>
-        <profile>
-            <id>bookworm.kundendaten.ui</id>
-            <modules>
-                <module>ui</module>
-            </modules>
-        </profile>
-    </profiles>
+    <modules>
+        <module>assembly</module>
+        <module>ui</module>
+        <module>app</module>
+        <module>repository</module>
+        <module>domain</module>
+    </modules>
 </project>

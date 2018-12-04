@@ -6,60 +6,86 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
-@Component
-@PropertySource({"classpath:/conf/hoerbuchkatalog.properties"})
-final class HoerbuchkatalogConfig {
+@Configuration
+@PropertySource("classpath:/conf/hoerbuchkatalog.properties")
+@ConfigurationProperties(prefix = "hoerbuchkatalog")
+public class HoerbuchkatalogConfig {
 
-    @Value("${hoerbuchkatalog.directory}")
-    private Path hoerbuchkatalogDirectory;
+    private Path directory;
 
-    @Value("${hoerbuchkatalog.cronexpression}")
-    private String hoerbuchkatalogCronExpression;
+    public void setDirectory(final Path directory) {
+        this.directory = directory;
+    }
 
-    @Value("${wbh.gesamtdat.filename}")
-    private String wbhGesamtdatFilename;
+    public static class Cron {
 
-    @Value("${wbh.gesamtdat.charset}")
-    private String wbhGesamtdatCharset;
+        private String expression;
 
-    //@Value("${blista.katalog.rest.url}")
-    @Value("${blista.katalog.rest.scheme}://" +
-            "${blista.katalog.rest.host}:${blista.katalog.rest.port}" +
-            "${blista.katalog.rest.path}")
-    private String blistaDlsCatalogRestUrl;
+        public void setExpression(final String expression) {
+            this.expression = expression;
+        }
 
-    @Value("${blista.katalog.aghnummern.path_in_zip}")
-    private String blistaDlsCatalogAghNummernPathInZip;
+    }
 
-    Path getHoerbuchkatalogDirectory() {
-        return hoerbuchkatalogDirectory;
+    private Cron cron;
+
+    public void setCron(final Cron cron) {
+        this.cron = cron;
+    }
+
+    public static class Wbh {
+
+        public static class Gesamtdat {
+
+            private String filename;
+
+            public void setFilename(final String filename) {
+                this.filename = filename;
+            }
+
+            private Charset charset;
+
+            public void setCharset(final Charset charset) {
+                this.charset = charset;
+            }
+
+        }
+
+        private Gesamtdat gesamtdat = new Gesamtdat();
+
+        public void setGesamtdat(final Gesamtdat gesamtdat) {
+            this.gesamtdat = gesamtdat;
+        }
+
+    }
+
+    private Wbh wbh;
+
+    public void setWbh(final Wbh wbh) {
+        this.wbh = wbh;
+    }
+
+    Path getDirectory() {
+        return directory;
+    }
+
+    String getCronExpression() {
+        return cron.expression;
     }
 
     String getWbhGesamtdatFilename() {
-        return wbhGesamtdatFilename;
+        return wbh.gesamtdat.filename;
     }
 
     Charset getWbhGesamtdatCharset() {
-        return Charset.forName(wbhGesamtdatCharset);
-    }
-
-    String getHoerbuchkatalogCronExpression() {
-        return hoerbuchkatalogCronExpression;
-    }
-
-    String getBlistaKatalogRestUrl() {
-        return blistaDlsCatalogRestUrl;
-    }
-
-    String getBlistaKatalogAghNummernPathInZip() {
-        return blistaDlsCatalogAghNummernPathInZip;
+        return wbh.gesamtdat.charset;
     }
 
 }

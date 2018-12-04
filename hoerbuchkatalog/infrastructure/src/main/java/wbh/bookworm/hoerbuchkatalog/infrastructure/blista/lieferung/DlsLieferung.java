@@ -268,7 +268,7 @@ public class DlsLieferung {
                         .replaceAll("[.]", "-")
                         .replaceAll(":", "-"));
         Files.copy(connection.getInputStream(),
-                dlsLieferungConfig.getBlistaDlsDirectory().resolve(filename),
+                dlsLieferungConfig.getDirectory().resolve(filename),
                 StandardCopyOption.REPLACE_EXISTING);
         connection.disconnect();
         return Path.of(filename);
@@ -328,7 +328,7 @@ public class DlsLieferung {
 
     public Optional<DlsWerke> alleWerkeLaden(final String hoerernummer) {
         try {
-            final URL url = new URL(String.format("%s/%s", dlsLieferungConfig.getBlistaDlsRestUrl(),
+            final URL url = new URL(String.format("%s/%s", dlsLieferungConfig.getRestUrl(),
                     hoerernummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "werke", url)));*/
@@ -353,7 +353,7 @@ public class DlsLieferung {
     public Optional<DlsBestellung> bestellungLaden(final String hoerernummer, final String aghNummer) {
         final long startBook = System.nanoTime();
         try {
-            final URL url = new URL(String.format("%s/%s/%s", dlsLieferungConfig.getBlistaDlsRestUrl(),
+            final URL url = new URL(String.format("%s/%s/%s", dlsLieferungConfig.getRestUrl(),
                     hoerernummer, aghNummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "bestellung-" + aghNummer, url)));*/

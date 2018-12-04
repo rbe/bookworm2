@@ -88,7 +88,8 @@ final class HoerbuchkatalogMapper {
     };
 
     private Hoerbuch ausGesamtDatEintrag(final String zeile) {
-        LOGGER.trace("Erzeuge Hörbuch aus Gesamt.dat: {}", zeile);
+        LOGGER.trace("Erzeuge Hörbuch aus '{}': {}",
+                hoerbuchkatalogConfig.getWbhGesamtdatFilename(), zeile);
         final String[] arr = new String[COLUMN_POSITIONS.length / 2];
         for (int cp = 0; cp < COLUMN_POSITIONS.length; cp += 2) {
             int from = COLUMN_POSITIONS[cp];
@@ -109,7 +110,7 @@ final class HoerbuchkatalogMapper {
             try {
                 aghNummer = new AghNummer(arr[18]);
             } catch (Exception e) {
-                LOGGER.warn("Hörbuch Titelnummer#{} hat eine ungültige AGH Nummer '{}'",
+                LOGGER.warn("Hörbuch {} hat eine ungültige AGH Nummer '{}'",
                         titelnummer, arr[18]);
             }
         }

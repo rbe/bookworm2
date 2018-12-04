@@ -10,11 +10,9 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @Import({DlsLieferungAppConfig.class})
@@ -24,10 +22,4 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
         DlsLieferung.class
 })
 public class LieferungAppConfig {
-
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
 }

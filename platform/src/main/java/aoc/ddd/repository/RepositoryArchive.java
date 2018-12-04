@@ -34,6 +34,7 @@ public final class RepositoryArchive {
     }
 
     private void createDirectoryOrFail() {
+        LOGGER.debug("Checking directoy '{}", archiveDirectory);
         final boolean directoryExists = Files.exists(archiveDirectory);
         if (!directoryExists) {
             try {
@@ -43,7 +44,7 @@ public final class RepositoryArchive {
                         "Cannot create directory '%s'", archiveDirectory.toAbsolutePath()));
             }
         }
-        LOGGER.info("Archive directory is '{}'", archiveDirectory.toAbsolutePath());
+        LOGGER.debug("Archive directory is '{}'", archiveDirectory.toAbsolutePath());
     }
 
     private String[] filenameAndExtension(final Path filename) {
@@ -65,7 +66,7 @@ public final class RepositoryArchive {
         final Path archivedFile = archiveDirectory.resolve(archivedFilename).toAbsolutePath();
         try {
             Files.move(resolvedFromFile, archivedFile, StandardCopyOption.REPLACE_EXISTING);
-            LOGGER.info("Archived file '{}' to '{}'", fromFile, archivedFile);
+            LOGGER.debug("Archived file '{}' to '{}'", fromFile, archivedFile);
             return archivedFile;
         } catch (IOException e) {
             throw new RepositoryArchiveException(String.format("Canot archive file '%s'", fromFile), e);

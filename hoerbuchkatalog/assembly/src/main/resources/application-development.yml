@@ -1,9 +1,3 @@
-#
-# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-# All rights reserved. Use is subject to license terms.
-#
-
 spring:
   profiles: development
   main:
@@ -11,8 +5,8 @@ spring:
   mail:
     host: smtp.gmail.com
     port: 587
-    username: <login user to smtp server>
-    password: <login password to smtp server>
+    username: username
+    password: password
     default-encoding: UTF-8
     protocol: smtp
     test-connection: false

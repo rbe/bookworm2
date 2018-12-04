@@ -14,7 +14,7 @@ import aoc.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
 
-@DomainRespositoryComponent
+// TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
 public class EmailTemplateRepository extends JsonDomainRepository<HtmlEmailTemplate, EmailTemplateId> {
 
     public EmailTemplateRepository(final Path storagePath) {

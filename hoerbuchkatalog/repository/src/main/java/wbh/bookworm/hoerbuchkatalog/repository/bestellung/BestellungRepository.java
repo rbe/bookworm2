@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@DomainRespositoryComponent
+// TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
 public class BestellungRepository extends JsonDomainRepository<Bestellung, BestellungId> {
 
     public BestellungRepository(final Path storagePath) {

@@ -23,7 +23,7 @@ final class DownloadsArchiv {
     @Autowired
     DownloadsArchiv(final DlsLieferungConfig downloadsConfig) {
         this.repositoryArchive = new RepositoryArchive(
-                downloadsConfig.getBlistaDlsDirectory());
+                downloadsConfig.getDirectory());
     }
 
     void archiviere(final Path katalogDatei) {

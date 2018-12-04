@@ -6,20 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 @Configuration
 @ComponentScan(basePackageClasses = {
         DlsLieferung.class
 })
 public class DlsLieferungAppConfig {
-
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-
 }

@@ -27,7 +27,7 @@ final class HoerbuchkatalogArchiv {
     @Autowired
     HoerbuchkatalogArchiv(final HoerbuchkatalogConfig hoerbuchkatalogConfig) {
         this.repositoryArchive = new RepositoryArchive(
-                hoerbuchkatalogConfig.getHoerbuchkatalogDirectory());
+                hoerbuchkatalogConfig.getDirectory());
     }
 
     Path archiviereKatalog(final Path katalogDatei) {

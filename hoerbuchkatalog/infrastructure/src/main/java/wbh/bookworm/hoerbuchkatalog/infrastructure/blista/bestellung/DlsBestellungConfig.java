@@ -6,32 +6,29 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 @Component
 @PropertySource({"classpath:/conf/blista-dls-bestellung.properties"})
+@ConfigurationProperties(prefix = "blista.dls.bestellung.sftp")
 final class DlsBestellungConfig {
 
-    @Value("${blista.dls.bestellung.sftp.host}")
-    private String sftpHost;
+    private String host;
 
-    @Value("${blista.dls.bestellung.sftp.port}")
-    private Integer sftpPort;
+    private Integer port;
 
-    @Value("${blista.dls.bestellung.sftp.bibliothek}")
     private String bibliothek;
 
-    @Value("${blista.dls.bestellung.sftp.bibkennwort}")
     private String bibkennwort;
 
-    String getSftpHost() {
-        return sftpHost;
+    String getHost() {
+        return host;
     }
 
-    Integer getSftpPort() {
-        return sftpPort;
+    Integer getPort() {
+        return port;
     }
 
     String getBibliothek() {

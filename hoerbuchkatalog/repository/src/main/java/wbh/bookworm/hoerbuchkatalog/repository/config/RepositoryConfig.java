@@ -18,8 +18,8 @@ import org.springframework.context.annotation.Import;
 @Import({
         KatalogAppConfig.class,
         BestellungAppConfig.class,
-        LieferungAppConfig.class,
-        EmailAppConfig.class
+        EmailAppConfig.class,
+        LieferungAppConfig.class
 })
 public class RepositoryConfig {
 }

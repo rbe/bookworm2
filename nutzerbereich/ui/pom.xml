@@ -5,10 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.kundendaten</artifactId>
+        <artifactId>wbh.bookworm.nutzerbereich</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.kundendaten.ui</artifactId>
+    <artifactId>wbh.bookworm.nutzerbereich.ui</artifactId>
     <dependencyManagement>
         <dependencies>
             <dependency>

@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
@@ -14,37 +14,57 @@ import java.nio.file.Path;
 
 @Component
 @PropertySource({"classpath:/conf/blista-dls-lieferung.properties"})
+@ConfigurationProperties(prefix = "blista.dls.lieferung")
 final class DlsLieferungConfig {
 
-    @Value("${blista.dls.lieferung.directory}")
-    private Path blistaDlsDirectory;
+    private Path directory;
 
-    //@Value("${blista.dls.lieferung.rest.url}")
-    @Value("${blista.dls.lieferung.rest.scheme}://" +
-            "${blista.dls.lieferung.rest.host}:${blista.dls.lieferung.rest.port}" +
-            "${blista.dls.lieferung.rest.path}")
-    private String blistaDlsRestUrl;
-
-    @Value("${blista.dls.lieferung.rest.bibliothek}")
-    private String bibliothek;
-
-    @Value("${blista.dls.lieferung.rest.bibkennwort}")
-    private String bibkennwort;
-
-    Path getBlistaDlsDirectory() {
-        return blistaDlsDirectory;
+    public void setDirectory(final Path directory) {
+        this.directory = directory;
     }
 
-    String getBlistaDlsRestUrl() {
-        return blistaDlsRestUrl;
+    Path getDirectory() {
+        return directory;
+    }
+
+    public static class Rest {
+
+        private String url;
+
+        public void setUrl(final String url) {
+            this.url = url;
+        }
+
+        private String bibliothek;
+
+        public void setBibliothek(final String bibliothek) {
+            this.bibliothek = bibliothek;
+        }
+
+        private String bibkennwort;
+
+        public void setBibkennwort(final String bibkennwort) {
+            this.bibkennwort = bibkennwort;
+        }
+
+    }
+
+    private Rest rest;
+
+    public void setRest(final Rest rest) {
+        this.rest = rest;
+    }
+
+    String getRestUrl() {
+        return rest.url;
     }
 
     String getBibliothek() {
-        return bibliothek;
+        return rest.bibliothek;
     }
 
     String getBibkennwort() {
-        return bibkennwort;
+        return rest.bibkennwort;
     }
 
 }

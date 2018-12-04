@@ -20,7 +20,7 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
 @Component
-public final class EmailService {
+public /* TODO final*/ class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
