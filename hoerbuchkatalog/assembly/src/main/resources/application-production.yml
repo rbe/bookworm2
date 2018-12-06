@@ -1,7 +1,9 @@
 spring:
   profiles: production
+  banner:
+    location: classpath:/banner/banner.txt
   main:
-    banner-mode: "log"
+    banner-mode: "console"
   mail:
     host: smtp.gmail.com
     port: 587
@@ -33,12 +35,17 @@ server:
   port: 8080
   compression:
     enabled: true
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: always
   servlet:
     context-path: /hoerbuchkatalog
     session:
       cookie:
         http-only: true
         secure: true
+      persistent: true
 
 logging:
   config: classpath:logback-production.xml

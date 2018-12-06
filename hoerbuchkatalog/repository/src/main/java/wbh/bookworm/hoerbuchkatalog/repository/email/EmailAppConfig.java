@@ -20,7 +20,7 @@ public class EmailAppConfig {
 
     @Bean
     public EmailTemplateRepository emailTemplateRepository() {
-        return new EmailTemplateRepository(Path.of("target/var"));
+        return new EmailTemplateRepository(Path.of("var"));
     }
 
 }

@@ -62,8 +62,8 @@ public final class RepositoryArchive {
                 .replaceAll("[.]", "-")
                 .replaceAll(":", "-");
         final String archivedFilename = String.format("%s-%s.%s", fext[0], timestamp, fext[1]);
-        final Path resolvedFromFile = archiveDirectory.resolve(fromFile).toAbsolutePath();
-        final Path archivedFile = archiveDirectory.resolve(archivedFilename).toAbsolutePath();
+        final Path resolvedFromFile = archiveDirectory.resolve(fromFile)/*.toAbsolutePath()*/;
+        final Path archivedFile = archiveDirectory.resolve(archivedFilename)/*.toAbsolutePath()*/;
         try {
             Files.move(resolvedFromFile, archivedFile, StandardCopyOption.REPLACE_EXISTING);
             LOGGER.debug("Archived file '{}' to '{}'", fromFile, archivedFile);

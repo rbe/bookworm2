@@ -61,7 +61,7 @@ public final class FaceletsResourceHandler extends ResourceHandlerWrapper {
         static {
             BASE_PATH = System.getenv(TEMPLATE_SYSTEM_VARIABLE);
             if (null == WebFilesystem.BASE_PATH) {
-                LOGGER.error("Variable {} not set!", TEMPLATE_SYSTEM_VARIABLE);
+                LOGGER.error("Environment variable '{}' not set!", TEMPLATE_SYSTEM_VARIABLE);
             }
         }
 

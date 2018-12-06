@@ -80,7 +80,7 @@ public abstract class JsonDomainRepository
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         /* TODO objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);*/
-        logger.info("Initialized with aggregate storage path {}", aggregateStoragePath.toAbsolutePath());
+        logger.info("Initialized with aggregate storage path '{}'", aggregateStoragePath.toAbsolutePath());
     }
 
     private Path makeStorageFilename(final ID domainId) {
