@@ -1,4 +1,56 @@
+.Deployment
+[source,bash,linenum]
+----
+cd target
+mkdir dist
+cd dist
+mkdir -p var/hoerbuchkatalog
+cp ../../var/hoerbuchkatalog/Gesamt-2018-12-03T19-00-57-82719.dat var/hoerbuchkatalog/Gesamt.dat
+cp -r ../../src/main/resources/conf .
+cp -r ../../src/main/resources/*.yml .
+cp -r ../../../ui/src/main/resources/templates .
+JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
+cp ../${JAR} .
+scp -Cr * medienhof9:/home/wbh/app/bookworm2
+----
+
+.Start (development)
+[source,bash,linenum]
+----
+export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
+java -jar ${JAR} \
+    --spring.profiles.active=production \
+    --spring.config.additional-location=conf/
+----
+
+.Start (development; www.wbh-online.de)
+[source,bash,linenum]
+----
+export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
+export PATH=$JAVA_HOME/bin:$PATH
+export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
+nohup \
+    java -jar wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar \
+    --spring.profiles.active=development \
+    --spring.config.additional-location=conf/ \
+    2>&1 1>hoerbuchkatalog.log &
+----
+
+.Start (production; www.wbh-online.de)
+[source,bash,linenum]
+----
+export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
+export PATH=$JAVA_HOME/bin:$PATH
+export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
+nohup \
+    java -jar wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar \
+    --spring.profiles.active=production \
+    --spring.config.additional-location=conf/ \
+    2>&1 1>hoerbuchkatalog.log &
+----
+
 .Java Flight Recorder
+[source,bash,linenum]
 ----
 -Xlog:gc*=debug:file=gc.log:utctime,uptime,tid,level:filecount=10,filesize=128m
 -XX:+HeapDumpOnOutOfMemoryError
