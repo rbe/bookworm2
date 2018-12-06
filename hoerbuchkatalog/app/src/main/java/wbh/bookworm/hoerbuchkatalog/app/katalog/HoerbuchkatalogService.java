@@ -35,7 +35,7 @@ public class HoerbuchkatalogService {
     public Suchergebnis sucheNachStichwort(final Hoerernummer hoerernummer, final String stichwort) {
         LOGGER.trace("");
         final Suchergebnis suchergebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
-        LOGGER.info("Hörer {}: Suche nach Stichwort {} ergab {} Treffer",
+        LOGGER.info("Hörer {}: Suche nach Stichwort '{}' ergab {} Treffer",
                 hoerernummer, stichwort, suchergebnis.getAnzahl());
         return suchergebnis;
     }
@@ -43,7 +43,7 @@ public class HoerbuchkatalogService {
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
         LOGGER.trace("");
         final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.info("Hörer {}: Suche nach {} ergab {} Treffer",
+        LOGGER.info("Hörer {}: Suche nach '{}' ergab {} Treffer",
                 hoerernummer, suchparameter, suchergebnis.getAnzahl());
         return suchergebnis;
     }

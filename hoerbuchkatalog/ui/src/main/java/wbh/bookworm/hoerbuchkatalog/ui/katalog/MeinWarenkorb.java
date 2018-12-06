@@ -23,11 +23,13 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.Serializable;
+
 @Component
 @org.springframework.web.context.annotation.SessionScope
 //@org.springframework.context.annotation.Scope("session")
 //@javax.enterprise.context.SessionScoped
-public class MeinWarenkorb {
+public class MeinWarenkorb implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
 
@@ -35,39 +37,39 @@ public class MeinWarenkorb {
     // Hörer
     //
 
+    // TODO Hoerer
     private final Hoerernummer hoerernummer;
 
     //
     // Hörbuchkatalog
     //
 
-    private final ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
+    private final transient ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
 
     //
     // Bestellung
     //
 
-    private final BestellungService bestellungService;
+    private final transient BestellungService bestellungService;
 
-    private final ELValueCacheGroup cdWarenkorbCacheGroup;
+    private final transient ELValueCacheGroup cdWarenkorbCacheGroup;
 
-    private final ELValueCache<CdWarenkorb> cdWarenkorbValueCache;
+    private final transient ELValueCache<CdWarenkorb> cdWarenkorbValueCache;
 
-    private final ELValueCacheGroup downloadWarenkorbCacheGroup;
+    private final transient ELValueCacheGroup downloadWarenkorbCacheGroup;
 
-    private final ELValueCache<DownloadWarenkorb> downloadWarenkorbValueCache;
+    private final transient ELValueCache<DownloadWarenkorb> downloadWarenkorbValueCache;
 
-    private final ELValueCache<Boolean> maxDownloadsProTagErreicht;
+    private final transient ELValueCache<Boolean> maxDownloadsProTagErreicht;
 
-    private final ELValueCache<Boolean> maxDownloadsProMonatErreicht;
+    private final transient ELValueCache<Boolean> maxDownloadsProMonatErreicht;
 
     @Autowired
     MeinWarenkorb(final HoererSession hoererSession,
                   final HoerbuchkatalogService hoerbuchkatalogService,
                   final BestellungService bestellungService) {
-        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
+        this.hoerernummer = hoererSession.getHoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
-        this.hoerernummer = hoerernummer;
         this.bestellungService = bestellungService;
         // CD Warenkorb
         cdWarenkorbValueCache = new ELValueCache<>(null,
@@ -87,7 +89,7 @@ public class MeinWarenkorb {
                 titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer));
     }
 
-    public void bestellungAufgegeben() {
+    void bestellungAufgegeben() {
         cdWarenkorbCacheGroup.invalidateAll();
         downloadWarenkorbCacheGroup.invalidateAll();
         hoerbuchValueCache.invalidateAll();
@@ -153,12 +155,12 @@ public class MeinWarenkorb {
 
     public boolean isMaxDownloadsProTagErreicht() {
         LOGGER.trace("");
-        return maxDownloadsProTagErreicht.get();
+        return hoerernummer.isBekannt() && maxDownloadsProTagErreicht.get();
     }
 
     public boolean isMaxDownloadsProMonatErreicht() {
         LOGGER.trace("");
-        return maxDownloadsProMonatErreicht.get();
+        return hoerernummer.isBekannt() && maxDownloadsProMonatErreicht.get();
     }
 
     //

@@ -32,10 +32,34 @@ public final class LuceneQuery {
 
     private static final DecimalFormat decimalFormat = new DecimalFormat("#,###.##");
 
+    public static class Result {
+
+        private final List<DomainId<?>> domainIds;
+
+        private final int totalMatchingCount;
+
+        private static final Result EMPTY_RESULT = new Result(Collections.emptyList(), 0);
+
+        Result(final List<DomainId<?>> domainIds, final int totalMatchingCount) {
+            this.domainIds = domainIds;
+            this.totalMatchingCount = totalMatchingCount;
+        }
+
+        public List<DomainId<?>> getDomainIds() {
+            return domainIds;
+        }
+
+        public int getTotalMatchingCount() {
+            return totalMatchingCount;
+        }
+
+    }
+
     @SuppressWarnings({"squid:S1452"})
-    public static List<DomainId<?>> query(final LuceneIndex luceneIndex,
-                                          final BooleanQueryBuilder queryBuilder,
-                                          final String... sortFields) {
+    public static Result query(final LuceneIndex luceneIndex,
+                               final BooleanQueryBuilder queryBuilder,
+                               final int maxResults,
+                               final String... sortFields) {
         Objects.requireNonNull(queryBuilder);
         Objects.requireNonNull(luceneIndex);
         Objects.requireNonNull(luceneIndex.getIndexReader());
@@ -46,16 +70,17 @@ public final class LuceneQuery {
                     .map(f -> new SortField(f.toLowerCase(), SortField.Type.STRING_VAL))
                     .toArray(SortField[]::new);
             final Sort sort = new Sort(sortFieldStream);
-            final TopDocs topDocs = searcher.search(queryBuilder.build(), Integer.MAX_VALUE, sort);
+            final int count = searcher.count(queryBuilder.build());
+            final TopDocs topDocs = searcher.search(queryBuilder.build(), maxResults, sort);
             final long nanos = System.nanoTime() - startNanos;
             LOGGER.debug("Query took {} ns (= {} ms = {} s)",
                     decimalFormat.format(nanos),
                     decimalFormat.format(nanos / 1_000_000),
                     decimalFormat.format(nanos / 1_000_000 / 1_000));
-            return topDocsToDomainIds(searcher, topDocs);
+            return new Result(topDocsToDomainIds(searcher, topDocs), count);
         } catch (IOException e) {
             LOGGER.error("Cannot execute query", e);
-            return Collections.emptyList();
+            return Result.EMPTY_RESULT;
         }
     }
 
@@ -70,7 +95,8 @@ public final class LuceneQuery {
                         return new DomainId<>(doc.get(DOMAIN_ID));
                     } catch (IOException e) {
                         LOGGER.error("", e);
-                        /* TODO Function may return null, but it's not allowed here */return null;
+                        /* TODO Function may return null, but it's not allowed here */
+                        return null;
                     }
                 })
                 .collect(Collectors.toUnmodifiableList());

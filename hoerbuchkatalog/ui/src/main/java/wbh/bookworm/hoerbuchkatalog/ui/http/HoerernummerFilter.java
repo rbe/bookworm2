@@ -61,13 +61,17 @@ public class HoerernummerFilter implements Filter {
 
     private void hoerernummerInSessionSetzen(final HttpServletRequest request, final HttpSession session) {
         final String requestHnr = request.getParameter(HNR_KEY);
-        if (null != requestHnr) {
+        if (isEmpty(requestHnr)) {
             session.setAttribute(HNR_KEY, new Hoerernummer(requestHnr));
             LOGGER.debug("Hörernummer {} für HttpSession {} gesetzt", requestHnr, session.getId());
         } else {
             session.setAttribute(HNR_KEY, Hoerernummer.UNBEKANNT);
             LOGGER.debug("Unbekannter Hörer für HttpSession {} gesetzt", session.getId());
         }
+    }
+
+    private boolean isEmpty(final String str) {
+        return null!=str&&!str.isBlank();
     }
 
     @Override

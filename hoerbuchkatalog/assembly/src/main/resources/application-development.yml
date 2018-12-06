@@ -32,7 +32,7 @@ jsf:
 
 server:
   address: 127.0.0.1
-  port: 8080
+  port: 9080
   compression:
     enabled: true
   error:
@@ -45,7 +45,7 @@ server:
       cookie:
         http-only: true
         secure: false
-      persistent: true
+      persistent: false
 
 logging:
   config: classpath:logback-development.xml

@@ -33,22 +33,26 @@ public class HoererSession implements Serializable {
 
     private static final String HOERERNUMMER = "hnr";
 
-    public Hoerernummer hoerernummer() {
+    public Hoerernummer getHoerernummer() {
         return (Hoerernummer) getSession().getAttribute(HOERERNUMMER);
     }
 
-    public Hoerer hoerer() {
-        return new Hoerer(hoerernummer(),
+    public Hoerer getHoerer() {
+        return new Hoerer(getHoerernummer(),
                 new Hoerername(new Vorname("VORNAME"), new Nachname("NACHNAME")),
                 new HoererEmail("hoerer@example.com"));
     }
 
+    public Hoerername getHoerername() {
+        return getHoerer().getHoerername();
+    }
+
     public boolean isHoererIstBekannt() {
-        return hoerernummer().isBekannt();
+        return getHoerernummer().isBekannt();
     }
 
     public boolean isHoererIstUnbekannt() {
-        return hoerernummer().isUnbekannt();
+        return getHoerernummer().isUnbekannt();
     }
 
     private HttpSession getSession() {

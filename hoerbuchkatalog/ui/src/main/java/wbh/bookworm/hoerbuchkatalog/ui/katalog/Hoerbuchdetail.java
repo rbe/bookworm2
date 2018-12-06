@@ -18,24 +18,25 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.Objects;
 
 @Component
 @SessionScope
-public class Hoerbuchdetail {
+public class Hoerbuchdetail implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuchdetail.class);
 
     private final Hoerernummer hoerernummer;
 
-    private final HoerbuchkatalogService hoerbuchkatalogService;
+    private final transient HoerbuchkatalogService hoerbuchkatalogService;
 
     private Hoerbuch hoerbuch;
 
     @Autowired
     public Hoerbuchdetail(final HoererSession hoererSession,
                           final HoerbuchkatalogService hoerbuchkatalogService) {
-        this.hoerernummer = hoererSession.hoerernummer();
+        this.hoerernummer = hoererSession.getHoerernummer();
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 

@@ -31,10 +31,14 @@ final class HoerbuchkatalogSuche {
 
     private final LuceneIndex luceneIndex;
 
+    private final int anzahlSuchergebnisse;
+
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
-                         final DomainId<String> hoerbuchkatalogDomainId) {
+                         final DomainId<String> hoerbuchkatalogDomainId,
+                         final int anzahlSuchergebnisse) {
         this.luceneIndex = applicationContext.getBean(
                 LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
+        this.anzahlSuchergebnisse = anzahlSuchergebnisse;
     }
 
     void indiziere(final Set<Hoerbuch> hoerbuecher) {
@@ -69,36 +73,30 @@ final class HoerbuchkatalogSuche {
                 .add(new QueryParameters.Field(Suchparameter.Feld.UNTERTITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
                 .add(new QueryParameters.Field(Suchparameter.Feld.ERLAEUTERUNG.name(), QueryParameters.Occur.SHOULD), stichwort)
                 .add(new QueryParameters.Field(Suchparameter.Feld.SUCHWOERTER.name(), QueryParameters.Occur.SHOULD), stichwort);
-        final List<Titelnummer> titelnummern =
-                LuceneQuery.query(this.luceneIndex, booleanQueryBuilder,
-                        Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name())
+        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
+                Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
+        final List<Titelnummer> titelnummern = result.getDomainIds()
                         .stream()
                         .map(dddId -> new Titelnummer(dddId.getValue()))
                         .collect(Collectors.toUnmodifiableList());
-/*
-       TODO if (titelnummern.size() <= 1000) {
-*/
-        return new Suchergebnis(new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort),
-                titelnummern);
-/*
-        } else {
-            return Optional.empty();
-        }
-*/
+        final Suchparameter suchparameter =
+                new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
     }
 
     Suchergebnis suchen(final Suchparameter suchparameter) {
-        LOGGER.info("Suche nach {}", suchparameter);
+        LOGGER.info("Suche nach '{}'", suchparameter);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
                 .add(new QueryParameters.Field(Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.SHOULD), suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
         suchparameter.getFelderMitWerten().keySet()
                 .forEach(k -> booleanQueryBuilder.add(new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST), suchparameter.wert(k)));
-        final List<DomainId<?>> result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder,
+        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder, 1000,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
-        return new Suchergebnis(suchparameter, result.stream()
+        final List<Titelnummer> titelnummern = result.getDomainIds()
+                .stream()
                 .map(dddId -> new Titelnummer(dddId.getValue()))
-                .collect(Collectors.toList())
-        );
+                .collect(Collectors.toList());
+        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
     }
 
 }

@@ -17,17 +17,21 @@ public final class Suchergebnis extends DomainValueObject {
 
     private static final long serialVersionUID = -1L;
 
-    private Suchparameter suchparameter;
+    private final Suchparameter suchparameter;
 
-    private List<Titelnummer> titelnummern;
+    private final List<Titelnummer> titelnummern;
 
-    private int anzahl;
+    private final int anzahl;
+
+    private final int gesamtAnzahlTreffer;
 
     public Suchergebnis(final Suchparameter suchparameter,
-                        final List<Titelnummer> titelnummern) {
+                        final List<Titelnummer> titelnummern,
+                        final int gesamtAnzahlTreffer) {
         this.suchparameter = suchparameter;
         this.titelnummern = titelnummern;
         anzahl = titelnummern.size();
+        this.gesamtAnzahlTreffer = gesamtAnzahlTreffer;
     }
 
     public Suchparameter getSuchparameter() {
@@ -36,6 +40,10 @@ public final class Suchergebnis extends DomainValueObject {
 
     public int getAnzahl() {
         return anzahl;
+    }
+
+    public int getGesamtAnzahlTreffer() {
+        return gesamtAnzahlTreffer;
     }
 
     public List<Titelnummer> getTitelnummern() {
@@ -62,8 +70,8 @@ public final class Suchergebnis extends DomainValueObject {
 
     @Override
     public String toString() {
-        return String.format("Suchergebnis{suchparameter=%s, titelnummern=%d, anzahl=%d}",
-                suchparameter, titelnummern.size(), anzahl);
+        return String.format("Suchergebnis{suchparameter=%s, titelnummern=%d, anzahl=%d, gesamtAnzahlTreffer=%d}",
+                suchparameter, titelnummern.size(), anzahl, gesamtAnzahlTreffer);
     }
 
 }

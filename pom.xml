@@ -475,6 +475,7 @@
             <properties>
                 <maven-surefire-plugin.version>2.22.0</maven-surefire-plugin.version>
                 <maven-failsafe-plugin.version>2.22.0</maven-failsafe-plugin.version>
+                <jacoco.version>0.8.2</jacoco.version>
                 <skipTests>false</skipTests>
             </properties>
             <build>
@@ -490,13 +491,17 @@
                             <artifactId>maven-failsafe-plugin</artifactId>
                             <version>${maven-failsafe-plugin.version}</version>
                         </plugin>
+                        <plugin>
+                            <groupId>org.jacoco</groupId>
+                            <artifactId>jacoco-maven-plugin</artifactId>
+                            <version>${jacoco.version}</version>
+                        </plugin>
                     </plugins>
                 </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.2</version>
                         <executions>
                             <execution>
                                 <id>pre-unit-test</id>
@@ -606,6 +611,12 @@
             <id>bookworm.nutzerbereich</id>
             <modules>
                 <module>nutzerbereich</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>bookworm.approxy</id>
+            <modules>
+                <module>approxy</module>
             </modules>
         </profile>
         <profile>

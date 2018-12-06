@@ -71,6 +71,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         this.zeitpunktAbgeschickt = zeitpunktAbgeschickt;
     }
 
+    @SuppressWarnings({"squid:S00107"})
     public Bestellung(final BestellungId bestellungId,
                       final Hoerernummer hoerernummer,
                       final Hoerername hoerername,
@@ -148,7 +149,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
     }
 
     public boolean inAktuellemMonatAbgeschickt() {
-        if (null != zeitpunktAbgeschickt) {
+        if (null == zeitpunktAbgeschickt) {
             return false;
         } else {
             final LocalDateTime now = LocalDateTime.now();
@@ -158,7 +159,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
     }
 
     public boolean heuteAbgeschickt() {
-        if (null != zeitpunktAbgeschickt) {
+        if (null == zeitpunktAbgeschickt) {
             return false;
         } else {
             final LocalDateTime now = LocalDateTime.now();

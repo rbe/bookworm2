@@ -48,6 +48,10 @@ public class BestellungService {
         this.bestellungRepository = bestellungRepository;
     }
 
+    //
+    // CD Warenkorb
+    //
+
     public CdWarenkorb cdWarenkorbKopie(final Hoerernummer hoerernummer) {
         return new CdWarenkorb(cdWarenkorb(hoerernummer));
     }
@@ -100,6 +104,10 @@ public class BestellungService {
         }
     }
 
+    //
+    // Download Warenkorb
+    //
+
     public DownloadWarenkorb downloadWarenkorbKopie(final Hoerernummer hoerernummer) {
         return new DownloadWarenkorb(downloadWarenkorb(hoerernummer));
     }
@@ -150,6 +158,20 @@ public class BestellungService {
         return anzahlHoerbuecherAlsCd(hoerernummer) + anzahlHoerbuecherAlsDownload(hoerernummer);
     }
 
+    public boolean isMaxDownloadsProTagErreicht(final Hoerernummer hoerernummer) {
+        return (bestellungRepository.countAlleDownloadsVonHeute(hoerernummer) +
+                downloadWarenkorb(hoerernummer).getAnzahl()) >= 4;
+    }
+
+    public boolean isMaxDownloadsProMonatErreicht(final Hoerernummer hoerernummer) {
+        return (bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer) +
+                downloadWarenkorb(hoerernummer).getAnzahl()) >= 10;
+    }
+
+    //
+    // Bestellung
+    //
+
     /**
      * Command
      */
@@ -171,16 +193,6 @@ public class BestellungService {
         bestellung.aufgeben();
         LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben!", bestellung, hoerernummer);
         return Optional.of(bestellung.getDomainId());
-    }
-
-    public boolean isMaxDownloadsProTagErreicht(final Hoerernummer hoerernummer) {
-        return (bestellungRepository.countAlleDownloadsVonHeute(hoerernummer) +
-                downloadWarenkorb(hoerernummer).getAnzahl()) >= 4;
-    }
-
-    public boolean isMaxDownloadsProMonatErreicht(final Hoerernummer hoerernummer) {
-        return (bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer) +
-                downloadWarenkorb(hoerernummer).getAnzahl()) >= 10;
     }
 
     public long anzahlBestellungen(final Hoerernummer hoerernummer) {

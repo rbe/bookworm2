@@ -19,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
@@ -26,13 +27,13 @@ import java.util.stream.Collectors;
 
 @Component
 @SessionScope
-public class MeineDownloads {
+public class MeineDownloads implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
 
     private final MeineBestellung meineBestellung;
 
-    private final ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
+    private final transient ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
 
     private String stichwort;
 
@@ -42,7 +43,7 @@ public class MeineDownloads {
     public MeineDownloads(final HoererSession hoererSession,
                           final DownloadsLieferungService downloadsLieferungService,
                           final MeineBestellung meineBestellung) {
-        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
+        final Hoerernummer hoerernummer = hoererSession.getHoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.meineBestellung = meineBestellung;
         this.verfuegbareDownloadsELCache = new ELValueCache<>(null,

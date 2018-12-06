@@ -10,12 +10,12 @@
       xmlns:hk="http://xmlns.jcp.org/jsf/composite/bookworm/hk">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <!--h:form rendered="#{null != katalogsuchergebnis}"-->
         <h:form id="suchergebnisForm">
             <div class="leading">
                 <h2 class="contentheading">Ihre Suchergebnisse</h2>
                 <hk:navigation/>
-                <h:panelGroup layout="block" rendered="#{katalogsuchergebnis.suchparameterAlsText.length() > 0}">
+                <h:panelGroup rendered="#{katalogsuchergebnis.suchparameterAlsText.length() > 0}"
+                              layout="block">
                     <p class="line15 resulttext">
                         Ihre Suche nach
                         <span class="suchbegriff">
@@ -23,12 +23,16 @@
                         </span>
                         ergab
                         <span class="suchtreffer">
-                            <h:outputText rendered="#{katalogsuchergebnis.anzahl > 0}"
-                                          value="#{katalogsuchergebnis.anzahl}"/>
-                            <h:outputText rendered="#{katalogsuchergebnis.anzahl == 0}"
+                            <h:outputText rendered="#{katalogsuchergebnis.gesamtAnzahlTreffer > 0}"
+                                          value="#{katalogsuchergebnis.gesamtAnzahlTreffer}"/>
+                            <h:outputText rendered="#{katalogsuchergebnis.gesamtAnzahlTreffer == 0}"
                                           value="keine"/>
                         </span>
-                        Treffer
+                        Treffer.
+                        <h:panelGroup rendered="#{katalogsuchergebnis.anzahl == 1000}"
+                                      layout="block">
+                            &nbsp;Die Anzeige wird auf <h:outputText value="#{katalogsuchergebnis.anzahl}"/> begrenzt.
+                        </h:panelGroup>
                     </p>
                 </h:panelGroup>
                 <!--offset="{searchBean.paginateableSearch.offset}"-->
@@ -83,25 +87,25 @@
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <h:commandLink rendered="#{hoerbuch.downloadbar and meinWarenkorb.downloadFuerHoererVerfuegbar(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{hoererSession.hoererIstBekannt and hoerbuch.downloadbar and meinWarenkorb.downloadFuerHoererVerfuegbar(hoerbuch.titelnummer) and !meinWarenkorb.downloadEnthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link download"
                                        action="#{meinWarenkorb.downloadHinzufuegen(hoerbuch.titelnummer)}"
                                        value="Download">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
-                        <h:commandLink rendered="#{hoerbuch.downloadbar and meinWarenkorb.downloadEnthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{hoererSession.hoererIstBekannt and hoerbuch.downloadbar and meinWarenkorb.downloadEnthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-remove-link clr"
                                        action="#{meinWarenkorb.downloadEntfernen(hoerbuch.titelnummer)}"
-                                       value="Aus Warenkorb löschen">
+                                       value="Download Bestellung löschen">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <h:commandLink rendered="#{!meineMerkliste.enthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{hoererSession.hoererIstBekannt and !meineMerkliste.enthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-order-link wishlist"
                                        action="#{meineMerkliste.hinzufuegen(hoerbuch.titelnummer)}" value="Merken">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
-                        <h:commandLink rendered="#{meineMerkliste.enthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{hoererSession.hoererIstBekannt and meineMerkliste.enthalten(hoerbuch.titelnummer)}"
                                        styleClass="basket-remove-link clr"
                                        action="#{meineMerkliste.entfernen(hoerbuch.titelnummer)}"
                                        value="Aus Merkliste löschen">

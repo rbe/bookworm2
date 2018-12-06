@@ -1,10 +1,4 @@
 <?xml version='1.0' encoding='UTF-8' ?>
-<!--
-  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-  ~ All rights reserved. Use is subject to license terms.
-  -->
-
 <!DOCTYPE html [
         <!ENTITY nbsp "&#160;">
         <!ENTITY copy "&#169;">
@@ -34,12 +28,14 @@
             </div>
             <!-- Merkliste / Warenkorb -->
             <h:panelGroup layout="block" styleClass="basket-count">
-                <h:outputLink disabled="#{!navigation.linkZurMerklisteAnzeigen}"
+                <h:outputLink rendered="#{hoererSession.hoererIstBekannt}"
+                              disabled="#{!navigation.linkZurMerklisteAnzeigen}"
                               value="#{navigation.zuMeinerMerkliste()}">
                     <h:outputText value="Merkliste (#{meineMerkliste.anzahl})"/>
                 </h:outputLink>
                 &nbsp;
-                <h:outputLink disabled="#{!navigation.linkZumWarenkorbAnzeigen}"
+                <h:outputLink rendered="#{hoererSession.hoererIstBekannt}"
+                              disabled="#{!navigation.linkZumWarenkorbAnzeigen}"
                               value="#{navigation.zuMeinemWarenkorb()}">
                     <h:outputText value="Warenkorb (#{meinWarenkorb.anzahl})"/>
                 </h:outputLink>

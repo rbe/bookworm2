@@ -22,11 +22,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.Set;
 
 @Component
 @SessionScope
-public class MeineMerkliste {
+public class MeineMerkliste implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
 
@@ -40,9 +41,9 @@ public class MeineMerkliste {
     // Merkliste
     //
 
-    private final MerklisteService merklisteService;
+    private final transient MerklisteService merklisteService;
 
-    private final ELValueCache<Merkliste> merklisteValueCache;
+    private final transient ELValueCache<Merkliste> merklisteValueCache;
 
     //
     // Bestellung
@@ -54,14 +55,14 @@ public class MeineMerkliste {
     // Hörbuchkatalog
     //
 
-    private final ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
+    private final transient ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
 
     @Autowired
     MeineMerkliste(final HoererSession hoererSession,
                    final MerklisteService merklisteService,
                    final MeinWarenkorb meinWarenkorb,
                    final HoerbuchkatalogService hoerbuchkatalogService) {
-        final Hoerernummer hoerernummer = hoererSession.hoerernummer();
+        final Hoerernummer hoerernummer = hoererSession.getHoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
         this.hoerernummer = hoerernummer;
         this.meinWarenkorb = meinWarenkorb;

@@ -18,15 +18,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
+
 @Component
 @SessionScope
-public class Katalogsuche {
+public class Katalogsuche implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
 
     private final Hoerernummer hoerernummer;
 
-    private final HoerbuchkatalogService hoerbuchkatalogService;
+    private final transient HoerbuchkatalogService hoerbuchkatalogService;
 
     private final Katalogsuchergebnis katalogsuchergebnis;
 
@@ -38,7 +40,7 @@ public class Katalogsuche {
     public Katalogsuche(final HoererSession hoererSession,
                         final HoerbuchkatalogService hoerbuchkatalogService,
                         final Katalogsuchergebnis katalogsuchergebnis) {
-        this.hoerernummer = hoererSession.hoerernummer();
+        this.hoerernummer = hoererSession.getHoerernummer();
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.katalogsuchergebnis = katalogsuchergebnis;
         this.suchparameter = new Suchparameter();
@@ -111,7 +113,7 @@ public class Katalogsuche {
     }
 
     public String suchen() {
-        LOGGER.info("Suche {}", suchparameter);
+        LOGGER.info("Suche '{}'", suchparameter);
         final Suchergebnis suchergebnis =
                 hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
         if (suchergebnis.getAnzahl() > 0) {

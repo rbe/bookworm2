@@ -32,20 +32,20 @@ jsf:
 
 server:
   address: 127.0.0.1
-  port: 8080
+  port: 9080
   compression:
     enabled: true
   error:
     whitelabel:
       enabled: false
-    include-stacktrace: always
+    include-stacktrace: never
   servlet:
     context-path: /hoerbuchkatalog
     session:
       cookie:
         http-only: true
-        secure: true
-      persistent: true
+        secure: false
+      persistent: false
 
 logging:
   config: classpath:logback-production.xml

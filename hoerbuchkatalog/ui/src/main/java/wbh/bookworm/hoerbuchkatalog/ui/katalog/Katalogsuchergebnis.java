@@ -18,13 +18,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
 @Component
 @SessionScope
-public class Katalogsuchergebnis {
+public class Katalogsuchergebnis implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuchergebnis.class);
 
@@ -34,7 +35,7 @@ public class Katalogsuchergebnis {
 
     private final Navigation navigation;
 
-    private final HoerbuchkatalogService hoerbuchkatalogService;
+    private final transient HoerbuchkatalogService hoerbuchkatalogService;
 
     private Suchergebnis suchergebnis;
 
@@ -49,7 +50,7 @@ public class Katalogsuchergebnis {
                                final Navigation navigation,
                                final HoerbuchkatalogService hoerbuchkatalogService,
                                final Hoerbuchdetail hoerbuchdetail) {
-        this.hoerernummer = hoererSession.hoerernummer();
+        this.hoerernummer = hoererSession.getHoerernummer();
         this.navigation = navigation;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.hoerbuchdetail = hoerbuchdetail;
@@ -75,6 +76,10 @@ public class Katalogsuchergebnis {
 
     public int getAnzahl() {
         return null != suchergebnis ? suchergebnis.getAnzahl() : 0;
+    }
+
+    public int getGesamtAnzahlTreffer() {
+        return null != suchergebnis ? suchergebnis.getGesamtAnzahlTreffer() : 0;
     }
 
     public int getSeitenanzahl() {

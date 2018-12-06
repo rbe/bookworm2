@@ -21,7 +21,8 @@ public class DefaultView implements WebMvcConfigurer {
     public void addViewControllers(final ViewControllerRegistry registry) {
         registry.addViewController("/")
                 .setStatusCode(HttpStatus.TEMPORARY_REDIRECT)
-                .setViewName(String.format("forward:%s", INDEX_PAGE));
+                //.setViewName(String.format("forward:%s", INDEX_PAGE));
+                .setViewName(INDEX_PAGE);
         registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
     }
 

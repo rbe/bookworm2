@@ -24,6 +24,10 @@ public class HoerbuchkatalogConfig {
         this.directory = directory;
     }
 
+    Path getDirectory() {
+        return directory;
+    }
+
     public static class Cron {
 
         private String expression;
@@ -38,6 +42,10 @@ public class HoerbuchkatalogConfig {
 
     public void setCron(final Cron cron) {
         this.cron = cron;
+    }
+
+    String getCronExpression() {
+        return cron.expression;
     }
 
     public static class Wbh {
@@ -72,20 +80,32 @@ public class HoerbuchkatalogConfig {
         this.wbh = wbh;
     }
 
-    Path getDirectory() {
-        return directory;
-    }
-
-    String getCronExpression() {
-        return cron.expression;
-    }
-
     String getWbhGesamtdatFilename() {
         return wbh.gesamtdat.filename;
     }
 
     Charset getWbhGesamtdatCharset() {
         return wbh.gesamtdat.charset;
+    }
+
+    public static class Suchergebnisse {
+
+        private int anzahl;
+
+        public void setAnzahl(final int anzahl) {
+            this.anzahl = anzahl;
+        }
+
+    }
+
+    private Suchergebnisse suchergebnisse;
+
+    public void setSuchergebnisse(final Suchergebnisse suchergebnisse) {
+        this.suchergebnisse = suchergebnisse;
+    }
+
+    int getAnzahlSuchergebnisse() {
+        return suchergebnisse.anzahl;
     }
 
 }

@@ -122,7 +122,8 @@ public class HoerbuchkatalogRepository
     private void sucheInitialisieren(final DomainId<String> hoerbuchkatalogDomainId,
                                      final Hoerbuchkatalog hoerbuchkatalog) {
         final HoerbuchkatalogSuche hoerbuchkatalogSuche =
-                new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogDomainId);
+                new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogDomainId,
+                        hoerbuchkatalogConfig.getAnzahlSuchergebnisse());
         // TODO Nur on-demand, wenn kein Index besteht
         hoerbuchkatalogSuche.indiziere(hoerbuchkatalog.alle());
         hoerbuchkatalog.setHoerbuchkatalogSuche(hoerbuchkatalogSuche);

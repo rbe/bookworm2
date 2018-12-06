@@ -11,26 +11,31 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
 import javax.faces.context.FacesContext;
+import java.io.Serializable;
 
 @Component
-@SessionScope
-public class Navigation {
+/* TODO RequestScope? */@SessionScope
+public class Navigation implements Serializable {
 
-    static final String NAV_SUCHE = "katalogsuche.xhtml?faces-redirect=true";
+    // faces-redirect=true
 
-    static final String NAV_SUCHERGEBNIS = "katalogsuchergebnis.xhtml?faces-redirect=true";
+    static final String NAV_SUCHE = "katalogsuche.xhtml";
 
-    static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml?faces-redirect=true";
+    static final String NAV_SUCHERGEBNIS = "katalogsuchergebnis.xhtml";
 
-    static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml?faces-redirect=true";
+    static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml";
 
-    static final String NAV_MERKLISTE = "meinemerkliste.xhtml?faces-redirect=true";
+    static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml";
 
-    static final String NAV_WARENKORB = "meinwarenkorb.xhtml?faces-redirect=true";
+    static final String NAV_MERKLISTE = "meinemerkliste.xhtml";
 
-    private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml?faces-redirect=true";
+    static final String NAV_WARENKORB = "meinwarenkorb.xhtml";
+
+    private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml";
 
     static final String NAV_DOWNLOADS = "meinedownloads.xhtml";
+
+    private final HoererSession hoererSession;
 
     private final Katalogsuche katalogsuche;
 
@@ -41,10 +46,12 @@ public class Navigation {
     private final MeinWarenkorb meinWarenkorb;
 
     @Autowired
-    public Navigation(final Katalogsuche katalogsuche,
+    public Navigation(final HoererSession hoererSession,
+                      final Katalogsuche katalogsuche,
                       final Katalogsuchergebnis katalogsuchergebnis,
                       final MeineMerkliste meineMerkliste,
                       final MeinWarenkorb meinWarenkorb) {
+        this.hoererSession = hoererSession;
         this.katalogsuche = katalogsuche;
         this.katalogsuchergebnis = katalogsuchergebnis;
         this.meineMerkliste = meineMerkliste;
@@ -92,7 +99,7 @@ public class Navigation {
     }
 
     public boolean isLinkZurMerklisteAnzeigen() {
-        return meineMerkliste.getAnzahl() > 0;
+        return hoererSession.isHoererIstBekannt() && meineMerkliste.getAnzahl() > 0;
     }
 
     public String zuMeinerMerkliste() {
@@ -100,7 +107,7 @@ public class Navigation {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return meinWarenkorb.getAnzahl() > 0;
+        return hoererSession.isHoererIstBekannt() && meinWarenkorb.getAnzahl() > 0;
     }
 
     public String zuMeinemWarenkorb() {

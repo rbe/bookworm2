@@ -24,11 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
 
+import java.io.Serializable;
 import java.util.Optional;
 
 @Component
 @SessionScope
-public class MeineBestellung {
+public class MeineBestellung implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
 
@@ -48,7 +49,7 @@ public class MeineBestellung {
 
     private final MeinWarenkorb meinWarenkorb;
 
-    private final BestellungService bestellungService;
+    private final transient BestellungService bestellungService;
 
     private String bemerkung;
 
@@ -62,11 +63,11 @@ public class MeineBestellung {
 
     private DownloadWarenkorb bestellterDownloadWarenkorb;
 
-    private final ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
+    private final transient ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
 
-    private final DownloadsLieferungService downloadsLieferungService;
+    private final transient DownloadsLieferungService downloadsLieferungService;
 
-    private final ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
+    private final transient ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
 
     @Autowired
     public MeineBestellung(final Navigation navigation,
@@ -74,9 +75,9 @@ public class MeineBestellung {
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService,
                            final DownloadsLieferungService downloadsLieferungService) {
-        this.hoerernummer = hoererSession.hoerernummer();
+        this.hoerernummer = hoererSession.getHoerernummer();
         LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
-        this.hoerer = hoererSession.hoerer();
+        this.hoerer = hoererSession.getHoerer();
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
