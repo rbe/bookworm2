@@ -13,6 +13,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
@@ -39,9 +40,17 @@ public class MeineBestellung implements Serializable {
     // Hörer
     //
 
+    private final HoererSession hoererSession;
+
+    /**
+     * Kann sich durch Eingabe im Forumlar ändern
+     */
     private Hoerernummer hoerernummer;
 
-    private Hoerer hoerer;
+    /**
+     * Kann sich durch Eingabe im Forumlar ändern
+     */
+    private Hoerername hoerername;
 
     //
     // Bestellung
@@ -65,8 +74,6 @@ public class MeineBestellung implements Serializable {
 
     private final transient ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
 
-    private final transient DownloadsLieferungService downloadsLieferungService;
-
     private final transient ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
 
     @Autowired
@@ -75,13 +82,15 @@ public class MeineBestellung implements Serializable {
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService,
                            final DownloadsLieferungService downloadsLieferungService) {
-        this.hoerernummer = hoererSession.getHoerernummer();
-        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
-        this.hoerer = hoererSession.getHoerer();
+        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
+        this.hoererSession = hoererSession;
+        if (hoererSession.isHoererIstBekannt()) {
+            this.hoerernummer = hoererSession.getHoerernummer();
+            this.hoerername = hoererSession.getHoerername();
+        }
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
-        this.downloadsLieferungService = downloadsLieferungService;
         anzahlBestellterHoerbuecherValueCache = new ELValueCache<>(0,
                 () -> {
                     final int anzahlCDs =
@@ -95,7 +104,11 @@ public class MeineBestellung implements Serializable {
                     return anzahlCDs + anzahlDownloads;
                 });
         this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
-                () -> this.downloadsLieferungService.lieferungen(hoerernummer));
+                () -> downloadsLieferungService.lieferungen(hoerernummer));
+    }
+
+    public boolean hasHoerernummer() {
+        return hoererSession.isHoererIstBekannt();
     }
 
     public Hoerernummer getHoerernummer() {
@@ -103,31 +116,36 @@ public class MeineBestellung implements Serializable {
     }
 
     public void setHoerernummer(final Hoerernummer hoerernummer) {
-        LOGGER.trace("{}", hoerernummer);
-        if (Hoerernummer.UNBEKANNT == hoerernummer) {
+        LOGGER.trace("Im Formular eingegebene Hörernummer {}", hoerernummer);
+        if (Hoerernummer.UNBEKANNT != hoerernummer) {
             this.hoerernummer = hoerernummer;
         } else {
-            /*TODO Bekannte Hörernummer*/
+            /* Bekannte Hörernummer kann nicht geändert werden */
             throw new UnsupportedOperationException();
         }
     }
 
     public boolean hasHoerername() {
-        return hoerer.hasHoerername();
+        return hoererSession.getHoerer().hasHoerername();
     }
 
     public String getHoerername() {
+        final Hoerer hoerer = hoererSession.getHoerer();
         return String.format("%s %s",
                 hoerer.hasVorname() ? hoerer.getVorname() : "Unbekannt",
-                hoerer.hasNachname() ? hoerer.getNachname() : "Unbekann");
+                hoerer.hasNachname() ? hoerer.getNachname() : "Unbekannt");
+    }
+
+    public void setHoerername(final String hoerername) {
+        this.hoerername = Hoerername.of(hoerername);
     }
 
     public boolean hasHoereremail() {
-        return hoerer.hasHoereremail();
+        return hoererSession.getHoerer().hasHoereremail();
     }
 
     public HoererEmail getHoereremail() {
-        return hoerer.getHoereremail();
+        return hoererSession.getHoerer().getHoereremail();
     }
 
     //
@@ -163,17 +181,17 @@ public class MeineBestellung implements Serializable {
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
     }
 
-    /**
-     * Command
-     */
     public String bestellungAbschicken() {
         bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
         // Warenkörbe kopieren
-        bestellterCdWarenkorb = bestellungService.cdWarenkorbKopie(hoerernummer);
-        bestellterDownloadWarenkorb = bestellungService.downloadWarenkorbKopie(hoerernummer);
+        bestellterCdWarenkorb =
+                bestellungService.cdWarenkorbKopie(hoererSession.getBestellungSessionId());
+        bestellterDownloadWarenkorb =
+                bestellungService.downloadWarenkorbKopie(hoererSession.getBestellungSessionId());
         // Bestellung aufgeben
+        final Hoerer hoerer = hoererSession.getHoerer();
         final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(
-                hoerernummer,
+                hoererSession.getBestellungSessionId(),
                 hoerer.getHoerername(), hoerer.getHoereremail(),
                 bemerkung,
                 bestellkarteMischen, alteBestellkarteLoeschen);
@@ -183,7 +201,7 @@ public class MeineBestellung implements Serializable {
                     bestellungId.get(), hoerernummer);
             return navigation.zuBestellungErfolgreich();
         } else {
-            LOGGER.error("Bestellung für Hörer {} konnte nicht aufgegeben werden!", hoerernummer);
+            LOGGER.error("Eine Bestellung für Hörer {} konnte nicht aufgegeben werden!", hoerernummer);
             bestellterCdWarenkorb = null;
             bestellterDownloadWarenkorb = null;
             bestellungStatusNachricht = "Ihre Bestellung konnte leider nicht bearbeitet werden," +

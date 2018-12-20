@@ -18,7 +18,9 @@ import org.slf4j.Logger;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @DomainRespositoryComponent
 @SuppressWarnings({"squid:S00119"})
@@ -36,7 +38,9 @@ public interface DomainRepository
     }
 
     default Set<AGG> saveAll(Set<AGG> aggregates) {
-        throw new UnsupportedOperationException();
+        return aggregates.stream()
+                .map(this::save)
+                .collect(Collectors.toCollection(TreeSet::new));
     }
 
     default Optional<AGG> load(ID domainId) {
@@ -75,6 +79,16 @@ public interface DomainRepository
     default long countAll() {
         // TODO Performance: count all files, do not load all
         return loadAll().orElseThrow(DomainRepositoryException::new).size();
+    }
+
+    void delete(ID id);
+
+    default void delete(AGG agg) {
+        delete(agg.getDomainId());
+    }
+
+    default void delete(Set<AGG> aggregates) {
+        aggregates.forEach(this::delete);
     }
 
     @SuppressWarnings({"unchecked"})
@@ -116,6 +130,26 @@ public interface DomainRepository
             @Override
             public String toString() {
                 return "saveOnEvent(" + domainEvent + ')';
+            }
+
+        });
+    }
+
+    default <E extends DomainAggregateWriteEvent<AGG, ID>> void deleteOnEvent(Logger logger, Class<E> domainEvent) {
+        Objects.requireNonNull(logger);
+        Objects.requireNonNull(domainEvent);
+        DomainEventPublisher.global().subscribe(new DomainEventSubscriber<>(domainEvent) {
+
+            @Override
+            public void handleEvent(final E domainEvent) {
+                logger.trace("{}/deleteOnEvent handling received event: {}", this, domainEvent);
+                delete(domainEvent.getDomainAggregate().getDomainId());
+                logger.debug("{}/deleteOnEvent handled received event: {}", this, domainEvent);
+            }
+
+            @Override
+            public String toString() {
+                return "deleteOnEvent(" + domainEvent + ')';
             }
 
         });

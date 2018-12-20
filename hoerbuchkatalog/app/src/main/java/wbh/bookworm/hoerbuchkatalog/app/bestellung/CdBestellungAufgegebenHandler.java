@@ -20,6 +20,10 @@ import aoc.ddd.event.DomainEventSubscriber;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -54,11 +58,33 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
         final Set<Hoerbuch> hoerbucher = bestellung.getCdTitelnummern().stream().
                 map(hoerbuchkatalog::hole)
                 .collect(Collectors.toSet());
-        final String htmlEmail = emailTemplateBuilder.build("BestellbestaetigungCd.html",
+        emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbucher);
+    }
+
+    private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
+                                                      final Bestellung bestellung,
+                                                      final Set<Hoerbuch> hoerbucher) {
+        final String htmlEmail = emailTemplateBuilder.build(
+                "BestellbestaetigungCd.html",
                 Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
+        emailArchivieren(domainEvent, htmlEmail);
         emailService.send(bestellung.getHoereremail().getValue(), "wbh@wbh-online.de",
-                "Ihre Bestellung bei der WBH",
+                "Ihre CD-Bestellung bei der WBH",
                 htmlEmail);
+    }
+
+    private void emailArchivieren(final BestellungAufgegeben domainEvent,
+                                  final String htmlEmail) {
+        try {
+            final Path archivDatei =
+                    Path.of("Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
+            Files.createDirectories(archivDatei.getParent());
+            Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
+        } catch (IOException e) {
+            logger.error(String.format(
+                    "Kann E-Mail für Bestellung %snicht archivieren", domainEvent.getDomainId()),
+                    e);
+        }
     }
 
 }

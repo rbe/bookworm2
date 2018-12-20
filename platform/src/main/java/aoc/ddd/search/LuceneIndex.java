@@ -63,6 +63,10 @@ public class LuceneIndex {
         return config;
     }
 
+    /* TODO */public boolean hasIndex() {
+        return false;
+    }
+
     public LuceneIndex deleteIndex() {
         try {
             if (null != indexReader) {

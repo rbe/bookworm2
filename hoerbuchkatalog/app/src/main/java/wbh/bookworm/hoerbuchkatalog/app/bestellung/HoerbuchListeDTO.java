@@ -11,6 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import java.io.Serializable;
 import java.util.List;
 
+// TODO Verwenden, um von .domain zu abstrahieren!? Was ist dann mit Hoerbuch?
 public final class HoerbuchListeDTO implements Serializable {
 
     private static final long serialVersionUID = 1L;

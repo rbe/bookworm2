@@ -10,7 +10,6 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
@@ -37,8 +36,7 @@ public class MeinWarenkorb implements Serializable {
     // Hörer
     //
 
-    // TODO Hoerer
-    private final Hoerernummer hoerernummer;
+    private final HoererSession hoererSession;
 
     //
     // Hörbuchkatalog
@@ -68,25 +66,25 @@ public class MeinWarenkorb implements Serializable {
     MeinWarenkorb(final HoererSession hoererSession,
                   final HoerbuchkatalogService hoerbuchkatalogService,
                   final BestellungService bestellungService) {
-        this.hoerernummer = hoererSession.getHoerernummer();
-        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
+        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
+        this.hoererSession = hoererSession;
         this.bestellungService = bestellungService;
         // CD Warenkorb
         cdWarenkorbValueCache = new ELValueCache<>(null,
-                () -> bestellungService.cdWarenkorbKopie(hoerernummer));
+                () -> bestellungService.cdWarenkorbKopie(hoererSession.getBestellungSessionId()));
         cdWarenkorbCacheGroup = new ELValueCacheGroup(cdWarenkorbValueCache);
         // Download Warenkorb
         downloadWarenkorbValueCache = new ELValueCache<>(null,
-                () -> bestellungService.downloadWarenkorbKopie(hoerernummer));
+                () -> bestellungService.downloadWarenkorbKopie(hoererSession.getBestellungSessionId()));
         maxDownloadsProTagErreicht = new ELValueCache<>(Boolean.FALSE,
-                () -> bestellungService.isMaxDownloadsProTagErreicht(hoerernummer));
+                () -> bestellungService.isMaxDownloadsProTagErreicht(hoererSession.getBestellungSessionId()));
         maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE,
-                () -> bestellungService.isMaxDownloadsProMonatErreicht(hoerernummer));
+                () -> bestellungService.isMaxDownloadsProMonatErreicht(hoererSession.getBestellungSessionId()));
         downloadWarenkorbCacheGroup = new ELValueCacheGroup(downloadWarenkorbValueCache,
                 maxDownloadsProTagErreicht, maxDownloadsProMonatErreicht);
         // Hörbuch
         hoerbuchValueCache = new ELFunctionCache<>(
-                titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer));
+                titelnummer -> hoerbuchkatalogService.hole(hoererSession.getHoerernummer(), titelnummer));
     }
 
     void bestellungAufgegeben() {
@@ -118,13 +116,15 @@ public class MeinWarenkorb implements Serializable {
     public void cdHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
         cdWarenkorbCacheGroup.invalidateAll();
-        bestellungService.inDenCdWarenkorb(hoerernummer, titelnummer);
+        bestellungService.inDenCdWarenkorb(
+                hoererSession.getBestellungSessionId(), titelnummer);
     }
 
     public void cdEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
         cdWarenkorbCacheGroup.invalidateAll();
-        bestellungService.ausDemCdWarenkorbEntfernen(hoerernummer, titelnummer);
+        bestellungService.ausDemCdWarenkorbEntfernen(
+                hoererSession.getBestellungSessionId(), titelnummer);
     }
 
     //
@@ -144,23 +144,40 @@ public class MeinWarenkorb implements Serializable {
     public void downloadHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
         downloadWarenkorbCacheGroup.invalidateAll();
-        bestellungService.inDenDownloadWarenkorb(hoerernummer, titelnummer);
+        bestellungService.inDenDownloadWarenkorb(
+                hoererSession.getBestellungSessionId(), titelnummer);
     }
 
     public void downloadEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
         downloadWarenkorbCacheGroup.invalidateAll();
-        bestellungService.ausDemDownloadWarenkorbEntfernen(hoerernummer, titelnummer);
+        bestellungService.ausDemDownloadWarenkorbEntfernen(
+                hoererSession.getBestellungSessionId(), titelnummer);
     }
 
     public boolean isMaxDownloadsProTagErreicht() {
         LOGGER.trace("");
-        return hoerernummer.isBekannt() && maxDownloadsProTagErreicht.get();
+        return hoererSession.getHoerernummer().isBekannt()
+                && maxDownloadsProTagErreicht.get();
     }
 
     public boolean isMaxDownloadsProMonatErreicht() {
         LOGGER.trace("");
-        return hoerernummer.isBekannt() && maxDownloadsProMonatErreicht.get();
+        return hoererSession.getHoerernummer().isBekannt()
+                && maxDownloadsProMonatErreicht.get();
+    }
+
+    public boolean isDownloadHinzufuegenAnzeigen(final Titelnummer titelnummer) {
+        return hoererSession.isHoererIstBekannt()
+                && hoerbuchValueCache.get(titelnummer).isDownloadbar()
+                && downloadFuerHoererVerfuegbar(titelnummer)
+                && !downloadEnthalten(titelnummer);
+    }
+
+    public boolean isDownloadEntfernenAnzeigen(final Titelnummer titelnummer) {
+        return hoererSession.isHoererIstBekannt()
+                // TODO && hoerbuchValueCache.get(titelnummer).isDownloadbar()
+                && downloadEnthalten(titelnummer);
     }
 
     //

@@ -35,6 +35,8 @@ public class MeineMerkliste implements Serializable {
     // Hörer
     //
 
+    private final HoererSession hoererSession;
+
     private final Hoerernummer hoerernummer;
 
     //
@@ -62,9 +64,9 @@ public class MeineMerkliste implements Serializable {
                    final MerklisteService merklisteService,
                    final MeinWarenkorb meinWarenkorb,
                    final HoerbuchkatalogService hoerbuchkatalogService) {
-        final Hoerernummer hoerernummer = hoererSession.getHoerernummer();
-        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
-        this.hoerernummer = hoerernummer;
+        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
+        this.hoererSession = hoererSession;
+        this.hoerernummer = hoererSession.getHoerernummer();
         this.meinWarenkorb = meinWarenkorb;
         this.merklisteService = merklisteService;
         // Merkliste
@@ -74,6 +76,10 @@ public class MeineMerkliste implements Serializable {
         hoerbuchValueCache = new ELFunctionCache<>(
                 titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer));
     }
+
+    //
+    // Merkliste
+    //
 
     public int getAnzahl() {
         LOGGER.trace("");
@@ -100,6 +106,14 @@ public class MeineMerkliste implements Serializable {
         LOGGER.trace("");
         merklisteValueCache.invalidate();
         merklisteService.entfernen(hoerernummer, titelnummer);
+    }
+
+    public boolean isMerklisteHinzufuegenAnzeigen(final Titelnummer titelnummer) {
+        return hoererSession.isHoererIstBekannt() && !enthalten(titelnummer);
+    }
+
+    public boolean isMerklisteEntfernenAnzeigen(final Titelnummer titelnummer) {
+        return hoererSession.isHoererIstBekannt() && enthalten(titelnummer);
     }
 
     public void inCdWarenkorbVerschieben(final Titelnummer titelnummer) {

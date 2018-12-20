@@ -19,6 +19,7 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
+/* TODO In .infrastructure verschieben */
 @Component
 public /* TODO final*/ class EmailService {
 

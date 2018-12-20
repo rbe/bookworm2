@@ -55,6 +55,12 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         return hoerername.getNachname();
     }
 
+    public String getName() {
+        return String.format("%s %s",
+                hasVorname() ? getVorname() : "Unbekannt",
+                hasNachname() ? getNachname() : "Unbekannt");
+    }
+
     public boolean hasHoereremail() {
         return null != hoereremail;
     }

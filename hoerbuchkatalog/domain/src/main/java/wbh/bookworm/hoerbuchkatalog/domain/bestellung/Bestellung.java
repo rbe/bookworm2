@@ -15,11 +15,13 @@ import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 import java.util.Set;
 import java.util.TreeSet;
@@ -146,6 +148,11 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public LocalDateTime getZeitpunktAbgeschickt() {
         return zeitpunktAbgeschickt;
+    }
+
+    @JsonIgnore
+    public String getZeitpunktAbgeschicktAlsDeutschesDatum() {
+        return zeitpunktAbgeschickt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     public boolean inAktuellemMonatAbgeschickt() {

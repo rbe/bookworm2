@@ -28,8 +28,6 @@ public class HoerernummerFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerernummerFilter.class);
 
-    private static final String HNR_KEY = "hnr";
-
     @Override
     public void init(final FilterConfig filterConfig) {
     }
@@ -44,7 +42,7 @@ public class HoerernummerFilter implements Filter {
             LOGGER.debug("Session {} ist {}, lastAccessedTime={}",
                     session.getId(), session.isNew() ? "neu" : "nicht neu",
                     new Date(session.getLastAccessedTime()));
-            final Hoerernummer sessionHnr = (Hoerernummer) session.getAttribute(HNR_KEY);
+            final Hoerernummer sessionHnr = (Hoerernummer) session.getAttribute(SessionKey.HOERERNUMMER);
             if (request.getRequestURI().endsWith("logout")) {
                 session.invalidate();
                 LOGGER.debug("HttpSession {} invalidiert", session.getId());
@@ -60,12 +58,12 @@ public class HoerernummerFilter implements Filter {
     }
 
     private void hoerernummerInSessionSetzen(final HttpServletRequest request, final HttpSession session) {
-        final String requestHnr = request.getParameter(HNR_KEY);
+        final String requestHnr = request.getParameter(SessionKey.HOERERNUMMER);
         if (isEmpty(requestHnr)) {
-            session.setAttribute(HNR_KEY, new Hoerernummer(requestHnr));
+            session.setAttribute(SessionKey.HOERERNUMMER, new Hoerernummer(requestHnr));
             LOGGER.debug("Hörernummer {} für HttpSession {} gesetzt", requestHnr, session.getId());
         } else {
-            session.setAttribute(HNR_KEY, Hoerernummer.UNBEKANNT);
+            session.setAttribute(SessionKey.HOERERNUMMER, Hoerernummer.UNBEKANNT);
             LOGGER.debug("Unbekannter Hörer für HttpSession {} gesetzt", session.getId());
         }
     }

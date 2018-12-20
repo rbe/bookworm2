@@ -27,13 +27,22 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.platform" level="DEBUG" additivity="false">
+    <logger name="aoc" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.event" level="TRACE" additivity="false">
+    <logger name="aoc.ddd.event" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="aoc.ddd.repository" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="aoc.ddd.search" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="aoc.jsf" level="TRACE" additivity="false">

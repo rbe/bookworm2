@@ -17,7 +17,6 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbGeleert;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
@@ -26,37 +25,31 @@ import java.util.Optional;
 // TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
 public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
 
+    /** Via @Bean erzeugen */
     public WarenkorbRepository(final Path storagePath) {
         super(Warenkorb.class, WarenkorbId.class, storagePath);
         saveOnEvent(logger, CdInDenWarenkorbGelegt.class);
         saveOnEvent(logger, CdAusDemWarenkorbEntfernt.class);
         saveOnEvent(logger, DownloadInDenWarenkorbGelegt.class);
         saveOnEvent(logger, DownloadAusDemWarenkorbEntfernt.class);
-        saveOnEvent(logger, WarenkorbGeleert.class);
+        deleteOnEvent(logger, WarenkorbGeleert.class);
     }
 
-    private WarenkorbId cdWarenkorbIdFuerHoerer(final Hoerernummer hoerernummer) {
-        return new WarenkorbId(hoerernummer + "-CD");
+    public CdWarenkorb cdWarenkorbErstellen(final WarenkorbId warenkorbId, final Hoerernummer hoerernummer) {
+        return new CdWarenkorb(warenkorbId, hoerernummer);
     }
 
-    public CdWarenkorb cdWarenkorbErstellen(final Hoerernummer hoerernummer) {
-        return new CdWarenkorb(cdWarenkorbIdFuerHoerer(hoerernummer), hoerernummer);
+    public Optional<CdWarenkorb> loadCdWarenkorb(final WarenkorbId warenkorbId) {
+        return super.load(warenkorbId, CdWarenkorb.class);
     }
 
-    public Optional<CdWarenkorb> loadCdWarenkorb(final Hoerernummer hoerernummer) {
-        return super.load(cdWarenkorbIdFuerHoerer(hoerernummer), CdWarenkorb.class);
+    public DownloadWarenkorb downloadWarenkorbErstellen(final WarenkorbId warenkorbId,
+                                                        final Hoerernummer hoerernummer) {
+        return new DownloadWarenkorb(warenkorbId, hoerernummer);
     }
 
-    private WarenkorbId downloadWarenkorbIdFuerHoerer(final Hoerernummer hoerernummer) {
-        return new WarenkorbId(hoerernummer + "-Download");
-    }
-
-    public DownloadWarenkorb downloadWarenkorbErstellen(final Hoerernummer hoerernummer) {
-        return new DownloadWarenkorb(downloadWarenkorbIdFuerHoerer(hoerernummer), hoerernummer);
-    }
-
-    public Optional<DownloadWarenkorb> loadDownloadWarenkorb(final Hoerernummer hoerernummer) {
-        return super.load(downloadWarenkorbIdFuerHoerer(hoerernummer), DownloadWarenkorb.class);
+    public Optional<DownloadWarenkorb> loadDownloadWarenkorb(final WarenkorbId warenkorbId) {
+        return super.load(warenkorbId, DownloadWarenkorb.class);
     }
 
 }

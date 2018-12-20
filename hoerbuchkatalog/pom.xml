@@ -18,6 +18,9 @@
         <module>domain</module>
         <module>infrastructure</module>
     </modules>
+    <properties>
+        <joinfaces.version>4.0.0</joinfaces.version>
+    </properties>
     <dependencyManagement>
         <dependencies>
             <!-- Bookworm -->

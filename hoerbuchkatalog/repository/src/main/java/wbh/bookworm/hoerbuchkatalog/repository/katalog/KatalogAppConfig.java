@@ -36,7 +36,9 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @EnableScheduling
 public class KatalogAppConfig {
 
-    @Bean("hoerbuchkatalogMap")
+    public static final String HOERBUCHKATALOG_MAP = "hoerbuchkatalogMap";
+
+    @Bean(/*"hoerbuchkatalogMap"*/HOERBUCHKATALOG_MAP)
     @Scope(SCOPE_PROTOTYPE)
     public Map<Titelnummer, Hoerbuch> hoerbuchkatalogMap() {
         return new ConcurrentHashMap<>();

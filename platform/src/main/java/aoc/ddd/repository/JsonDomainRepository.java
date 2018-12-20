@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReentrantLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -51,13 +50,16 @@ public abstract class JsonDomainRepository
 
     private final ObjectMapper objectMapper;
 
+    /**
+     * Lock operations on ID sequence (file)
+     */
     private final ReentrantLock idSequenceLock = new ReentrantLock();
 
+    /* TODO Fine granular locking
     private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock();
-
     private final ReentrantReadWriteLock.ReadLock readLock = readWriteLock.readLock();
-
     private final ReentrantReadWriteLock.WriteLock writeLock = readWriteLock.writeLock();
+    */
 
     public JsonDomainRepository(final Class<AGG> aggClass, final Class<ID> idClass,
                                 final Path storagePath) {
@@ -83,26 +85,30 @@ public abstract class JsonDomainRepository
         logger.info("Initialized with aggregate storage path '{}'", aggregateStoragePath.toAbsolutePath());
     }
 
-    private Path makeStorageFilename(final ID domainId) {
+    /**
+     * Just create storage filename (w/o aggregate storage path)
+     */
+    private Path makeStorageFilenameFrom(final ID domainId) {
         final String sane = domainId.getValue()
                 .replaceAll("[^a-zA-Z0-9., ]+", "_");
         return Path.of(String.format("%s.json", sane));
     }
 
-    private ID makeIDFromStorageFilename(final Path path) {
+    private ID makeDomainIdFrom(final Path path) {
         final String[] sane = path.getFileName().toString().split("[.]");
         try {
-            return idClass.getDeclaredConstructor(String.class).newInstance(sane[0]);
+            return idClass.getDeclaredConstructor(String.class)
+                    .newInstance(sane[0]);
         } catch (InstantiationException | IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             throw new DomainRepositoryException("", e);
         }
     }
 
-    private Path fullyQualifiedAggregateStoragePath(final ID domainId) {
-        return aggregateStoragePath.resolve(makeStorageFilename(domainId));
+    private Path fqAggregatePathFrom(final ID domainId) {
+        return aggregateStoragePath.resolve(makeStorageFilenameFrom(domainId));
     }
 
-    private Stream<Path> getStorageStream() throws IOException {
+    private Stream<Path> aggregatePathsAsStream() throws IOException {
         return Files.list(aggregateStoragePath)
                 .filter(p -> !p.getFileName().equals(idSequenceFilename));
     }
@@ -161,6 +167,7 @@ public abstract class JsonDomainRepository
     }
 
     private DomainIdSequence loadExistingIdSequence(final Path idSequencePath) {
+        Objects.requireNonNull(idSequencePath);
         final DomainIdSequence domainIdSequence;
         logger.trace("Loading existing IdSequence for {}", aggClass);
         try {
@@ -175,6 +182,7 @@ public abstract class JsonDomainRepository
     }
 
     private DomainIdSequence initializeDomainIdCountingExistingAggregates(final Path idSequencePath) {
+        Objects.requireNonNull(idSequencePath);
         logger.trace("Initializing IdSequence at '{}' with count of existing aggregates",
                 idSequencePath);
         try {
@@ -199,13 +207,15 @@ public abstract class JsonDomainRepository
     @Override
     public AGG create() {
         try {
-            return aggClass.getDeclaredConstructor(idClass).newInstance(nextIdentity());
+            return aggClass.getDeclaredConstructor(idClass)
+                    .newInstance(nextIdentity());
         } catch (InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
             throw new DomainRepositoryException(e);
         }
     }
 
     private AGG create(final ID domainId) {
+        Objects.requireNonNull(domainId);
         if (load(domainId).isPresent()) {
             throw new DomainRepositoryException("ID " + domainId + " already exists");
         } else {
@@ -222,7 +232,7 @@ public abstract class JsonDomainRepository
         Objects.requireNonNull(aggregate);
         try {
             final long version = aggregate.incVersion();
-            final Path path = fullyQualifiedAggregateStoragePath(aggregate.getDomainId());
+            final Path path = fqAggregatePathFrom(aggregate.getDomainId());
             logger.trace("Saving aggregate {} with id '{}@{}' at '{}'",
                     aggClass, aggregate.getDomainId(), version, path);
             final byte[] bytes = objectMapper.writeValueAsBytes(aggregate);
@@ -240,10 +250,9 @@ public abstract class JsonDomainRepository
     public Set<AGG> saveAll(final Set<AGG> aggregates) {
         Objects.requireNonNull(aggregates);
         logger.trace("Saving {} aggregates", aggregates.size());
-        final Set<AGG> ids = new TreeSet<>();
-        for (final AGG aggregate : aggregates) {
-            ids.add(save(aggregate));
-        }
+        final Set<AGG> ids = aggregates.stream()
+                .map(this::save)
+                .collect(Collectors.toCollection(TreeSet::new));
         logger.debug("Saved {} aggregates", aggregates.size());
         return ids;
     }
@@ -251,12 +260,12 @@ public abstract class JsonDomainRepository
     @Override
     public Optional<AGG> load(final ID domainId) {
         Objects.requireNonNull(domainId);
-        logger.trace("Loading aggregate {} with id '{}'", aggClass, domainId);
-        final Path storagePath = fullyQualifiedAggregateStoragePath(domainId);
+        logger.trace("Loading aggregate of type {} with id '{}'", aggClass, domainId);
+        final Path storagePath = fqAggregatePathFrom(domainId);
         try {
             final byte[] bytes = Files.readAllBytes(storagePath);
             final AGG aggregate = objectMapper.readValue(bytes, aggClass);
-            logger.debug("Loaded aggregate {} with id '{}@{}' and data: {}",
+            logger.debug("Loaded aggregate of type {} with id '{}@{}' toString={}",
                     aggClass, aggregate.getDomainId(), aggregate.getVersion(), aggregate);
             return Optional.of(aggregate);
         } catch (NoSuchFileException e) {
@@ -268,20 +277,23 @@ public abstract class JsonDomainRepository
     }
 
     private Optional<AGG> load(final Path path) {
-        return load(makeIDFromStorageFilename(path));
+        Objects.requireNonNull(path);
+        return load(makeDomainIdFrom(path));
     }
 
     //@Override
+    /*
     public AGG loadOrCreate(final ID domainId) {
         return load(domainId).orElseGet(() -> create(domainId));
     }
+    */
 
     @Override
     public <SUBT extends AGG> Optional<SUBT> load(final ID domainId, final Class<SUBT> subklass) {
         Objects.requireNonNull(domainId);
         Objects.requireNonNull(subklass);
         logger.trace("Loading {} with domain id '{}'", subklass, domainId);
-        final Path storagePath = fullyQualifiedAggregateStoragePath(domainId);
+        final Path storagePath = fqAggregatePathFrom(domainId);
         if (Files.exists(storagePath)) {
             try {
                 final byte[] bytes = Files.readAllBytes(storagePath);
@@ -300,7 +312,7 @@ public abstract class JsonDomainRepository
 
     @Override
     public Optional<Set<AGG>> loadAll() {
-        try (final Stream<Path> stream = getStorageStream()) {
+        try (final Stream<Path> stream = aggregatePathsAsStream()) {
             return Optional.of(stream
                     .map(this::load)
                     .filter(Optional::isPresent)
@@ -314,34 +326,59 @@ public abstract class JsonDomainRepository
     @Override
     @SuppressWarnings({"unchecked"})
     public final Optional<Set<AGG>> find(final QueryPredicate... queryPredicates) {
+        Objects.requireNonNull(queryPredicates);
         return Optional.of(loadAll()
                 .orElseThrow()
                 .stream()
-                .filter(agg -> Arrays.stream(queryPredicates).anyMatch(predicate -> {
-                    try {
-                        final String fieldName = predicate.getField();
-                        final String getter = "get" + fieldName.substring(0, 1).toUpperCase()
-                                + fieldName.substring(1);
-                        final Method method = agg.getClass().getMethod(getter);
-                        final Object value = method.invoke(agg);
-                        logger.trace("{}.equals({})", value, predicate.getValue());
-                        return predicate.isSatisfied(value.toString());
-                    } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
-                        logger.error("", e);
-                        return false;
-                    }
-                }))
+                .filter(agg -> Arrays.stream(queryPredicates)
+                        .anyMatch(predicate -> {
+                            try {
+                                final String fieldName = predicate.getField();
+                                final String getter = String.format("get%s%s",
+                                        fieldName.substring(0, 1).toUpperCase(), fieldName.substring(1));
+                                final Method method = agg.getClass().getMethod(getter);
+                                final Object value = method.invoke(agg);
+                                logger.trace("{}.equals({})", value, predicate.getValue());
+                                return predicate.isSatisfied(value.toString());
+                            } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException e) {
+                                logger.error("", e);
+                                return false;
+                            }
+                        }))
                 .collect(Collectors.toSet()));
     }
 
     @Override
     public long countAll() {
-        try (final Stream<Path> stream = getStorageStream()) {
-            return stream.count();
+        logger.trace("Counting all instances of aggregate type {}", aggClass);
+        try (final Stream<Path> stream = aggregatePathsAsStream()) {
+            final long count = stream.count();
+            logger.debug("Found {} instances of aggregate type {}", count, aggClass);
+            return count;
         } catch (IOException e) {
             throw new DomainRepositoryException("Cannot count all instances of aggregate " +
                     aggClass, e);
         }
+    }
+
+    @Override
+    public void delete(final ID id) {
+        logger.trace("Trying to delete domain id '{}'", id);
+        try {
+            Files.deleteIfExists(fqAggregatePathFrom(id));
+        } catch (IOException e) {
+            throw new DomainRepositoryException(String.format(
+                    "Cannot delete aggregate with domain id '%s'", id),
+                    e);
+        }
+    }
+
+    @Override
+    public void delete(final Set<AGG> aggregates) {
+        Objects.requireNonNull(aggregates);
+        logger.trace("Deleting {} aggregates", aggregates.size());
+        aggregates.forEach(this::delete);
+        logger.debug("Deleted {} aggregates", aggregates.size());
     }
 
 }

@@ -6,5 +6,5 @@
 
 package aoc.ddd.model;
 
-public class DomainCommand/*<AGG extends DomainAggregate<AGG, ?>>*/ {
+public class DomainCommand/* TODO <AGG extends DomainAggregate<AGG, ?>>*/ {
 }

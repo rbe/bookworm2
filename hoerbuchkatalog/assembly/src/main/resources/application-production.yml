@@ -1,7 +1,7 @@
 spring:
   profiles: production
   banner:
-    location: classpath:/banner/banner.txt
+    location: classpath:/banner/banner-starwars0.txt
   main:
     banner-mode: "console"
   mail:

@@ -43,25 +43,29 @@ final class HoerbuchkatalogSuche {
 
     void indiziere(final Set<Hoerbuch> hoerbuecher) {
         LOGGER.trace("Indiziere {} Hörbücher", hoerbuecher.size());
-        luceneIndex.deleteIndex()
-                .add(hoerbuecher,
-                        "titelnummer",
-                        new String[]{Suchparameter.Feld.SACHGEBIET.luceneName()},
-                        new String[]{
-                                Suchparameter.Feld.AUTOR.luceneName(),
-                                Suchparameter.Feld.TITEL.luceneName(),
-                                Suchparameter.Feld.UNTERTITEL.luceneName(),
-                                Suchparameter.Feld.ERLAEUTERUNG.luceneName(),
-                                Suchparameter.Feld.SPRECHER1.luceneName(),
-                                Suchparameter.Feld.SUCHWOERTER.luceneName()
-                        },
-                        new String[]{Suchparameter.Feld.EINSTELLDATUM.luceneName()},
-                        new String[]{
-                                Suchparameter.Feld.AUTOR.luceneName(),
-                                Suchparameter.Feld.TITEL.luceneName()
-                        })
-                .build();
-        LOGGER.info("Hörbuchkatalog mit {} Einträgen indiziert", hoerbuecher.size());
+        if (luceneIndex.hasIndex()) {
+            LOGGER.info("Hörbuchkatalog mit {} Einträgen wurde bereits indiziert", hoerbuecher.size());
+        } else {
+            luceneIndex.deleteIndex()
+                    .add(hoerbuecher,
+                            "titelnummer",
+                            new String[]{Suchparameter.Feld.SACHGEBIET.luceneName()},
+                            new String[]{
+                                    Suchparameter.Feld.AUTOR.luceneName(),
+                                    Suchparameter.Feld.TITEL.luceneName(),
+                                    Suchparameter.Feld.UNTERTITEL.luceneName(),
+                                    Suchparameter.Feld.ERLAEUTERUNG.luceneName(),
+                                    Suchparameter.Feld.SPRECHER1.luceneName(),
+                                    Suchparameter.Feld.SUCHWOERTER.luceneName()
+                            },
+                            new String[]{Suchparameter.Feld.EINSTELLDATUM.luceneName()},
+                            new String[]{
+                                    Suchparameter.Feld.AUTOR.luceneName(),
+                                    Suchparameter.Feld.TITEL.luceneName()
+                            })
+                    .build();
+            LOGGER.info("Hörbuchkatalog mit {} Einträgen indiziert", hoerbuecher.size());
+        }
     }
 
     Suchergebnis sucheNachStichwort(final String stichwort) {

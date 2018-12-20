@@ -4,9 +4,9 @@
               xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-facesconfig_2_2.xsd"
               version="2.2">
     <application>
-        <resource-handler>wbh.bookworm.hoerbuchkatalog.ui.config.FaceletsResourceHandler</resource-handler>
+        <resource-handler>wbh.bookworm.hoerbuchkatalog.ui.config.ExternalizedFaceletsResourceHandler</resource-handler>
     </application>
-    <!--
+    <!-- TODO JSF ExceptionHandler
     <factory>
         <exception-handler-factory>wbh.bookworm.hoerbuchkatalog.ui.config.FacesExceptionHandlerFactory</exception-handler-factory>
     </factory>

@@ -13,6 +13,7 @@ import aoc.ddd.model.DomainValueObject;
 import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 public final class HoererBlistaDownloads extends DomainValueObject {
@@ -27,7 +28,9 @@ public final class HoererBlistaDownloads extends DomainValueObject {
 
     public HoererBlistaDownloads(final Hoerernummer hoerernummer,
                                  final List<BlistaDownload> blistaDownload) {
+        Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
+        Objects.requireNonNull(blistaDownload);
         this.blistaDownload = blistaDownload;
         blistaDownload.sort(Comparator.comparing(BlistaDownload::getBestelldatum).reversed());
         this.standVom = LocalDateTime.now();

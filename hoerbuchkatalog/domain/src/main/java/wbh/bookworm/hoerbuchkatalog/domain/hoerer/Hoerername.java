@@ -19,6 +19,12 @@ public final class Hoerername extends DomainValueObject {
         this.nachname = nachname;
     }
 
+    public static Hoerername of(final String str) {
+        final int lastSpacePos = str.lastIndexOf(' ');
+        return new Hoerername(new Vorname(str.substring(0, lastSpacePos)),
+                new Nachname(str.substring(lastSpacePos + 1)));
+    }
+
     public Vorname getVorname() {
         return vorname;
     }
@@ -31,5 +37,11 @@ public final class Hoerername extends DomainValueObject {
     public String toString() {
         return String.format("%s %s", vorname, nachname);
     }
+
+    /* TODO Test
+    public static void main(String[] args) {
+        System.out.println(Hoerername.of("Ralf Emil Henri Bensmann-Petersen"));
+    }
+    */
 
 }

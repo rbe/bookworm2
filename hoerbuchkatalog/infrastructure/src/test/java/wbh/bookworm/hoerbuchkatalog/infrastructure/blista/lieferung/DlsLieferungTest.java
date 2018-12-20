@@ -6,42 +6,41 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 @SpringBootTest(classes = {LieferungTestAppConfig.class})
+@SpringBootConfiguration
 @ExtendWith(SpringExtension.class)
 class DlsLieferungTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DlsLieferungTest.class);
 
-    private final DlsLieferungConfig dlsLieferungConfig;
+    private final DlsRestConfig dlsRestConfig;
 
     @Autowired
-    DlsLieferungTest(final DlsLieferungConfig dlsLieferungConfig) {
-        this.dlsLieferungConfig = dlsLieferungConfig;
+    DlsLieferungTest(final DlsRestConfig dlsRestConfig) {
+        this.dlsRestConfig = dlsRestConfig;
     }
 
     @Test
-    void shouldFehlermeldungAuswerten() throws IOException {
-        final InputStream inputStream = DlsLieferungTest.class
-                .getResourceAsStream("/blista-xml/fehlermeldung.xml");
-        final DlsLieferung.DlsAntwort dlsAntwort = new DlsLieferung(dlsLieferungConfig)
-                .werteAntwortAus(inputStream.readAllBytes());
+    void shouldPrintConfig() {
+        System.out.println(dlsRestConfig);
     }
 
-/*
+    /*
     @Test
+    @Disabled("Werte ändern sich")
     void shouldDownloadWerke() {
-        final Hoerernummer hoerernummer = new Hoerernummer("7110");
+        final Hoerernummer hoerernummer = new Hoerernummer("80170");
         final DownloadsRepository.DlsWerke dlsWerke = new DownloadsRepository()
                 .alleWerkeLaden(hoerernummer)
                 .orElseThrow();
@@ -51,19 +50,20 @@ class DlsLieferungTest {
             LOGGER.info("Hörer {} hat {} Werke bestellt", hoerernummer, dlsWerke.books.size());
         }
     }
-*/
+    */
 
-/*
+    /*
     @Test
+    @Disabled("Werte ändern sich")
     void shouldDownloadBestellung() {
         final Hoerernummer hoerernummer = new Hoerernummer("7110");
         final AghNummer aghNummer = new AghNummer("1-0081537-1-0");
-        final DownloadsRepository.DlsBestellung bestellungLaden = new DownloadsRepository()
+        final DownloadsRepository.DlsBook bestellungLaden = new DownloadsRepository()
                 .bestellungLaden(hoerernummer, aghNummer)
                 .orElseThrow();
         LOGGER.info("Hörer {} hat AGH Nummer {} am {} bestellt",
                 hoerernummer, aghNummer, bestellungLaden.book.Bestelldatum);
     }
-*/
+    */
 
 }

@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.atomic.AtomicReference;
 
+import static wbh.bookworm.hoerbuchkatalog.repository.katalog.KatalogAppConfig.HOERBUCHKATALOG_MAP;
+
 @Configuration
 @DomainRespositoryComponent
 public class HoerbuchkatalogRepository
@@ -96,7 +98,7 @@ public class HoerbuchkatalogRepository
                         } else {
                             final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
                             @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
-                                    applicationContext.getBean("hoerbuchkatalogMap", Map.class);
+                                    applicationContext.getBean(/*"hoerbuchkatalogMap"*/HOERBUCHKATALOG_MAP, Map.class);
                             final HoerbuchkatalogId hoerbuchkatalogDomainId =
                                     new HoerbuchkatalogId(gd.getFileName().toString());
                             final Hoerbuchkatalog neuerKatalog =
@@ -119,10 +121,11 @@ public class HoerbuchkatalogRepository
         return aktuellerHoerbuchkatalog.get();
     }
 
-    private void sucheInitialisieren(final DomainId<String> hoerbuchkatalogDomainId,
+    private void sucheInitialisieren(final DomainId<String> hoerbuchkatalogId,
                                      final Hoerbuchkatalog hoerbuchkatalog) {
+        LOGGER.trace("Initialisiere Suchindex für Hörbuchkatalog {}", hoerbuchkatalogId);
         final HoerbuchkatalogSuche hoerbuchkatalogSuche =
-                new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogDomainId,
+                new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogId,
                         hoerbuchkatalogConfig.getAnzahlSuchergebnisse());
         // TODO Nur on-demand, wenn kein Index besteht
         hoerbuchkatalogSuche.indiziere(hoerbuchkatalog.alle());
@@ -135,7 +138,7 @@ public class HoerbuchkatalogRepository
             istHoerbuchDownloadbar(hoerbuch, aghNummern);
             hoerbuchkatalog.hinzufuegen(hoerbuch);
         });
-        LOGGER.info("{} von {} Hörbüchern sind im Download-Katalog vorhanden",
+        LOGGER.info("{} Hörbücher von {} AGH Nummern sind im Download-Katalog vorhanden",
                 hoerbuchkatalog.anzahlDownloadbarerHoerbuecher(),
                 hoerbuchkatalog.anzahlHoerbuecherGesamt());
     }

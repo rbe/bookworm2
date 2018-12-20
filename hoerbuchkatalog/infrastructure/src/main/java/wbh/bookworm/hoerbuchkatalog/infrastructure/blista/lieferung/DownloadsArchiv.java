@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
+
 import aoc.ddd.repository.RepositoryArchive;
 import aoc.ddd.repository.RepositoryArchiveException;
 import aoc.ddd.spring.Singleton;
@@ -21,7 +23,7 @@ final class DownloadsArchiv {
     private final RepositoryArchive repositoryArchive;
 
     @Autowired
-    DownloadsArchiv(final DlsLieferungConfig downloadsConfig) {
+    DownloadsArchiv(final DlsRestConfig downloadsConfig) {
         this.repositoryArchive = new RepositoryArchive(
                 downloadsConfig.getDirectory());
     }

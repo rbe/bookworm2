@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-  ~ All rights reserved. Use is subject to license terms.
-  -->
-
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <include resource="logback-properties.xml"/>
@@ -23,19 +17,7 @@
     <root level="ERROR">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="wbh.bookworm.hoerbuchkatalog.assembly" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.ui" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="wbh.bookworm.platform" level="DEBUG" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">

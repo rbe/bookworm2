@@ -26,12 +26,13 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     private static final long serialVersionUID = 1L;
 
-    protected final Logger logger = LoggerFactory.getLogger(Warenkorb.class);
+    protected final transient Logger logger = LoggerFactory.getLogger(Warenkorb.class);
 
     @JsonProperty
     protected final Hoerernummer hoerernummer;
 
-    protected Set<Titelnummer> titelnummern;
+    @JsonProperty
+    protected transient Set<Titelnummer> titelnummern;
 
     /** Copy constructor */
     public Warenkorb(final Warenkorb warenkorb) {

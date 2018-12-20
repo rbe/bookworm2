@@ -12,11 +12,11 @@
     <packaging>jar</packaging>
     <dependencyManagement>
         <dependencies>
-            <!-- JavaServer Faces -->
+            <!-- JoinFaces / JavaServer Faces -->
             <dependency>
                 <groupId>org.joinfaces</groupId>
                 <artifactId>joinfaces-dependencies</artifactId>
-                <version>3.2.6</version>
+                <version>${joinfaces.version}</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -55,7 +55,7 @@
             <groupId>aoc.platform</groupId>
             <artifactId>aoc.platform</artifactId>
         </dependency>
-        <!-- JavaServer Faces -->
+        <!-- JoinFaces / JavaServer Faces -->
         <dependency>
             <groupId>org.joinfaces</groupId>
             <artifactId>jsf-spring-boot-starter</artifactId>
@@ -68,11 +68,26 @@
                     <groupId>org.springframework</groupId>
                     <artifactId>spring-web</artifactId>
                 </exclusion>-->
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>joinfaces-autoconfigure</artifactId>
+            <exclusions>
                 <!--<exclusion>
-                    <groupId>org.joinfaces</groupId>
-                    <artifactId>omnifaces1-spring-boot-starter</artifactId>
+                    <groupId>io.github.classgraph</groupId>
+                    <artifactId>classgraph</artifactId>
                 </exclusion>-->
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>io.github.classgraph</groupId>
+            <artifactId>classgraph</artifactId>
+            <version>4.6.6</version>
+        </dependency>
+        <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>mojarra-spring-boot-starter</artifactId>
         </dependency>
         <dependency>
             <groupId>org.joinfaces</groupId>
@@ -85,14 +100,23 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>org.joinfaces</groupId>
+            <artifactId>omnifaces3-spring-boot-starter</artifactId>
+            <version>4.0.0</version>
+        </dependency>
+        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-jetty</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-        <!--<dependency>
-            <groupId>org.joinfaces</groupId>
-            <artifactId>omnifaces3-spring-boot-starter</artifactId>
-        </dependency>-->
+        <dependency>
+            <groupId>javax.faces</groupId>
+            <artifactId>javax.faces-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.faces</artifactId>
+        </dependency>
         <dependency>
             <groupId>javax.servlet.jsp.jstl</groupId>
             <artifactId>jstl-api</artifactId>
@@ -106,6 +130,10 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.hibernate.validator</groupId>

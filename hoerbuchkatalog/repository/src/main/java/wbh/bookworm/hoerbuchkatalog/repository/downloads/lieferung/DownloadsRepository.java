@@ -12,6 +12,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsBook;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerke;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
 import aoc.ddd.repository.DomainRespositoryComponent;
@@ -43,27 +45,27 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */{
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
         long startWerke = System.nanoTime();
         // TODO DownloadsArchiv
-        final Optional<DlsLieferung.DlsWerke> werke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
+        final Optional<DlsWerke> werke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
         if (werke.isPresent()&&!werke.get().hatFehler()) {
             final List<BlistaDownload> bereitgestellteDownloads = werke.get()
                     .books.parallelStream()
                     .map(book -> {
                         final AghNummer aghNummer = new AghNummer(book.Aghnummer);
-                        final Optional<DlsLieferung.DlsBestellung> bestellung =
+                        final Optional<DlsBook> bestellung =
                                 dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
                         if (bestellung.isPresent()) {
-                            final DlsLieferung.DlsBestellung dlsBestellung = bestellung.get();
+                            final DlsBook dlsBook = bestellung.get();
                             final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
                             return hoerbuch.map(h -> new BlistaDownload(
                                     hoerernummer,
                                     aghNummer,
                                     h.getTitelnummer(), h.getTitel(),
                                     h.getAutor(), h.getSpieldauer(),
-                                    dlsBestellung.book.Ausleihstatus,
-                                    dlsBestellung.book.Bestelldatum, dlsBestellung.book.Rueckgabedatum,
-                                    dlsBestellung.book.DlsDescription,
-                                    dlsBestellung.book.DownloadCount, dlsBestellung.book.MaxDownload,
-                                    dlsBestellung.book.DownloadLink
+                                    dlsBook.book.Ausleihstatus,
+                                    dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                                    dlsBook.book.DlsDescription,
+                                    dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
+                                    dlsBook.book.DownloadLink
                             )).orElse(null);
                         } else {
                             return null;

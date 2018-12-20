@@ -6,12 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
+import wbh.bookworm.hoerbuchkatalog.ui.http.SessionKey;
 
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.SessionScope;
@@ -24,23 +26,24 @@ import java.io.Serializable;
 
 @Component
 @SessionScope
-// org.springframework.aop.framework.AopConfigException:
-// Could not generate CGLIB subclass of class wbh.bookworm.hoerbuchkatalog.ui.katalog.HoererSession:
-// Common causes of this problem include using a final class or a non-visible class;
-// nested exception is org.springframework.cglib.core.CodeGenerationException:
-// java.lang.reflect.InvocationTargetException-->null
 public class HoererSession implements Serializable {
 
-    private static final String HOERERNUMMER = "hnr";
+    public HoererSession() {
+        getSession().setAttribute(SessionKey.HOERER,
+                /* TODO Daten aus Nutzerbereich abfragen */new Hoerer(
+                        (Hoerernummer) getSession().getAttribute(SessionKey.HOERERNUMMER),
+                        new Hoerername(new Vorname("VORNAME"), new Nachname("NACHNAME")),
+                        new HoererEmail("hoerer@example.com")));
+        getSession().setAttribute(SessionKey.BESTELLUNG_SESSION_ID,
+                new BestellungSessionId(getHoerernummer().getValue(), getSession().getId()));
+    }
 
     public Hoerernummer getHoerernummer() {
-        return (Hoerernummer) getSession().getAttribute(HOERERNUMMER);
+        return getHoerer().getHoerernummer();
     }
 
     public Hoerer getHoerer() {
-        return new Hoerer(getHoerernummer(),
-                new Hoerername(new Vorname("VORNAME"), new Nachname("NACHNAME")),
-                new HoererEmail("hoerer@example.com"));
+        return (Hoerer) getSession().getAttribute(SessionKey.HOERER);
     }
 
     public Hoerername getHoerername() {
@@ -53,6 +56,10 @@ public class HoererSession implements Serializable {
 
     public boolean isHoererIstUnbekannt() {
         return getHoerernummer().isUnbekannt();
+    }
+
+    BestellungSessionId getBestellungSessionId() {
+        return (BestellungSessionId) getSession().getAttribute(SessionKey.BESTELLUNG_SESSION_ID);
     }
 
     private HttpSession getSession() {

@@ -69,7 +69,7 @@ public class Navigation implements Serializable {
     }
 
     public String zurSuche() {
-        return NAV_SUCHE;
+        return NAV_SUCHE + "?faces-redirect=true";
     }
 
     public boolean isLinkZumSuchergebnisAnzeigen() {
@@ -84,14 +84,14 @@ public class Navigation implements Serializable {
                 && !viewId.contains(Navigation.NAV_SUCHE);
     }
 
-    public String zumSuchergebnis() {
-        return NAV_SUCHERGEBNIS;
-    }
-
     public String zurErneutenSuche() {
         katalogsuche.leeren();
         katalogsuchergebnis.leeren();
         return NAV_SUCHE;
+    }
+
+    public String zumSuchergebnis() {
+        return NAV_SUCHERGEBNIS;
     }
 
     public String zumHoerbuchdetail() {
@@ -107,7 +107,7 @@ public class Navigation implements Serializable {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return hoererSession.isHoererIstBekannt() && meinWarenkorb.getAnzahl() > 0;
+        return /* TODO hoererSession.isHoererIstBekannt() && */meinWarenkorb.getAnzahl() > 0;
     }
 
     public String zuMeinemWarenkorb() {

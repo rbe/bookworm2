@@ -24,27 +24,29 @@ import java.util.Properties;
 import java.util.Vector;
 import java.util.function.Consumer;
 
+import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
+
 @Component
-@Scope(value = "prototype")
+@Scope(SCOPE_PROTOTYPE)
 class SftpClient {
 
-    private final DlsBestellungConfig dlsBestellungConfig;
+    private final DlsSftpConfig dlsSftpConfig;
 
     private Session session;
 
     private ChannelSftp channelSftp;
 
     @Autowired
-    SftpClient(final DlsBestellungConfig dlsBestellungConfig) {
-        this.dlsBestellungConfig = dlsBestellungConfig;
+    SftpClient(final DlsSftpConfig dlsSftpConfig) {
+        this.dlsSftpConfig = dlsSftpConfig;
     }
 
     private void openSftpChannel() {
         final JSch jsch = new JSch();
         try {
-            session = jsch.getSession(dlsBestellungConfig.getBibliothek(),
-                    dlsBestellungConfig.getHost(), dlsBestellungConfig.getPort());
-            session.setPassword(dlsBestellungConfig.getBibkennwort());
+            session = jsch.getSession(dlsSftpConfig.getBibliothek(),
+                    dlsSftpConfig.getHost(), dlsSftpConfig.getPort());
+            session.setPassword(dlsSftpConfig.getBibkennwort());
             session.setConfig(getSessionConfig());
             session.connect();
             final Channel channel = session.openChannel("sftp");
