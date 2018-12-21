@@ -77,7 +77,7 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
                                   final String htmlEmail) {
         try {
             final Path archivDatei =
-                    Path.of("Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
+                    Path.of("var/Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

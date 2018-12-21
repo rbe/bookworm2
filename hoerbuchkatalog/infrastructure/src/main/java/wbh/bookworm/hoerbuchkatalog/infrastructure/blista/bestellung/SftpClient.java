@@ -55,7 +55,7 @@ class SftpClient {
         } catch (JSchException e) {
             session = null;
             channelSftp = null;
-            throw new DlsBestellungException(e);
+            throw new SftpClientException(e);
         }
     }
 
@@ -93,7 +93,7 @@ class SftpClient {
                 channelSftp.put(tempFile.toAbsolutePath().toString(), dst, ChannelSftp.OVERWRITE);
                 Files.delete(tempFile);
             } catch (IOException | SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 
@@ -101,7 +101,7 @@ class SftpClient {
             try {
                 channelSftp.put(src, dst, ChannelSftp.OVERWRITE);
             } catch (SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 
@@ -109,7 +109,7 @@ class SftpClient {
             try {
                 channelSftp.cd(path);
             } catch (SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 
@@ -118,7 +118,7 @@ class SftpClient {
             try {
                 return channelSftp.ls(path);
             } catch (SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 
@@ -126,7 +126,7 @@ class SftpClient {
             try {
                 channelSftp.ls(path, selector);
             } catch (SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 
@@ -134,7 +134,7 @@ class SftpClient {
             try {
                 return channelSftp.pwd();
             } catch (SftpException e) {
-                throw new DlsBestellungException(e);
+                throw new SftpClientException(e);
             }
         }
 

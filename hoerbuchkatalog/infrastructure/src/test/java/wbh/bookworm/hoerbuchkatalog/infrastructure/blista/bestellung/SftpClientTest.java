@@ -6,37 +6,28 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
-import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringBootConfiguration;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-/*
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = AppConfig.class)
-*/
-@Disabled
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+@SpringBootTest(classes = {DlsBestellungTestAppConfig.class})
+@SpringBootConfiguration
+@ExtendWith(SpringExtension.class)
 class SftpClientTest {
 
-/*
     @Autowired
     private SftpClient sftpClient;
 
     @Test
     void shouldLogin() {
-        sftpClient.with((delegate) -> {
+        sftpClient.with(delegate -> {
             assertEquals("/", delegate.pwd());
-            return null;
         });
     }
-
-    @Test
-    void shouldPutFileIntoNew() {
-        sftpClient.with((delegate) -> {
-            delegate.cd("new");
-            assertEquals("/new", delegate.pwd());
-            final InputStream resourceAsStream = SftpClientTest.class.getResourceAsStream("/dls/0.3/ExampleBillet.xml");
-            delegate.putOverwrite(resourceAsStream, "titusTest-1-0000122-3-9.blt");
-            return null;
-        });
-    }
-*/
 
 }

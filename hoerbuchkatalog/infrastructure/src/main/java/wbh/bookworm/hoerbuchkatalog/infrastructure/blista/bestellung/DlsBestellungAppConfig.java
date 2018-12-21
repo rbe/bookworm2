@@ -6,12 +6,17 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
+
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
 @ComponentScan(basePackageClasses = {
-        DlsBestellung.class
+        DlsBestellung.class,
+        RestServiceClient.class
 })
+@EnableConfigurationProperties
 public class DlsBestellungAppConfig {
 }

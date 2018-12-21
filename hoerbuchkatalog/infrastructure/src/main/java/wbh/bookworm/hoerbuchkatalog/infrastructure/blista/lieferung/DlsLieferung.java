@@ -40,7 +40,7 @@ public class DlsLieferung {
 
     public Optional<DlsWerke> alleWerkeLaden(final String hoerernummer) {
         try {
-            final URL url = new URL(String.format("%s/%s", dlsRestConfig.getUrl(),
+            final URL url = new URL(String.format("%s/%s", dlsRestConfig.getWerkeurl(),
                     hoerernummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "werke", url)));*/
@@ -67,7 +67,7 @@ public class DlsLieferung {
     public Optional<DlsBook> bestellungLaden(final String hoerernummer, final String aghNummer) {
         final long startBook = System.nanoTime();
         try {
-            final URL url = new URL(String.format("%s/%s/%s", dlsRestConfig.getUrl(),
+            final URL url = new URL(String.format("%s/%s/%s", dlsRestConfig.getWerkeurl(),
                     hoerernummer, aghNummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "bestellung-" + aghNummer, url)));*/

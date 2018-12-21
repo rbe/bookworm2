@@ -16,6 +16,9 @@ public class DlsResponse extends DlsAntwort {
 
     public static class Response {
 
+        @JsonDeserialize(using = TrimmingStringDeserializer.class)
+        public String success;
+
         @JsonIgnoreProperties(ignoreUnknown = true)
         public List<Fehler> fehlerliste;
 
@@ -28,6 +31,10 @@ public class DlsResponse extends DlsAntwort {
 
     public boolean hatFehler() {
         return null != response.fehlerliste && !response.fehlerliste.isEmpty();
+    }
+
+    public boolean isSuccess() {
+        return response.success.equals("0") ? false : true;
     }
 
 }

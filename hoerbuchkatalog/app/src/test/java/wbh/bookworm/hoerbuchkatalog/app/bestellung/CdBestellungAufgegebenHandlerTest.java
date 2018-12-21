@@ -10,7 +10,6 @@ import wbh.bookworm.hoerbuchkatalog.app.config.TestAppConfig;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
-import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
@@ -19,7 +18,10 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
+import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.ServerSetup;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
@@ -27,14 +29,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {TestAppConfig.class})
 @ExtendWith({SpringExtension.class})
@@ -43,13 +43,24 @@ class CdBestellungAufgegebenHandlerTest {
     private final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler;
 
     @RegisterExtension
-    static GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup(
-            3025, "127.0.0.1", "smtp")
-            .setVerbose(true));
+    static GreenMailExtension greenMail = new GreenMailExtension(
+            new ServerSetup(3025, "127.0.0.1", "smtp")
+                    .setVerbose(true));
 
     @Autowired
     CdBestellungAufgegebenHandlerTest(final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler) {
         this.cdBestellungAufgegebenHandler = cdBestellungAufgegebenHandler;
+    }
+
+    @BeforeEach
+    void beforeEach() throws UserException {
+        greenMail.getManagers().getUserManager()
+                .createUser("user@example.com", "username", "password");
+    }
+
+    @AfterEach
+    void afterEach() {
+        greenMail.stop();
     }
 
     @Test
@@ -67,14 +78,19 @@ class CdBestellungAufgegebenHandlerTest {
         );
         cdBestellungAufgegebenHandler.handleEvent(
                 new BestellungAufgegeben(new Hoerernummer("80170"), bestellung));
+        // TODO assertMessageReceived
+        assertMessageReceived();
     }
-    private void assertMessageReceived(final Email email) throws MessagingException, IOException {
+
+    private void assertMessageReceived(/*final Email email*/) /*throws MessagingException, IOException*/ {
         final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
         assertEquals(1, receivedMessages.length);
+        /*
         final MimeMessage current = receivedMessages[0];
         assertEquals(email.getSubject(), current.getSubject());
         assertEquals(email.getTo(), current.getAllRecipients()[0].toString());
         assertTrue(String.valueOf(current.getContent()).contains(email.getContent()));
+        */
     }
 
 }

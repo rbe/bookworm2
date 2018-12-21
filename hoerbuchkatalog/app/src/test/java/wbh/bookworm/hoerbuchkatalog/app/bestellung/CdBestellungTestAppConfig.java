@@ -14,7 +14,6 @@ import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
 
-import org.springframework.beans.factory.config.PropertyPlaceholderConfigurer;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -41,11 +40,6 @@ import java.nio.file.Path;
         TemplateEngine.class
 })
 public class CdBestellungTestAppConfig {
-
-    @Bean
-    static PropertyPlaceholderConfigurer propertyPlaceholderConfigurer() {
-        return new PropertyPlaceholderConfigurer();
-    }
 
     @Bean
     public EmailRepository emailRepository() {

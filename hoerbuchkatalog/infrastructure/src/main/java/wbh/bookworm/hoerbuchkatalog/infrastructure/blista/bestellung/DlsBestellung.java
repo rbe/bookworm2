@@ -6,7 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsAntwort;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsResponse;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,31 +46,25 @@ public class DlsBestellung {
     /**
      * Prüfen, ob eine Bestellung Erfolg haben kann
      */
-    private boolean pruefen(final String userId, final String aghNummer) {
+    Auftragsquittung pruefen(final String userId, final String aghNummer) {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("%s/%s/%s",
-                        dlsRestConfig.getUrl(), userId, aghNummer)))
+                        dlsRestConfig.getCheckurl(), userId, aghNummer)))
                 .header("bibliothek", dlsRestConfig.getBibliothek())
                 .header("bibkennwort", dlsRestConfig.getBibkennwort())
                 .build();
-        final String result = client.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+        final byte[] result = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
                 .thenApply(HttpResponse::body)
                 .join();
-        return false;
-    }
-
-    private Auftragsquittung bestellen(final String userId, final String aghNummer) {
-        Auftragsquittung auftragsquittung = null;
-        try {
-            final String abrufkennwort = auftragsuebermittlung.uebergeben(userId, aghNummer);
-            auftragsquittung = new Auftragsquittung(abrufkennwort, Auftragsstatus.NEU.name());
-        } catch (Exception e) {
-            LOGGER.error(String.format(
-                    "Konnte Bestellung für Benutzer %s, AGH Nummer %s nicht aufgeben", userId, aghNummer),
-                    e);
+        final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(result);
+        if (dlsAntwort instanceof DlsResponse) {
+            final DlsResponse dlsResponse = (DlsResponse) dlsAntwort;
+            return new Auftragsquittung(aghNummer,
+                    !dlsResponse.hatFehler() && dlsResponse.isSuccess());
+        } else {
+            throw new IllegalStateException();
         }
-        return auftragsquittung;
     }
 
     public List<Auftragsquittung> pruefenUndBestellen(final String userId,
@@ -75,29 +72,33 @@ public class DlsBestellung {
         Objects.requireNonNull(userId);
         Objects.requireNonNull(aghNummern);
         MDC.put("userId", userId);
+        LOGGER.trace("Prüfe und bestelle die AGH Nummern {} für Benutzer {}",
+                aghNummern, userId);
         final List<Auftragsquittung> auftragsquittungen = new LinkedList<>();
         try {
             auftragsquittungen.addAll(Arrays.stream(aghNummern)
                     .map(aghNummer -> {
                         MDC.put("aghNummer", aghNummer);
-                        pruefen(userId, aghNummer);
-                        return bestellen(userId, aghNummer);
+                        final Auftragsquittung auftragsquittung = pruefen(userId, aghNummer);
+                        if (auftragsuebermittlung.uebergeben(userId, aghNummer)) {
+                            LOGGER.debug("Bestellung der AGH Nummer {} für Benutzer {}" +
+                                            " erfolgreich geprüft und übergeben",
+                                    aghNummern, userId);
+                        } else {
+                            LOGGER.error("Prüfung der AGH Nummer {} für Benutzer {} war ok," +
+                                            " die Übermittlung leider erfolglos",
+                                    aghNummern, userId);
+                            auftragsquittung.uebermittlungOk();
+                        }
+                        return auftragsquittung;
                     })
                     .collect(Collectors.toList()));
+            LOGGER.info("AGH Nummern {} für Benutzer {} geprüft und bestellt: {}",
+                    aghNummern, userId, auftragsquittungen);
         } finally {
             MDC.clear();
         }
         return auftragsquittungen;
-    }
-
-    public Auftragsstatus auftragsstatus(final String userId, final String aghNummer) {
-        MDC.put("userId", userId);
-        MDC.put("aghNummer", aghNummer);
-        try {
-            return auftragsuebermittlung.auftragsstatus(userId, aghNummer);
-        } finally {
-            MDC.clear();
-        }
     }
 
 }

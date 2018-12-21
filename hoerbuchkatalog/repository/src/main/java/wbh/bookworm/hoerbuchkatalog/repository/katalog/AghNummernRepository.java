@@ -33,14 +33,14 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AghNummernRepository.class);
 
-    private final BlistaConfig blistaConfig;
+    private final BlistaKatalogConfig blistaKatalogConfig;
 
     private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
     @Autowired
-    AghNummernRepository(final BlistaConfig blistaConfig,
+    AghNummernRepository(final BlistaKatalogConfig blistaKatalogConfig,
                          final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
-        this.blistaConfig = blistaConfig;
+        this.blistaKatalogConfig = blistaKatalogConfig;
         this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
     }
 
@@ -64,7 +64,7 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
         LOGGER.info("Importiere AGH Nummern aus '{}'", katalogZip);
         final Set<AghNummer> aghNummern = new TreeSet<>(AghNummer::compareTo);
         try {
-            final String pathInZip = blistaConfig.getAghNummernPathInZip();
+            final String pathInZip = blistaKatalogConfig.getAghNummernPathInZip();
             final List<String> neueAghNummern = DownloadHelper.extractLinesFromPathInZip(katalogZip, pathInZip);
             final List<String> aghNummernOhneErsteZeile = neueAghNummern.subList(1, neueAghNummern.size());
             aghNummernOhneErsteZeile.forEach(a -> {
@@ -79,7 +79,7 @@ class AghNummernRepository /* TODO implements DomainRepository<>*/ {
     }
 
     Path aktualisiereArchiv() {
-        final String url = blistaConfig.getKatalogRestUrl();
+        final String url = blistaKatalogConfig.getKatalogRestUrl();
         LOGGER.info("Aktualisiere AGH Nummern von {}", url);
         try {
             final Path downloadPath = DownloadHelper.getAndSave(url);

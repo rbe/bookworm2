@@ -34,7 +34,7 @@ public final class RepositoryArchive {
     }
 
     private void createDirectoryOrFail() {
-        LOGGER.debug("Checking directoy '{}", archiveDirectory);
+        LOGGER.trace("Checking directory '{}", archiveDirectory);
         final boolean directoryExists = Files.exists(archiveDirectory);
         if (!directoryExists) {
             try {

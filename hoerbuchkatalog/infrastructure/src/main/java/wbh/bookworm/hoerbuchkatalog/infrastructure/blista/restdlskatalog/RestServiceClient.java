@@ -25,7 +25,7 @@ public final class RestServiceClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestServiceClient.class);
 
-    private static final String XML_ERGIBT = "XML={} ergibt {}";
+    private static final String XML_ERGIBT = "XML {} ist DlsAntwort Typ {}";
 
     private RestServiceClient() {
         throw new AssertionError();
@@ -33,10 +33,7 @@ public final class RestServiceClient {
 
     private static Class<? extends DlsAntwort> errateAntworttyp(final byte[] bytes) {
         final String xml = new String(bytes, 0, bytes.length, StandardCharsets.UTF_8);
-        if (xml.contains("fehler")) {
-            LOGGER.trace(XML_ERGIBT, xml, DlsFehlermeldung.class);
-            return DlsFehlermeldung.class;
-        } else if (xml.contains("response")) {
+        if (xml.contains("response")) {
             LOGGER.trace(XML_ERGIBT, xml, DlsResponse.class);
             return DlsResponse.class;
         } else if (xml.contains("books")) {
@@ -45,6 +42,9 @@ public final class RestServiceClient {
         } else if (xml.contains("book")) {
             LOGGER.trace(XML_ERGIBT, xml, DlsBook.class);
             return DlsBook.class;
+        } else if (xml.contains("fehler")) {
+            LOGGER.trace(XML_ERGIBT, xml, DlsFehlermeldung.class);
+            return DlsFehlermeldung.class;
         } else {
             throw new IllegalStateException("Unknown message type");
         }

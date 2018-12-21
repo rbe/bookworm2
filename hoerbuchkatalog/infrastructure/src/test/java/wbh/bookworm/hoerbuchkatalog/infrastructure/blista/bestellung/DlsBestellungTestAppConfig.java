@@ -6,14 +6,18 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-@SpringBootApplication(scanBasePackageClasses = {
-        DlsBestellung.class
+/*
+@SpringBootTest(classes = {
+        DlsBestellung.class,
+        RestServiceClient.class
 })
 @SpringBootConfiguration
+@Import({DlsBestellungAppConfig.class})
+*/
+@Configuration
 @Import({DlsBestellungAppConfig.class})
 public class DlsBestellungTestAppConfig {
 }

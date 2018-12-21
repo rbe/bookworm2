@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.LieferungTestAppConfig;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungTestAppConfig;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.io.IOException;
 import java.io.InputStream;
 
-@SpringBootTest(classes = {LieferungTestAppConfig.class})
+@SpringBootTest(classes = {DlsLieferungTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 class RestServiceClientTest {
 

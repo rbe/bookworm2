@@ -2,6 +2,7 @@ spring:
   profiles: test
   main:
     banner-mode: "off"
+    allow-bean-definition-overriding: true
   mail:
     host: 127.0.0.1
     port: 3025

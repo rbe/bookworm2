@@ -6,14 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
-
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
 @Configuration
 @Import({DlsLieferungAppConfig.class})
-@ComponentScan(basePackageClasses = {RestServiceClient.class})
-public class LieferungTestAppConfig {
+public class DlsLieferungTestAppConfig {
 }

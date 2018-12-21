@@ -15,7 +15,7 @@ import java.nio.charset.Charset;
 @Configuration
 @PropertySource("classpath:/conf/hoerbuchkatalog.properties")
 @ConfigurationProperties(prefix = "hoerbuchkatalog.blista")
-public class BlistaConfig {
+public class BlistaKatalogConfig {
 
     public static class Rest {
 

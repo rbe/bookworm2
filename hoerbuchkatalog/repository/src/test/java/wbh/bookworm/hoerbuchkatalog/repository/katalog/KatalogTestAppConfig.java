@@ -9,11 +9,12 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Import;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackageClasses = {
+        Hoerbuchkatalog.class
+})
 @SpringBootConfiguration
-@Import({KatalogAppConfig.class})
+//@Import({KatalogAppConfig.class})
 @EnableConfigurationProperties
 public class KatalogTestAppConfig {
 }

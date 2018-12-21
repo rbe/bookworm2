@@ -10,9 +10,25 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
+import java.nio.file.Path;
+
 @Component
 @PropertySource({"classpath:/conf/blista-dls.properties"})
 @ConfigurationProperties(prefix = "blista.dls.sftp")
+/**
+ * <pre>
+ * #
+ * # blista DLS - Aufträge per SFTP
+ * #
+ *
+ * blista.dls.sftp.host=rest-dls-katalog.blista.de
+ * blista.dls.sftp.port=95
+ * blista.dls.sftp.bibliothek=
+ * blista.dls.sftp.bibkennwort=
+ *
+ * blista.dls.sftp.directory=./var/blista-dls
+ * </pre>
+ */
 final class DlsSftpConfig {
 
     private String host;
@@ -23,20 +39,46 @@ final class DlsSftpConfig {
 
     private String bibkennwort;
 
+    private Path directory;
+
     String getHost() {
         return host;
+    }
+
+    public void setHost(final String host) {
+        this.host = host;
     }
 
     Integer getPort() {
         return port;
     }
 
+    public void setPort(final Integer port) {
+        this.port = port;
+    }
+
     String getBibliothek() {
         return bibliothek;
     }
 
+    public void setBibliothek(final String bibliothek) {
+        this.bibliothek = bibliothek;
+    }
+
     String getBibkennwort() {
         return bibkennwort;
+    }
+
+    public void setBibkennwort(final String bibkennwort) {
+        this.bibkennwort = bibkennwort;
+    }
+
+    public Path getDirectory() {
+        return directory;
+    }
+
+    public void setDirectory(final Path directory) {
+        this.directory = directory;
     }
 
 }

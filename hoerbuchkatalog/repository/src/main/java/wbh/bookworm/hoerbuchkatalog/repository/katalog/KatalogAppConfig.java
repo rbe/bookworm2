@@ -12,6 +12,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.search.LuceneIndex;
 
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -34,9 +35,10 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
         DomainConfig.class
 })
 @EnableScheduling
+@EnableConfigurationProperties
 public class KatalogAppConfig {
 
-    public static final String HOERBUCHKATALOG_MAP = "hoerbuchkatalogMap";
+    static final String HOERBUCHKATALOG_MAP = "hoerbuchkatalogMap";
 
     @Bean(/*"hoerbuchkatalogMap"*/HOERBUCHKATALOG_MAP)
     @Scope(SCOPE_PROTOTYPE)

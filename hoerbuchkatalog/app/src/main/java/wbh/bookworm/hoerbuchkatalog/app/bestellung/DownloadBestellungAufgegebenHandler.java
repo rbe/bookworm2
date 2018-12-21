@@ -69,6 +69,8 @@ public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<B
                 .map(tn -> hoerbuchkatalog.hole(tn).getAghNummer())
                 .toArray(AghNummer[]::new);
         logger.info("Hörer {} hat folgende Downloads bestellt: {}", hoerernummer, aghNummern);
+        // TODO Auftragsquittungn auswerten und E-Mail anpassen (erfolglose Bestellungen)?
+        // TODO Alternativ Bestellung wiederholen
         final List<Auftragsquittung> auftragsquittungen =
                 dlsBestellung.pruefenUndBestellen(
                         domainEvent.getHoerernummer().getValue(),
@@ -98,7 +100,7 @@ public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<B
                                   final String htmlEmail) {
         try {
             final Path archivDatei =
-                    Path.of("Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
+                    Path.of("var/Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {

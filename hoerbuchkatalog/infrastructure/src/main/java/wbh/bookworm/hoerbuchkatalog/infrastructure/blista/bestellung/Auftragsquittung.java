@@ -16,43 +16,37 @@ public final class Auftragsquittung implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
-    private static final Auftragsquittung UNBEKANNT = new Auftragsquittung(null, null);
+    private final String aghNummer;
 
-    private String abrufkennwort;
+    private final boolean pruefungOk;
 
-    private String billetStatus;
+    private boolean uebermittlungOk;
 
-    Auftragsquittung(final String abrufkennwort, final String billetStatus) {
-        this.abrufkennwort = abrufkennwort;
-        this.billetStatus = billetStatus;
+    Auftragsquittung(final String aghNummer, final boolean pruefungOk) {
+        this.aghNummer = aghNummer;
+        this.pruefungOk = pruefungOk;
     }
 
-    static Auftragsquittung unbekannt() {
-        return UNBEKANNT;
+    public String getAghNummer() {
+        return aghNummer;
     }
 
-    //@XmlElement(name = "Abrufkennwort")
-    public String getAbrufkennwort() {
-        return abrufkennwort;
+    public boolean isPruefungOk() {
+        return pruefungOk;
     }
 
-    void setAbrufkennwort(final String abrufkennwort) {
-        this.abrufkennwort = abrufkennwort;
+    void uebermittlungOk() {
+        this.uebermittlungOk = true;
     }
 
-    //@XmlElement(name = "Auftragsstatus")
-    public String getBilletStatus() {
-        return billetStatus;
-    }
-
-    void setBilletStatus(final String billetStatus) {
-        this.billetStatus = billetStatus;
+    public boolean isUebermittlungOk() {
+        return uebermittlungOk;
     }
 
     @Override
     public String toString() {
-        return String.format("Auftragsquittung{abrufkennwort='%s', auftragsstatus='%s'}",
-                abrufkennwort, billetStatus);
+        return String.format("Auftragsquittung{aghNummer='%s', pruefungOk=%s, uebermittlungOk=%s}",
+                aghNummer, pruefungOk, uebermittlungOk);
     }
 
 }

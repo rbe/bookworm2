@@ -13,7 +13,7 @@ import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.UserException;
 import com.icegreen.greenmail.util.GreenMailUtil;
 import com.icegreen.greenmail.util.ServerSetup;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -45,8 +45,8 @@ class EmailServiceTest {
     private final EmailRepository emailRepository;
 
     @RegisterExtension
-    static GreenMailExtension greenMail = new GreenMailExtension(new ServerSetup(
-                    3025, "127.0.0.1", "smtp")
+    static GreenMailExtension greenMail = new GreenMailExtension(
+            new ServerSetup(3025, "127.0.0.1", "smtp")
                     .setVerbose(true));
 
     @Autowired
@@ -56,9 +56,14 @@ class EmailServiceTest {
     }
 
     @BeforeEach
-    void before() throws UserException {
+    void beforeEach() throws UserException {
         greenMail.getManagers().getUserManager()
                 .createUser("user@example.com", "username", "password");
+    }
+
+    @AfterEach
+    void afterEach() {
+        greenMail.stop();
     }
 
     @Test
@@ -69,7 +74,7 @@ class EmailServiceTest {
                 "some body");
         final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
         final MimeMessage receivedMessage = receivedMessages[0];
-        Assertions.assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
+        assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
     }
 
     @Test()

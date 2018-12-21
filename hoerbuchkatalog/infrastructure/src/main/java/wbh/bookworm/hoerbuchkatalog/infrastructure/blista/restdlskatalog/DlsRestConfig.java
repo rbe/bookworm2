@@ -15,16 +15,40 @@ import java.nio.file.Path;
 @Component
 @PropertySource({"classpath:/conf/blista-dls.properties"})
 @ConfigurationProperties(prefix = "blista.dls.rest")
+/**
+ * <pre>
+ * #
+ * # blista DLS - Abruf per REST
+ * #
+ *
+ * blista.dls.rest.werkeurl=https://rest-dls-katalog.blista.de:443/v1/werke
+ * blista.dls.rest.checkurl=https://rest-dls-katalog.blista.de:443/v1/check
+ * blista.dls.rest.bibliothek=
+ * blista.dls.rest.bibkennwort=
+ *
+ * blista.dls.rest.directory=./var/blista-dls
+ * </pre>
+ */
 public final class DlsRestConfig {
 
-    private String url;
+    private String werkeurl;
 
-    public String getUrl() {
-        return url;
+    public String getWerkeurl() {
+        return werkeurl;
     }
 
-    public void setUrl(final String url) {
-        this.url = url;
+    public void setWerkeurl(final String werkeurl) {
+        this.werkeurl = werkeurl;
+    }
+
+    private String checkurl;
+
+    public String getCheckurl() {
+        return checkurl;
+    }
+
+    public void setCheckurl(final String checkurl) {
+        this.checkurl = checkurl;
     }
 
     private String bibliothek;

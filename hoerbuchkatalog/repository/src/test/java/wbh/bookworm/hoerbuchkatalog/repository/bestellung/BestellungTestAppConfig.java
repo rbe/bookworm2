@@ -6,27 +6,30 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellungAppConfig;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
-import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
 import java.nio.file.Path;
 
-@SpringBootApplication
+@SpringBootApplication(scanBasePackageClasses = {
+        DlsBestellung.class,
+        RestServiceClient.class
+})
 @SpringBootConfiguration
 @EnableConfigurationProperties
-@Import({DlsBestellungAppConfig.class})
 public class BestellungTestAppConfig {
 
+    /*
     @Bean
     static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
     }
+    */
 
     @Bean
     public WarenkorbRepository warenkorbRepository() {
@@ -44,3 +47,4 @@ public class BestellungTestAppConfig {
     }
 
 }
+

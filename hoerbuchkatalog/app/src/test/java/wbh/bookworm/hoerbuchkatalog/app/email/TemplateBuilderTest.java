@@ -95,7 +95,7 @@ class TemplateBuilderTest {
                         LocalDate.now(), new AghNummer("1-1234567-2-3"), false));
         final String build = emailTemplateBuilder.build("BestellbestaetigungCd.html",
                 Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
-        Files.write(Path.of("BestellbestaetigungCd-test.html"), build.getBytes(StandardCharsets.UTF_8));
+        Files.write(Path.of("target/BestellbestaetigungCd-test.html"), build.getBytes(StandardCharsets.UTF_8));
     }
 
 }

@@ -17,7 +17,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(classes = {LieferungTestAppConfig.class})
+@SpringBootTest(classes = {DlsLieferungTestAppConfig.class})
 @SpringBootConfiguration
 @ExtendWith(SpringExtension.class)
 class DlsLieferungTest {
