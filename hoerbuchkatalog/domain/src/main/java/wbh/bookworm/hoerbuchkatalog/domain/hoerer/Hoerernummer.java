@@ -33,6 +33,10 @@ public final class Hoerernummer extends DomainId<String> {
         super(value);
     }
 
+    public Hoerernummer(final Integer hoerernummer) {
+        this(String.valueOf(hoerernummer));
+    }
+
     public Hoerernummer(final Hoerernummer hoerernummer) {
         this(hoerernummer.value);
     }

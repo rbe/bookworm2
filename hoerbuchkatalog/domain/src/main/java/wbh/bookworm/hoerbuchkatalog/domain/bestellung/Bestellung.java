@@ -136,12 +136,14 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public LocalDateTime aufgeben() {
         if (null == zeitpunktAbgeschickt) {
-            LOGGER.info("Bestellung {} für Hörer {} wird aufgegeben", domainId, hoerernummer);
+            LOGGER.info("Bestellung {} für Hörer {} wird aufgegeben",
+                    domainId, hoerernummer);
             zeitpunktAbgeschickt = LocalDateTime.now();
             DomainEventPublisher.global()
-                    .publish(new BestellungAufgegeben(hoerernummer, this));
+                    .publishAsync(new BestellungAufgegeben(hoerernummer, this));
         } else {
-            LOGGER.error("Bestellung {} für Hörer {} wurde bereits abgeschickt", domainId, hoerernummer);
+            LOGGER.error("Bestellung {} für Hörer {} wurde bereits abgeschickt",
+                    domainId, hoerernummer);
         }
         return zeitpunktAbgeschickt;
     }
@@ -152,7 +154,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @JsonIgnore
     public String getZeitpunktAbgeschicktAlsDeutschesDatum() {
-        return zeitpunktAbgeschickt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        return zeitpunktAbgeschickt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
     }
 
     public boolean inAktuellemMonatAbgeschickt() {

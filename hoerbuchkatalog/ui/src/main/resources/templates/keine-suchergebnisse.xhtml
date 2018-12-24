@@ -5,20 +5,24 @@
         ]>
 <html lang="de"
       xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog">
+      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog"
+      xmlns:ks="http://xmlns.jcp.org/jsf/composite/katalogsuche">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
-            <h2 class="contentheading">Onlinekatalog Suche</h2>
-            <div class="noticetext">
-                <h3>Keine Suchergebnisse</h3>
-                Es wurden keine Treffer zu Ihrer Suche gefunden.<br/>
-                Bitte geben Sie Suchbegriffe mit mindestens 3 Zeichen ein!
+        <h:form id="keinesuchergebnisseForm">
+            <div class="leading">
+                <h2 class="contentheading">Onlinekatalog Suche</h2>
+                <div class="noticetext">
+                    <h3>Keine Suchergebnisse</h3>
+                    Es wurden keine Treffer zu Ihrer Suche gefunden.<br/>
+                    Bitte geben Sie Suchbegriffe mit mindestens 3 Zeichen ein!
+                </div>
+                <hk:navigation/>
+                <ks:suchformular/>
             </div>
-            <hk:navigation/>
-            <hk:katalogsuche/>
-        </div>
+        </h:form>
         <div class="noticetext">
             <h3>Platz für Hinweistext</h3>
             Hier kann eine Erklärung stehen.....

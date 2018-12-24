@@ -29,7 +29,7 @@ import java.util.stream.Collectors;
 @SessionScope
 public class MeineDownloads implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
 
     private final MeineBestellung meineBestellung;
 
@@ -37,7 +37,7 @@ public class MeineDownloads implements Serializable {
 
     private String stichwort;
 
-    private List<BlistaDownload> nachStichwortGefilterteDownloads;
+    private transient List<BlistaDownload> nachStichwortGefilterteDownloads;
 
     @Autowired
     public MeineDownloads(final HoererSession hoererSession,
@@ -70,8 +70,9 @@ public class MeineDownloads implements Serializable {
                 .collect(Collectors.toList());
     }
 
-    public boolean isStichwortHatTreffer() {
-        return !nachStichwortGefilterteDownloads.isEmpty();
+    public boolean isStichwortHatKeineTreffer() {
+        return null == stichwort || stichwort.isBlank()
+                || !nachStichwortGefilterteDownloads.isEmpty();
     }
 
     public LocalDateTime standVom() {
@@ -85,7 +86,13 @@ public class MeineDownloads implements Serializable {
     }
 
     public boolean isHoerbuecherAnzeigen() {
-        return meineBestellung.isBestellungenVorhanden() || !nachStichwortGefilterteDownloads.isEmpty();
+        return meineBestellung.isBestellungenVorhanden()
+                || !nachStichwortGefilterteDownloads.isEmpty();
+    }
+
+    void bestellungAufgegeben() {
+        verfuegbareDownloadsELCache.invalidate();
+        LOGGER.debug("Zwischengespeicherte Downloads geleert; erneute Abfrage bei blista notwendig");
     }
 
 }

@@ -11,7 +11,6 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
@@ -32,7 +31,7 @@ import java.util.Optional;
 @SessionScope
 public class MeineBestellung implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
 
     private final Navigation navigation;
 
@@ -42,15 +41,13 @@ public class MeineBestellung implements Serializable {
 
     private final HoererSession hoererSession;
 
-    /**
-     * Kann sich durch Eingabe im Forumlar ändern
-     */
-    private Hoerernummer hoerernummer;
+    private Integer hoerernummerFormular;
 
-    /**
-     * Kann sich durch Eingabe im Forumlar ändern
-     */
-    private Hoerername hoerername;
+    private String hoerernameAusFormular;
+
+    private String hoereremailAusFormular;
+
+    private final MeineDownloads meineDownloads;
 
     //
     // Bestellung
@@ -79,15 +76,13 @@ public class MeineBestellung implements Serializable {
     @Autowired
     public MeineBestellung(final Navigation navigation,
                            final HoererSession hoererSession,
+                           final MeineDownloads meineDownloads,
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService,
                            final DownloadsLieferungService downloadsLieferungService) {
         LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
         this.hoererSession = hoererSession;
-        if (hoererSession.isHoererIstBekannt()) {
-            this.hoerernummer = hoererSession.getHoerernummer();
-            this.hoerername = hoererSession.getHoerername();
-        }
+        this.meineDownloads = meineDownloads;
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
@@ -104,48 +99,56 @@ public class MeineBestellung implements Serializable {
                     return anzahlCDs + anzahlDownloads;
                 });
         this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
-                () -> downloadsLieferungService.lieferungen(hoerernummer));
+                () -> downloadsLieferungService.lieferungen(hoererSession.getHoerernummer()));
     }
 
     public boolean hasHoerernummer() {
         return hoererSession.isHoererIstBekannt();
     }
 
-    public Hoerernummer getHoerernummer() {
-        return hoerernummer;
+    public Integer getHoerernummer() {
+        return hoererSession.isHoererIstBekannt()
+                ? Integer.valueOf(hoererSession.getHoerernummer().getValue())
+                : hoerernummerFormular;
     }
 
-    public void setHoerernummer(final Hoerernummer hoerernummer) {
-        LOGGER.trace("Im Formular eingegebene Hörernummer {}", hoerernummer);
-        if (Hoerernummer.UNBEKANNT != hoerernummer) {
-            this.hoerernummer = hoerernummer;
-        } else {
-            /* Bekannte Hörernummer kann nicht geändert werden */
-            throw new UnsupportedOperationException();
+    public void setHoerernummer(final Integer hoerernummerAusFormular) {
+        if (hoererSession.isHoererIstUnbekannt()) {
+            this.hoerernummerFormular = hoerernummerAusFormular;
+            LOGGER.debug("Im Formular eingegebene Hörernummer: {}", hoerernummerAusFormular);
         }
     }
 
     public boolean hasHoerername() {
-        return hoererSession.getHoerer().hasHoerername();
+        return hoererSession.isHoererIstBekannt()
+                && hoererSession.hasHoerername();
     }
 
     public String getHoerername() {
-        final Hoerer hoerer = hoererSession.getHoerer();
-        return String.format("%s %s",
-                hoerer.hasVorname() ? hoerer.getVorname() : "Unbekannt",
-                hoerer.hasNachname() ? hoerer.getNachname() : "Unbekannt");
+        return hoererSession.isHoererIstBekannt()
+                ? hoererSession.getHoerername().toString()
+                : hoerernameAusFormular;
     }
 
-    public void setHoerername(final String hoerername) {
-        this.hoerername = Hoerername.of(hoerername);
+    public void setHoerername(final String hoerernameAusFormular) {
+        if (hoererSession.isHoererIstUnbekannt()) {
+            this.hoerernameAusFormular = hoerernameAusFormular;
+        }
     }
 
     public boolean hasHoereremail() {
-        return hoererSession.getHoerer().hasHoereremail();
+        /* TODO Kann immer geändert werden!? */
+        return false; //hoererSession.hasHoereremail();
     }
 
-    public HoererEmail getHoereremail() {
-        return hoererSession.getHoerer().getHoereremail();
+    public String getHoereremail() {
+        return hoererSession.isHoererIstBekannt()
+                ? hoererSession.getHoereremail().toString()
+                : hoereremailAusFormular;
+    }
+
+    public void setHoereremail(final String hoereremailAusFormular) {
+        this.hoereremailAusFormular = hoereremailAusFormular;
     }
 
     //
@@ -183,31 +186,37 @@ public class MeineBestellung implements Serializable {
 
     public String bestellungAbschicken() {
         bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
-        // Warenkörbe kopieren
-        bestellterCdWarenkorb =
-                bestellungService.cdWarenkorbKopie(hoererSession.getBestellungSessionId());
-        bestellterDownloadWarenkorb =
-                bestellungService.downloadWarenkorbKopie(hoererSession.getBestellungSessionId());
-        // Bestellung aufgeben
-        final Hoerer hoerer = hoererSession.getHoerer();
-        final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(
-                hoererSession.getBestellungSessionId(),
-                hoerer.getHoerername(), hoerer.getHoereremail(),
-                bemerkung,
-                bestellkarteMischen, alteBestellkarteLoeschen);
+        warenkoerbeKopieren();
+        final Optional<BestellungId> bestellungId = bestellungAufgeben();
         if (bestellungId.isPresent()) {
             meinWarenkorb.bestellungAufgegeben();
+            meineDownloads.bestellungAufgegeben();
             LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben",
-                    bestellungId.get(), hoerernummer);
+                    bestellungId.get(), getHoerernummer());
             return navigation.zuBestellungErfolgreich();
         } else {
-            LOGGER.error("Eine Bestellung für Hörer {} konnte nicht aufgegeben werden!", hoerernummer);
             bestellterCdWarenkorb = null;
             bestellterDownloadWarenkorb = null;
             bestellungStatusNachricht = "Ihre Bestellung konnte leider nicht bearbeitet werden," +
                     " bitte wenden Sie sich an die WBH.";
+            LOGGER.error("Eine Bestellung für Hörer {} konnte nicht aufgegeben werden!",
+                    getHoerernummer());
             return null; //navigation.zuMeinemWarenkorb();
         }
+    }
+
+    private Optional<BestellungId> bestellungAufgeben() {
+        return bestellungService.bestellungAufgeben(hoererSession.getBestellungSessionId(),
+                new Hoerernummer(getHoerernummer()),
+                Hoerername.of(getHoerername()), new HoererEmail(getHoereremail()),
+                bemerkung, bestellkarteMischen, alteBestellkarteLoeschen);
+    }
+
+    private void warenkoerbeKopieren() {
+        bestellterCdWarenkorb = bestellungService
+                .cdWarenkorbKopie(hoererSession.getBestellungSessionId());
+        bestellterDownloadWarenkorb = bestellungService
+                .downloadWarenkorbKopie(hoererSession.getBestellungSessionId());
     }
 
     public String getBestellungStatusNachricht() {
@@ -228,8 +237,12 @@ public class MeineBestellung implements Serializable {
     }
 
     public boolean isBestellungenVorhanden() {
-        return bestellungService.anzahlBestellungen(hoerernummer) > 0
-                || !verfuegbareDownloadsELCache.get().alle().isEmpty();
+        if (hoererSession.isHoererIstUnbekannt()) {
+            return false;
+        } else {
+            return bestellungService.anzahlBestellungen(hoererSession.getHoerernummer()) > 0
+                    || !verfuegbareDownloadsELCache.get().alle().isEmpty();
+        }
     }
 
 }

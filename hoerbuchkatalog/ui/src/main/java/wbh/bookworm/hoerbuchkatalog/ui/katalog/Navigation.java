@@ -14,10 +14,11 @@ import javax.faces.context.FacesContext;
 import java.io.Serializable;
 
 @Component
-/* TODO RequestScope? */@SessionScope
+/* TODO RequestScope? */
+@SessionScope
 public class Navigation implements Serializable {
 
-    // faces-redirect=true
+    private static final String FRT = "?faces-redirect=true";
 
     static final String NAV_SUCHE = "katalogsuche.xhtml";
 
@@ -59,7 +60,8 @@ public class Navigation implements Serializable {
     }
 
     private String getViewId() {
-        return FacesContext.getCurrentInstance().getViewRoot().getViewId();
+        return FacesContext.getCurrentInstance()
+                .getViewRoot().getViewId();
     }
 
     public boolean isLinkZurSucheAnzeigen() {
@@ -69,7 +71,7 @@ public class Navigation implements Serializable {
     }
 
     public String zurSuche() {
-        return NAV_SUCHE + "?faces-redirect=true";
+        return NAV_SUCHE + FRT;
     }
 
     public boolean isLinkZumSuchergebnisAnzeigen() {
@@ -107,7 +109,7 @@ public class Navigation implements Serializable {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return /* TODO hoererSession.isHoererIstBekannt() && */meinWarenkorb.getAnzahl() > 0;
+        return meinWarenkorb.getAnzahl() > 0;
     }
 
     public String zuMeinemWarenkorb() {

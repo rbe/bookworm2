@@ -195,13 +195,8 @@ public class BestellungService {
     private WarenkorbId warenkorbIdFrom(final BestellungSessionId bestellungSessionId,
                                         final String diskriminator) {
         final Hoerernummer hoerernummer = new Hoerernummer(bestellungSessionId.getHoerernummer());
-        if (Hoerernummer.UNBEKANNT.equals(hoerernummer)) {
-            return new WarenkorbId(String.format("%s-%s-%s",
-                    hoerernummer.getValue(), bestellungSessionId.getSessionId(), diskriminator));
-        } else {
-            return new WarenkorbId(String.format("%s-%s",
-                    hoerernummer.getValue(), diskriminator));
-        }
+        return new WarenkorbId(String.format("%s-%s-%s",
+                hoerernummer.getValue(), bestellungSessionId.getSessionId(), diskriminator));
     }
 
     public int anzahlHoerbuecher(final BestellungSessionId bestellungSessionId) {
@@ -215,21 +210,22 @@ public class BestellungService {
     /**
      * Command
      */
-    public Optional<BestellungId> bestellungAufgeben(/* TODO Hoerer */final BestellungSessionId bestellungSessionId,
-                                                                      final Hoerername hoerername, final HoererEmail hoereremail,
-                                                                      final String bemerkung,
-                                                                      final Boolean bestellkarteMischen,
-                                                                      final Boolean alteBestellkarteLoeschen) {
-        final Hoerernummer hoerernummer = new Hoerernummer(bestellungSessionId.getHoerernummer());
+    public Optional<BestellungId> bestellungAufgeben(final BestellungSessionId bestellungSessionId,
+                                                     /* TODO Hoerer */
+                                                     final Hoerernummer hoerernummer,
+                                                     final Hoerername hoerername, final HoererEmail hoereremail,
+                                                     final String bemerkung,
+                                                     final Boolean bestellkarteMischen,
+                                                     final Boolean alteBestellkarteLoeschen) {
+        //final Hoerernummer hoerernummer = new Hoerernummer(bestellungSessionId.getHoerernummer());
         LOGGER.trace("Bestellung {} für Hörer {} wird aufgegeben", this, hoerernummer);
         final WarenkorbId cdWarenkorbId = warenkorbIdFrom(bestellungSessionId, "CD");
         final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, cdWarenkorbId);
         final WarenkorbId downloadWarenkorbId = warenkorbIdFrom(bestellungSessionId, "Download");
         final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer, downloadWarenkorbId);
-        final Bestellung bestellung = bestellungRepository.erstellen(hoerernummer,
-                hoerername, hoereremail,
-                bemerkung,
-                bestellkarteMischen, alteBestellkarteLoeschen,
+        final Bestellung bestellung = bestellungRepository.erstellen(
+                hoerernummer, hoerername, hoereremail,
+                bemerkung, bestellkarteMischen, alteBestellkarteLoeschen,
                 cdWarenkorb.getTitelnummern(), downloadWarenkorb.getTitelnummern());
         cdWarenkorb.leeren();
         downloadWarenkorb.leeren();
@@ -240,7 +236,8 @@ public class BestellungService {
 
     public long anzahlBestellungen(final Hoerernummer hoerernummer) {
         return bestellungRepository
-                .find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+                .find(hoerernummer.getValue(),
+                        QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .size();
     }

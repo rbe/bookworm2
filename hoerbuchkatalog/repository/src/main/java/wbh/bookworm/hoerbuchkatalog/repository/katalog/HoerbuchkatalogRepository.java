@@ -98,11 +98,14 @@ public class HoerbuchkatalogRepository
                         } else {
                             final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
                             @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
-                                    applicationContext.getBean(/*"hoerbuchkatalogMap"*/HOERBUCHKATALOG_MAP, Map.class);
+                                    applicationContext.getBean(HOERBUCHKATALOG_MAP, Map.class);
                             final HoerbuchkatalogId hoerbuchkatalogDomainId =
                                     new HoerbuchkatalogId(gd.getFileName().toString());
+                            final long neueVersion = null != aktuellerHoerbuchkatalog.get()
+                                    ? aktuellerHoerbuchkatalog.get().getVersion() + 1
+                                    : 1;
                             final Hoerbuchkatalog neuerKatalog =
-                                    new Hoerbuchkatalog(hoerbuchkatalogDomainId, map);
+                                    new Hoerbuchkatalog(hoerbuchkatalogDomainId, map, neueVersion);
                             LOGGER.debug("Hörbuchkatalog aus '{}' erfolgreich erzeugt", gd);
                             verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                             sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);

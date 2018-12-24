@@ -6,132 +6,96 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
 import java.io.Serializable;
-import java.util.Objects;
 
 @Component
-@SessionScope
+@RequestScope
 public class Hoerbuchdetail implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuchdetail.class);
-
-    private final Hoerernummer hoerernummer;
-
-    private final transient HoerbuchkatalogService hoerbuchkatalogService;
-
-    private Hoerbuch hoerbuch;
+    private final HoererSession hoererSession;
 
     @Autowired
-    public Hoerbuchdetail(final HoererSession hoererSession,
-                          final HoerbuchkatalogService hoerbuchkatalogService) {
-        this.hoerernummer = hoererSession.getHoerernummer();
-        this.hoerbuchkatalogService = hoerbuchkatalogService;
-    }
-
-    void setTitelnummer(final Titelnummer titelnummer) {
-        Objects.requireNonNull(titelnummer);
-        LOGGER.trace("");
-        hoerbuch = hoerbuchkatalogService.hole(hoerernummer, titelnummer);
+    public Hoerbuchdetail(final HoererSession hoererSession) {
+        this.hoererSession = hoererSession;
     }
 
     void leeren() {
-        this.hoerbuch = null;
+        hoererSession.hoerbuchVergessen();
     }
 
     public boolean isHoerbuchVorhanden() {
-        return null != hoerbuch;
+        return null != hoererSession.hoerbuch();
     }
 
     public Sachgebiet getSachgebiet() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getSachgebiet();
+        return hoererSession.hoerbuch().getSachgebiet();
     }
 
     public Titelnummer getTitelnummer() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getTitelnummer();
+        return hoererSession.hoerbuch().getTitelnummer();
     }
 
     public String getAutor() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getAutor();
+        return hoererSession.hoerbuch().getAutor();
     }
 
     public String getTitel() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getTitel();
+        return hoererSession.hoerbuch().getTitel();
     }
 
     public String getUntertitel() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getUntertitel();
+        return hoererSession.hoerbuch().getUntertitel();
     }
 
     public String getErlaeuterung() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getErlaeuterung();
+        return hoererSession.hoerbuch().getErlaeuterung();
     }
 
     public String getVerlagsort() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getVerlagsort();
+        return hoererSession.hoerbuch().getVerlagsort();
     }
 
     public String getVerlag() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getVerlag();
+        return hoererSession.hoerbuch().getVerlag();
     }
 
     public String getDruckjahr() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getDruckjahr();
+        return hoererSession.hoerbuch().getDruckjahr();
     }
 
     public String getSprecher() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getSprecher();
+        return hoererSession.hoerbuch().getSprecher();
     }
 
     public String getSpieldauer() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getSpieldauer();
+        return hoererSession.hoerbuch().getSpieldauer();
     }
 
     public String getProdOrt() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getProdOrt();
+        return hoererSession.hoerbuch().getProdOrt();
     }
 
     public String getProdJahr() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getProdJahr();
+        return hoererSession.hoerbuch().getProdJahr();
     }
 
     public String getAnzahlCD() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getAnzahlCD();
+        return hoererSession.hoerbuch().getAnzahlCD();
     }
 
     public String getTitelfamilie() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getTitelfamilie();
+        return hoererSession.hoerbuch().getTitelfamilie();
     }
 
     public String getEinstelldatum() {
-        Objects.requireNonNull(hoerbuch);
-        return hoerbuch.getEinstelldatumAufDeutsch();
+        return hoererSession.hoerbuch().getEinstelldatumAufDeutsch();
     }
 
 }

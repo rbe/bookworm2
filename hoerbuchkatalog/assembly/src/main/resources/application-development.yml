@@ -5,13 +5,13 @@ spring:
   main:
     banner-mode: "console"
   mail:
-    host: smtp.gmail.com
+    host: mx.1ci.net
     port: 587
-    username: username
-    password: password
+    username: wbh@wbh-online.de
+    password: wbh78%wb
     default-encoding: UTF-8
     protocol: smtp
-    test-connection: false
+    test-connection: true
     properties:
       mail:
         debug: true

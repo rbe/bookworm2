@@ -30,7 +30,7 @@ import java.io.Serializable;
 //@javax.enterprise.context.SessionScoped
 public class MeinWarenkorb implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
 
     //
     // Hörer
@@ -87,16 +87,27 @@ public class MeinWarenkorb implements Serializable {
                 titelnummer -> hoerbuchkatalogService.hole(hoererSession.getHoerernummer(), titelnummer));
     }
 
-    void bestellungAufgegeben() {
-        cdWarenkorbCacheGroup.invalidateAll();
-        downloadWarenkorbCacheGroup.invalidateAll();
-        hoerbuchValueCache.invalidateAll();
+    //
+    // Hörbuch
+    //
+
+    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
+        LOGGER.trace("{}", titelnummer);
+        final boolean b = !isMaxDownloadsProTagErreicht()
+                && !isMaxDownloadsProMonatErreicht()
+                && hoerbuchValueCache.get(titelnummer).isDownloadbar();
+        LOGGER.debug("{} = {}", titelnummer, b);
+        return b;
     }
 
-    public int getAnzahl() {
+    public String hoerbuchAutor(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return cdWarenkorbValueCache.get().getAnzahl() +
-                downloadWarenkorbValueCache.get().getAnzahl();
+        return hoerbuchValueCache.get(titelnummer).getAutor();
+    }
+
+    public String hoerbuchTitel(final Titelnummer titelnummer) {
+        LOGGER.trace("");
+        return hoerbuchValueCache.get(titelnummer).getTitel();
     }
 
     //
@@ -181,26 +192,19 @@ public class MeinWarenkorb implements Serializable {
     }
 
     //
-    // Hörbuch
+    // Bestellung
     //
 
-    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
-        LOGGER.trace("{}", titelnummer);
-        final boolean b = !isMaxDownloadsProTagErreicht()
-                && !isMaxDownloadsProMonatErreicht()
-                && hoerbuchValueCache.get(titelnummer).isDownloadbar();
-        LOGGER.debug("{} = {}", titelnummer, b);
-        return b;
+    void bestellungAufgegeben() {
+        cdWarenkorbCacheGroup.invalidateAll();
+        downloadWarenkorbCacheGroup.invalidateAll();
+        hoerbuchValueCache.invalidateAll();
     }
 
-    public String hoerbuchAutor(final Titelnummer titelnummer) {
+    public int getAnzahl() {
         LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getAutor();
-    }
-
-    public String hoerbuchTitel(final Titelnummer titelnummer) {
-        LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getTitel();
+        return cdWarenkorbValueCache.get().getAnzahl() +
+                downloadWarenkorbValueCache.get().getAnzahl();
     }
 
 }

@@ -88,7 +88,7 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
     public void leeren() {
         titelnummern.clear();
         DomainEventPublisher.global()
-                .publish(new WarenkorbGeleert(hoerernummer, this));
+                .publishAsync(new WarenkorbGeleert(hoerernummer, this));
     }
 
     @Override

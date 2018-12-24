@@ -41,14 +41,14 @@ public final class DownloadWarenkorb extends Warenkorb {
     public void hinzufuegen(final Titelnummer titelnummer) {
         super.hinzufuegen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new DownloadInDenWarenkorbGelegt(hoerernummer, this, titelnummer));
+                .publishAsync(new DownloadInDenWarenkorbGelegt(hoerernummer, this, titelnummer));
     }
 
     @Override
     public void entfernen(final Titelnummer titelnummer) {
         super.entfernen(titelnummer);
         DomainEventPublisher.global()
-                .publish(new DownloadAusDemWarenkorbEntfernt(hoerernummer, this, titelnummer));
+                .publishAsync(new DownloadAusDemWarenkorbEntfernt(hoerernummer, this, titelnummer));
     }
 
     @Override

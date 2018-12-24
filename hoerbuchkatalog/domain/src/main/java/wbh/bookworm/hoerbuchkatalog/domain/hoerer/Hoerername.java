@@ -8,21 +8,30 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import aoc.ddd.model.DomainValueObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public final class Hoerername extends DomainValueObject {
 
     private final Vorname vorname;
 
     private final Nachname nachname;
 
-    public Hoerername(final Vorname vorname, final Nachname nachname) {
+    @JsonCreator
+    public Hoerername(final @JsonProperty("vorname") Vorname vorname,
+                      final @JsonProperty("nachname") Nachname nachname) {
         this.vorname = vorname;
         this.nachname = nachname;
     }
 
     public static Hoerername of(final String str) {
         final int lastSpacePos = str.lastIndexOf(' ');
-        return new Hoerername(new Vorname(str.substring(0, lastSpacePos)),
-                new Nachname(str.substring(lastSpacePos + 1)));
+        if (lastSpacePos > -1) {
+            return new Hoerername(new Vorname(str.substring(0, lastSpacePos)),
+                    new Nachname(str.substring(lastSpacePos + 1)));
+        } else {
+            return new Hoerername(new Vorname(""), new Nachname(str));
+        }
     }
 
     public Vorname getVorname() {

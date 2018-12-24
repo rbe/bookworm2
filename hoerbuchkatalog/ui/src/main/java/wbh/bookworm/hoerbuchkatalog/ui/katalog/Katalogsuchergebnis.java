@@ -29,7 +29,10 @@ public class Katalogsuchergebnis implements Serializable {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuchergebnis.class);
 
+    // TODO Konfiguration
     private static final int ANZAHL_HOERBUECHER_PRO_SEITE = 25;
+
+    private final HoererSession hoererSession;
 
     private final Hoerernummer hoerernummer;
 
@@ -50,11 +53,12 @@ public class Katalogsuchergebnis implements Serializable {
                                final Navigation navigation,
                                final HoerbuchkatalogService hoerbuchkatalogService,
                                final Hoerbuchdetail hoerbuchdetail) {
+        LOGGER.trace("Initialisiere {}", this);
+        this.hoererSession = hoererSession;
         this.hoerernummer = hoererSession.getHoerernummer();
         this.navigation = navigation;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.hoerbuchdetail = hoerbuchdetail;
-        LOGGER.trace("{} initialisiert", this);
     }
 
     public int getAnzahlHoerbuecherProSeite() {
@@ -140,7 +144,8 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String ansehen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        hoerbuchdetail.setTitelnummer(titelnummer);
+        //hoerbuchdetail.setTitelnummer(titelnummer);
+        hoererSession.hoerbuchMerken(titelnummer);
         return navigation.zumHoerbuchdetail();
     }
 
@@ -165,7 +170,8 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String vorherigesHoerbuchAnsehen(final Titelnummer titelnummer) {
         final Titelnummer vorherige = suchergebnis.vorherige(titelnummer);
-        hoerbuchdetail.setTitelnummer(vorherige);
+        //hoerbuchdetail.setTitelnummer(vorherige);
+        hoererSession.hoerbuchMerken(vorherige);
         return navigation.zumHoerbuchdetail();
     }
 
@@ -178,7 +184,8 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String naechstesHoerbuchAnsehen(final Titelnummer titelnummer) {
         final Titelnummer naechste = suchergebnis.naechste(titelnummer);
-        hoerbuchdetail.setTitelnummer(naechste);
+        //hoerbuchdetail.setTitelnummer(naechste);
+        hoererSession.hoerbuchMerken(naechste);
         return navigation.zumHoerbuchdetail();
     }
 

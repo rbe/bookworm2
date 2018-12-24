@@ -55,8 +55,18 @@ public interface DomainRepository
         return Optional.empty();
     }
 
+    Optional<Set<AGG>> loadAll(String domainIdPrefix);
+
+    default Optional<Set<AGG>> find(String domainIdPrefix) {
+        throw new UnsupportedOperationException();
+    }
+
     default Optional<Set<AGG>> find(QueryPredicate... queryPredicates) {
         return Optional.empty();
+    }
+
+    default Optional<Set<AGG>> find(String domainIdPrefix, QueryPredicate... queryPredicates) {
+        throw new UnsupportedOperationException();
     }
 
     /**

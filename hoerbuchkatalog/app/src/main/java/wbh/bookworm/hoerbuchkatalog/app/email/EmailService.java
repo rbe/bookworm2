@@ -18,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
+import java.io.UnsupportedEncodingException;
 
 /* TODO In .infrastructure verschieben */
 @Component
@@ -42,15 +43,18 @@ public /* TODO final*/ class EmailService {
     }
 
     public void send(final String to, final String cc, final String subject, String text) {
+        LOGGER.trace("Sende E-Mail an {}, Cc {}, Betreff {}", to, cc, subject);
         final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
+            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            helper.setFrom("wbh@wbh-online.de", "Westdeutsche Blindenhörbucherei e.V.");
             helper.setTo(to);
             helper.setCc(cc);
             helper.setSubject(subject);
-            helper.setText(text);
+            helper.setText(text, true);
             javaMailSender.send(mimeMessage);
-        } catch (MessagingException e) {
+            LOGGER.info("E-Mail an {}, Cc {}, Betreff {} gesendet", to, cc, subject);
+        } catch (UnsupportedEncodingException | MessagingException e) {
             LOGGER.error("", e);
         }
     }

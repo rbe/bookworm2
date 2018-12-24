@@ -10,7 +10,7 @@ spring:
     password: password
     default-encoding: UTF-8
     protocol: smtp
-    test-connection: false
+    test-connection: true
     properties:
       mail:
         debug: true

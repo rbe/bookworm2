@@ -36,7 +36,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
+class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
 
     private final Hoerbuchkatalog hoerbuchkatalog;
 
@@ -47,10 +47,10 @@ public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<B
     private final EmailService emailService;
 
     @Autowired
-    public DownloadBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
-                                               final DlsBestellung dlsBestellung,
-                                               final EmailTemplateBuilder emailTemplateBuilder,
-                                               final EmailService emailService) {
+    DownloadBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
+                                        final DlsBestellung dlsBestellung,
+                                        final EmailTemplateBuilder emailTemplateBuilder,
+                                        final EmailService emailService) {
         super(BestellungAufgegeben.class);
         logger.trace("Initializing");
         this.hoerbuchkatalog = hoerbuchkatalog;
@@ -68,20 +68,22 @@ public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<B
         final AghNummer[] aghNummern = downloadTitelnummern.stream()
                 .map(tn -> hoerbuchkatalog.hole(tn).getAghNummer())
                 .toArray(AghNummer[]::new);
-        logger.info("Hörer {} hat folgende Downloads bestellt: {}", hoerernummer, aghNummern);
-        // TODO Auftragsquittungn auswerten und E-Mail anpassen (erfolglose Bestellungen)?
-        // TODO Alternativ Bestellung wiederholen
-        final List<Auftragsquittung> auftragsquittungen =
-                dlsBestellung.pruefenUndBestellen(
-                        domainEvent.getHoerernummer().getValue(),
-                        Arrays.stream(aghNummern)
-                                .map(AghNummer::getValue)
-                                .toArray(String[]::new));
-        final Set<Hoerbuch> hoerbuecher = Arrays.stream(aghNummern)
-                .map(hoerbuchkatalog::hole)
-                .flatMap(Optional::stream)
-                .collect(Collectors.toSet());
-        emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher);
+        if (aghNummern.length > 0) {
+            logger.info("Hörer {} hat folgende Downloads bestellt: {}", hoerernummer, aghNummern);
+            // TODO Auftragsquittungen auswerten und E-Mail anpassen (erfolglose Bestellungen)?
+            // TODO Alternativ Bestellung wiederholen
+            final List<Auftragsquittung> auftragsquittungen =
+                    dlsBestellung.pruefenUndBestellen(
+                            domainEvent.getHoerernummer().getValue(),
+                            Arrays.stream(aghNummern)
+                                    .map(AghNummer::getValue)
+                                    .toArray(String[]::new));
+            final Set<Hoerbuch> hoerbuecher = Arrays.stream(aghNummern)
+                    .map(hoerbuchkatalog::hole)
+                    .flatMap(Optional::stream)
+                    .collect(Collectors.toSet());
+            emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher);
+        }
     }
 
     private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
@@ -100,12 +102,13 @@ public class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<B
                                   final String htmlEmail) {
         try {
             final Path archivDatei =
-                    Path.of("var/Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
+                    Path.of("var/repository/Bestellung",
+                            domainEvent.getDomainId() + "-DownloadBestellung.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             logger.error(String.format(
-                    "Kann E-Mail für Bestellung %snicht archivieren", domainEvent.getDomainId()),
+                    "Kann E-Mail für Bestellung %s nicht archivieren", domainEvent.getDomainId()),
                     e);
         }
     }

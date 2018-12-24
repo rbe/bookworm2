@@ -24,7 +24,7 @@ import java.io.Serializable;
 @SessionScope
 public class Katalogsuche implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
 
     private final Hoerernummer hoerernummer;
 

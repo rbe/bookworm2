@@ -4,12 +4,12 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
+package aoc.tools;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
-final class RandomStringGenerator {
+public final class RandomStringGenerator {
 
     private static final SecureRandom random = new SecureRandom();
 
@@ -17,7 +17,7 @@ final class RandomStringGenerator {
         throw new AssertionError();
     }
 
-    static String next() {
+    public static String next() {
         return new BigInteger(128, random).toString(32);
     }
 

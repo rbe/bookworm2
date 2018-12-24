@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.ui.http;
+package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 public final class SessionKey {
 
@@ -13,6 +13,8 @@ public final class SessionKey {
     public static final String HOERER = "hoerer";
 
     public static final String BESTELLUNG_SESSION_ID = "bestellungSessionId";
+
+    public static final String HOERBUCH = "HOERBUCH";
 
     private SessionKey() {
         throw new AssertionError();

@@ -24,19 +24,20 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
 
-/**
- * TODO ...ist eine Kombination: Set<Hoerbuch> mit LuceneIndex
- */
+// TODO ...ist eine Kombination: Set<Hoerbuch> mit LuceneIndex
+// TODO Version nutzen, damit JSF Bean wissen, dass sich Daten geändert haben
 public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, HoerbuchkatalogId> {
 
-    private final Map<Titelnummer, Hoerbuch> katalog;
+    private final transient Map<Titelnummer, Hoerbuch> katalog;
 
-    private HoerbuchkatalogSuche hoerbuchkatalogSuche;
+    private transient HoerbuchkatalogSuche hoerbuchkatalogSuche;
 
     public Hoerbuchkatalog(final HoerbuchkatalogId hoerbuchkatalogId,
-                           final Map<Titelnummer, Hoerbuch> katalog) {
+                           final Map<Titelnummer, Hoerbuch> katalog,
+                           final long version) {
         super(hoerbuchkatalogId);
         this.katalog = katalog;
+        this.version.set(version);
     }
 
     void setHoerbuchkatalogSuche(final HoerbuchkatalogSuche hoerbuchkatalogSuche) {
@@ -118,7 +119,8 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
 
     @Override
     public String toString() {
-        return String.format("Hoerbuchkatalog{domainId=%s, katalog=%s}", domainId, katalog);
+        return String.format("Hoerbuchkatalog{domainId=%s, version=%d, groesse=%s}",
+                domainId, version.get(), katalog.size());
     }
 
 }

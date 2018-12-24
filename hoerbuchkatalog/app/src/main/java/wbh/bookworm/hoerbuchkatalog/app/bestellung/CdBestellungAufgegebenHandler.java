@@ -29,7 +29,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Component
-public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
+class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
 
     private final Hoerbuchkatalog hoerbuchkatalog;
 
@@ -38,9 +38,9 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
     private final EmailService emailService;
 
     @Autowired
-    public CdBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
-                                         final EmailTemplateBuilder emailTemplateBuilder,
-                                         final EmailService emailService) {
+    CdBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
+                                  final EmailTemplateBuilder emailTemplateBuilder,
+                                  final EmailService emailService) {
         super(BestellungAufgegeben.class);
         logger.trace("Initializing");
         this.hoerbuchkatalog = hoerbuchkatalog;
@@ -58,7 +58,9 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
         final Set<Hoerbuch> hoerbucher = bestellung.getCdTitelnummern().stream().
                 map(hoerbuchkatalog::hole)
                 .collect(Collectors.toSet());
-        emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbucher);
+        if (!hoerbucher.isEmpty()) {
+            emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbucher);
+        }
     }
 
     private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
@@ -77,12 +79,13 @@ public class CdBestellungAufgegebenHandler extends DomainEventSubscriber<Bestell
                                   final String htmlEmail) {
         try {
             final Path archivDatei =
-                    Path.of("var/Archiv/Bestellungen", domainEvent.getDomainId() + "_email.html");
+                    Path.of("var/repository/Bestellung",
+                            domainEvent.getDomainId() + "-CDBestellung.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
             logger.error(String.format(
-                    "Kann E-Mail für Bestellung %snicht archivieren", domainEvent.getDomainId()),
+                    "Kann E-Mail für Bestellung %s nicht archivieren", domainEvent.getDomainId()),
                     e);
         }
     }

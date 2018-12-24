@@ -40,7 +40,7 @@ public class KatalogAppConfig {
 
     static final String HOERBUCHKATALOG_MAP = "hoerbuchkatalogMap";
 
-    @Bean(/*"hoerbuchkatalogMap"*/HOERBUCHKATALOG_MAP)
+    @Bean(HOERBUCHKATALOG_MAP)
     @Scope(SCOPE_PROTOTYPE)
     public Map<Titelnummer, Hoerbuch> hoerbuchkatalogMap() {
         return new ConcurrentHashMap<>();
@@ -60,41 +60,5 @@ public class KatalogAppConfig {
     public TaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
-
-    /*
-    @Bean
-    @Scope("singleton")
-    public HazelcastInstance hazelcastInstance() {
-        final Config config = new Config(this.getClass().getPackage().getName());
-        final InterfacesConfig interfaces =
-                new InterfacesConfig()
-                        .setEnabled(true)
-                        .addInterface("127.0.0.1");
-        final NetworkConfig networkConfig =
-                new NetworkConfig()
-                        .setPublicAddress("127.0.0.1")
-                        .setInterfaces(interfaces);
-        networkConfig.getJoin()
-                .getMulticastConfig()
-                .setEnabled(false);
-        networkConfig.getJoin()
-                .getTcpIpConfig()
-                .setEnabled(true)
-                .addMember("127.0.0.1");
-        config.setNetworkConfig(networkConfig);
-        final ManagementCenterConfig managementCenterConfig =
-                new ManagementCenterConfig()
-                        .setEnabled(true)
-                        .setUrl("http://localhost:8080/mancenter");
-        config.setManagementCenterConfig(managementCenterConfig);
-        return Hazelcast.newHazelcastInstance(config);
-    }
-
-    @Bean
-    @Autowired
-    public Map<Titelnummer, Hoerbuch> hoerbuchkatalogMap(HazelcastInstance hazelcastInstance) {
-        return hazelcastInstance.getMap("hoerbuchkatalog");
-    }
-    */
 
 }

@@ -8,6 +8,7 @@ package aoc.ddd.event;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.Async;
 
 import java.util.List;
 import java.util.Map;
@@ -64,8 +65,17 @@ public final class DomainEventPublisher {
         return this;
     }
 
-    @SuppressWarnings({"unchecked"})
     public void publish(final DomainEvent domainEvent) {
+        pub(domainEvent);
+    }
+
+    @Async
+    public void publishAsync(final DomainEvent domainEvent) {
+        pub(domainEvent);
+    }
+
+    @SuppressWarnings({"unchecked"})
+    private void pub(final DomainEvent domainEvent) {
         LOGGER.trace("Try to publish {} on {}", domainEvent, this);
         if (publishing.get()) {
             LOGGER.warn("{} is currently publishing, did not publish {}", this, domainEvent);
@@ -85,7 +95,7 @@ public final class DomainEventPublisher {
                     } else if (subscribedToEventType == DomainAggregateWriteEvent.class
                             && domainEvent instanceof DomainAggregateWriteEvent) {
                         subscriber.handleEvent(domainEvent);
-                        LOGGER.debug("{} published {} to {} as it's interested in DomainAggregateUpdateEventS",
+                        LOGGER.debug("{} published {} to {} as it's interested in DomainAggregateWriteEventS",
                                 this, domainEvent, subscriber);
                     } else if (subscribedToEventType == DomainEvent.class) {
                         subscriber.handleEvent(domainEvent);

@@ -9,8 +9,8 @@ package wbh.bookworm.hoerbuchkatalog.ui.config;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.ui.katalog.HoerernummerFilter;
 import wbh.bookworm.hoerbuchkatalog.ui.katalog.Navigation;
-import wbh.bookworm.hoerbuchkatalog.ui.http.NoCacheFilter;
 
 import org.springframework.boot.web.servlet.ServletComponentScan;
 import org.springframework.context.annotation.ComponentScan;
@@ -24,7 +24,8 @@ import org.springframework.context.annotation.Configuration;
         Navigation.class
 })
 @ServletComponentScan(basePackageClasses = {
-        NoCacheFilter.class
+        NoCacheFilter.class,
+        HoerernummerFilter.class
 })
 public class UiConfig {
 }

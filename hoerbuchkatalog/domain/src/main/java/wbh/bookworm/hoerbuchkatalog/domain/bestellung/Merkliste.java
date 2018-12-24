@@ -72,14 +72,14 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
         titelnummern.add(titelnummer);
         LOGGER.info("Hörbuch {} zum Warenkorb {} hinzugefügt", titelnummer, this);
         DomainEventPublisher.global()
-                .publish(new HoerbuechAufDieMerklisteGesetzt(hoerernummer, this, titelnummer));
+                .publishAsync(new HoerbuechAufDieMerklisteGesetzt(hoerernummer, this, titelnummer));
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
         LOGGER.info("Hörbuch {} aus dem Warenkorb {} entfernt", titelnummer, this);
         DomainEventPublisher.global()
-                .publish(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, this, titelnummer));
+                .publishAsync(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, this, titelnummer));
     }
 
     @Override

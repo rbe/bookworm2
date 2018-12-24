@@ -17,7 +17,12 @@ public abstract class DomainAggregate
 
     protected DomainAggregate(final ID domainId) {
         super(domainId);
-        this.version = new AtomicLong();
+        this.version = new AtomicLong(1);
+    }
+
+    protected DomainAggregate(final ID domainId, long version) {
+        super(domainId);
+        this.version = new AtomicLong(version);
     }
 
     public long getVersion() {

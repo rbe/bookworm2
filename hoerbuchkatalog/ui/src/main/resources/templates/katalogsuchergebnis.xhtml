@@ -11,7 +11,7 @@
       xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <h:form id="suchergebnisForm">
+        <h:form id="katalogsuchergebnisForm">
             <div class="leading">
                 <h2 class="contentheading">Ihre Suchergebnisse</h2>
                 <hk:navigation/>
@@ -30,13 +30,12 @@
                                           value="keine"/>
                         </span>
                         Treffer.
-                        <h:panelGroup rendered="#{katalogsuchergebnis.anzahl == 1000}"
+                        <h:panelGroup rendered="#{katalogsuchergebnis.anzahl >= 1000}"
                                       layout="block">
                             &nbsp;Die Anzeige wird auf <h:outputText value="#{katalogsuchergebnis.anzahl}"/> begrenzt.
                         </h:panelGroup>
                     </p>
                 </h:panelGroup>
-                <!--offset="{searchBean.paginateableSearch.offset}"-->
                 <h:dataTable id="suchergebnisTabelle"
                              styleClass="tab result-table"
                              columnClasses="result-column1,result-column2,result-column3,result-column4,result-column5"

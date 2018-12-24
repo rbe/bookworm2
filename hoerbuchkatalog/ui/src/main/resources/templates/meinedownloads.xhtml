@@ -10,7 +10,6 @@
       xmlns:of="http://omnifaces.org/functions"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
-
     <ui:define name="container">
         <div class="leading">
             <h2 class="contentheading">Meine Downloads</h2>
@@ -21,7 +20,6 @@
                     <span class="entry-hrnr">#{hoererSession.hoerernummer}</span>
                 </div>
             </div>
-
             <h:form id="meineDownloads">
                 <h:panelGroup layout="block" styleClass="searchrow">
                     <h3>Suchen Sie einen Titel innerhalb Ihrer Downloads</h3>
@@ -37,7 +35,7 @@
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen!
                 </h:panelGroup>
-                <h:panelGroup rendered="#{!meineDownloads.stichwortHatTreffer}"
+                <h:panelGroup rendered="#{meineBestellung.bestellungenVorhanden and meineDownloads.stichwortHatKeineTreffer}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen, die Ihrer Suche entsprechen!
                 </h:panelGroup>
@@ -53,7 +51,6 @@
                                 <th style="text-align:center;">Download</th>
                                 <th style="text-align:center;">Verfügbar</th>
                             </tr>
-                            <!-- TODO h:dataTable? Siehe katalogsuchergebnis.xhtml -->
                             <ui:repeat value="#{meineDownloads.downloads}"
                                        var="download" varStatus="downloadStatus">
                                 <h:outputFormat rendered="#{downloadStatus.last}">
@@ -120,8 +117,6 @@
             <p>Sie können eine Hörbuchdatei bis zu 5 Mal herunterladen. Die Spalte "Verfügbar" gibt an, wie oft Sie die Datei erneut herunterladen können.</p>
             <p>Urheberrechtshinweis: Jede Downloaddatei wird mit einem individuellen Wasserzeichen versehen und kann bei Zweckentfremdung (unberechtigte Weitergabe) dem Verursacher zugeordnet werden.</p>
         </div>
-        <!-- <iframe id="blistaDownload"></iframe> -->
     </ui:define>
-
 </ui:composition>
 </html>

@@ -5,15 +5,19 @@
         ]>
 <html lang="de"
       xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog">
+      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog"
+      xmlns:ks="http://xmlns.jcp.org/jsf/composite/katalogsuche">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
-            <h2 class="contentheading">Onlinekatalog Suche</h2>
-            <hk:navigation/>
-            <hk:katalogsuche/>
-        </div>
+        <h:form name="katalogsucheForm">
+            <div class="leading">
+                <h2 class="contentheading">Onlinekatalog Suche</h2>
+                <hk:navigation/>
+                <ks:suchformular/>
+            </div>
+        </h:form>
         <div class="noticetext">
             <h3>Hinweise für bessere Suchergebnisse</h3>
             <p>

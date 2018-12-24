@@ -84,7 +84,7 @@ class CdBestellungAufgegebenHandlerTest {
 
     private void assertMessageReceived(/*final Email email*/) /*throws MessagingException, IOException*/ {
         final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
-        assertEquals(1, receivedMessages.length);
+        assertEquals(/* Zwei Empfänger */2, receivedMessages.length);
         /*
         final MimeMessage current = receivedMessages[0];
         assertEquals(email.getSubject(), current.getSubject());

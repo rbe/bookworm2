@@ -55,7 +55,7 @@ public final class ExternalizedFaceletsResourceHandler extends ResourceHandlerWr
         return resource;
     }
 
-    private static final String[] libraryNames = {"hoerbuchkatalog", "hoerbuch", "warenkorb"};
+    private static final String[] libraryNames = {"hoerbuchkatalog", "katalogsuche", "warenkorb"};
 
     @Override
     public Resource createResource(final String resourceName, final String libraryName) {

@@ -1,18 +1,22 @@
 .Deployment
 [source,bash,linenum]
 ----
-cd target
-mkdir dist
+cd $HOME/project
+cd wbh.bookworm/hoerbuchkatalog/assembly/target
+mkdir -p dist/var/hoerbuchkatalog
 cd dist
-mkdir -p var/hoerbuchkatalog
-cp ../../var/hoerbuchkatalog/Gesamt-2018-12-03T19-00-57-82719.dat var/hoerbuchkatalog/Gesamt.dat
-cp -r ../../src/main/resources/conf .
-cp -r ../../src/main/resources/*.yml .
+cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
+#cp -r ../../src/main/resources/conf .
+#cp -r ../../src/main/resources/*.yml .
+cp -r ../../src/main/resources/application.yml .
+cp -r ../../src/main/resources/application-development.yml .
+#cp -r ../../../ui/src/main/resources/static .
 cp -r ../../../ui/src/main/resources/templates .
 #cp -r ../../../ui/src/main/resources/components .
 JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
 cp ../${JAR} .
-scp -Cr * medienhof9:/home/wbh/app/bookworm2
+scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
+ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 ----
 
 .Start (development)

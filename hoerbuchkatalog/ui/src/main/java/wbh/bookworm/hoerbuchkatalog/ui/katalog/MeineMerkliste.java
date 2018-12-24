@@ -29,7 +29,7 @@ import java.util.Set;
 @SessionScope
 public class MeineMerkliste implements Serializable {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
+    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
 
     //
     // Hörer

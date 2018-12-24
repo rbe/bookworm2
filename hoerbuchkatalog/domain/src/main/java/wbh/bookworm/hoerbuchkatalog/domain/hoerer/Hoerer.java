@@ -8,6 +8,8 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import aoc.ddd.model.DomainAggregate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.Objects;
 
 public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
@@ -25,6 +27,16 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         super(hoerernummer);
         this.hoerername = hoerername;
         this.hoereremail = hoereremail;
+    }
+
+    @JsonIgnore
+    public boolean isUnbekannt() {
+        return domainId.isUnbekannt();
+    }
+
+    @JsonIgnore
+    public boolean isBekannt() {
+        return domainId.isBekannt();
     }
 
     public Hoerernummer getHoerernummer() {

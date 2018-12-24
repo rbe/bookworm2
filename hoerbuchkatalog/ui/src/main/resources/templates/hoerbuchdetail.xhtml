@@ -7,10 +7,11 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog">
+      xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog"
+      xmlns:ks="http://xmlns.jcp.org/jsf/composite/katalogsuche">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <h:form rendered="#{hoerbuchdetail.hoerbuchVorhanden}">
+        <h:form id="hoerbuchdetailForm" rendered="#{hoerbuchdetail.hoerbuchVorhanden}">
             <div class="leading">
                 <h2 class="contentheading">Detailinformationen - Onlinekatalog Suche</h2>
                 <hk:navigation/>
@@ -18,7 +19,7 @@
                     <div class="catalogtitle">
                         <h:outputText value="#{hoerbuchdetail.titel}"/>
                     </div>
-                    <hk:hoerbuchdetail-navigation titelnummer="#{hoerbuchdetail.titelnummer}"/>
+                    <ks:hoerbuchdetail-navigation titelnummer="#{hoerbuchdetail.titelnummer}"/>
                 </div>
                 <table class="detailtable" cellpadding="0" cellspacing="0">
                     <tr>
@@ -112,7 +113,7 @@
                         </td>
                     </tr>
                 </table>
-                <hk:hoerbuchdetail-navigation titelnummer="#{hoerbuchdetail.titelnummer}"/>
+                <ks:hoerbuchdetail-navigation titelnummer="#{hoerbuchdetail.titelnummer}"/>
             </div>
         </h:form>
         <div class="noticetext">

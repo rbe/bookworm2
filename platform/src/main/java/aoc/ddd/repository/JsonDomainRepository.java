@@ -71,8 +71,10 @@ public abstract class JsonDomainRepository
         Objects.requireNonNull(storagePath);
         logger.trace("Initizialing with default storage path '{}'", storagePath.toAbsolutePath());
         aggregateStoragePath = storagePath
-                //.resolve(this.getClass().getSimpleName())
-                .resolve(Path.of(String.format("%s.%s", aggClass.getPackageName(), aggClass.getSimpleName())));
+                .resolve(String.format("repository/%s", aggClass.getSimpleName()));
+                //.resolve(this.getClass().getSimpleName());
+                //.resolve(Path.of(String.format("%s.%s",
+                //        aggClass.getPackageName(), aggClass.getSimpleName())));
         try {
             Files.createDirectories(aggregateStoragePath);
         } catch (IOException e) {
@@ -282,11 +284,9 @@ public abstract class JsonDomainRepository
     }
 
     //@Override
-    /*
-    public AGG loadOrCreate(final ID domainId) {
+    /* TODO public AGG loadOrCreate(final ID domainId) {
         return load(domainId).orElseGet(() -> create(domainId));
-    }
-    */
+    }*/
 
     @Override
     public <SUBT extends AGG> Optional<SUBT> load(final ID domainId, final Class<SUBT> subklass) {
@@ -313,22 +313,55 @@ public abstract class JsonDomainRepository
     @Override
     public Optional<Set<AGG>> loadAll() {
         try (final Stream<Path> stream = aggregatePathsAsStream()) {
-            return Optional.of(stream
-                    .map(this::load)
-                    .filter(Optional::isPresent)
-                    .map(Optional::get)
-                    .collect(Collectors.toSet()));
+            return getAggs(stream);
         } catch (IOException e) {
             throw new DomainRepositoryException("Cannot load all aggregates of type " + aggClass, e);
         }
     }
 
     @Override
+    public Optional<Set<AGG>> loadAll(final String domainIdPrefix) {
+        try (final Stream<Path> stream = aggregatePathsAsStream()
+                .filter(path -> path.startsWith(domainIdPrefix))) {
+            return getAggs(stream);
+        } catch (IOException e) {
+            throw new DomainRepositoryException("Cannot load all aggregates of type " + aggClass, e);
+        }
+    }
+
+    private Optional<Set<AGG>> getAggs(final Stream<Path> stream) {
+        return Optional.of(stream.map(this::load)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .collect(Collectors.toSet()));
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public final Optional<Set<AGG>> find(final String domainIdPrefix) {
+        Objects.requireNonNull(domainIdPrefix);
+        return loadAll(domainIdPrefix);
+    }
+
+    @Override
     @SuppressWarnings({"unchecked"})
     public final Optional<Set<AGG>> find(final QueryPredicate... queryPredicates) {
         Objects.requireNonNull(queryPredicates);
-        return Optional.of(loadAll()
-                .orElseThrow()
+        return filterAggs(queryPredicates, loadAll().orElseThrow());
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public final Optional<Set<AGG>> find(final String domainIdPrefix,
+                                         final QueryPredicate... queryPredicates) {
+        Objects.requireNonNull(domainIdPrefix);
+        Objects.requireNonNull(queryPredicates);
+        return filterAggs(queryPredicates, loadAll(domainIdPrefix).orElseThrow());
+    }
+
+    private Optional<Set<AGG>> filterAggs(final QueryPredicate[] queryPredicates,
+                                          final Set<AGG> aggs) {
+        return Optional.of(aggs
                 .stream()
                 .filter(agg -> Arrays.stream(queryPredicates)
                         .anyMatch(predicate -> {
@@ -347,6 +380,8 @@ public abstract class JsonDomainRepository
                         }))
                 .collect(Collectors.toSet()));
     }
+
+    // TODO public final Optional<Set<AGG>> find(final String domainIdPrefix) {}
 
     @Override
     public long countAll() {
