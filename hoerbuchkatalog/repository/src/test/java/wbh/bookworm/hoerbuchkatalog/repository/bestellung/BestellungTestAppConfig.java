@@ -24,13 +24,6 @@ import java.nio.file.Path;
 @EnableConfigurationProperties
 public class BestellungTestAppConfig {
 
-    /*
-    @Bean
-    static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
-        return new PropertySourcesPlaceholderConfigurer();
-    }
-    */
-
     @Bean
     public WarenkorbRepository warenkorbRepository() {
         return new WarenkorbRepository(Path.of("target/var"));

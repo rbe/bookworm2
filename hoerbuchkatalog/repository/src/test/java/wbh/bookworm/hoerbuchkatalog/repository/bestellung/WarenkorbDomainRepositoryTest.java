@@ -24,7 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-@SpringBootTest(classes = {BestellungAppConfig.class})
+@SpringBootTest(classes = {BestellungTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 class WarenkorbDomainRepositoryTest {
 

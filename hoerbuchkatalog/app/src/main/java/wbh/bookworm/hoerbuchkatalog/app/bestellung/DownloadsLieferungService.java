@@ -16,7 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DownloadsLieferungService {
+public final class DownloadsLieferungService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadsLieferungService.class);
 
@@ -24,11 +24,16 @@ public class DownloadsLieferungService {
 
     @Autowired
     public DownloadsLieferungService(final DownloadsRepository downloadsRepository) {
+        LOGGER.trace("Initializing");
         this.downloadsRepository = downloadsRepository;
     }
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
-        return downloadsRepository.lieferungen(hoerernummer);
+        LOGGER.trace("Hole Downloads für {}", hoerernummer);
+        final HoererBlistaDownloads lieferungen = downloadsRepository.lieferungen(hoerernummer);
+        LOGGER.debug("{} Downloads für Hörer {} geholt, davon {} bezugsfähig",
+                lieferungen.alle().size(), hoerernummer, lieferungen.bezuegsfaehige());
+        return lieferungen;
     }
 
 }

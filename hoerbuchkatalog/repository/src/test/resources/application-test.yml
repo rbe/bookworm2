@@ -2,7 +2,6 @@ spring:
   profiles: test
   main:
     banner-mode: "off"
-    allow-bean-definition-overriding: true
 
 logging:
   config: classpath:logback-test.xml

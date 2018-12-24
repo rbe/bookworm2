@@ -30,7 +30,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 @Service
-public class BestellungService {
+public final class BestellungService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungService.class);
 

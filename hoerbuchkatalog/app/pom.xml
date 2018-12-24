@@ -73,7 +73,7 @@
             <groupId>com.icegreen</groupId>
             <artifactId>greenmail-junit5</artifactId>
             <version>1.6.0-SNAPSHOT</version>
-            <scope>test</scope>
+            <!--<scope>test</scope>-->
             <exclusions>
                 <exclusion>
                     <groupId>junit</groupId>

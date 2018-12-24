@@ -8,8 +8,7 @@ cd dist
 cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
 #cp -r ../../src/main/resources/conf .
 #cp -r ../../src/main/resources/*.yml .
-cp -r ../../src/main/resources/application.yml .
-cp -r ../../src/main/resources/application-development.yml .
+cp -r ../../src/main/resources/application*.yml .
 #cp -r ../../../ui/src/main/resources/static .
 cp -r ../../../ui/src/main/resources/templates .
 #cp -r ../../../ui/src/main/resources/components .

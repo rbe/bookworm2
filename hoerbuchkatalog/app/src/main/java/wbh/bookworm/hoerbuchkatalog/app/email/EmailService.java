@@ -20,9 +20,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
 
-/* TODO In .infrastructure verschieben */
+/* TODO In .infrastructure/aoc.platform verschieben */
 @Component
-public /* TODO final*/ class EmailService {
+public final class EmailService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(EmailService.class);
 
@@ -46,8 +46,10 @@ public /* TODO final*/ class EmailService {
         LOGGER.trace("Sende E-Mail an {}, Cc {}, Betreff {}", to, cc, subject);
         final MimeMessage mimeMessage = javaMailSender.createMimeMessage();
         try {
-            final MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
-            helper.setFrom("wbh@wbh-online.de", "Westdeutsche Blindenhörbucherei e.V.");
+            final MimeMessageHelper helper = new MimeMessageHelper(
+                    mimeMessage, true, "UTF-8");
+            helper.setFrom("wbh@wbh-online.de",
+                    "Westdeutsche Blindenhörbucherei e.V.");
             helper.setTo(to);
             helper.setCc(cc);
             helper.setSubject(subject);
