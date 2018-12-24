@@ -6,12 +6,10 @@ cd wbh.bookworm/hoerbuchkatalog/assembly/target
 mkdir -p dist/var/hoerbuchkatalog
 cd dist
 cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
-#cp -r ../../src/main/resources/conf .
-#cp -r ../../src/main/resources/*.yml .
+cp -r ../../src/main/resources/conf .
 cp -r ../../src/main/resources/application*.yml .
 #cp -r ../../../ui/src/main/resources/static .
 cp -r ../../../ui/src/main/resources/templates .
-#cp -r ../../../ui/src/main/resources/components .
 JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
 cp ../${JAR} .
 scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
@@ -51,6 +49,12 @@ nohup \
     --spring.profiles.active=production \
     --spring.config.additional-location=conf/ \
     2>&1 1>hoerbuchkatalog.log &
+----
+
+.Stop (www.wbh-online.de)
+[source,bash,linenum]
+----
+kill $(ps ax | grep hoerbuchkatalog | grep -v grep | awk '{print $1}')
 ----
 
 .Java Flight Recorder
