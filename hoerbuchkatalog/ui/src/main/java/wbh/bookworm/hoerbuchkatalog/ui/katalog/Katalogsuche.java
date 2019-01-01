@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
@@ -16,43 +15,38 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
-
-import java.io.Serializable;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@SessionScope
-public class Katalogsuche implements Serializable {
+@RequestScope
+public class Katalogsuche {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(Katalogsuche.class);
 
-    private final Hoerernummer hoerernummer;
+    private final HoererSession hoererSession;
 
-    private final transient HoerbuchkatalogService hoerbuchkatalogService;
+    private final HoerbuchkatalogService hoerbuchkatalogService;
 
     private final Katalogsuchergebnis katalogsuchergebnis;
 
     private String stichwort;
 
-    private Suchparameter suchparameter;
-
     @Autowired
     public Katalogsuche(final HoererSession hoererSession,
                         final HoerbuchkatalogService hoerbuchkatalogService,
                         final Katalogsuchergebnis katalogsuchergebnis) {
-        this.hoerernummer = hoererSession.getHoerernummer();
+        this.hoererSession = hoererSession;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.katalogsuchergebnis = katalogsuchergebnis;
-        this.suchparameter = new Suchparameter();
     }
 
     public String getStichwort() {
-        //return suchparameter.wert(Suchparameter.Feld.STICHWORT);
+        //return hoererSession.wertDesSuchparameters(Suchparameter.Feld.STICHWORT);
         return stichwort;
     }
 
     public void setStichwort(final String stichwort) {
-        //suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        //hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         this.stichwort = stichwort;
     }
 
@@ -61,61 +55,63 @@ public class Katalogsuche implements Serializable {
     }
 
     public String getSachgebiet() {
-        return suchparameter.wert(Suchparameter.Feld.SACHGEBIET);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.SACHGEBIET);
     }
 
     public void setSachgebiet(final String sachgebiet) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
     }
 
     public String getAutor() {
-        return suchparameter.wert(Suchparameter.Feld.AUTOR);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.AUTOR);
     }
 
     public void setAutor(final String autor) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.AUTOR, autor);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.AUTOR, autor);
     }
 
     public String getTitel() {
-        return suchparameter.wert(Suchparameter.Feld.TITEL);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.TITEL);
     }
 
     public void setTitel(final String titel) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.TITEL, titel);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.TITEL, titel);
     }
 
     public String getSprecher() {
-        return suchparameter.wert(Suchparameter.Feld.SPRECHER);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.SPRECHER);
     }
 
     public void setSprecher(final String sprecher) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.SPRECHER, sprecher);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.SPRECHER, sprecher);
     }
 
     public String getEinstelldatum() {
-        return suchparameter.wert(Suchparameter.Feld.EINSTELLDATUM);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.EINSTELLDATUM);
     }
 
     public void setEinstelldatum(final String einstelldatum) {
-        suchparameter.hinzufuegen(Suchparameter.Feld.EINSTELLDATUM, einstelldatum);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.EINSTELLDATUM, einstelldatum);
     }
 
     public String sucheNachStichwort() {
-        LOGGER.info("Suche nach Stichwort '{}'", stichwort);
-        final Suchergebnis suchergebnis =
-                hoerbuchkatalogService.sucheNachStichwort(hoerernummer, stichwort);
+        LOGGER.trace("Suche nach Stichwort '{}' starten", stichwort);
+        final Suchergebnis suchergebnis = hoerbuchkatalogService.sucheNachStichwort(
+                hoererSession.getHoerernummer(), stichwort);
         if (suchergebnis.getAnzahl() > 0) {
+            LOGGER.debug("Zeige {} Suchergebnisse an", suchergebnis.getAnzahl());
             katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
             return Navigation.NAV_SUCHERGEBNIS;
         } else {
+            LOGGER.debug("Zeige Seite für keine Suchergebnisse an");
             return Navigation.NAV_KEINE_SUCHERGEBNISSE;
         }
     }
 
     public String suchen() {
-        LOGGER.info("Suche '{}'", suchparameter);
-        final Suchergebnis suchergebnis =
-                hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
+        LOGGER.trace("Suche mit '{}' starten", hoererSession.getSuchparameter());
+        final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(
+                hoererSession.getHoerernummer(), hoererSession.getSuchparameter());
         if (suchergebnis.getAnzahl() > 0) {
             katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
             return Navigation.NAV_SUCHERGEBNIS;
@@ -125,7 +121,7 @@ public class Katalogsuche implements Serializable {
     }
 
     void leeren() {
-        suchparameter = new Suchparameter();
+        hoererSession.suchparameterVergessen();
     }
 
 }

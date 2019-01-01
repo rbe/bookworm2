@@ -11,7 +11,11 @@ import aoc.ddd.model.DomainValueObject;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import java.util.Objects;
+
 public final class Hoerername extends DomainValueObject {
+
+    public static final Hoerername UNBEKANNT = new Hoerername(Vorname.UNBEKANNT, Nachname.UNBEKANNT);
 
     private final Vorname vorname;
 
@@ -20,11 +24,14 @@ public final class Hoerername extends DomainValueObject {
     @JsonCreator
     public Hoerername(final @JsonProperty("vorname") Vorname vorname,
                       final @JsonProperty("nachname") Nachname nachname) {
+        Objects.requireNonNull(vorname);
         this.vorname = vorname;
+        Objects.requireNonNull(nachname);
         this.nachname = nachname;
     }
 
     public static Hoerername of(final String str) {
+        Objects.requireNonNull(str);
         final int lastSpacePos = str.lastIndexOf(' ');
         if (lastSpacePos > -1) {
             return new Hoerername(new Vorname(str.substring(0, lastSpacePos)),
@@ -42,6 +49,10 @@ public final class Hoerername extends DomainValueObject {
         return nachname;
     }
 
+    public boolean irgendeinNameVorhanden() {
+        return vorname.hasValue() || nachname.hasValue();
+    }
+
     @Override
     public String toString() {
         return String.format("%s %s", vorname, nachname);
@@ -49,7 +60,7 @@ public final class Hoerername extends DomainValueObject {
 
     /* TODO Test
     public static void main(String[] args) {
-        System.out.println(Hoerername.of("Ralf Emil Henri Bensmann-Petersen"));
+        System.out.println(Hoerername.of("Tom-Fiete Emil Henri Bensmann-Petersen"));
     }
     */
 

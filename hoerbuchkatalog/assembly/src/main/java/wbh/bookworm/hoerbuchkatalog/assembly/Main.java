@@ -17,7 +17,7 @@ public class Main {
     public static void main(String[] args) {
         //SLF4JBridgeHandler.install();
         SpringApplication.run(Main.class, args);
-        // ContextStartedEvent applicationContext.start();
+        //ContextStartedEvent applicationContext.start();
     }
 
 }

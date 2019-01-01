@@ -109,7 +109,7 @@ public class Navigation implements Serializable {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return meinWarenkorb.getAnzahl() > 0;
+        return meinWarenkorb.getAnzahlGesamt() > 0;
     }
 
     public String zuMeinemWarenkorb() {

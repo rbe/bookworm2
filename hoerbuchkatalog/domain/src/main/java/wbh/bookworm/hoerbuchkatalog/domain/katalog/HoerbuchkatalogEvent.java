@@ -6,22 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-
 import aoc.ddd.event.DomainEvent;
 
 public abstract class HoerbuchkatalogEvent extends DomainEvent {
 
     private static final long serialVersionUID = -1L;
-
-    private final Hoerernummer hoerernummer;
-
-    public HoerbuchkatalogEvent(final Hoerernummer hoerernummer) {
-        this.hoerernummer = hoerernummer;
-    }
-
-    public Hoerernummer getHoerernummer() {
-        return hoerernummer;
-    }
 
 }

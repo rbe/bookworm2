@@ -44,8 +44,11 @@ server:
     context-path: /hoerbuchkatalog
     session:
       cookie:
+        domain: localhost
+        path: /hoerbuchkatalog
         http-only: true
         secure: false
+        max-age: 3600
       persistent: false
 
 logging:

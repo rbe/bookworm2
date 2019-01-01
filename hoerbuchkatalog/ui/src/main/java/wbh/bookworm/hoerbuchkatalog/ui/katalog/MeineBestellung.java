@@ -7,31 +7,26 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-
-import aoc.jsf.ELValueCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.Serializable;
 import java.util.Optional;
 
 @Component
-@SessionScope
-public class MeineBestellung implements Serializable {
+@RequestScope
+public class MeineBestellung {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeineBestellung.class);
 
     private final Navigation navigation;
 
@@ -47,15 +42,13 @@ public class MeineBestellung implements Serializable {
 
     private String hoereremailAusFormular;
 
-    private final MeineDownloads meineDownloads;
-
     //
     // Bestellung
     //
 
     private final MeinWarenkorb meinWarenkorb;
 
-    private final transient BestellungService bestellungService;
+    private final BestellungService bestellungService;
 
     private String bemerkung;
 
@@ -65,41 +58,24 @@ public class MeineBestellung implements Serializable {
 
     private String bestellungStatusNachricht;
 
-    private CdWarenkorb bestellterCdWarenkorb;
+    //
+    // Lieferung
+    //
 
-    private DownloadWarenkorb bestellterDownloadWarenkorb;
-
-    private final transient ELValueCache<Integer> anzahlBestellterHoerbuecherValueCache;
-
-    private final transient ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
+    private final MeineDownloads meineDownloads;
 
     @Autowired
-    public MeineBestellung(final Navigation navigation,
-                           final HoererSession hoererSession,
-                           final MeineDownloads meineDownloads,
+    public MeineBestellung(final HoererSession hoererSession,
+                           final Navigation navigation,
                            final MeinWarenkorb meinWarenkorb,
                            final BestellungService bestellungService,
-                           final DownloadsLieferungService downloadsLieferungService) {
-        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
+                           final MeineDownloads meineDownloads) {
+        LOGGER.trace("Initialisiere {}", hoererSession);
         this.hoererSession = hoererSession;
-        this.meineDownloads = meineDownloads;
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
-        anzahlBestellterHoerbuecherValueCache = new ELValueCache<>(0,
-                () -> {
-                    final int anzahlCDs =
-                            null != bestellterCdWarenkorb
-                                    ? bestellterCdWarenkorb.getAnzahl()
-                                    : 0;
-                    final int anzahlDownloads =
-                            null != bestellterDownloadWarenkorb
-                                    ? bestellterDownloadWarenkorb.getAnzahl()
-                                    : 0;
-                    return anzahlCDs + anzahlDownloads;
-                });
-        this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
-                () -> downloadsLieferungService.lieferungen(hoererSession.getHoerernummer()));
+        this.meineDownloads = meineDownloads;
     }
 
     public boolean hasHoerernummer() {
@@ -113,36 +89,37 @@ public class MeineBestellung implements Serializable {
     }
 
     public void setHoerernummer(final Integer hoerernummerAusFormular) {
-        if (hoererSession.isHoererIstUnbekannt()) {
+        if (hoererSession.isHoererIstUnbekannt() || !hasHoerernummer()) {
             this.hoerernummerFormular = hoerernummerAusFormular;
             LOGGER.debug("Im Formular eingegebene Hörernummer: {}", hoerernummerAusFormular);
         }
     }
 
     public boolean hasHoerername() {
-        return hoererSession.isHoererIstBekannt()
-                && hoererSession.hasHoerername();
+        return hoererSession.isHoererIstBekannt() && hoererSession.hasHoerername();
     }
 
     public String getHoerername() {
-        return hoererSession.isHoererIstBekannt()
+        return hasHoerername()
                 ? hoererSession.getHoerername().toString()
                 : hoerernameAusFormular;
     }
 
     public void setHoerername(final String hoerernameAusFormular) {
-        if (hoererSession.isHoererIstUnbekannt()) {
+        if (hoererSession.isHoererIstUnbekannt() || !hasHoerername()) {
             this.hoerernameAusFormular = hoerernameAusFormular;
+            LOGGER.debug("Im Formular eingegebener Hörername: {}", hoerernameAusFormular);
         }
     }
 
     public boolean hasHoereremail() {
         /* TODO Kann immer geändert werden!? */
-        return false; //hoererSession.hasHoereremail();
+        return false;
+        //return hoererSession.hasHoereremail();
     }
 
     public String getHoereremail() {
-        return hoererSession.isHoererIstBekannt()
+        return hasHoereremail()
                 ? hoererSession.getHoereremail().toString()
                 : hoereremailAusFormular;
     }
@@ -157,7 +134,7 @@ public class MeineBestellung implements Serializable {
 
     public int getAnzahlImWarenkorb() {
         LOGGER.trace("");
-        return meinWarenkorb.getAnzahl();
+        return meinWarenkorb.getAnzahlGesamt();
     }
 
     public String getBemerkung() {
@@ -184,24 +161,26 @@ public class MeineBestellung implements Serializable {
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
     }
 
-    public String bestellungAbschicken() {
+    public String bestellen() {
         bestellungStatusNachricht = "Ihre Bestellung wird bearbeitet!";
-        warenkoerbeKopieren();
+        /* TODO Event? */
+        hoererSession.bestellteWarenkoerbeMerken();
         final Optional<BestellungId> bestellungId = bestellungAufgeben();
         if (bestellungId.isPresent()) {
-            meinWarenkorb.bestellungAufgegeben();
-            meineDownloads.bestellungAufgegeben();
+            /* TODO BestellungAufgegebenEvent meinWarenkorb.bestellungAufgegeben();*/
+            /* TODO BestellungAufgegebenEvent meineDownloads.bestellungAufgegeben();*/
+            bestellungStatusNachricht = "Ihre Bestellung wurde erfolgreich bearbeitet!";
             LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben",
                     bestellungId.get(), getHoerernummer());
             return navigation.zuBestellungErfolgreich();
         } else {
-            bestellterCdWarenkorb = null;
-            bestellterDownloadWarenkorb = null;
+            /* TODO Event? */
+            hoererSession.bestellteWarenkoerbeVergessen();
             bestellungStatusNachricht = "Ihre Bestellung konnte leider nicht bearbeitet werden," +
                     " bitte wenden Sie sich an die WBH.";
-            LOGGER.error("Eine Bestellung für Hörer {} konnte nicht aufgegeben werden!",
+            LOGGER.error("Eine Bestellung für Hörer {} konnte nicht aufgegeben werden",
                     getHoerernummer());
-            return null; //navigation.zuMeinemWarenkorb();
+            return null;
         }
     }
 
@@ -212,36 +191,30 @@ public class MeineBestellung implements Serializable {
                 bemerkung, bestellkarteMischen, alteBestellkarteLoeschen);
     }
 
-    private void warenkoerbeKopieren() {
-        bestellterCdWarenkorb = bestellungService
-                .cdWarenkorbKopie(hoererSession.getBestellungSessionId());
-        bestellterDownloadWarenkorb = bestellungService
-                .downloadWarenkorbKopie(hoererSession.getBestellungSessionId());
-    }
-
     public String getBestellungStatusNachricht() {
         return bestellungStatusNachricht;
     }
 
     public int getBestellteAnzahl() {
         LOGGER.trace("");
-        return anzahlBestellterHoerbuecherValueCache.get();
+        return hoererSession.anzahlBestellterHoerbuecher();
     }
 
     public CdWarenkorb getBestellterCdWarenkorb() {
-        return bestellterCdWarenkorb;
+        return hoererSession.getBestellterCdWarenkorb();
     }
 
     public DownloadWarenkorb getBestellterDownloadWarenkorb() {
-        return bestellterDownloadWarenkorb;
+        return hoererSession.getBestellterDownloadWarenkorb();
     }
 
     public boolean isBestellungenVorhanden() {
         if (hoererSession.isHoererIstUnbekannt()) {
             return false;
         } else {
-            return bestellungService.anzahlBestellungen(hoererSession.getHoerernummer()) > 0
-                    || !verfuegbareDownloadsELCache.get().alle().isEmpty();
+            return !hoererSession.blistaAbrufHatFehler()
+                    && (/* TODO ELValueCache */bestellungService.anzahlBestellungen(hoererSession.getHoerernummer()) > 0
+                    || !hoererSession.alleDownloads().isEmpty());
         }
     }
 

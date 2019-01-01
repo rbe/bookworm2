@@ -72,9 +72,6 @@ public abstract class JsonDomainRepository
         logger.trace("Initizialing with default storage path '{}'", storagePath.toAbsolutePath());
         aggregateStoragePath = storagePath
                 .resolve(String.format("repository/%s", aggClass.getSimpleName()));
-                //.resolve(this.getClass().getSimpleName());
-                //.resolve(Path.of(String.format("%s.%s",
-                //        aggClass.getPackageName(), aggClass.getSimpleName())));
         try {
             Files.createDirectories(aggregateStoragePath);
         } catch (IOException e) {
@@ -84,7 +81,7 @@ public abstract class JsonDomainRepository
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         /* TODO objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL, JsonTypeInfo.As.PROPERTY);*/
-        logger.info("Initialized with aggregate storage path '{}'", aggregateStoragePath.toAbsolutePath());
+        logger.debug("Initialized with aggregate storage path '{}'", aggregateStoragePath.toAbsolutePath());
     }
 
     /**
@@ -305,7 +302,7 @@ public abstract class JsonDomainRepository
                 throw new DomainRepositoryException(e);
             }
         } else {
-            logger.warn("Domain id '{}' for {} not found", domainId, aggClass);
+            logger.debug("Domain id '{}' for {} not found", domainId, aggClass);
             return Optional.empty();
         }
     }
@@ -380,8 +377,6 @@ public abstract class JsonDomainRepository
                         }))
                 .collect(Collectors.toSet()));
     }
-
-    // TODO public final Optional<Set<AGG>> find(final String domainIdPrefix) {}
 
     @Override
     public long countAll() {

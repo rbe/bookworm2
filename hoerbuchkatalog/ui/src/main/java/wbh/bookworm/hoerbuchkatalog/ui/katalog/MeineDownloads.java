@@ -6,48 +6,38 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-
-import aoc.jsf.ELValueCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Component
-@SessionScope
-public class MeineDownloads implements Serializable {
+@RequestScope
+public class MeineDownloads {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeineDownloads.class);
+
+    private final HoererSession hoererSession;
 
     private final MeineBestellung meineBestellung;
 
-    private final transient ELValueCache<HoererBlistaDownloads> verfuegbareDownloadsELCache;
-
     private String stichwort;
 
-    private transient List<BlistaDownload> nachStichwortGefilterteDownloads;
+    private List<BlistaDownload> nachStichwortGefilterteDownloads;
 
     @Autowired
     public MeineDownloads(final HoererSession hoererSession,
-                          final DownloadsLieferungService downloadsLieferungService,
                           final MeineBestellung meineBestellung) {
-        final Hoerernummer hoerernummer = hoererSession.getHoerernummer();
-        LOGGER.trace("Initialisiere für Hörer {}", hoerernummer);
+        LOGGER.trace("Initialisiere für {}", hoererSession);
+        this.hoererSession = hoererSession;
         this.meineBestellung = meineBestellung;
-        this.verfuegbareDownloadsELCache = new ELValueCache<>(null,
-                () -> downloadsLieferungService.lieferungen(hoerernummer));
         nachStichwortGefilterteDownloads = Collections.emptyList();
     }
 
@@ -63,7 +53,7 @@ public class MeineDownloads implements Serializable {
     }
 
     public void sucheNachStichwort() {
-        nachStichwortGefilterteDownloads = verfuegbareDownloadsELCache.get().alle()
+        nachStichwortGefilterteDownloads = hoererSession.alleDownloads()
                 .stream()
                 .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
                         || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
@@ -75,24 +65,34 @@ public class MeineDownloads implements Serializable {
                 || !nachStichwortGefilterteDownloads.isEmpty();
     }
 
-    public LocalDateTime standVom() {
-        return verfuegbareDownloadsELCache.get().getStandVom();
-    }
-
-    public List<BlistaDownload> getDownloads() {
+    public List<BlistaDownload> getAlleDownloads() {
         return nachStichwortGefilterteDownloads.isEmpty()
-                ? verfuegbareDownloadsELCache.get().alle()
+                ? hoererSession.alleDownloads()
                 : nachStichwortGefilterteDownloads;
     }
 
     public boolean isHoerbuecherAnzeigen() {
-        return meineBestellung.isBestellungenVorhanden()
+        return (!hoererSession.blistaAbrufHatFehler()
+                && meineBestellung.isBestellungenVorhanden())
                 || !nachStichwortGefilterteDownloads.isEmpty();
     }
 
-    void bestellungAufgegeben() {
-        verfuegbareDownloadsELCache.invalidate();
-        LOGGER.debug("Zwischengespeicherte Downloads geleert; erneute Abfrage bei blista notwendig");
+    public boolean isBlistaAbrufHatFehler() {
+        return hoererSession.blistaAbrufHatFehler();
     }
+
+    public String getBlistaFehlercode() {
+        return hoererSession.blistaFehlercode();
+    }
+
+    public String getBlistaFehlermeldung() {
+        return hoererSession.blistaFehlermeldung();
+    }
+
+    /* TODO BestellungAufgegebenEvent
+    void bestellungAufgegeben() {
+        hoererSession.downloadsVergessen();
+    }
+    */
 
 }

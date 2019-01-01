@@ -25,7 +25,9 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
     public Hoerer(final Hoerernummer hoerernummer,
                   final Hoerername hoerername, final HoererEmail hoereremail) {
         super(hoerernummer);
+        Objects.requireNonNull(hoerername);
         this.hoerername = hoerername;
+        Objects.requireNonNull(hoereremail);
         this.hoereremail = hoereremail;
     }
 
@@ -44,7 +46,7 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
     }
 
     public boolean hasHoerername() {
-        return null != hoerername;
+        return hoerername.irgendeinNameVorhanden();
     }
 
     public Hoerername getHoerername() {

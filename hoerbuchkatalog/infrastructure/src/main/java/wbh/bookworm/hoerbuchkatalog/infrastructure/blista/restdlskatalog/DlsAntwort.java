@@ -17,4 +17,12 @@ public abstract class DlsAntwort {
         return null != dlsFehlermeldung;
     }
 
+    public String getFehlercode() {
+        return dlsFehlermeldung.fehler.fehlercode;
+    }
+
+    public String getFehlermeldung() {
+        return dlsFehlermeldung.fehler.fehlermeldung;
+    }
+
 }

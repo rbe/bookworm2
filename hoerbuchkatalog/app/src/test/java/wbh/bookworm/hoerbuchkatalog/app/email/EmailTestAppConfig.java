@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
 
@@ -27,6 +28,11 @@ import java.nio.file.Path;
         DomainConfig.class
 })
 public class EmailTestAppConfig {
+
+    @Bean
+    public BestellungRepository bestellungRepository() {
+        return new BestellungRepository(Path.of("target/var"));
+    }
 
     @Bean
     public EmailRepository emailRepository() {

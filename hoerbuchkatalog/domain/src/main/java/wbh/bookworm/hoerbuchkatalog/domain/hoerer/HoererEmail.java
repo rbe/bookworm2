@@ -10,6 +10,8 @@ import aoc.ddd.model.DomainSingleValueObject;
 
 public final class HoererEmail extends DomainSingleValueObject<HoererEmail, String> {
 
+    public static final HoererEmail UNBEKANNT = new HoererEmail("");
+
     public HoererEmail(final String hoereremail) {
         super(hoereremail);
     }

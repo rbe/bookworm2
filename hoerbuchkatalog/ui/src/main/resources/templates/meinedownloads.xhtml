@@ -21,7 +21,8 @@
                 </div>
             </div>
             <h:form id="meineDownloads">
-                <h:panelGroup layout="block" styleClass="searchrow">
+                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler}"
+                              layout="block" styleClass="searchrow">
                     <h3>Suchen Sie einen Titel innerhalb Ihrer Downloads</h3>
                     <h:inputText id="stichwort" value="#{meineDownloads.stichwort}"
                                  styleClass="searchtitle"/>
@@ -31,13 +32,24 @@
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
                 </h:panelGroup>
-                <h:panelGroup rendered="#{!meineBestellung.bestellungenVorhanden}"
+                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and !meineBestellung.bestellungenVorhanden}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen!
                 </h:panelGroup>
-                <h:panelGroup rendered="#{meineBestellung.bestellungenVorhanden and meineDownloads.stichwortHatKeineTreffer}"
+                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and meineBestellung.bestellungenVorhanden and meineDownloads.stichwortHatKeineTreffer}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen, die Ihrer Suche entsprechen!
+                </h:panelGroup>
+                <h:panelGroup id="blistaFehler"
+                              rendered="#{meineDownloads.blistaAbrufHatFehler}"
+                              layout="block" styleClass="row notitle">
+                    Die Downloads stehen temporär leider nicht zur Verfügung.<br/>
+                    <br/>
+                    <h:outputText value="#{meineDownloads.blistaFehlercode}"/>:
+                    <h:outputText value="#{meineDownloads.blistaFehlermeldung}"/><br/>
+                    <br/>
+                    Bitte entschuldigen Sie die Unannehmlichkeit und versuchen Sie es später noch einmal.<br/>
+                    Vielen Dank!
                 </h:panelGroup>
                 <h:panelGroup id="archivTabelle"
                               rendered="#{meineDownloads.hoerbuecherAnzeigen}"
@@ -51,7 +63,7 @@
                                 <th style="text-align:center;">Download</th>
                                 <th style="text-align:center;">Verfügbar</th>
                             </tr>
-                            <ui:repeat value="#{meineDownloads.downloads}"
+                            <ui:repeat value="#{meineDownloads.alleDownloads}"
                                        var="download" varStatus="downloadStatus">
                                 <h:outputFormat rendered="#{downloadStatus.last}">
                                     <tr>
@@ -94,6 +106,7 @@
                                             <h:outputText value="#{download.statusText}"/>
                                         </div>
                                         <div class="link">
+                                            <!-- TODO MeineDownloads invalidieren -->
                                             <h:outputLink rendered="#{download.bezugsfaehig}"
                                                           value="#{download.downloadLink}"
                                                           target="_blank">Herunterladen</h:outputLink>

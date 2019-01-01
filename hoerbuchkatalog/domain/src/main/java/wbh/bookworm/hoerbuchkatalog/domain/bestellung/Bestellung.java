@@ -154,7 +154,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @JsonIgnore
     public String getZeitpunktAbgeschicktAlsDeutschesDatum() {
-        return zeitpunktAbgeschickt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy hh:mm"));
+        return zeitpunktAbgeschickt.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"));
     }
 
     public boolean inAktuellemMonatAbgeschickt() {

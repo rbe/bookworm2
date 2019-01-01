@@ -7,187 +7,136 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.jsf.ELFunctionCache;
-import aoc.jsf.ELValueCache;
-import aoc.jsf.ELValueCacheGroup;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-
-import java.io.Serializable;
+import org.springframework.web.context.annotation.RequestScope;
 
 @Component
-@org.springframework.web.context.annotation.SessionScope
-//@org.springframework.context.annotation.Scope("session")
-//@javax.enterprise.context.SessionScoped
-public class MeinWarenkorb implements Serializable {
+@RequestScope
+public class MeinWarenkorb {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
-
-    //
-    // Hörer
-    //
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeinWarenkorb.class);
 
     private final HoererSession hoererSession;
+
+    private final BestellungService bestellungService;
+
+    @Autowired
+    MeinWarenkorb(final HoererSession hoererSession,
+                  final BestellungService bestellungService) {
+        LOGGER.trace("Initialisiere für {}", hoererSession);
+        this.hoererSession = hoererSession;
+        this.bestellungService = bestellungService;
+    }
 
     //
     // Hörbuchkatalog
     //
 
-    private final transient ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
-
-    //
-    // Bestellung
-    //
-
-    private final transient BestellungService bestellungService;
-
-    private final transient ELValueCacheGroup cdWarenkorbCacheGroup;
-
-    private final transient ELValueCache<CdWarenkorb> cdWarenkorbValueCache;
-
-    private final transient ELValueCacheGroup downloadWarenkorbCacheGroup;
-
-    private final transient ELValueCache<DownloadWarenkorb> downloadWarenkorbValueCache;
-
-    private final transient ELValueCache<Boolean> maxDownloadsProTagErreicht;
-
-    private final transient ELValueCache<Boolean> maxDownloadsProMonatErreicht;
-
-    @Autowired
-    MeinWarenkorb(final HoererSession hoererSession,
-                  final HoerbuchkatalogService hoerbuchkatalogService,
-                  final BestellungService bestellungService) {
-        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
-        this.hoererSession = hoererSession;
-        this.bestellungService = bestellungService;
-        // CD Warenkorb
-        cdWarenkorbValueCache = new ELValueCache<>(null,
-                () -> bestellungService.cdWarenkorbKopie(hoererSession.getBestellungSessionId()));
-        cdWarenkorbCacheGroup = new ELValueCacheGroup(cdWarenkorbValueCache);
-        // Download Warenkorb
-        downloadWarenkorbValueCache = new ELValueCache<>(null,
-                () -> bestellungService.downloadWarenkorbKopie(hoererSession.getBestellungSessionId()));
-        maxDownloadsProTagErreicht = new ELValueCache<>(Boolean.FALSE,
-                () -> bestellungService.isMaxDownloadsProTagErreicht(hoererSession.getBestellungSessionId()));
-        maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE,
-                () -> bestellungService.isMaxDownloadsProMonatErreicht(hoererSession.getBestellungSessionId()));
-        downloadWarenkorbCacheGroup = new ELValueCacheGroup(downloadWarenkorbValueCache,
-                maxDownloadsProTagErreicht, maxDownloadsProMonatErreicht);
-        // Hörbuch
-        hoerbuchValueCache = new ELFunctionCache<>(
-                titelnummer -> hoerbuchkatalogService.hole(hoererSession.getHoerernummer(), titelnummer));
-    }
-
-    //
-    // Hörbuch
-    //
-
-    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
+    // TODO Duplikat mit MeineMerkliste#downloadFuerHoererVerfuegbar
+    private boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
         LOGGER.trace("{}", titelnummer);
         final boolean b = !isMaxDownloadsProTagErreicht()
                 && !isMaxDownloadsProMonatErreicht()
-                && hoerbuchValueCache.get(titelnummer).isDownloadbar();
-        LOGGER.debug("{} = {}", titelnummer, b);
+                && hoererSession.hoerbuchIstDownloadbar(titelnummer);
+        LOGGER.debug("Download für Hörbuch {} {} vergfübar", titelnummer, b ? "ist" : "ist nicht");
         return b;
     }
 
     public String hoerbuchAutor(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getAutor();
+        return hoererSession.autor(titelnummer);
     }
 
     public String hoerbuchTitel(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getTitel();
+        return hoererSession.titel(titelnummer);
     }
 
     //
     // CD Warenkorb
     //
 
-    public CdWarenkorb getCds() {
+    public CdWarenkorb getCdWarenkorb() {
         LOGGER.trace("");
-        return cdWarenkorbValueCache.get();
+        return hoererSession.cdWarenkorb();
     }
 
     public boolean cdEnthalten(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return cdWarenkorbValueCache.get().enthalten(titelnummer);
+        return hoererSession.cdEnthalten(titelnummer);
     }
 
     public void cdHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        cdWarenkorbCacheGroup.invalidateAll();
         bestellungService.inDenCdWarenkorb(
-                hoererSession.getBestellungSessionId(), titelnummer);
+                hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
+        /* TODO CdInDenWarenkorbGelegtEvent */hoererSession.cdWarenkorbVergessen();
     }
 
     public void cdEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        cdWarenkorbCacheGroup.invalidateAll();
         bestellungService.ausDemCdWarenkorbEntfernen(
-                hoererSession.getBestellungSessionId(), titelnummer);
+                hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
+        /* TODO CdInDenWarenkorbGelegtEvent */hoererSession.cdWarenkorbVergessen();
     }
 
     //
     // Download Warenkorb
     //
 
-    public DownloadWarenkorb getDownloads() {
+    public DownloadWarenkorb getDownloadWarenkorb() {
         LOGGER.trace("");
-        return downloadWarenkorbValueCache.get();
+        return hoererSession.downloadWarenkorb();
     }
 
     public boolean downloadEnthalten(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return downloadWarenkorbValueCache.get().enthalten(titelnummer);
+        return hoererSession.downloadEnthalten(titelnummer);
     }
 
     public void downloadHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        downloadWarenkorbCacheGroup.invalidateAll();
         bestellungService.inDenDownloadWarenkorb(
-                hoererSession.getBestellungSessionId(), titelnummer);
+                hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
+        /* TODO DownloadInDenWarenkorbGelegtEvent */hoererSession.downloadWarenkorbVergessen();
     }
 
     public void downloadEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        downloadWarenkorbCacheGroup.invalidateAll();
         bestellungService.ausDemDownloadWarenkorbEntfernen(
-                hoererSession.getBestellungSessionId(), titelnummer);
+                hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
+        /* TODO DownloadInDenWarenkorbGelegtEvent */hoererSession.downloadWarenkorbVergessen();
     }
 
+    // TODO Gehört zu MeineBestellung
     public boolean isMaxDownloadsProTagErreicht() {
         LOGGER.trace("");
-        return hoererSession.getHoerernummer().isBekannt()
-                && maxDownloadsProTagErreicht.get();
+        return hoererSession.maxDownloadsProTagErreicht();
     }
 
+    // TODO Gehört zu MeineBestellung
     public boolean isMaxDownloadsProMonatErreicht() {
         LOGGER.trace("");
-        return hoererSession.getHoerernummer().isBekannt()
-                && maxDownloadsProMonatErreicht.get();
+        return hoererSession.maxDownloadsProMonatErreicht();
     }
 
     public boolean isDownloadHinzufuegenAnzeigen(final Titelnummer titelnummer) {
         return hoererSession.isHoererIstBekannt()
-                && hoerbuchValueCache.get(titelnummer).isDownloadbar()
+                // TODO hoerbuchIstDownloadbar und downloadFuerHoererVerfuegbar kombinieren, Hoerernummer+Titelnummer
+                && hoererSession.hoerbuchIstDownloadbar(titelnummer)
                 && downloadFuerHoererVerfuegbar(titelnummer)
                 && !downloadEnthalten(titelnummer);
     }
 
     public boolean isDownloadEntfernenAnzeigen(final Titelnummer titelnummer) {
         return hoererSession.isHoererIstBekannt()
-                // TODO && hoerbuchValueCache.get(titelnummer).isDownloadbar()
                 && downloadEnthalten(titelnummer);
     }
 
@@ -195,16 +144,16 @@ public class MeinWarenkorb implements Serializable {
     // Bestellung
     //
 
-    void bestellungAufgegeben() {
-        cdWarenkorbCacheGroup.invalidateAll();
-        downloadWarenkorbCacheGroup.invalidateAll();
-        hoerbuchValueCache.invalidateAll();
+    public int getAnzahlGesamt() {
+        LOGGER.trace("");
+        return hoererSession.anzahlImWarenkorbGesamt();
     }
 
-    public int getAnzahl() {
-        LOGGER.trace("");
-        return cdWarenkorbValueCache.get().getAnzahl() +
-                downloadWarenkorbValueCache.get().getAnzahl();
+    /* TODO BestellungAufgegebenEvent
+    void bestellungAufgegeben() {
+        hoererSession.cdWarenkorbVergessen();
+        hoererSession.downloadWarenkorbVergessen();
     }
+    */
 
 }

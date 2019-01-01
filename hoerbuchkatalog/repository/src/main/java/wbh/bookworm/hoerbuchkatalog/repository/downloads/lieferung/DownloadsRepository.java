@@ -28,7 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @DomainRespositoryComponent
-public class DownloadsRepository /* TODO implements DomainRepository<> */{
+public class DownloadsRepository /* TODO implements DomainRepository<> */ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadsRepository.class);
 
@@ -45,39 +45,47 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */{
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
         long startWerke = System.nanoTime();
         // TODO DownloadsArchiv
-        final Optional<DlsWerke> werke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
-        if (werke.isPresent()&&!werke.get().hatFehler()) {
-            final List<BlistaDownload> bereitgestellteDownloads = werke.get()
-                    .books.parallelStream()
-                    .map(book -> {
-                        final AghNummer aghNummer = new AghNummer(book.Aghnummer);
-                        final Optional<DlsBook> bestellung =
-                                dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
-                        if (bestellung.isPresent()) {
-                            final DlsBook dlsBook = bestellung.get();
-                            final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
-                            return hoerbuch.map(h -> new BlistaDownload(
-                                    hoerernummer,
-                                    aghNummer,
-                                    h.getTitelnummer(), h.getTitel(),
-                                    h.getAutor(), h.getSpieldauer(),
-                                    dlsBook.book.Ausleihstatus,
-                                    dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
-                                    dlsBook.book.DlsDescription,
-                                    dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
-                                    dlsBook.book.DownloadLink
-                            )).orElse(null);
-                        } else {
-                            return null;
-                        }
-                    })
-                    .filter(Objects::nonNull)
-                    .collect(Collectors.toList());
-            LOGGER.trace("{}: Abholen aller Werke dauerte {} ms", Thread.currentThread().getName(),
-                   (System.nanoTime() - startWerke) / 1_000_000);
-            return new HoererBlistaDownloads(hoerernummer, bereitgestellteDownloads);
+        final Optional<DlsWerke> maybeAlleWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
+        if (maybeAlleWerke.isPresent()) {
+            final DlsWerke alleWerke = maybeAlleWerke.get();
+            if (!alleWerke.hatFehler()) {
+                final List<BlistaDownload> bereitgestellteDownloads = alleWerke
+                        .books.parallelStream()
+                        .map(book -> {
+                            final AghNummer aghNummer = new AghNummer(book.Aghnummer);
+                            final Optional<DlsBook> bestellung =
+                                    dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
+                            if (bestellung.isPresent()) {
+                                final DlsBook dlsBook = bestellung.get();
+                                final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
+                                return hoerbuch.map(h -> new BlistaDownload(
+                                        hoerernummer,
+                                        aghNummer,
+                                        h.getTitelnummer(), h.getTitel(),
+                                        h.getAutor(), h.getSpieldauer(),
+                                        dlsBook.book.Ausleihstatus,
+                                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                                        dlsBook.book.DlsDescription,
+                                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
+                                        dlsBook.book.DownloadLink
+                                )).orElse(null);
+                            } else {
+                                return null;
+                            }
+                        })
+                        .filter(Objects::nonNull)
+                        .collect(Collectors.toList());
+                LOGGER.trace("{}: Abholen aller Werke dauerte {} ms", Thread.currentThread().getName(),
+                        (System.nanoTime() - startWerke) / 1_000_000);
+                return new HoererBlistaDownloads(hoerernummer, bereitgestellteDownloads);
+            } else {
+                return new HoererBlistaDownloads(hoerernummer,
+                        alleWerke.getFehlercode(), alleWerke.getFehlermeldung());
+            }
         } else {
-            return null;
+            return new HoererBlistaDownloads(hoerernummer,
+                    "42",
+                    "Die Downloads konnten nicht bei blista abgerufen werden");
         }
     }
 

@@ -27,75 +27,75 @@ public class Hoerbuchdetail implements Serializable {
     }
 
     void leeren() {
-        hoererSession.hoerbuchVergessen();
+        hoererSession.gemerktesHoerbuchVergessen();
     }
 
     public boolean isHoerbuchVorhanden() {
-        return null != hoererSession.hoerbuch();
+        return null != hoererSession.gemerktesHoerbuch();
     }
 
     public Sachgebiet getSachgebiet() {
-        return hoererSession.hoerbuch().getSachgebiet();
+        return hoererSession.gemerktesHoerbuch().getSachgebiet();
     }
 
     public Titelnummer getTitelnummer() {
-        return hoererSession.hoerbuch().getTitelnummer();
+        return hoererSession.gemerktesHoerbuch().getTitelnummer();
     }
 
     public String getAutor() {
-        return hoererSession.hoerbuch().getAutor();
+        return hoererSession.gemerktesHoerbuch().getAutor();
     }
 
     public String getTitel() {
-        return hoererSession.hoerbuch().getTitel();
+        return hoererSession.gemerktesHoerbuch().getTitel();
     }
 
     public String getUntertitel() {
-        return hoererSession.hoerbuch().getUntertitel();
+        return hoererSession.gemerktesHoerbuch().getUntertitel();
     }
 
     public String getErlaeuterung() {
-        return hoererSession.hoerbuch().getErlaeuterung();
+        return hoererSession.gemerktesHoerbuch().getErlaeuterung();
     }
 
     public String getVerlagsort() {
-        return hoererSession.hoerbuch().getVerlagsort();
+        return hoererSession.gemerktesHoerbuch().getVerlagsort();
     }
 
     public String getVerlag() {
-        return hoererSession.hoerbuch().getVerlag();
+        return hoererSession.gemerktesHoerbuch().getVerlag();
     }
 
     public String getDruckjahr() {
-        return hoererSession.hoerbuch().getDruckjahr();
+        return hoererSession.gemerktesHoerbuch().getDruckjahr();
     }
 
     public String getSprecher() {
-        return hoererSession.hoerbuch().getSprecher();
+        return hoererSession.gemerktesHoerbuch().getSprecher();
     }
 
     public String getSpieldauer() {
-        return hoererSession.hoerbuch().getSpieldauer();
+        return hoererSession.gemerktesHoerbuch().getSpieldauer();
     }
 
     public String getProdOrt() {
-        return hoererSession.hoerbuch().getProdOrt();
+        return hoererSession.gemerktesHoerbuch().getProdOrt();
     }
 
     public String getProdJahr() {
-        return hoererSession.hoerbuch().getProdJahr();
+        return hoererSession.gemerktesHoerbuch().getProdJahr();
     }
 
     public String getAnzahlCD() {
-        return hoererSession.hoerbuch().getAnzahlCD();
+        return hoererSession.gemerktesHoerbuch().getAnzahlCD();
     }
 
     public String getTitelfamilie() {
-        return hoererSession.hoerbuch().getTitelfamilie();
+        return hoererSession.gemerktesHoerbuch().getTitelfamilie();
     }
 
     public String getEinstelldatum() {
-        return hoererSession.hoerbuch().getEinstelldatumAufDeutsch();
+        return hoererSession.gemerktesHoerbuch().getEinstelldatumAufDeutsch();
     }
 
 }

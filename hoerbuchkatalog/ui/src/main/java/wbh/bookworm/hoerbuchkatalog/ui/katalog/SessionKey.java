@@ -16,6 +16,8 @@ public final class SessionKey {
 
     public static final String HOERBUCH = "HOERBUCH";
 
+    public static final String SCOPEDTARGET_HOERERSESSION = "scopedTarget.hoererSession";
+
     private SessionKey() {
         throw new AssertionError();
     }

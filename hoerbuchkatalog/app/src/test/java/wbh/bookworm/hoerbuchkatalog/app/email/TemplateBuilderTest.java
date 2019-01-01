@@ -80,7 +80,8 @@ class TemplateBuilderTest {
         final Set<Hoerbuch> hoerbucher = hoerbuecher();
         final String build = emailTemplateBuilder.build("BestellbestaetigungCd.html",
                 Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
-        Files.write(Path.of("target/BestellbestaetigungCd-test.html"), build.getBytes(StandardCharsets.UTF_8));
+        Files.write(Path.of("target/BestellbestaetigungCd-test.html"),
+                build.getBytes(StandardCharsets.UTF_8));
     }
 
     @Test
@@ -99,7 +100,8 @@ class TemplateBuilderTest {
         final Set<Hoerbuch> hoerbucher = hoerbuecher();
         final String build = emailTemplateBuilder.build("BestellbestaetigungDownload.html",
                 Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
-        Files.write(Path.of("target/BestellbestaetigungDownload-test.html"), build.getBytes(StandardCharsets.UTF_8));
+        Files.write(Path.of("target/BestellbestaetigungDownload-test.html"),
+                build.getBytes(StandardCharsets.UTF_8));
     }
 
     private Set<Hoerbuch> hoerbuecher() {

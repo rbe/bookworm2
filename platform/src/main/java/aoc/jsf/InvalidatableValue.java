@@ -6,7 +6,7 @@
 
 package aoc.jsf;
 
-public interface Invalidatable<R> {
+public interface InvalidatableValue<R> {
 
     R update();
 

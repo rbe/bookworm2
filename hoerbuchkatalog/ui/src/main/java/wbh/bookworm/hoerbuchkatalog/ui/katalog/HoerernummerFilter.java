@@ -6,10 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -20,12 +20,20 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
-import java.util.Date;
+import java.util.function.Consumer;
 
 @WebFilter(servletNames = "FacesServlet", urlPatterns = {"*.xhtml", "logout"})
+@Component
 public class HoerernummerFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerernummerFilter.class);
+
+    private final Consumer<HttpServletRequest> hoerernummerHttpRequest;
+
+    @Autowired
+    public HoerernummerFilter(final Consumer<HttpServletRequest> hoerernummerHttpRequest) {
+        this.hoerernummerHttpRequest = hoerernummerHttpRequest;
+    }
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse res,
@@ -34,25 +42,7 @@ public class HoerernummerFilter implements Filter {
         if (request.getRequestURI().endsWith("logout")) {
             logoutVerarbeiten(request);
         } else {
-            LOGGER.trace("Suche Hoerernummer in HTTP-Anfrage '{}'", request.getRequestURI());
-            final HttpSession session = request.getSession(false);
-            if (null != session) {
-                LOGGER.debug("Session {} ist {}, lastAccessedTime={}",
-                        session.getId(), session.isNew() ? "neu" : "nicht neu",
-                        new Date(session.getLastAccessedTime()));
-                final Hoerernummer sessionHnr =
-                        (Hoerernummer) session.getAttribute(SessionKey.HOERERNUMMER);
-                if (null == sessionHnr
-                        || (sessionHnr.isUnbekannt()
-                        && null != request.getParameter(SessionKey.HOERERNUMMER))) {
-                    hoerernummerInSessionSetzen(request);
-                } else {
-                    LOGGER.trace("Hörernummer {} in HttpSession {} bereits gesetzt",
-                            sessionHnr, session.getId());
-                }
-            } else {
-                LOGGER.warn("Keine HttpSession");
-            }
+            hoerernummerHttpRequest.accept(request);
         }
         chain.doFilter(req, res);
     }
@@ -61,33 +51,9 @@ public class HoerernummerFilter implements Filter {
         LOGGER.trace("Melde Hörer ab");
         final HttpSession session = request.getSession(false);
         /* TODO Richtig? */request.removeAttribute(SessionKey.HOERERNUMMER);
-        /* TODO Richtig? */session.removeAttribute("scopedTarget.hoererSession");
+        /* TODO Richtig? */session.removeAttribute(SessionKey.SCOPEDTARGET_HOERERSESSION);
         session.invalidate();
         LOGGER.debug("HttpSession {} invalidiert", session.getId());
-    }
-
-    private void hoerernummerInSessionSetzen(final HttpServletRequest request) {
-        final String requestHnr = request.getParameter(SessionKey.HOERERNUMMER);
-        final HttpSession session = request.getSession(false);
-        final HoererSession scopedHoererSession =
-                (HoererSession) session.getAttribute("scopedTarget.hoererSession");
-        if (null == scopedHoererSession) {
-            return;
-        }
-        if (isNotNullAndNotEmpty(requestHnr)) {
-            final Hoerernummer hoerernummer = new Hoerernummer(requestHnr);
-            session.setAttribute(SessionKey.HOERERNUMMER, hoerernummer);
-            scopedHoererSession.hoererSetzen(hoerernummer);
-            LOGGER.debug("Hörernummer {} für HttpSession {} gesetzt", requestHnr, session.getId());
-        } else {
-            session.setAttribute(SessionKey.HOERERNUMMER, Hoerernummer.UNBEKANNT);
-            scopedHoererSession.hoererSetzen(Hoerernummer.UNBEKANNT);
-            LOGGER.debug("Unbekannter Hörer für HttpSession {} gesetzt", session.getId());
-        }
-    }
-
-    private boolean isNotNullAndNotEmpty(final String str) {
-        return null != str && !str.isBlank();
     }
 
 }

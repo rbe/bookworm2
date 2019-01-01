@@ -69,8 +69,8 @@ final class HoerbuchkatalogSuche {
     }
 
     Suchergebnis sucheNachStichwort(final String stichwort) {
-        //final String stichwort = suchparameter.wert(Feld.STICHWORT);
-        LOGGER.info("Suche nach Stichwort '{}'", stichwort);
+        // TODO final String stichwort = suchparameter.wert(Feld.STICHWORT);
+        LOGGER.trace("Suche nach Stichwort '{}'", stichwort);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
                 .add(new QueryParameters.Field(Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
                 .add(new QueryParameters.Field(Suchparameter.Feld.TITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
@@ -85,7 +85,10 @@ final class HoerbuchkatalogSuche {
                         .collect(Collectors.toUnmodifiableList());
         final Suchparameter suchparameter =
                 new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
-        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
+        final Suchergebnis suchergebnis = new Suchergebnis(
+                suchparameter, titelnummern, result.getTotalMatchingCount());
+        LOGGER.debug("Suche nach Stichwort '{}' ergab {}", stichwort, suchergebnis);
+        return suchergebnis;
     }
 
     Suchergebnis suchen(final Suchparameter suchparameter) {

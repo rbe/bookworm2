@@ -1,8 +1,9 @@
-.Deployment
+== Deployment
+
+.Full deployment
 [source,bash,linenum]
 ----
-cd $HOME/project
-cd wbh.bookworm/hoerbuchkatalog/assembly/target
+cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
 mkdir -p dist/var/hoerbuchkatalog
 cd dist
 cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
@@ -16,12 +17,25 @@ scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
 ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 ----
 
+.Update application
+[source,bash,linenum]
+----
+cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
+#cp -r ../../src/main/resources/conf .
+#cp -r ../../src/main/resources/application*.yml .
+#cp -r ../../../ui/src/main/resources/static .
+#cp -r ../../../ui/src/main/resources/templates .
+JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
+scp -Cr ${JAR} root@medienhof9:/home/wbh/app/bookworm2
+ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
+----
+
 .Start (development)
 [source,bash,linenum]
 ----
 export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
 java -jar ${JAR} \
-    --spring.profiles.active=production \
+    --spring.profiles.active=development \
     --spring.config.additional-location=conf/
 ----
 

@@ -21,7 +21,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class HoerbuchkatalogService {
+public final class HoerbuchkatalogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogService.class);
 

@@ -7,29 +7,22 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.jsf.ELFunctionCache;
-import aoc.jsf.ELValueCache;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
+import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.Serializable;
 import java.util.Set;
 
 @Component
-@SessionScope
-public class MeineMerkliste implements Serializable {
+@RequestScope
+public class MeineMerkliste {
 
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(MeineMerkliste.class);
 
     //
     // Hörer
@@ -43,9 +36,8 @@ public class MeineMerkliste implements Serializable {
     // Merkliste
     //
 
-    private final transient MerklisteService merklisteService;
-
-    private final transient ELValueCache<Merkliste> merklisteValueCache;
+    // TODO Proxy für Service, welcher das Caching handhabt, anstelle über HoererSession
+    private final MerklisteService merklisteService;
 
     //
     // Bestellung
@@ -53,28 +45,39 @@ public class MeineMerkliste implements Serializable {
 
     private final MeinWarenkorb meinWarenkorb;
 
-    //
-    // Hörbuchkatalog
-    //
-
-    private final transient ELFunctionCache<Titelnummer, Hoerbuch> hoerbuchValueCache;
-
     @Autowired
     MeineMerkliste(final HoererSession hoererSession,
                    final MerklisteService merklisteService,
-                   final MeinWarenkorb meinWarenkorb,
-                   final HoerbuchkatalogService hoerbuchkatalogService) {
-        LOGGER.trace("Initialisiere für Hörer {}", hoererSession.getHoerernummer());
+                   final MeinWarenkorb meinWarenkorb) {
+        LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
         this.hoerernummer = hoererSession.getHoerernummer();
         this.meinWarenkorb = meinWarenkorb;
         this.merklisteService = merklisteService;
-        // Merkliste
-        merklisteValueCache = new ELValueCache<>(null,
-                () -> merklisteService.merklisteKopie(hoerernummer));
-        // Hörbuch
-        hoerbuchValueCache = new ELFunctionCache<>(
-                titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer));
+    }
+
+    //
+    // Hörbuchkatalog
+    //
+
+    // TODO Duplikat von MeinWarenkorb#downloadFuerHoererVerfuegbar
+    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
+        LOGGER.trace("{}", titelnummer);
+        final boolean b = !meinWarenkorb.isMaxDownloadsProTagErreicht()
+                && !meinWarenkorb.isMaxDownloadsProMonatErreicht()
+                && hoererSession.hoerbuchIstDownloadbar(titelnummer);
+        LOGGER.debug("Download für Hörbuch {} {} vergfübar", titelnummer, b ? "ist" : "ist nicht");
+        return b;
+    }
+
+    public String hoerbuchAutor(final Titelnummer titelnummer) {
+        LOGGER.trace("");
+        return hoererSession.hoerbuchValueCache().get(titelnummer).getAutor();
+    }
+
+    public String hoerbuchTitel(final Titelnummer titelnummer) {
+        LOGGER.trace("");
+        return hoererSession.hoerbuchValueCache().get(titelnummer).getTitel();
     }
 
     //
@@ -83,28 +86,28 @@ public class MeineMerkliste implements Serializable {
 
     public int getAnzahl() {
         LOGGER.trace("");
-        return merklisteValueCache.get().getAnzahl();
+        return hoererSession.anzahlTitelnummernAufMerkliste();
     }
 
     public Set<Titelnummer> getTitelnummern() {
         LOGGER.trace("");
-        return merklisteValueCache.get().getTitelnummern();
+        return hoererSession.titelnummernAufMerkliste();
     }
 
     public boolean enthalten(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return merklisteValueCache.get().enthalten(titelnummer);
+        return hoererSession.titelnummernAufMerklisteEnthalten(titelnummer);
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        merklisteValueCache.invalidate();
+        hoererSession.merklisteVergessen();
         merklisteService.hinzufuegen(hoerernummer, titelnummer);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        merklisteValueCache.invalidate();
+        hoererSession.merklisteVergessen();
         merklisteService.entfernen(hoerernummer, titelnummer);
     }
 
@@ -118,39 +121,16 @@ public class MeineMerkliste implements Serializable {
 
     public void inCdWarenkorbVerschieben(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        merklisteValueCache.invalidate();
+        hoererSession.merklisteVergessen();
         meinWarenkorb.cdHinzufuegen(titelnummer);
         merklisteService.entfernen(hoerernummer, titelnummer);
     }
 
     public void inDownloadWarenkorbVerschieben(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        merklisteValueCache.invalidate();
+        hoererSession.merklisteVergessen();
         meinWarenkorb.downloadHinzufuegen(titelnummer);
         merklisteService.entfernen(hoerernummer, titelnummer);
-    }
-
-    //
-    // Hörbuch
-    //
-
-    public boolean downloadFuerHoererVerfuegbar(final Titelnummer titelnummer) {
-        LOGGER.trace("{}", titelnummer);
-        final boolean b = !meinWarenkorb.isMaxDownloadsProTagErreicht()
-                && !meinWarenkorb.isMaxDownloadsProMonatErreicht()
-                && hoerbuchValueCache.get(titelnummer).isDownloadbar();
-        LOGGER.debug("{} = {}", titelnummer, b);
-        return b;
-    }
-
-    public String hoerbuchAutor(final Titelnummer titelnummer) {
-        LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getAutor();
-    }
-
-    public String hoerbuchTitel(final Titelnummer titelnummer) {
-        LOGGER.trace("");
-        return hoerbuchValueCache.get(titelnummer).getTitel();
     }
 
 }

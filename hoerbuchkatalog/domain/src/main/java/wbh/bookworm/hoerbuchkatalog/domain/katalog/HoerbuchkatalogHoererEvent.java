@@ -8,19 +8,18 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
-public abstract class HoerbuchEvent extends HoerbuchkatalogHoererEvent {
+public abstract class HoerbuchkatalogHoererEvent extends HoerbuchkatalogEvent {
 
     private static final long serialVersionUID = -1L;
 
-    private final Titelnummer titelnummer;
+    private final Hoerernummer hoerernummer;
 
-    public HoerbuchEvent(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        super(hoerernummer);
-        this.titelnummer = titelnummer;
+    public HoerbuchkatalogHoererEvent(final Hoerernummer hoerernummer) {
+        this.hoerernummer = hoerernummer;
     }
 
-    public Titelnummer getTitelnummer() {
-        return titelnummer;
+    public Hoerernummer getHoerernummer() {
+        return hoerernummer;
     }
 
 }

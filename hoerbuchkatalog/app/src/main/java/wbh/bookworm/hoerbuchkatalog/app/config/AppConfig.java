@@ -14,13 +14,16 @@ import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
+import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.thymeleaf.TemplateEngine;
 
 @Configuration
@@ -43,6 +46,17 @@ public class AppConfig {
     @Bean
     static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    @ConditionalOnMissingBean
+    public TaskExecutor taskExecutor() {
+        final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(5);
+        taskExecutor.setMaxPoolSize(10);
+        taskExecutor.setThreadNamePrefix("hoerbuchkatalogExecutor-");
+        taskExecutor.initialize();
+        return taskExecutor;
     }
 
 }

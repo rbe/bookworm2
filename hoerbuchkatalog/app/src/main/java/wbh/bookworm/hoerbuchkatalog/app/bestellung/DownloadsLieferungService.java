@@ -31,8 +31,13 @@ public final class DownloadsLieferungService {
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
         LOGGER.trace("Hole Downloads für {}", hoerernummer);
         final HoererBlistaDownloads lieferungen = downloadsRepository.lieferungen(hoerernummer);
-        LOGGER.debug("{} Downloads für Hörer {} geholt, davon {} bezugsfähig",
-                lieferungen.alle().size(), hoerernummer, lieferungen.bezuegsfaehige());
+        if (!lieferungen.hatFehler()) {
+            LOGGER.info("{} Downloads für Hörer {} geholt, davon {} bezugsfähig",
+                    lieferungen.alle().size(), hoerernummer, lieferungen.bezuegsfaehige().size());
+        } else {
+            LOGGER.warn("Downloads für Hörer {} konnten nicht abgerufen werden: {} {}",
+                    hoerernummer, lieferungen.getFehlercode(), lieferungen.getFehlermeldung());
+        }
         return lieferungen;
     }
 

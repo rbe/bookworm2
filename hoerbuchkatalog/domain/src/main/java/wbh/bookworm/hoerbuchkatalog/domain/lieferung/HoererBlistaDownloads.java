@@ -11,6 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import aoc.ddd.model.DomainValueObject;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -24,16 +25,35 @@ public final class HoererBlistaDownloads extends DomainValueObject {
 
     private final List<BlistaDownload> blistaDownload;
 
-    // TODO Fehlermeldung
+    private final String fehlercode;
 
-    public HoererBlistaDownloads(final Hoerernummer hoerernummer,
-                                 final List<BlistaDownload> blistaDownload) {
+    private final String fehlermeldung;
+
+    private HoererBlistaDownloads(final Hoerernummer hoerernummer,
+                                  final List<BlistaDownload> blistaDownload,
+                                  final String fehlercode, final String fehlermeldung) {
         Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
         Objects.requireNonNull(blistaDownload);
         this.blistaDownload = blistaDownload;
-        blistaDownload.sort(Comparator.comparing(BlistaDownload::getBestelldatum).reversed());
+        if (!blistaDownload.isEmpty()) {
+            blistaDownload.sort(
+                    Comparator.comparing(BlistaDownload::getBestelldatum)
+                            .reversed());
+        }
         this.standVom = LocalDateTime.now();
+        this.fehlercode = fehlercode;
+        this.fehlermeldung = fehlermeldung;
+    }
+
+    public HoererBlistaDownloads(final Hoerernummer hoerernummer,
+                                 final List<BlistaDownload> blistaDownload) {
+        this(hoerernummer, blistaDownload, "", "");
+    }
+
+    public HoererBlistaDownloads(final Hoerernummer hoerernummer,
+                                 final String fehlercode, final String fehlermeldung) {
+        this(hoerernummer, Collections.emptyList(), fehlercode, fehlermeldung);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -52,6 +72,19 @@ public final class HoererBlistaDownloads extends DomainValueObject {
         return blistaDownload.stream()
                 .filter(BlistaDownload::isBezugsfaehig)
                 .collect(Collectors.toList());
+    }
+
+    public boolean hatFehler() {
+        return (null != fehlercode && !fehlercode.isBlank())
+                || (null != fehlermeldung && !fehlermeldung.isBlank());
+    }
+
+    public String getFehlercode() {
+        return fehlercode;
+    }
+
+    public String getFehlermeldung() {
+        return fehlermeldung;
     }
 
     @Override

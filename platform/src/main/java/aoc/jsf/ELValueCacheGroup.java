@@ -12,31 +12,31 @@ import java.util.List;
 
 public class ELValueCacheGroup {
 
-    private final List<Invalidatable<?>> elValueCaches;
+    private final List<InvalidatableValue<?>> elValueCaches;
 
     public ELValueCacheGroup() {
         this.elValueCaches = new LinkedList<>();
     }
 
-    public ELValueCacheGroup(final Invalidatable<?>... elValueCaches) {
+    public ELValueCacheGroup(final InvalidatableValue<?>... elValueCaches) {
         this();
         register(elValueCaches);
     }
 
-    public void register(final Invalidatable<?>... elValueCaches) {
+    public void register(final InvalidatableValue<?>... elValueCaches) {
         this.elValueCaches.addAll(Arrays.asList(elValueCaches));
     }
 
-    public void unregister(final Invalidatable<?>... elValueCaches) {
+    public void unregister(final InvalidatableValue<?>... elValueCaches) {
         this.elValueCaches.removeAll(Arrays.asList(elValueCaches));
     }
 
     public void updateAll() {
-        elValueCaches.forEach(Invalidatable::update);
+        elValueCaches.forEach(InvalidatableValue::update);
     }
 
     public void invalidateAll() {
-        elValueCaches.forEach(Invalidatable::invalidate);
+        elValueCaches.forEach(InvalidatableValue::invalidate);
     }
 
 }

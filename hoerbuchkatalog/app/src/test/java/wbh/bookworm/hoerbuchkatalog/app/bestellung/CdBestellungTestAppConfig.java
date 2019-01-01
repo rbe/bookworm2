@@ -10,6 +10,7 @@ import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
@@ -40,6 +41,11 @@ import java.nio.file.Path;
         TemplateEngine.class
 })
 public class CdBestellungTestAppConfig {
+
+    @Bean
+    public BestellungRepository bestellungRepository() {
+        return new BestellungRepository(Path.of("target/var"));
+    }
 
     @Bean
     public EmailRepository emailRepository() {

@@ -10,10 +10,17 @@ import aoc.ddd.model.DomainSingleValueObject;
 
 public final class Vorname extends DomainSingleValueObject<Vorname, String> {
 
+    public static final Vorname UNBEKANNT = new Vorname("");
+
     public Vorname(final String vorname) {
         super(vorname);
     }
 
     // TODO checkValue .trim() !.isBlank() !.isEmpty()
+
+    @Override
+    public boolean hasValue() {
+        return !value.isBlank();
+    }
 
 }

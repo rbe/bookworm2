@@ -144,7 +144,6 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String ansehen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        //hoerbuchdetail.setTitelnummer(titelnummer);
         hoererSession.hoerbuchMerken(titelnummer);
         return navigation.zumHoerbuchdetail();
     }
@@ -170,7 +169,6 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String vorherigesHoerbuchAnsehen(final Titelnummer titelnummer) {
         final Titelnummer vorherige = suchergebnis.vorherige(titelnummer);
-        //hoerbuchdetail.setTitelnummer(vorherige);
         hoererSession.hoerbuchMerken(vorherige);
         return navigation.zumHoerbuchdetail();
     }
@@ -184,7 +182,6 @@ public class Katalogsuchergebnis implements Serializable {
 
     public String naechstesHoerbuchAnsehen(final Titelnummer titelnummer) {
         final Titelnummer naechste = suchergebnis.naechste(titelnummer);
-        //hoerbuchdetail.setTitelnummer(naechste);
         hoererSession.hoerbuchMerken(naechste);
         return navigation.zumHoerbuchdetail();
     }

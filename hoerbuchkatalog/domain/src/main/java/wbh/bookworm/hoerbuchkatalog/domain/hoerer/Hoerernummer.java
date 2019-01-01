@@ -20,12 +20,12 @@ public final class Hoerernummer extends DomainId<String> {
 
     @JsonIgnore
     public boolean isUnbekannt() {
-        return this == UNBEKANNT;
+        return this.equals(UNBEKANNT);
     }
 
     @JsonIgnore
     public boolean isBekannt() {
-        return this != UNBEKANNT;
+        return !this.equals(UNBEKANNT);
     }
 
     @JsonCreator

@@ -8,9 +8,11 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
+import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.model.DomainId;
 import aoc.ddd.repository.DomainRespositoryComponent;
 
@@ -40,11 +42,11 @@ public class HoerbuchkatalogRepository
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogRepository.class);
 
-    private final Path wbhKatalogDateiname;
-
     private final ApplicationContext applicationContext;
 
     private final HoerbuchkatalogConfig hoerbuchkatalogConfig;
+
+    private final Path wbhKatalogDateiname;
 
     private final TaskScheduler taskScheduler;
 
@@ -82,14 +84,13 @@ public class HoerbuchkatalogRepository
         return hoerbuchkatalog(false);
     }
 
-    /**
-     * TODO Logik nach GesamtDatRepository#load("Datum") inkl. Selektion LuceneIndex
-     */
+    /* TODO Logik nach GesamtDatRepository#load("Datum") inkl. Selektion LuceneIndex */
     private Hoerbuchkatalog hoerbuchkatalog(final boolean neu) {
         if (null == aktuellerHoerbuchkatalog.get() || neu) {
             LOGGER.trace("Erzeuge neuen Hörbuchkatalog");
             hoerbuchkatalogArchiv.archiviereNeuenKatalog(wbhKatalogDateiname);
-            final Optional<Path> gesamtDat = hoerbuchkatalogArchiv.findeAktuellstenKatalog(wbhKatalogDateiname);
+            final Optional<Path> gesamtDat =
+                    hoerbuchkatalogArchiv.findeAktuellstenKatalog(wbhKatalogDateiname);
             gesamtDat.ifPresentOrElse(gd -> {
                         LOGGER.trace("Erzeuge neuen Hörbuchkatalog aus '{}'", gd);
                         final Set<Hoerbuch> hoerbuecher = importiereHoerbuchkatalogAusArchiv(gd);
@@ -110,13 +111,15 @@ public class HoerbuchkatalogRepository
                             verheiraten(neuerKatalog, hoerbuecher, aghNummern);
                             sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
                             aktuellerHoerbuchkatalog.set(neuerKatalog);
-                            LOGGER.info("Hörbuchkatalog erfolgreich initialisiert");
+                            LOGGER.info("Hörbuchkatalog erfolgreich aufgebaut");
+                            DomainEventPublisher.global().publishAsync(new HoerbuchkatalogAktualisiert(
+                                    hoerbuchkatalogDomainId, neueVersion));
                         }
                     },
                     () -> LOGGER.error("Es wurde kein Hörbuchkatalog '{}/{}' gefunden",
                             hoerbuchkatalogConfig.getDirectory().toAbsolutePath(), wbhKatalogDateiname));
         } else {
-            LOGGER.trace("Hörbuchkatalog bereits erzeugt");
+            LOGGER.trace("Hörbuchkatalog {} bereits erzeugt", aktuellerHoerbuchkatalog.get());
         }
         if (null == aktuellerHoerbuchkatalog.get()) {
             throw new IllegalStateException("null == aktuellerHoerbuchkatalog");
@@ -133,10 +136,13 @@ public class HoerbuchkatalogRepository
         // TODO Nur on-demand, wenn kein Index besteht
         hoerbuchkatalogSuche.indiziere(hoerbuchkatalog.alle());
         hoerbuchkatalog.setHoerbuchkatalogSuche(hoerbuchkatalogSuche);
+        LOGGER.debug("Suchindex für Hörbuchkatalog {} aufgebaut", hoerbuchkatalogId);
     }
 
     private void verheiraten(final Hoerbuchkatalog hoerbuchkatalog,
                              final Set<Hoerbuch> hoerbuecher, final Set<AghNummer> aghNummern) {
+        LOGGER.trace("Verheirate {} WBH Titelnummern und {} blista AGH NUmmern",
+                hoerbuecher.size(), aghNummern.size());
         hoerbuecher.forEach(hoerbuch -> {
             istHoerbuchDownloadbar(hoerbuch, aghNummern);
             hoerbuchkatalog.hinzufuegen(hoerbuch);
@@ -147,6 +153,8 @@ public class HoerbuchkatalogRepository
     }
 
     private void istHoerbuchDownloadbar(final Hoerbuch hoerbuch, final Set<AghNummer> aghNummern) {
+        LOGGER.trace("Suche AGH Nummer {} von Hörbuch {} im Download-Katalog",
+                hoerbuch.getAghNummer(), hoerbuch.getTitelnummer());
         boolean aghNummernVorhanden = !aghNummern.isEmpty();
         final AghNummer aghNummer = hoerbuch.getAghNummer();
         final boolean aghVorhanden = aghNummernVorhanden
@@ -155,8 +163,6 @@ public class HoerbuchkatalogRepository
         if (aghVorhanden) {
             final boolean downloadKatalogHatPassendeAghNummer =
                     null != aghNummer.getValue() && aghNummern.contains(aghNummer);
-            LOGGER.trace("Suche AGH Nummer {} im Download-Katalog ergibt {}",
-                    aghNummer, downloadKatalogHatPassendeAghNummer);
             if (downloadKatalogHatPassendeAghNummer) {
                 hoerbuch.imDownloadKatalogVorhanden();
                 LOGGER.trace("Hörbuch {} hat AGH Nummer {} und ist im Download-Katalog vorhanden",

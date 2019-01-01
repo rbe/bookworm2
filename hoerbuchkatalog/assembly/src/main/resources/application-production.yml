@@ -21,12 +21,13 @@ spring:
           starttls:
             enable: true
 
-jsf:
-  project-stage: production
-  facelets-refresh-period: 0
-  interpret-empty-string-submitted-values-as-null: true
-  state-saving-method: server
-  partial-state-saving: true
+joinfaces:
+  jsf:
+    project-stage: production
+    facelets-refresh-period: 0
+    interpret-empty-string-submitted-values-as-null: true
+    state-saving-method: server
+    partial-state-saving: true
   mojarra:
     enable-restore-view11-compatibility: false
 
@@ -43,8 +44,11 @@ server:
     context-path: /hoerbuchkatalog
     session:
       cookie:
+        domain: wbh-online.de
+        path: /hoerbuchkatalog
         http-only: true
-        secure: false
+        secure: true
+        max-age: 3600
       persistent: false
 
 logging:

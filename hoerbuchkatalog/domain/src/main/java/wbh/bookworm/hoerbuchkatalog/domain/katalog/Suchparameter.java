@@ -33,6 +33,7 @@ public final class Suchparameter extends DomainValueObject {
         EINSTELLDATUM("Einstelldatum", "einstelldatum");
 
         private final String label;
+
         private final String luceneName;
 
         Feld(final String label, final String luceneName) {
@@ -85,6 +86,10 @@ public final class Suchparameter extends DomainValueObject {
         final StringBuilder builder = new StringBuilder();
         felderMitWerten.forEach((feld, wert) -> appendIfSet(builder, feld.label, wert));
         return builder.toString();
+    }
+
+    public void leeren() {
+        felderMitWerten.clear();
     }
 
     @Override

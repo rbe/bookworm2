@@ -65,17 +65,17 @@ public final class DomainEventPublisher {
         return this;
     }
 
-    public void publish(final DomainEvent domainEvent) {
-        pub(domainEvent);
+    public void publishSync(final DomainEvent domainEvent) {
+        publish(domainEvent);
     }
 
     @Async
     public void publishAsync(final DomainEvent domainEvent) {
-        pub(domainEvent);
+        publish(domainEvent);
     }
 
     @SuppressWarnings({"unchecked"})
-    private void pub(final DomainEvent domainEvent) {
+    private void publish(final DomainEvent domainEvent) {
         LOGGER.trace("Try to publish {} on {}", domainEvent, this);
         if (publishing.get()) {
             LOGGER.warn("{} is currently publishing, did not publish {}", this, domainEvent);

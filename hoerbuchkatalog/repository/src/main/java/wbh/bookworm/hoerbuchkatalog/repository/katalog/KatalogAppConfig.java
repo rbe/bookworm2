@@ -12,6 +12,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.search.LuceneIndex;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -47,16 +48,18 @@ public class KatalogAppConfig {
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public TaskExecutor taskExecutor() {
         final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
         taskExecutor.setCorePoolSize(5);
         taskExecutor.setMaxPoolSize(10);
-        taskExecutor.setThreadNamePrefix("hoerbuchkatalogExecutor-");
+        taskExecutor.setThreadNamePrefix("hoerbuchkatalogRepositoryExecutor-");
         taskExecutor.initialize();
         return taskExecutor;
     }
 
     @Bean
+    @ConditionalOnMissingBean
     public TaskScheduler taskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
