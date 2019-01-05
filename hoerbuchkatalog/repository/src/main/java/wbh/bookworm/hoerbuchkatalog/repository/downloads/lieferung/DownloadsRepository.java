@@ -43,6 +43,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
     }
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
+        LOGGER.trace("Hole blista Werke für Hörer {}", hoerernummer);
         long startWerke = System.nanoTime();
         // TODO DownloadsArchiv
         final Optional<DlsWerke> maybeAlleWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
@@ -51,31 +52,13 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
             if (!alleWerke.hatFehler()) {
                 final List<BlistaDownload> bereitgestellteDownloads = alleWerke
                         .books.parallelStream()
-                        .map(book -> {
-                            final AghNummer aghNummer = new AghNummer(book.Aghnummer);
-                            final Optional<DlsBook> bestellung =
-                                    dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
-                            if (bestellung.isPresent()) {
-                                final DlsBook dlsBook = bestellung.get();
-                                final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
-                                return hoerbuch.map(h -> new BlistaDownload(
-                                        hoerernummer,
-                                        aghNummer,
-                                        h.getTitelnummer(), h.getTitel(),
-                                        h.getAutor(), h.getSpieldauer(),
-                                        dlsBook.book.Ausleihstatus,
-                                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
-                                        dlsBook.book.DlsDescription,
-                                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
-                                        dlsBook.book.DownloadLink
-                                )).orElse(null);
-                            } else {
-                                return null;
-                            }
-                        })
+                        .map(book -> toBlistaDownload(hoerernummer, book))
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
-                LOGGER.trace("{}: Abholen aller Werke dauerte {} ms", Thread.currentThread().getName(),
+                LOGGER.debug("{}: Abholen von {} blista Werken für Hörer {} dauerte {} ms",
+                        bereitgestellteDownloads.size(),
+                        hoerernummer,
+                        Thread.currentThread().getName(),
                         (System.nanoTime() - startWerke) / 1_000_000);
                 return new HoererBlistaDownloads(hoerernummer, bereitgestellteDownloads);
             } else {
@@ -85,7 +68,31 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
         } else {
             return new HoererBlistaDownloads(hoerernummer,
                     "42",
-                    "Die Downloads konnten nicht bei blista abgerufen werden");
+                    "Die Downloads konnten leider nicht bei der blista abgerufen werden.");
+        }
+    }
+
+    private BlistaDownload toBlistaDownload(final Hoerernummer hoerernummer,
+                                            final DlsWerke.Book book) {
+        final AghNummer aghNummer = new AghNummer(book.Aghnummer);
+        final Optional<DlsBook> bestellung =
+                dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
+        if (bestellung.isPresent()) {
+            final DlsBook dlsBook = bestellung.get();
+            final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
+            return hoerbuch.map(h -> new BlistaDownload(
+                    hoerernummer,
+                    aghNummer,
+                    h.getTitelnummer(), h.getTitel(),
+                    h.getAutor(), h.getSpieldauer(),
+                    dlsBook.book.Ausleihstatus,
+                    dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                    dlsBook.book.DlsDescription,
+                    dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
+                    dlsBook.book.DownloadLink))
+                    .orElse(null);
+        } else {
+            return null;
         }
     }
 

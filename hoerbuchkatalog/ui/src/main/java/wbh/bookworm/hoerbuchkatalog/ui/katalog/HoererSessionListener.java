@@ -19,13 +19,17 @@ public class HoererSessionListener implements HttpSessionListener {
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererSessionListener.class);
 
     @Override
-    public void sessionCreated(final HttpSessionEvent se) {
-        LOGGER.debug("HttpSession {} erstellt", se.getSession().getId());
+    public void sessionCreated(final HttpSessionEvent httpSessionEvent) {
+        LOGGER.debug("HttpSession {} für Hörer {} erstellt",
+                httpSessionEvent.getSession().getId(),
+                httpSessionEvent.getSession().getAttribute(SessionKey.HOERERNUMMER));
     }
 
     @Override
-    public void sessionDestroyed(final HttpSessionEvent se) {
-        LOGGER.debug("HttpSession {} beendet", se.getSession().getId());
+    public void sessionDestroyed(final HttpSessionEvent httpSessionEvent) {
+        LOGGER.debug("HttpSession {} für Hörer {} beendet",
+                httpSessionEvent.getSession().getId(),
+                httpSessionEvent.getSession().getAttribute(SessionKey.HOERERNUMMER));
     }
 
 }

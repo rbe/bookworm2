@@ -44,11 +44,14 @@ server:
     context-path: /hoerbuchkatalog
     session:
       cookie:
+        name: Bookworm
+        comment: Hörbuchkatalog
         domain: localhost
         path: /hoerbuchkatalog
         http-only: true
         secure: false
         max-age: 3600
+      tracking-modes: COOKIE
       persistent: false
 
 logging:

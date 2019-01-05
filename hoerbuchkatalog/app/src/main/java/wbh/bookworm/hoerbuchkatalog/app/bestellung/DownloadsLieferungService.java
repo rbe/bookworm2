@@ -29,10 +29,10 @@ public final class DownloadsLieferungService {
     }
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
-        LOGGER.trace("Hole Downloads für {}", hoerernummer);
+        LOGGER.trace("Hole Downloads für Hörer {}", hoerernummer);
         final HoererBlistaDownloads lieferungen = downloadsRepository.lieferungen(hoerernummer);
         if (!lieferungen.hatFehler()) {
-            LOGGER.info("{} Downloads für Hörer {} geholt, davon {} bezugsfähig",
+            LOGGER.info("{} Download(s) für Hörer {} geholt, davon {} bezugsfähig",
                     lieferungen.alle().size(), hoerernummer, lieferungen.bezuegsfaehige().size());
         } else {
             LOGGER.warn("Downloads für Hörer {} konnten nicht abgerufen werden: {} {}",

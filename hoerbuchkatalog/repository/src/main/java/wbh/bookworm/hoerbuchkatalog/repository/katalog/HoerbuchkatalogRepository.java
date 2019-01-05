@@ -97,23 +97,7 @@ public class HoerbuchkatalogRepository
                         if (hoerbuecher.isEmpty()) {
                             throw new IllegalStateException("Import leer; Keine Hörbücher importiert");
                         } else {
-                            final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
-                            @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
-                                    applicationContext.getBean(HOERBUCHKATALOG_MAP, Map.class);
-                            final HoerbuchkatalogId hoerbuchkatalogDomainId =
-                                    new HoerbuchkatalogId(gd.getFileName().toString());
-                            final long neueVersion = null != aktuellerHoerbuchkatalog.get()
-                                    ? aktuellerHoerbuchkatalog.get().getVersion() + 1
-                                    : 1;
-                            final Hoerbuchkatalog neuerKatalog =
-                                    new Hoerbuchkatalog(hoerbuchkatalogDomainId, map, neueVersion);
-                            LOGGER.debug("Hörbuchkatalog aus '{}' erfolgreich erzeugt", gd);
-                            verheiraten(neuerKatalog, hoerbuecher, aghNummern);
-                            sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
-                            aktuellerHoerbuchkatalog.set(neuerKatalog);
-                            LOGGER.info("Hörbuchkatalog erfolgreich aufgebaut");
-                            DomainEventPublisher.global().publishAsync(new HoerbuchkatalogAktualisiert(
-                                    hoerbuchkatalogDomainId, neueVersion));
+                            gesamtDatUndAghNummernImportieren(gd, hoerbuecher);
                         }
                     },
                     () -> LOGGER.error("Es wurde kein Hörbuchkatalog '{}/{}' gefunden",
@@ -125,6 +109,26 @@ public class HoerbuchkatalogRepository
             throw new IllegalStateException("null == aktuellerHoerbuchkatalog");
         }
         return aktuellerHoerbuchkatalog.get();
+    }
+
+    private void gesamtDatUndAghNummernImportieren(final Path gd, final Set<Hoerbuch> hoerbuecher) {
+        @SuppressWarnings({"unchecked"}) final Map<Titelnummer, Hoerbuch> map = (Map<Titelnummer, Hoerbuch>)
+                applicationContext.getBean(HOERBUCHKATALOG_MAP, Map.class);
+        final HoerbuchkatalogId hoerbuchkatalogDomainId =
+                new HoerbuchkatalogId(gd.getFileName().toString());
+        final long neueVersion = null != aktuellerHoerbuchkatalog.get()
+                ? aktuellerHoerbuchkatalog.get().getVersion() + 1
+                : 1;
+        final Hoerbuchkatalog neuerKatalog =
+                new Hoerbuchkatalog(hoerbuchkatalogDomainId, map, neueVersion);
+        LOGGER.debug("Hörbuchkatalog aus '{}' erfolgreich erzeugt", gd);
+        final Set<AghNummer> aghNummern = importiereAghNummernAusArchiv();
+        verheiraten(neuerKatalog, hoerbuecher, aghNummern);
+        sucheInitialisieren(hoerbuchkatalogDomainId, neuerKatalog);
+        aktuellerHoerbuchkatalog.set(neuerKatalog);
+        LOGGER.info("Hörbuchkatalog mit AGH Nummern erfolgreich aufgebaut");
+        DomainEventPublisher.global().publishAsync(new HoerbuchkatalogAktualisiert(
+                hoerbuchkatalogDomainId, neueVersion));
     }
 
     private void sucheInitialisieren(final DomainId<String> hoerbuchkatalogId,
@@ -147,7 +151,7 @@ public class HoerbuchkatalogRepository
             istHoerbuchDownloadbar(hoerbuch, aghNummern);
             hoerbuchkatalog.hinzufuegen(hoerbuch);
         });
-        LOGGER.info("{} Hörbücher von {} AGH Nummern sind im Download-Katalog vorhanden",
+        LOGGER.info("{} Hörbücher/AGH Nummern von insgesamt {} sind im Download-Katalog vorhanden",
                 hoerbuchkatalog.anzahlDownloadbarerHoerbuecher(),
                 hoerbuchkatalog.anzahlHoerbuecherGesamt());
     }
@@ -175,6 +179,7 @@ public class HoerbuchkatalogRepository
         }
     }
 
+    // TODO AGH Nummern separat aktualisieren (einmal tgl. nach 05:00 Uhr)
     private void archivRegelmaessigAktualisieren() {
         final CronTrigger cronTrigger = new CronTrigger(
                 hoerbuchkatalogConfig.getCronExpression());
@@ -187,6 +192,7 @@ public class HoerbuchkatalogRepository
                 this::aktualisiereArchiv, cronTrigger);
     }
 
+    // TODO AGH Nummern separat aktualisieren (einmal tgl. nach 05:00 Uhr)
     private void aktualisiereArchiv() {
         try {
             hoerbuchkatalogArchiv.archiviereNeuenKatalog(wbhKatalogDateiname);

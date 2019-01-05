@@ -45,7 +45,7 @@ public final class BlistaDownload extends DomainValueObject {
 
     private final LocalDateTime rueckgabedatum;
 
-    private final int downloadCount;
+    private /*final*/ int downloadCount;
 
     private final int maxDownload;
 
@@ -163,6 +163,10 @@ public final class BlistaDownload extends DomainValueObject {
 
     public String getDownloadLink() {
         return downloadLink;
+    }
+
+    public void downloadCounterRuntersetzen() {
+        downloadCount++;
     }
 
     @Override

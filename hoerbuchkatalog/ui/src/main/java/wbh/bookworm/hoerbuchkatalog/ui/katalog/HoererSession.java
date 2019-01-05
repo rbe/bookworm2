@@ -110,7 +110,7 @@ public class HoererSession implements Serializable {
             maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE, () ->
                     bestellungService.isMaxDownloadsProMonatErreicht(bestellungSessionId, hoerernummer));
             // Lieferung
-            alleDownloadsELCache = new ELValueCache<>(null, () ->
+            blistaDownloadsELCache = new ELValueCache<>(null, () ->
                     downloadsLieferungService.lieferungen(hoerernummer));
             LOGGER.debug("Hörer {} hat HttpSession {}", hoerernummer, session.getId());
         } else {
@@ -343,37 +343,44 @@ public class HoererSession implements Serializable {
 
     private final transient DownloadsLieferungService downloadsLieferungService;
 
-    private transient ELValueCache<HoererBlistaDownloads> alleDownloadsELCache;
+    private transient ELValueCache<HoererBlistaDownloads> blistaDownloadsELCache;
 
     LocalDateTime standVomDerDownloads() {
-        return alleDownloadsELCache.get().getStandVom();
+        return blistaDownloadsELCache.get().getStandVom();
     }
 
-    boolean blistaAbrufHatFehler() {
-        if (alleDownloadsELCache.get().hatFehler()) {
-            alleDownloadsELCache.invalidate();
+    boolean isBlistaAbrufHatFehler() {
+        if (blistaDownloadsELCache.get().hatFehler()) {
+            blistaDownloadsELCache.invalidate();
         }
-        return alleDownloadsELCache.get().hatFehler();
+        return blistaDownloadsELCache.get().hatFehler();
     }
 
     String blistaFehlercode() {
-        return alleDownloadsELCache.get().getFehlercode();
+        return blistaDownloadsELCache.get().getFehlercode();
     }
 
     String blistaFehlermeldung() {
-        return alleDownloadsELCache.get().getFehlermeldung();
+        return blistaDownloadsELCache.get().getFehlermeldung();
     }
 
     List<BlistaDownload> alleDownloads() {
-        if (alleDownloadsELCache.get().hatFehler()) {
-            alleDownloadsELCache.invalidate();
+        if (blistaDownloadsELCache.get().hatFehler()) {
+            blistaDownloadsELCache.invalidate();
         }
-        return alleDownloadsELCache.get().alle();
+        return blistaDownloadsELCache.get().alle();
+    }
+
+    List<BlistaDownload> bezugsfaehigeDownloads() {
+        if (blistaDownloadsELCache.get().hatFehler()) {
+            blistaDownloadsELCache.invalidate();
+        }
+        return blistaDownloadsELCache.get().bezuegsfaehige();
     }
 
     /* TODO BestellungAufgegebenEvent
     void downloadsVergessen() {
-        alleDownloadsELCache.invalidate();
+        blistaDownloadsELCache.invalidate();
         LOGGER.debug("Zwischengespeicherte Downloads geleert; erneute Abfrage bei blista notwendig");
     }
     */
@@ -403,7 +410,7 @@ public class HoererSession implements Serializable {
             maxDownloadsProMonatErreicht.invalidate();
             LOGGER.debug("Cache für Download-Warenkorb invalidiert");
             // downloadsVergessen
-            alleDownloadsELCache.invalidate();
+            blistaDownloadsELCache.invalidate();
             LOGGER.debug("Cache für Downloads invalidiert; erneute Abfrage bei blista notwendig");
         }
 

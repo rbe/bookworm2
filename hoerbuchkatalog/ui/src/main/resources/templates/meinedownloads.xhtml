@@ -21,26 +21,7 @@
                 </div>
             </div>
             <h:form id="meineDownloads">
-                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler}"
-                              layout="block" styleClass="searchrow">
-                    <h3>Suchen Sie einen Titel innerhalb Ihrer Downloads</h3>
-                    <h:inputText id="stichwort" value="#{meineDownloads.stichwort}"
-                                 styleClass="searchtitle"/>
-                    <h:commandButton id="downloadsDurchsuchen" value="Suchen"
-                                     action="#{meineDownloads.sucheNachStichwort}"
-                                     styleClass="searchbutton">
-                        <f:ajax event="action" execute="@form" render="@all"/>
-                    </h:commandButton>
-                </h:panelGroup>
-                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and !meineBestellung.bestellungenVorhanden}"
-                              layout="block" styleClass="row notitle">
-                    Es wurden keine Hörbücher ausgeliehen!
-                </h:panelGroup>
-                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and meineBestellung.bestellungenVorhanden and meineDownloads.stichwortHatKeineTreffer}"
-                              layout="block" styleClass="row notitle">
-                    Es wurden keine Hörbücher ausgeliehen, die Ihrer Suche entsprechen!
-                </h:panelGroup>
-                <h:panelGroup id="blistaFehler"
+                <h:panelGroup id="blistaAbrufFehler"
                               rendered="#{meineDownloads.blistaAbrufHatFehler}"
                               layout="block" styleClass="row notitle">
                     Die Downloads stehen temporär leider nicht zur Verfügung.<br/>
@@ -50,6 +31,27 @@
                     <br/>
                     Bitte entschuldigen Sie die Unannehmlichkeit und versuchen Sie es später noch einmal.<br/>
                     Vielen Dank!
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler}"
+                              layout="block" styleClass="searchrow">
+                    <h3>Suchen Sie einen Titel innerhalb Ihrer Downloads</h3>
+                    <h:inputText id="stichwort"
+                                 value="#{meineDownloads.stichwort}"
+                                 styleClass="searchtitle"/>
+                    <h:commandButton id="downloadsDurchsuchen"
+                                     actionListener="#{meineDownloads.sucheNachStichwort}"
+                                     styleClass="searchbutton"
+                                     value="Suchen">
+                        <f:ajax event="action" execute="@form" render="@all"/>
+                    </h:commandButton>
+                </h:panelGroup>
+                <h:panelGroup rendered="#{!meineDownloads.hoerbucherAusgeliehen}"
+                              layout="block" styleClass="row notitle">
+                    Es wurden keine Hörbücher ausgeliehen!
+                </h:panelGroup>
+                <h:panelGroup rendered="#{meineDownloads.stichwortEingegeben and !meineDownloads.stichwortHatTreffer}"
+                              layout="block" styleClass="row notitle">
+                    Es wurden keine Hörbücher ausgeliehen, die Ihrer Suche entsprechen!
                 </h:panelGroup>
                 <h:panelGroup id="archivTabelle"
                               rendered="#{meineDownloads.hoerbuecherAnzeigen}"
@@ -63,12 +65,11 @@
                                 <th style="text-align:center;">Download</th>
                                 <th style="text-align:center;">Verfügbar</th>
                             </tr>
-                            <ui:repeat value="#{meineDownloads.alleDownloads}"
+                            <ui:repeat value="#{meineDownloads.bezugsfaehigeDownloads}"
                                        var="download" varStatus="downloadStatus">
                                 <h:outputFormat rendered="#{downloadStatus.last}">
                                     <tr>
-                                        <td class="lastrow" colspan="4">Hinweis: Es folgt der letzte Datensatz
-                                        </td>
+                                        <td class="lastrow" colspan="4">Hinweis: Es folgt der letzte Datensatz</td>
                                     </tr>
                                 </h:outputFormat>
                                 <tr>
@@ -106,10 +107,12 @@
                                             <h:outputText value="#{download.statusText}"/>
                                         </div>
                                         <div class="link">
-                                            <!-- TODO MeineDownloads invalidieren -->
-                                            <h:outputLink rendered="#{download.bezugsfaehig}"
-                                                          value="#{download.downloadLink}"
-                                                          target="_blank">Herunterladen</h:outputLink>
+                                            <h:commandLink rendered="#{download.bezugsfaehig}"
+                                                           actionListener="#{meineDownloads.downloadZaehlen}"
+                                                           action="#{meineDownloads.downloadLink(download)}"
+                                                           target="_blank"
+                                                           value="Herunterladen">
+                                            </h:commandLink>
                                         </div>
                                     </td>
                                     <td class="download-count">

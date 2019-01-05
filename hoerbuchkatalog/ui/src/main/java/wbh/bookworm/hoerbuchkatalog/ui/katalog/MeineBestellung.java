@@ -212,7 +212,7 @@ public class MeineBestellung {
         if (hoererSession.isHoererIstUnbekannt()) {
             return false;
         } else {
-            return !hoererSession.blistaAbrufHatFehler()
+            return !hoererSession.isBlistaAbrufHatFehler()
                     && (/* TODO ELValueCache */bestellungService.anzahlBestellungen(hoererSession.getHoerernummer()) > 0
                     || !hoererSession.alleDownloads().isEmpty());
         }

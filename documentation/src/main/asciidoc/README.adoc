@@ -21,12 +21,15 @@ ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 [source,bash,linenum]
 ----
 cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
+mkdir dist
+cd dist
 #cp -r ../../src/main/resources/conf .
 #cp -r ../../src/main/resources/application*.yml .
 #cp -r ../../../ui/src/main/resources/static .
-#cp -r ../../../ui/src/main/resources/templates .
+cp -r ../../../ui/src/main/resources/templates .
 JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
-scp -Cr ${JAR} root@medienhof9:/home/wbh/app/bookworm2
+cp ../${JAR} .
+scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
 ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 ----
 

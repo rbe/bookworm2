@@ -14,6 +14,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import javax.faces.component.html.HtmlCommandLink;
+import javax.faces.context.ExternalContext;
+import javax.faces.context.FacesContext;
+import javax.faces.event.ActionEvent;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,28 +46,37 @@ public class MeineDownloads {
         nachStichwortGefilterteDownloads = Collections.emptyList();
     }
 
+    public boolean isStichwortEingegeben() {
+        return null != stichwort && !stichwort.isBlank();
+    }
+
     public String getStichwort() {
         return stichwort;
     }
 
     public void setStichwort(final String stichwort) {
         this.stichwort = stichwort;
-        if (null != stichwort && stichwort.isBlank()) {
+        if (!isStichwortEingegeben()) {
             nachStichwortGefilterteDownloads = Collections.emptyList();
         }
     }
 
     public void sucheNachStichwort() {
-        nachStichwortGefilterteDownloads = hoererSession.alleDownloads()
-                .stream()
-                .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
-                        || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
-                .collect(Collectors.toList());
+        if (isStichwortEingegeben()) {
+            nachStichwortGefilterteDownloads = hoererSession.alleDownloads()
+                    .stream()
+                    .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
+                            || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
+                    .collect(Collectors.toList());
+        } else {
+            nachStichwortGefilterteDownloads = Collections.emptyList();
+        }
     }
 
-    public boolean isStichwortHatKeineTreffer() {
-        return null == stichwort || stichwort.isBlank()
-                || !nachStichwortGefilterteDownloads.isEmpty();
+    public boolean isStichwortHatTreffer() {
+        return isStichwortEingegeben()
+                && !hoererSession.isBlistaAbrufHatFehler() && meineBestellung.isBestellungenVorhanden()
+                && !nachStichwortGefilterteDownloads.isEmpty();
     }
 
     public List<BlistaDownload> getAlleDownloads() {
@@ -71,14 +85,22 @@ public class MeineDownloads {
                 : nachStichwortGefilterteDownloads;
     }
 
+    public List<BlistaDownload> getBezugsfaehigeDownloads() {
+        return nachStichwortGefilterteDownloads.isEmpty()
+                ? hoererSession.bezugsfaehigeDownloads()
+                : nachStichwortGefilterteDownloads;
+    }
+
     public boolean isHoerbuecherAnzeigen() {
-        return (!hoererSession.blistaAbrufHatFehler()
-                && meineBestellung.isBestellungenVorhanden())
-                || !nachStichwortGefilterteDownloads.isEmpty();
+        return (!hoererSession.isBlistaAbrufHatFehler()
+                //&& meineBestellung.isBestellungenVorhanden()
+                && !hoererSession.bezugsfaehigeDownloads().isEmpty()
+                && null == stichwort || stichwort.isBlank())
+                || isStichwortHatTreffer();
     }
 
     public boolean isBlistaAbrufHatFehler() {
-        return hoererSession.blistaAbrufHatFehler();
+        return hoererSession.isBlistaAbrufHatFehler();
     }
 
     public String getBlistaFehlercode() {
@@ -87,6 +109,31 @@ public class MeineDownloads {
 
     public String getBlistaFehlermeldung() {
         return hoererSession.blistaFehlermeldung();
+    }
+
+    public boolean isHoerbucherAusgeliehen() {
+        return !hoererSession.isBlistaAbrufHatFehler()
+                //&& meineBestellung.isBestellungenVorhanden()
+                && !hoererSession.bezugsfaehigeDownloads().isEmpty();
+    }
+
+    // TODO
+    public void downloadLink(final BlistaDownload blistaDownload) throws IOException {
+        LOGGER.info("Hörer {} lädt Hörbuch {} / {} herunter",
+                hoererSession.getHoerernummer(),
+                blistaDownload.getTitelnummer(), blistaDownload.getAghNummer());
+        final ExternalContext externalContext = FacesContext.getCurrentInstance().getExternalContext();
+        externalContext.redirect(blistaDownload.getDownloadLink());
+    }
+
+    // TODO
+    public void downloadZaehlen(final ActionEvent actionEvent) {
+        final HtmlCommandLink source = (HtmlCommandLink) actionEvent.getSource();
+        final FacesContext context = FacesContext.getCurrentInstance();
+        final BlistaDownload blistaDownload = FacesContext.getCurrentInstance().getApplication()
+                .evaluateExpressionGet(context, "#{download}", BlistaDownload.class);
+        blistaDownload.downloadCounterRuntersetzen();
+        LOGGER.debug("{} -> {}", source, blistaDownload);
     }
 
     /* TODO BestellungAufgegebenEvent
