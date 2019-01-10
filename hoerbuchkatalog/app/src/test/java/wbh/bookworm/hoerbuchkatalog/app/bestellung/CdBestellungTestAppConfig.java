@@ -36,7 +36,6 @@ import java.nio.file.Path;
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        DownloadsLieferungService.class,
         EmailService.class,
         TemplateEngine.class
 })

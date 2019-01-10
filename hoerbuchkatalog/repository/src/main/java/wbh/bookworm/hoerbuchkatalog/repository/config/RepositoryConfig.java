@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.repository.config;
 
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungAppConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.downloads.lieferung.LieferungAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.KatalogAppConfig;
 

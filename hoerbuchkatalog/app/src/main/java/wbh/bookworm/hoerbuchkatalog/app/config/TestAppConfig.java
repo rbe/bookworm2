@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.app.config;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;

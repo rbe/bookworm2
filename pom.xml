@@ -463,6 +463,15 @@
             </plugin>
         </plugins>
     </build>
+    <reporting>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-project-info-reports-plugin</artifactId>
+                <version>LATEST</version>
+            </plugin>
+        </plugins>
+    </reporting>
     <profiles>
         <profile>
             <id>bookworm.documentation</id>
@@ -659,6 +668,56 @@
                                 </reports>
                             </reportSet>
                         </reportSets>
+                    </plugin>
+                </plugins>
+            </reporting>
+        </profile>
+        <profile>
+            <id>bookworm.staticanalysis</id>
+            <build>
+                <!--<plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>3.0.5</version>
+                        <configuration>
+                            <effort>Max</effort>
+                            <outputDirectory>findbugs</outputDirectory>
+                            <skipEmptyReport>false</skipEmptyReport>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>check</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>-->
+            </build>
+            <reporting>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-pmd-plugin</artifactId>
+                        <version>3.11.0</version>
+                        <configuration>
+                            <outputDirectory>pmd</outputDirectory>
+                            <rulesets>
+                                <ruleset>/rulesets/java/braces.xml</ruleset>
+                                <ruleset>/rulesets/java/naming.xml</ruleset>
+                            </rulesets>
+                            <aggregate>false</aggregate>
+                        </configuration>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>findbugs-maven-plugin</artifactId>
+                        <version>3.0.5</version>
+                        <configuration>
+                            <outputDirectory>findbugs</outputDirectory>
+                            <skipEmptyReport>false</skipEmptyReport>
+                        </configuration>
                     </plugin>
                 </plugins>
             </reporting>

@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsLieferungService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
