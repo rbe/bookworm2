@@ -1,0 +1,30 @@
+version: '3.7'
+services:
+  hoerbuchkatalog:
+    image: wbh/hoerbuchkatalog:latest
+    ports:
+      - 80:9080
+    volumes:
+      - hoerbuchkatalog_data:/var/hoerbuchkatalog
+  nutzerbereich:
+    image: wbh/nutzerbereich:latest
+    ports:
+      - 80:9090
+    environment:
+      - NUTZERBEREICH_TEMPLATE=./template
+    volumes:
+      - nutzerbereich_data:/var/nutzerbereich
+networks:
+  frontend:
+    name: frontend
+    driver: bridge
+    external: true
+  private:
+    name: private
+    driver: bridge
+    external: false
+volumes:
+  hoerbuchkatalog_data:
+    driver: local
+  nutzerbereich_data:
+    driver: local

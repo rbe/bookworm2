@@ -674,9 +674,22 @@
         </profile>
         <profile>
             <id>bookworm.staticanalysis</id>
+            <properties>
+                <sonar.host.url>http://localhost:9000</sonar.host.url>
+                <sonar.login>a621b5c210d948cc305dcfb922c66d4de0eed177</sonar.login>
+            </properties>
             <build>
-                <!--<plugins>
-                    <plugin>
+                <pluginManagement>
+                    <plugins>
+                        <plugin>
+                            <groupId>org.sonarsource.scanner.maven</groupId>
+                            <artifactId>sonar-maven-plugin</artifactId>
+                            <version>3.6.0.1398</version>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
+                <plugins>
+                    <!--<plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>findbugs-maven-plugin</artifactId>
                         <version>3.0.5</version>
@@ -692,8 +705,17 @@
                                 </goals>
                             </execution>
                         </executions>
+                    </plugin>-->
+                    <!-- mvn sonar:sonar \
+                         -Dsonar.host.url=http://localhost:9000 \
+                         -Dsonar.login=a621b5c210d948cc305dcfb922c66d4de0eed177-->
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <configuration>
+                        </configuration>
                     </plugin>
-                </plugins>-->
+                </plugins>
             </build>
             <reporting>
                 <plugins>
