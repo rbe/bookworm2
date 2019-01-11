@@ -1,7 +1,15 @@
-# bookworm
+#
+# WBH Bookworm
+#
+
 var/
-documentation/src/main/resources
-*/php/approxy/vendor/
+documentation/src/main/resources/architecture/
+documentation/src/main/resources/WBH/
+
+approxy/src/main/php/approxy/vendor/
+
+# Hoerbuchkatalog
+# static resources
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts
