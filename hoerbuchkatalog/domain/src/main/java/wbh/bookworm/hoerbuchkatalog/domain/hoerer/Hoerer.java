@@ -10,17 +10,64 @@ import aoc.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import java.time.LocalDate;
 import java.util.Objects;
 
 public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 
-    private Hoerername hoerername;
+    /* HOERSTP, HOEAN */private String anrede;
 
-    private HoererEmail hoereremail;
+    /* HOERSTP, HOEVN private String vorname; */
+    /* HOERSTP, HOENN private String nachname; */
+    /* HOERSTP */private Hoerername hoerername;
 
+    /* HOERSTP, HOEN2 (Nachnamenszusatz) */private String name2;
+
+    /* HOERSTP, HOESTR */private String strasse;
+
+    /* HOERSTP, HOEPLZ */private String plz;
+
+    /* HOERSTP, HOEORT */private String ort;
+
+    /* HOERSTP, HOENPB */private String adresszusatz;
+
+    /* HOEKZ, HOELAN */private String land;
+
+    /* HOERSTP, HOETV */private LocalDate sperrTerminVon;
+
+    /* HOERSTP, HOETB */private LocalDate sperrTerminBis;
+
+    /* HOERSTP, HOEUV */private LocalDate urlaubVon;
+
+    /* HOERSTP, HOEUB */private LocalDate urlaubBis;
+
+    /* HOERSTP, HOUN2 (Namenszusatz) */private String urlaubName2;
+
+    /* HOERSTP, HOUSTR */private String urlaubStrasse;
+
+    /* HOERSTP, HOUPLZ */private String urlaubPlz;
+
+    /* HOERSTP, HOUORT */private String urlaubOrt;
+
+    /* HOERSTP, HOUNPB */private String urlaubAdresszusatz;
+
+    /* HOEKZ, HOELA2 */private String urlaubLand;
+
+    /* HOERSTP, HOEGBD */private LocalDate geburtsdatum;
+
+    /* HOERSTP, HOETEL */private String telefonnummer;
+
+    /* HOEKZ, HOKZ12 */private HoererEmail hoereremail;
+
+    /* HOEBSTP, BUMGI */private Integer mengenindex;
+
+    /* HOEBSTP, BURDAT */private LocalDate rueckbuchungsdatum;
+
+    /*
     protected Hoerer(final Hoerernummer hoerernummer) {
         super(hoerernummer);
     }
+    */
 
     public Hoerer(final Hoerernummer hoerernummer,
                   final Hoerername hoerername, final HoererEmail hoereremail) {
@@ -29,6 +76,43 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         this.hoerername = hoerername;
         Objects.requireNonNull(hoereremail);
         this.hoereremail = hoereremail;
+    }
+
+    public Hoerer(final Hoerernummer hoerernummer,
+                  final String anrede, final Hoerername hoerername, final String name2,
+                  final String strasse, final String plz, final String ort, final String adresszusatz, final String land,
+                  final LocalDate sperrTerminVon, final LocalDate sperrTerminBis,
+                  final LocalDate urlaubVon, final LocalDate urlaubBis,
+                  final String urlaubName2, final String urlaubStrasse, final String urlaubPlz, final String urlaubOrt,
+                  final String urlaubAdresszusatz, final String urlaubLand,
+                  final LocalDate geburtsdatum,
+                  final String telefonnummer, final HoererEmail hoereremail,
+                  final Integer mengenindex,
+                  final LocalDate rueckbuchungsdatum) {
+        super(hoerernummer);
+        this.anrede = anrede;
+        this.hoerername = hoerername;
+        this.name2 = name2;
+        this.strasse = strasse;
+        this.plz = plz;
+        this.ort = ort;
+        this.adresszusatz = adresszusatz;
+        this.land = land;
+        this.sperrTerminVon = sperrTerminVon;
+        this.sperrTerminBis = sperrTerminBis;
+        this.urlaubVon = urlaubVon;
+        this.urlaubBis = urlaubBis;
+        this.urlaubName2 = urlaubName2;
+        this.urlaubStrasse = urlaubStrasse;
+        this.urlaubPlz = urlaubPlz;
+        this.urlaubOrt = urlaubOrt;
+        this.urlaubAdresszusatz = urlaubAdresszusatz;
+        this.urlaubLand = urlaubLand;
+        this.geburtsdatum = geburtsdatum;
+        this.telefonnummer = telefonnummer;
+        this.hoereremail = hoereremail;
+        this.mengenindex = mengenindex;
+        this.rueckbuchungsdatum = rueckbuchungsdatum;
     }
 
     @JsonIgnore
@@ -81,6 +165,90 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 
     public HoererEmail getHoereremail() {
         return hoereremail;
+    }
+
+    public String getAnrede() {
+        return anrede;
+    }
+
+    public String getName2() {
+        return name2;
+    }
+
+    public String getStrasse() {
+        return strasse;
+    }
+
+    public String getPlz() {
+        return plz;
+    }
+
+    public String getOrt() {
+        return ort;
+    }
+
+    public String getAdresszusatz() {
+        return adresszusatz;
+    }
+
+    public String getLand() {
+        return land;
+    }
+
+    public LocalDate getSperrTerminVon() {
+        return sperrTerminVon;
+    }
+
+    public LocalDate getSperrTerminBis() {
+        return sperrTerminBis;
+    }
+
+    public LocalDate getUrlaubVon() {
+        return urlaubVon;
+    }
+
+    public LocalDate getUrlaubBis() {
+        return urlaubBis;
+    }
+
+    public String getUrlaubName2() {
+        return urlaubName2;
+    }
+
+    public String getUrlaubStrasse() {
+        return urlaubStrasse;
+    }
+
+    public String getUrlaubPlz() {
+        return urlaubPlz;
+    }
+
+    public String getUrlaubOrt() {
+        return urlaubOrt;
+    }
+
+    public String getUrlaubAdresszusatz() {
+        return urlaubAdresszusatz;
+    }
+
+    public String getUrlaubLand() {
+        return urlaubLand;
+    }
+
+    public LocalDate getGeburtsdatum() {
+        return geburtsdatum;
+    }
+
+    public String getTelefonnummer() {
+        return telefonnummer;
+    }
+
+    public Integer getMengenindex() {
+        return mengenindex;
+    }
+
+    public LocalDate getRueckbuchungsdatum() {
+        return rueckbuchungsdatum;
     }
 
     @Override

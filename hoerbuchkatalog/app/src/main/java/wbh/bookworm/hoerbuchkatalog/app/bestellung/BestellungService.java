@@ -29,6 +29,7 @@ import org.springframework.stereotype.Service;
 import java.util.Collections;
 import java.util.Optional;
 
+// TODO Peristenz für Warenkörbe nicht notwendig -> WK nur pro Session gültig, Session persistieren
 @Service
 public final class BestellungService {
 

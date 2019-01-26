@@ -23,7 +23,7 @@
             <h:form id="meineDownloads">
                 <h:panelGroup id="blistaAbrufFehler"
                               rendered="#{meineDownloads.blistaAbrufHatFehler}"
-                              layout="block" styleClass="row notitle">
+                              layout="block" styleClass="row">
                     Die Downloads stehen temporär leider nicht zur Verfügung.<br/>
                     <br/>
                     <h:outputText value="#{meineDownloads.blistaFehlercode}"/>:
@@ -45,7 +45,7 @@
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
                 </h:panelGroup>
-                <h:panelGroup rendered="#{!meineDownloads.hoerbucherAusgeliehen}"
+                <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and !meineDownloads.hoerbucherAusgeliehen}"
                               layout="block" styleClass="row notitle">
                     Es wurden keine Hörbücher ausgeliehen!
                 </h:panelGroup>

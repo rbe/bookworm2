@@ -7,12 +7,16 @@
 package wbh.bookworm.hoerbuchkatalog.repository.config;
 
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungAppConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.KatalogAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 @Import({
@@ -22,4 +26,10 @@ import org.springframework.context.annotation.Import;
         LieferungAppConfig.class
 })
 public class RepositoryConfig {
+
+    @Bean
+    public ExecutorService executorService() {
+        return Executors.newWorkStealingPool();
+    }
+
 }

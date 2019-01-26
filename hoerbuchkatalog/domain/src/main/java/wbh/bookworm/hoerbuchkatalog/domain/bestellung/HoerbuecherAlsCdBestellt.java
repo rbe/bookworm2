@@ -22,7 +22,7 @@ public final class HoerbuecherAlsCdBestellt extends DomainEvent {
 
     private final Hoerernummer hoerernummer;
 
-    private final Set<Titelnummer> titelnummern;
+    private final transient Set<Titelnummer> titelnummern;
 
     public HoerbuecherAlsCdBestellt(final Hoerernummer hoerernummer,
                                     final Set<Titelnummer> titelnummern) {

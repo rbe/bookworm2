@@ -5,15 +5,3 @@ Tests überarbeiten:
 * Package ``.test`` einführen
 * ``*AppConfig`` in eigene Pakete, damit diese nicht vom ``ComponentScan`` erfasst werden
 ** ``spring.main.allow-bean-definition-overriding: true`` notwendig
-* ``@Bean`` kontrollieren:
-
-  [source]
-  ----
-  w.b.h.r.bestellung.WarenkorbRepository   : Initialized with aggregate storage path '/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/app/var/wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb'
-  w.b.h.r.bestellung.BestellungRepository  : Initialized with aggregate storage path '/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/app/var/wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung'
-  w.b.h.r.email.EmailTemplateRepository    : Initialized with aggregate storage path '/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/app/target/var/wbh.bookworm.hoerbuchkatalog.domain.email.HtmlEmailTemplate'
-  w.b.h.r.bestellung.MerklisteRepository   : Initialized with aggregate storage path '/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/app/var/wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste'
-  o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService
-  o.s.s.concurrent.ThreadPoolTaskExecutor  : Initializing ExecutorService 'taskExecutor'
-  w.b.h.repository.email.EmailRepository   : Initialized with aggregate storage path '/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/app/target/var/wbh.bookworm.hoerbuchkatalog.domain.email.Email'
-  ----

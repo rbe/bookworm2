@@ -51,23 +51,23 @@ public final class DlsRestConfig {
         this.checkurl = checkurl;
     }
 
-    private String bibliothek;
+    private char[] bibliothek;
 
-    public String getBibliothek() {
+    public char[] getBibliothek() {
         return bibliothek;
     }
 
-    public void setBibliothek(final String bibliothek) {
+    public void setBibliothek(final char[] bibliothek) {
         this.bibliothek = bibliothek;
     }
 
-    private String bibkennwort;
+    private char[] bibkennwort;
 
-    public String getBibkennwort() {
+    public char[] getBibkennwort() {
         return bibkennwort;
     }
 
-    public void setBibkennwort(final String bibkennwort) {
+    public void setBibkennwort(final char[] bibkennwort) {
         this.bibkennwort = bibkennwort;
     }
 

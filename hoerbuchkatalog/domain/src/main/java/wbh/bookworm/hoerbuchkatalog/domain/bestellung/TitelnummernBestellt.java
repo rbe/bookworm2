@@ -22,7 +22,7 @@ public abstract class TitelnummernBestellt extends DomainEvent {
 
     protected final Hoerernummer hoerernummer;
 
-    protected final Set<Titelnummer> titelnummern;
+    protected final transient Set<Titelnummer> titelnummern;
 
     TitelnummernBestellt(final Hoerernummer hoerernummer,
                          final Set<Titelnummer> titelnummern) {

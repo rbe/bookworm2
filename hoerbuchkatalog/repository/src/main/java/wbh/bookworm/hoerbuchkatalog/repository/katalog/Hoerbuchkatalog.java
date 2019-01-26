@@ -74,7 +74,7 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
     }
 
     public Hoerbuch hole(final Titelnummer titelnummer) {
-        return katalog.get(titelnummer);
+        /*TODO Unbekannt*/return katalog.get(titelnummer);
     }
 
     public List<Hoerbuch> hole(final Titelnummer... titelnummern) {

@@ -51,8 +51,8 @@ public class DlsBestellung {
         HttpRequest request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("%s/%s/%s",
                         dlsRestConfig.getCheckurl(), userId, aghNummer)))
-                .header("bibliothek", dlsRestConfig.getBibliothek())
-                .header("bibkennwort", dlsRestConfig.getBibkennwort())
+                .header("bibliothek", String.valueOf(dlsRestConfig.getBibliothek()))
+                .header("bibkennwort", String.valueOf(dlsRestConfig.getBibkennwort()))
                 .build();
         final byte[] result = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
                 .thenApply(HttpResponse::body)

@@ -6,17 +6,17 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-public final class SessionKey {
+final class SessionKey {
 
-    public static final String HOERERNUMMER = "hnr";
+    static final String HOERERNUMMER = "hnr";
 
+    /*
     public static final String HOERER = "hoerer";
-
     public static final String BESTELLUNG_SESSION_ID = "bestellungSessionId";
-
     public static final String HOERBUCH = "HOERBUCH";
+    */
 
-    public static final String SCOPEDTARGET_HOERERSESSION = "scopedTarget.hoererSession";
+    static final String SCOPEDTARGET_HOERERSESSION = "scopedTarget.hoererSession";
 
     private SessionKey() {
         throw new AssertionError();

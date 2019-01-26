@@ -48,15 +48,21 @@ public class DlsLieferung {
                     dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
                     url);
             // TODO antwort.length == 0
-            final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
-            if (dlsAntwort instanceof DlsWerke) {
-                return Optional.of((DlsWerke) dlsAntwort);
-            } else if (dlsAntwort instanceof DlsFehlermeldung) {
-                final DlsWerke dlsWerke = new DlsWerke();
-                dlsWerke.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
-                return Optional.of(dlsWerke);
+            if (antwort.length > 0) {
+                final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
+                if (dlsAntwort instanceof DlsWerke) {
+                    return Optional.of((DlsWerke) dlsAntwort);
+                } else if (dlsAntwort instanceof DlsFehlermeldung) {
+                    final DlsWerke dlsWerke = new DlsWerke();
+                    dlsWerke.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
+                    return Optional.of(dlsWerke);
+                } else {
+                    LOGGER.error("Antwort des blista DLS kein bekannter Antworttyp: {}", dlsAntwort);
+                    return Optional.empty();
+                }
             } else {
-                throw new IllegalStateException();
+                LOGGER.warn("Antwort des blista DLS hat falsche Länge: {}", antwort.length);
+                return Optional.empty();
             }
         } catch (IOException e) {
             LOGGER.error("", e);
@@ -71,20 +77,26 @@ public class DlsLieferung {
                     hoerernummer, aghNummer));
             /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
                     Files.newInputStream(downloadToFile(hoerernummer, "bestellung-" + aghNummer, url)));*/
-            final byte[] download = RestServiceClient.download(
+            final byte[] antwort = RestServiceClient.download(
                     dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
                     url);
-            final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(download);
-            LOGGER.trace("{}: Abholen der Bestellung dauerte {} ms", Thread.currentThread().getName(),
-                    (System.nanoTime() - startBook) / 1_000_000);
-            if (dlsAntwort instanceof DlsBook) {
-                return Optional.of((DlsBook) dlsAntwort);
-            } else if (dlsAntwort instanceof DlsFehlermeldung) {
-                final DlsBook dlsBook = new DlsBook();
-                dlsBook.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
-                return Optional.of(dlsBook);
+            if (antwort.length > 0) {
+                final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
+                LOGGER.trace("{}: Abholen der Bestellung dauerte {} ms", Thread.currentThread().getName(),
+                        (System.nanoTime() - startBook) / 1_000_000);
+                if (dlsAntwort instanceof DlsBook) {
+                    return Optional.of((DlsBook) dlsAntwort);
+                } else if (dlsAntwort instanceof DlsFehlermeldung) {
+                    final DlsBook dlsBook = new DlsBook();
+                    dlsBook.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
+                    return Optional.of(dlsBook);
+                } else {
+                    LOGGER.warn("");
+                    return Optional.empty();
+                }
             } else {
-                throw new IllegalStateException();
+                LOGGER.warn("");
+                return Optional.empty();
             }
         } catch (IOException e) {
             LOGGER.error("", e);

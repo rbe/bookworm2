@@ -25,6 +25,12 @@
             <groupId>aoc.platform</groupId>
             <artifactId>aoc.platform</artifactId>
         </dependency>
+        <!-- Apache POI -->
+        <!--<dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>4.0.1</version>
+        </dependency>-->
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>

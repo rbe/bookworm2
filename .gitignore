@@ -5,27 +5,28 @@
 var/
 documentation/src/main/resources/architecture/
 documentation/src/main/resources/WBH/
+documentation/src/main/resources/blista/
 
 approxy/src/main/php/approxy/vendor/
 
 # Hoerbuchkatalog
 # static resources
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/images
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/img
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/images/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/img/
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates
-
-# Maven
-pom.xml.versionsBackup
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
 
 # Compiler
 *.class
 out/
+
+# Maven
 target/
+pom.xml.versionsBackup
 
 # IntelliJ
 *.iml

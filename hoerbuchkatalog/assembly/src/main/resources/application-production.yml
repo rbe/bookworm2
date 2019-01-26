@@ -50,7 +50,7 @@ server:
         path: /hoerbuchkatalog
         http-only: true
         secure: false
-        max-age: 3600
+        max-age: 28800
       tracking-modes: COOKIE
       persistent: false
 

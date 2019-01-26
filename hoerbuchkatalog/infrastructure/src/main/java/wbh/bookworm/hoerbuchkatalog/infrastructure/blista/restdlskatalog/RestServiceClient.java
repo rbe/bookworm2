@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.Objects;
 
 public final class RestServiceClient {
 
@@ -51,6 +52,7 @@ public final class RestServiceClient {
     }
 
     public static DlsAntwort werteAntwortAus(final byte[] antwort) {
+        Objects.requireNonNull(antwort);
         try {
             final Class<? extends DlsAntwort> valueType = errateAntworttyp(antwort);
             LOGGER.trace("valueType={}", valueType);
@@ -66,14 +68,14 @@ public final class RestServiceClient {
     }
 
     /* TODO Java 11 HttpClient */
-    public static byte[] download(/* TODO char[] */final String username, final String password,
-                                                   final URL url) throws IOException {
+    public static byte[] download(final char[] username, final char[] password,
+                                  final URL url) throws IOException {
         final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
         connection.setConnectTimeout(RestServiceHttpConfig.CONNECT_TIMEOUT);
         connection.setReadTimeout(RestServiceHttpConfig.READ_TIMEOUT);
         connection.setInstanceFollowRedirects(true);
-        connection.addRequestProperty("bibliothek", username);
-        connection.addRequestProperty("bibkennwort", password);
+        connection.addRequestProperty("bibliothek", String.valueOf(username));
+        connection.addRequestProperty("bibkennwort", String.valueOf(password));
         connection.addRequestProperty("Accept", "text/xml;charset=UTF-8");
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try {

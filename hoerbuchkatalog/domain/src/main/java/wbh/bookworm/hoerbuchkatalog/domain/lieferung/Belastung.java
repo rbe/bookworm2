@@ -1,0 +1,50 @@
+/*
+ * Copyright (C) 2011-2019 art of coding UG, https://www.art-of-coding.eu
+ * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+ * All rights reserved. Use is subject to license terms.
+ */
+
+package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+
+import aoc.ddd.model.DomainValueObject;
+
+import java.time.LocalDate;
+
+public final class Belastung extends DomainValueObject {
+
+    private static final long serialVersionUID = -1L;
+
+    private LocalDate belastungsdatum;
+
+    private String boxnummer;
+
+    private Titelnummer titelnummer;
+
+    public Belastung(final LocalDate belastungsdatum,
+                     final String boxnummer, final Titelnummer titelnummer) {
+        this.belastungsdatum = belastungsdatum;
+        this.boxnummer = boxnummer;
+        this.titelnummer = titelnummer;
+    }
+
+    public LocalDate getBelastungsdatum() {
+        return belastungsdatum;
+    }
+
+    public String getBoxnummer() {
+        return boxnummer;
+    }
+
+    public Titelnummer getTitelnummer() {
+        return titelnummer;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Belastung{belastungsdatum=%s, boxnummer='%s', titelnummer=%s}",
+                belastungsdatum, boxnummer, titelnummer);
+    }
+
+}

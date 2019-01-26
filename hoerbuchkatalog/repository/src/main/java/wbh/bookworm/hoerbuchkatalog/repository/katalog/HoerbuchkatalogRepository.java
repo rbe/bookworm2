@@ -52,7 +52,7 @@ public class HoerbuchkatalogRepository
 
     private ScheduledFuture<?> katalogeAktualisierenScheduledFuture;
 
-    private final HoerbuchkatalogMapper hoerbuchkatalogMapper;
+    private final GesamtDatToHoerbuchMapper gesamtDatToHoerbuchMapper;
 
     private final AghNummernRepository aghNummernRepository;
 
@@ -64,7 +64,7 @@ public class HoerbuchkatalogRepository
     HoerbuchkatalogRepository(final ApplicationContext applicationContext,
                               final HoerbuchkatalogConfig hoerbuchkatalogConfig,
                               final TaskScheduler taskScheduler,
-                              final HoerbuchkatalogMapper hoerbuchkatalogMapper,
+                              final GesamtDatToHoerbuchMapper gesamtDatToHoerbuchMapper,
                               final AghNummernRepository aghNummernRepository,
                               final HoerbuchkatalogArchiv hoerbuchkatalogArchiv) {
         /* TODO super(Hoerbuchkatalog.class, HoerbuchkatalogId.class, hoerbuchkatalogConfig.getDirectory());*/
@@ -72,7 +72,7 @@ public class HoerbuchkatalogRepository
         this.hoerbuchkatalogConfig = hoerbuchkatalogConfig;
         wbhKatalogDateiname = Path.of(hoerbuchkatalogConfig.getWbhGesamtdatFilename());
         this.taskScheduler = taskScheduler;
-        this.hoerbuchkatalogMapper = hoerbuchkatalogMapper;
+        this.gesamtDatToHoerbuchMapper = gesamtDatToHoerbuchMapper;
         this.aghNummernRepository = aghNummernRepository;
         this.hoerbuchkatalogArchiv = hoerbuchkatalogArchiv;
         this.aktuellerHoerbuchkatalog = new AtomicReference<>();
@@ -210,7 +210,8 @@ public class HoerbuchkatalogRepository
     private Set<Hoerbuch> importiereHoerbuchkatalogAusArchiv(final Path gesamtDat) {
         Set<Hoerbuch> hoerbuecher = null;
         try {
-            hoerbuecher = hoerbuchkatalogMapper.importiereAusArchiv(gesamtDat);
+            hoerbuecher = gesamtDatToHoerbuchMapper.importiere(gesamtDat,
+                    hoerbuchkatalogConfig.getWbhGesamtdatCharset());
         } catch (HoerbuchkatalogArchivException e) {
             LOGGER.error("Unbekannter Fehler beim Importieren des Hörbuchkatalogs aus dem Archiv", e);
         }

@@ -35,7 +35,8 @@ public enum Sachgebiet {
     V("Blindenwesen"),
     W("Hörspiele – Dramen"),
     X("Stimme des Autors"),
-    Z("Bücher in leichter/einfacher Sprache");
+    Z("Bücher in leichter/einfacher Sprache"),
+    UNBEKANNT("Unbekannt");
 
     private String description;
 

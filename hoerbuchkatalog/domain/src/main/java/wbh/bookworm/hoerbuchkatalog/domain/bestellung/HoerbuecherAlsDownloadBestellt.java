@@ -22,7 +22,7 @@ public final class HoerbuecherAlsDownloadBestellt extends DomainEvent {
 
     private final Hoerernummer hoerernummer;
 
-    private final Set<AghNummer> aghNummern;
+    private final transient Set<AghNummer> aghNummern;
 
     public HoerbuecherAlsDownloadBestellt(final Hoerernummer hoerernummer,
                                           final Set<AghNummer> aghNummern) {

@@ -95,7 +95,7 @@ public class MeineDownloads {
         return (!hoererSession.isBlistaAbrufHatFehler()
                 //&& meineBestellung.isBestellungenVorhanden()
                 && !hoererSession.bezugsfaehigeDownloads().isEmpty()
-                && null == stichwort || stichwort.isBlank())
+                && (null == stichwort || stichwort.isBlank()))
                 || isStichwortHatTreffer();
     }
 

@@ -20,43 +20,31 @@ public class Navigation implements Serializable {
 
     private static final String FRT = "?faces-redirect=true";
 
-    static final String NAV_SUCHE = "katalogsuche.xhtml";
+    private static final String NAV_SUCHE = "katalogsuche.xhtml";
 
     static final String NAV_SUCHERGEBNIS = "katalogsuchergebnis.xhtml";
 
-    static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml";
+    private static final String NAV_HOERBUCHDETAIL = "hoerbuchdetail.xhtml";
 
     static final String NAV_KEINE_SUCHERGEBNISSE = "keine-suchergebnisse.xhtml";
 
-    static final String NAV_MERKLISTE = "meinemerkliste.xhtml";
+    private static final String NAV_MERKLISTE = "meinemerkliste.xhtml";
 
-    static final String NAV_WARENKORB = "meinwarenkorb.xhtml";
+    private static final String NAV_WARENKORB = "meinwarenkorb.xhtml";
 
     private static final String NAV_BESTELLUNG_ERFOLGREICH = "bestellung-erfolgreich.xhtml";
 
-    static final String NAV_DOWNLOADS = "meinedownloads.xhtml";
+    private static final String NAV_DOWNLOADS = "meinedownloads.xhtml";
 
     private final HoererSession hoererSession;
 
-    private final Katalogsuche katalogsuche;
-
     private final Katalogsuchergebnis katalogsuchergebnis;
-
-    private final MeineMerkliste meineMerkliste;
-
-    private final MeinWarenkorb meinWarenkorb;
 
     @Autowired
     public Navigation(final HoererSession hoererSession,
-                      final Katalogsuche katalogsuche,
-                      final Katalogsuchergebnis katalogsuchergebnis,
-                      final MeineMerkliste meineMerkliste,
-                      final MeinWarenkorb meinWarenkorb) {
+                      final Katalogsuchergebnis katalogsuchergebnis) {
         this.hoererSession = hoererSession;
-        this.katalogsuche = katalogsuche;
         this.katalogsuchergebnis = katalogsuchergebnis;
-        this.meineMerkliste = meineMerkliste;
-        this.meinWarenkorb = meinWarenkorb;
     }
 
     private String getViewId() {
@@ -87,7 +75,6 @@ public class Navigation implements Serializable {
     }
 
     public String zurErneutenSuche() {
-        katalogsuche.leeren();
         katalogsuchergebnis.leeren();
         return NAV_SUCHE;
     }
@@ -101,7 +88,7 @@ public class Navigation implements Serializable {
     }
 
     public boolean isLinkZurMerklisteAnzeigen() {
-        return hoererSession.isHoererIstBekannt() && meineMerkliste.getAnzahl() > 0;
+        return hoererSession.isHoererIstBekannt() && hoererSession.anzahlTitelnummernAufMerkliste() > 0;
     }
 
     public String zuMeinerMerkliste() {
@@ -109,7 +96,7 @@ public class Navigation implements Serializable {
     }
 
     public boolean isLinkZumWarenkorbAnzeigen() {
-        return meinWarenkorb.getAnzahlGesamt() > 0;
+        return hoererSession.anzahlImWarenkorbGesamt() > 0;
     }
 
     public String zuMeinemWarenkorb() {

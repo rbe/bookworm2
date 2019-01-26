@@ -25,6 +25,19 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
 
+    public static final Hoerbuch UNBEKANNT = new Hoerbuch(Sachgebiet.UNBEKANNT,
+            new Titelnummer("000000"),
+            "unbekannt",
+            "unbekannt", "unbekannt",
+            "unbekannt",
+            "unbekannt", "unbekannt", "unbekannt",
+            "unbekannt", "unbekannt", "0,00",
+            "unbekannt", "unbekannt",
+            "unbekannt",
+            "0",
+            "unbekannt",
+            "", null, false);
+
     private Titelnummer titelnummer; // 6 0 (nummerisch)
 
     private Sachgebiet sachgebiet;
