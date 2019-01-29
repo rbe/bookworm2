@@ -6,14 +6,14 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
 import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Set;
+import java.util.List;
 
 @Component
 final class BestellkartenMapper {
@@ -55,8 +55,12 @@ final class BestellkartenMapper {
             /* BKPDAT: LETZT.BEST.DATUM */8,
     };
 
-    Set<Hoerer> importiere(final Path bkstpDat, final Charset charset) {
-        return Collections.emptySet();
+    void leseAs400Datei(final Path bkstpDat, final Charset charset,
+                               int expectedLineCount) {
+    }
+
+    public List<Bestellkarte> bestellkartenFuer(final Hoerernummer hoerernummer) {
+        return null;
     }
 
 }

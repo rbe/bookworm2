@@ -9,7 +9,6 @@ package aoc.tools.datatransfer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.util.LinkedList;
@@ -18,15 +17,9 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Scanner;
 
-public final class CsvParser implements As400FileParser {
+public final class CsvParser implements LineFileParser {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvParser.class);
-
-    private static final String EMPTY_STRING = "";
-
-    private static final String FIELD_SEPARATOR = ",";
-
-    private static final String FIELD_QUOTE = "\"";
 
     private final CsvFormat csvFormat;
 
@@ -42,18 +35,18 @@ public final class CsvParser implements As400FileParser {
         LOGGER.trace("Parsing line: {}", line);
         final List<String> values = new LinkedList<>();
         try (final Scanner scanner = new Scanner(line)) {
-            scanner.useDelimiter(EMPTY_STRING);
+            scanner.useDelimiter(csvFormat.EMPTY_STRING);
             boolean quotedField = false;
             final StringBuilder temp = new StringBuilder();
             while (scanner.hasNext()) {
                 String token = scanner.next();
-                if (token.equals(FIELD_QUOTE)) {
+                if (token.equals(csvFormat.FIELD_QUOTE)) {
                     quotedField = !quotedField;
                 }
-                if (!quotedField && token.equals(FIELD_SEPARATOR)) {
+                if (!quotedField && token.equals(csvFormat.FIELD_SEPARATOR)) {
                     values.add(temp.toString());
                     temp.delete(0, temp.length());
-                } else if (!token.equals(FIELD_QUOTE)) {
+                } else if (!token.equals(csvFormat.FIELD_QUOTE)) {
                     temp.append(token);
                 }
             }
@@ -67,10 +60,17 @@ public final class CsvParser implements As400FileParser {
         return arr;
     }
 
+    /*@Override
+    public List<List<String[]>> parseLines(final Charset charset, final int expectedLineCount,
+                                         final Path... path) throws IOException {
+        this.rows = LineFileParser.super.parseLines(charset, expectedLineCount, path);
+        return rows;
+    }*/
+
     @Override
-    public List<String[]> parseLines(final Path path, final Charset charset,
-                                     final int expectedLineCount) throws IOException {
-        this.rows = As400FileParser.super.parseLines(path, charset, expectedLineCount);
+    public List<String[]> flatParseLines(final Charset charset, final int expectedLineCount,
+                                         final Path... path) {
+        this.rows = LineFileParser.super.flatParseLines(charset, expectedLineCount, path);
         return rows;
     }
 
@@ -141,15 +141,11 @@ public final class CsvParser implements As400FileParser {
     }
 
     public String[] findRowByColumnValue(final String field, final String value) {
-        final Optional<String[]> row = csvFormat.findField(field)
+        return csvFormat.findField(field)
                 .flatMap(csvField -> rows.parallelStream()
                         .filter(s -> s[csvField.getIndex()].equalsIgnoreCase(value))
-                        .findFirst());
-        if (row.isPresent()) {
-            return row.get();
-        } else {
-            return new String[0]; //throw new CsvFieldNotFoundException(field);
-        }
+                        .findFirst())
+                .orElseGet(() -> new String[0]);
     }
 
 }

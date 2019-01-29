@@ -17,6 +17,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
 
 import aoc.tools.datatransfer.CsvFormat;
 import aoc.tools.datatransfer.CsvParser;
+import aoc.tools.datatransfer.Executor;
 import aoc.tools.datatransfer.ParseHelper;
 
 import org.slf4j.Logger;
@@ -30,11 +31,11 @@ import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -44,9 +45,6 @@ import static java.util.function.Predicate.not;
 final class HoererMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapper.class);
-
-    // TODO Konfiguration
-    private static final int TIMEOUT_SECONDS = 60;
 
     private final ExecutorService executorService;
 
@@ -244,42 +242,32 @@ final class HoererMapper {
         this.executorService = executorService;
     }
 
-    private void leseAs400Dateien(final Path hoerstpCsv, final Path hoekzstpCsv, final Path hoebstpCsv,
-                                  final Charset csvCharset, int expectedLineCount) {
-        final LocalDateTime start = LocalDateTime.now();
-        try {
-            executorService.submit(() -> hoerstp.parseLines(hoerstpCsv, csvCharset, expectedLineCount));
-            executorService.submit(() -> hoekzstp.parseLines(hoekzstpCsv, csvCharset, expectedLineCount));
-            executorService.submit(() -> hoebstp.parseLines(hoebstpCsv, csvCharset, expectedLineCount));
-            executorService.shutdown();
-            executorService.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            LOGGER.debug("executorService: shutdown={}, terminated={}",
-                    executorService.isShutdown(), executorService.isTerminated());
-            LOGGER.info("Alle CSV-Dateien gelesen (Anzahl: {} HOERSTP/{} HOEKZ/{} HOEBSTP), es dauerte {} ms",
-                    hoerstp.size(), hoekzstp.size(), hoebstp.size(),
-                    Duration.between(start, LocalDateTime.now()).toMillis());
-            verheirateAs400Dateien();
-        } catch (InterruptedException e) {
-            LOGGER.warn("Interrupted", e);
-            Thread.currentThread().interrupt();
-        }
-    }
-
-    private void verheirateAs400Dateien() {
-        final LocalDateTime start = LocalDateTime.now();
+    public void leseAs400Dateien(final Charset csvCharset, int expectedLineCount,
+                                 final Path hoerstpCsv, final Path hoekzstpCsv, final Path hoebstpCsv) {
+        LocalDateTime start = LocalDateTime.now();
+        Executor.invokeAllAndGet(executorService, Arrays.asList(
+                () -> hoerstp.flatParseLines(csvCharset, expectedLineCount, hoerstpCsv),
+                () -> hoekzstp.flatParseLines(csvCharset, expectedLineCount, hoekzstpCsv),
+                () -> hoebstp.flatParseLines(csvCharset, expectedLineCount, hoebstpCsv)
+        ));
+        LOGGER.info("Alle CSV-Dateien gelesen (Anzahl: {} HOERSTP/{} HOEKZ/{} HOEBSTP), es dauerte {} ms",
+                hoerstp.size(), hoekzstp.size(), hoebstp.size(),
+                Duration.between(start, LocalDateTime.now()).toMillis());
+        start = LocalDateTime.now();
         hoerer = hoerstp.getRows()
                 .parallelStream()
                 .map(this::hoererAusAs400Dateien)
                 .filter(not(Objects::isNull))
                 .collect(Collectors.toUnmodifiableMap(Hoerer::getHoerernummer, o -> o));
         LOGGER.info("Alle CSV-Dateien miteinander verknüpft ({} HOERSTP -> {} Hörer), es dauerte {} ms",
-                hoerstp.size(), hoerer.size(), Duration.between(start, LocalDateTime.now()).toMillis());
+                hoerstp.size(), hoerer.size(),
+                Duration.between(start, LocalDateTime.now()).toMillis());
     }
 
     private Hoerer hoererAusAs400Dateien(final String[] hoerstpRow) {
         final Hoerernummer hoerernummer =
                 new Hoerernummer(hoerstp.getValue(hoerstpRow, "HOENR"));
-        LOGGER.debug("Verheirate Daten für Hörer {}", hoerernummer);
+        LOGGER.trace("Verheirate Daten für Hörer {}", hoerernummer);
         try {
             final String[] hoekzstpRow =
                     hoekzstp.findRowByColumnValue("HOEKZN", hoerernummer.getValue());

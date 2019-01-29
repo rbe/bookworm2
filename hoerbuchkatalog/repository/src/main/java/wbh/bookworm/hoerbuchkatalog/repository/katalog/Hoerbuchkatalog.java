@@ -25,7 +25,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 // TODO ...ist eine Kombination: Set<Hoerbuch> mit LuceneIndex
-// TODO Version nutzen, damit JSF Bean wissen, dass sich Daten geändert haben
+// TODO Daten geändert->zB JSF Beans: a) Version nutzen b) Event schicken
 public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, HoerbuchkatalogId> {
 
     private final transient Map<Titelnummer, Hoerbuch> katalog;

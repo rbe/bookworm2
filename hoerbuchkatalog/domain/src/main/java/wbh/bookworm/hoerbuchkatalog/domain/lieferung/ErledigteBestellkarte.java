@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.model.DomainValueObject;
@@ -17,21 +18,31 @@ public final class ErledigteBestellkarte extends DomainValueObject {
 
     private static final long serialVersionUID = -1L;
 
+    private final Hoerernummer hoerernummer;
+
     private final Titelnummer titelnummer;
 
     private final LocalDate ausleihdatum;
 
-    private ErledigteBestellkarte(final Titelnummer titelnummer, final LocalDate ausleihdatum) {
+    private ErledigteBestellkarte(final Hoerernummer hoerernummer,
+                                  final Titelnummer titelnummer, final LocalDate ausleihdatum) {
+        this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
         this.ausleihdatum = ausleihdatum;
     }
 
-    public static ErledigteBestellkarte of(final String titelnummer, final String ausleihdatum) {
+    public static ErledigteBestellkarte of(final String hoerernummer,
+                                           final String titelnummer, final String ausleihdatum) {
         LocalDate _ausleihdatum = null;
         if (!ausleihdatum.equals("0")) {
             _ausleihdatum = LocalDate.parse(ausleihdatum, DateTimeFormatter.BASIC_ISO_DATE);
         }
-        return new ErledigteBestellkarte(new Titelnummer(titelnummer), _ausleihdatum);
+        return new ErledigteBestellkarte(new Hoerernummer(hoerernummer),
+                new Titelnummer(titelnummer), _ausleihdatum);
+    }
+
+    public Hoerernummer getHoerernummer() {
+        return hoerernummer;
     }
 
     public Titelnummer getTitelnummer() {

@@ -10,7 +10,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import aoc.tools.datatransfer.ColumnPositionAs400FileParser;
+import aoc.tools.datatransfer.ColumnPositionLineFileParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,10 +53,10 @@ final class GesamtDatToHoerbuchMapper {
             /* arr#18: AGH Nummer */1017,
     };
 
-    private final ColumnPositionAs400FileParser columnPositionDatParser;
+    private final ColumnPositionLineFileParser columnPositionDatParser;
 
     public GesamtDatToHoerbuchMapper() {
-        columnPositionDatParser = new ColumnPositionAs400FileParser(COLUMN_POSITIONS);
+        columnPositionDatParser = new ColumnPositionLineFileParser(COLUMN_POSITIONS);
     }
 
     Set<Hoerbuch> importiere(final Path gesamtDat, final Charset charset) {
@@ -65,8 +65,8 @@ final class GesamtDatToHoerbuchMapper {
                 gesamtDat, charset);
         try {
             /*
-            final ColumnPositionAs400FileParser columnPositionDatParser =
-                    new ColumnPositionAs400FileParser(COLUMN_POSITIONS);
+            final ColumnPositionLineFileParser columnPositionDatParser =
+                    new ColumnPositionLineFileParser(COLUMN_POSITIONS);
             columnPositionDatParser.parse(gesamtDat, StandardCharsets.ISO_8859_1, 40_000,
                     s -> s.length == 19, this::ausGesamtDatEintrag);
             */

@@ -6,30 +6,31 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+
 import aoc.tools.datatransfer.CsvFormat;
 import aoc.tools.datatransfer.CsvParser;
+import aoc.tools.datatransfer.FileSplitter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Component
 final class ErledigteBestellkartenMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErledigteBestellkartenMapper.class);
-
-    // TODO Konfiguration
-    private static final int TIMEOUT_SECONDS = 60;
-
-    private final ExecutorService executorService;
 
     private static final CsvFormat BKRXSTP_CSVFORMAT = new CsvFormat();
     static {
@@ -40,27 +41,39 @@ final class ErledigteBestellkartenMapper {
     }
     private final CsvParser bkrxstp = new CsvParser(BKRXSTP_CSVFORMAT);
 
-    @Autowired
-    public ErledigteBestellkartenMapper(final ExecutorService executorService) {
-        this.executorService = executorService;
-    }
+    private Map<Hoerernummer, List<ErledigteBestellkarte>> erledigteBestellkarten;
 
-    private void leseAs400Datei(final Path bkrxstpCsv, final Charset csvCharset,
-                                int expectedLineCount) {
-        final LocalDateTime start = LocalDateTime.now();
+    void leseAs400Datei(final Charset csvCharset, int expectedLineCount,
+                        final Path bkrxstpCsv) {
+        LocalDateTime start = LocalDateTime.now();
         try {
-            executorService.submit(() -> bkrxstp.parseLines(bkrxstpCsv, csvCharset, expectedLineCount));
-            executorService.shutdown();
-            executorService.awaitTermination(TIMEOUT_SECONDS, TimeUnit.SECONDS);
-            LOGGER.debug("executorService: shutdown={}, terminated={}",
-                    executorService.isShutdown(), executorService.isTerminated());
+            final Path[] split = FileSplitter.split(bkrxstpCsv, csvCharset,
+                    Runtime.getRuntime().availableProcessors() / 2);
+            LOGGER.debug("Lese CSV-Dateien: {}", Arrays.asList(split));
+            bkrxstp.flatParseLines(csvCharset, expectedLineCount, split);
             LOGGER.info("CSV-Datei gelesen (Anzahl: {} BKRXSTP), es dauerte {} ms",
                     bkrxstp.size(),
                     Duration.between(start, LocalDateTime.now()).toMillis());
-        } catch (InterruptedException e) {
-            LOGGER.warn("Interrupted", e);
-            Thread.currentThread().interrupt();
+            start = LocalDateTime.now();
+            erledigteBestellkarten = bkrxstp.getRows()
+                    .parallelStream()
+                    .map(bkrxstpRow -> ErledigteBestellkarte.of(
+                            bkrxstp.getValue(bkrxstpRow, "BEXLNR"),
+                            bkrxstp.getValue(bkrxstpRow, "BEXTIT"),
+                            bkrxstp.getValue(bkrxstpRow, "BEXDAT")))
+                    //.filter(not(Objects::isNull))
+                    .collect(Collectors.groupingBy(ErledigteBestellkarte::getHoerernummer,
+                            Collectors.mapping(o -> o, Collectors.toList())));
+            LOGGER.info("Erledigte Bestellkarten erzeugt ({} BKRXSTP -> {} erledigte Bestellkarten), es dauerte {} ms",
+                    bkrxstp.size(), erledigteBestellkarten.size(),
+                    Duration.between(start, LocalDateTime.now()).toMillis());
+        } catch (IOException e) {
+            LOGGER.error("", e);
         }
+    }
+
+    public List<ErledigteBestellkarte> erledigteBestellkartenFuer(final Hoerernummer hoerernummer) {
+        return erledigteBestellkarten.get(hoerernummer);
     }
 
 }

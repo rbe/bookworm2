@@ -9,37 +9,63 @@ package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
+@SpringBootTest(classes = {NutzerdatenTestAppConfig.class})
+@ExtendWith(SpringExtension.class)
 class HoererMapperTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapperTest.class);
 
-    @Test
-    void shouldAlleHoererdatenImportieren() {
+    private final HoererMapper hoererMapper;
+
+    @Autowired
+    HoererMapperTest(final HoererMapper hoererMapper) {
+        this.hoererMapper = hoererMapper;
+    }
+
+    @BeforeEach
+    void beforeAll() {
         final String string = "/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/repository";
         final Path hoerstp = Path.of(string + "/src/test/var/nutzerdaten/hoerstp.csv");
         final Path hoebstp = Path.of(string + "/src/test/var/nutzerdaten/hoebstp.csv");
         final Path hoekzstp = Path.of(string + "/src/test/var/nutzerdaten/hoekzstp.csv");
-        final HoererMapper hoererMapper = new HoererMapper(hoerstp, hoekzstp, hoebstp,
-                StandardCharsets.ISO_8859_1, 9_000);
-        /*
+        hoererMapper.leseAs400Dateien(StandardCharsets.ISO_8859_1, 9_000,
+                hoerstp, hoekzstp, hoebstp);
+    }
+
+    /* TODO CsvParserTest
+    @Test
+    void shouldGetValue() {
         System.out.println(csvParser.maybeGetValue(0, "HOENR"));
         System.out.println(csvParser.maybeGetValue(0, "HÖNR"));
         System.out.println(csvParser.getValue(0, "HOERER NR."));
         System.out.println(csvParser.getValue(0, "HÖRER NR."));
-        */
-        /*
+    }
+    */
+
+    /* TODO CsvParserTest
+    @Test
+    void shouldGetColumn() {
         LocalDateTime start = LocalDateTime.now();
-        final String[] hoenrs = hoererMapper.hoerstp.getColumn("HOENR");
+        final String[] hoenrs = csvParser.getColumn("HOENR");
         System.out.println("getColumn: " + hoenrs.length
                 + ": " + Duration.between(start, LocalDateTime.now()).toMillis());
-        */
+    }
+    */
+
+    @Test
+    void shouldAlleHoererdatenImportieren() {
         final Hoerernummer hoerer80170 = new Hoerernummer("80170");
         final Hoerer hoerer = hoererMapper.hoerer(hoerer80170);
         LOGGER.debug("hoerer(80170): {}", hoerer);

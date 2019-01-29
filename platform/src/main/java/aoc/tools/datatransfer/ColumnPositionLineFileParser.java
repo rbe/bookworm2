@@ -11,13 +11,13 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 
-public final class ColumnPositionAs400FileParser implements As400FileParser {
+public final class ColumnPositionLineFileParser implements LineFileParser {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnPositionAs400FileParser.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ColumnPositionLineFileParser.class);
 
     private final int[] columnPositions;
 
-    public ColumnPositionAs400FileParser(final int[] columnPositions) {
+    public ColumnPositionLineFileParser(final int[] columnPositions) {
         this.columnPositions = Arrays.copyOf(columnPositions, columnPositions.length);
     }
 

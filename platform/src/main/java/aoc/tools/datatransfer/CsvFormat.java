@@ -17,6 +17,12 @@ public final class CsvFormat {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CsvFormat.class);
 
+    final String EMPTY_STRING = "";
+
+    final String FIELD_SEPARATOR = ",";
+
+    final String FIELD_QUOTE = "\"";
+
     private final List<CsvField> csvFields;
 
     private int index;
