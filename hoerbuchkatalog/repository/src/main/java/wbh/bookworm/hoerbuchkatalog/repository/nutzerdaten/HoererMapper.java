@@ -14,11 +14,11 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
+import wbh.bookworm.hoerbuchkatalog.repository.as400.Datenformat;
 
 import aoc.tools.datatransfer.CsvFormat;
 import aoc.tools.datatransfer.CsvParser;
 import aoc.tools.datatransfer.Executor;
-import aoc.tools.datatransfer.ParseHelper;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +49,7 @@ final class HoererMapper {
     private final ExecutorService executorService;
 
     private static final CsvFormat HOERSTP_CSVFORMAT = new CsvFormat();
+
     static {
         HOERSTP_CSVFORMAT.addField("HOENR", "HOERER NR");
         HOERSTP_CSVFORMAT.addField("HOEAN", "ANREDE");
@@ -103,9 +104,11 @@ final class HoererMapper {
         HOERSTP_CSVFORMAT.addField("HOEMST", "MAHNSTUFE");
         HOERSTP_CSVFORMAT.addField("HOLDAT", "LÖSCH-DATUM");
     }
+
     private final CsvParser hoerstp = new CsvParser(HOERSTP_CSVFORMAT);
 
     private static final CsvFormat HOEKZSTP_CSVFORMAT = new CsvFormat();
+
     static {
         HOEKZSTP_CSVFORMAT.addField("HOEKZN", "HOERER NR.");
         HOEKZSTP_CSVFORMAT.addField("HOEKZ2", "");
@@ -148,9 +151,11 @@ final class HoererMapper {
         HOEKZSTP_CSVFORMAT.addField("HOKZ24", "FREIE FELDER");
         HOEKZSTP_CSVFORMAT.addField("HOKZ25", "FREIE FELDER");
     }
+
     private final CsvParser hoekzstp = new CsvParser(HOEKZSTP_CSVFORMAT);
 
     private static final CsvFormat HOEBSTP_CSVFORMAT = new CsvFormat();
+
     static {
         HOEBSTP_CSVFORMAT.addField("BUHNR", "HOERER NR.");
         HOEBSTP_CSVFORMAT.addField("BUANM", "ANMELDEDATUM");
@@ -233,6 +238,7 @@ final class HoererMapper {
         HOEBSTP_CSVFORMAT.addField("BURDAT", "RÜCK.DAT");
         HOEBSTP_CSVFORMAT.addField("BULKZ", "LÖSCH KZ");
     }
+
     private final CsvParser hoebstp = new CsvParser(HOEBSTP_CSVFORMAT);
 
     private Map<Hoerernummer, Hoerer> hoerer;
@@ -242,8 +248,8 @@ final class HoererMapper {
         this.executorService = executorService;
     }
 
-    public void leseAs400Dateien(final Charset csvCharset, int expectedLineCount,
-                                 final Path hoerstpCsv, final Path hoekzstpCsv, final Path hoebstpCsv) {
+    void leseAs400Dateien(final Charset csvCharset, int expectedLineCount,
+                          final Path hoerstpCsv, final Path hoekzstpCsv, final Path hoebstpCsv) {
         LocalDateTime start = LocalDateTime.now();
         Executor.invokeAllAndGet(executorService, Arrays.asList(
                 () -> hoerstp.flatParseLines(csvCharset, expectedLineCount, hoerstpCsv),
@@ -285,13 +291,13 @@ final class HoererMapper {
                     hoerstp.getValue(hoerstpRow, "HOEORT"),
                     hoerstp.getValue(hoerstpRow, "HOENPB"),
                     hoekzstp.getValue(hoekzstpRow, "HOELAN"),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOERSTP/HOETV",
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOERSTP/HOETV",
                             hoerstp.getValue(hoerstpRow, "HOETV")),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOERSTP/HOETB",
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOERSTP/HOETB",
                             hoerstp.getValue(hoerstpRow, "HOETB")),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOERSTP/HOEUV",
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOERSTP/HOEUV",
                             hoerstp.getValue(hoerstpRow, "HOEUV")),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOERSTP/HOEUB",
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOERSTP/HOEUB",
                             hoerstp.getValue(hoerstpRow, "HOEUB")),
                     hoerstp.getValue(hoerstpRow, "HOUN2"),
                     hoerstp.getValue(hoerstpRow, "HOUSTR"),
@@ -299,12 +305,12 @@ final class HoererMapper {
                     hoerstp.getValue(hoerstpRow, "HOUORT"),
                     hoerstp.getValue(hoerstpRow, "HOUNPB"),
                     hoekzstp.getValue(hoekzstpRow, "HOELA2"),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOERSTP/HOEGBD",
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOERSTP/HOEGBD",
                             hoerstp.getValue(hoerstpRow, "HOEGBD")),
                     hoerstp.getValue(hoerstpRow, "HOETEL"),
                     new HoererEmail(hoekzstp.getValue(hoekzstpRow, "HOKZ12")),
-                    ParseHelper.parseInt(hoebstp.getValue(hoebstpRow, "BUMGI")),
-                    ParseHelper.parseDate(hoerernummer.getValue(), "HOEBSTP/BURDAT",
+                    aoc.tools.datatransfer.ParseHelper.parseInt(hoebstp.getValue(hoebstpRow, "BUMGI")),
+                    Datenformat.localDateOf(hoerernummer.getValue(), "HOEBSTP/BURDAT",
                             hoebstp.getValue(hoebstpRow, "BURDAT"))
             );
         } catch (Exception e) {
@@ -333,18 +339,14 @@ final class HoererMapper {
                     }
                 })
                 .filter(not(Objects::isNull))
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
-    public List<Belastung> belastungenFuer(final Hoerernummer hoerernummer) {
+    List<Belastung> belastungenFuer(final Hoerernummer hoerernummer) {
         return belastungen(hoebstp.findRowByColumnValue("BUHNR", hoerernummer.getValue()));
     }
 
-    public Hoerer hoerer(final String hoerernummer) {
-        return hoerer.get(new Hoerernummer(hoerernummer));
-    }
-
-    public Hoerer hoerer(final Hoerernummer hoerernummer) {
+    Hoerer hoerer(final Hoerernummer hoerernummer) {
         return hoerer.get(hoerernummer);
     }
 

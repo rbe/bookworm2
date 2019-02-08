@@ -82,12 +82,10 @@
                                 <li><h:outputLink value="meinedownloads.xhtml">Downloads</h:outputLink></li>
                                 <li><h:outputLink value="meinemerkliste.xhtml">Merkliste</h:outputLink></li>
                                 <li><h:outputLink value="meinwarenkorb.xhtml">Warenkorb</h:outputLink></li>
-                                <!--
-                                <li><h:outputLink value="/hoererdaten/meinedaten.xhtml">Hörerdaten</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/meineausleihe.xhtml">Ausleihe</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/meinebestellkarte.xhtml">Bestellkarte</h:outputLink></li>
-                                <li><h:outputLink value="/hoererdaten/meinarchiv.xhtml">Archiv</h:outputLink></li>
-                                -->
+                                <li><h:outputLink value="meinedaten.xhtml">Hörerdaten</h:outputLink></li>
+                                <li><h:outputLink value="meineausleihe.xhtml">Ausleihe</h:outputLink></li>
+                                <li><h:outputLink value="meinebestellkarte.xhtml">Bestellkarte</h:outputLink></li>
+                                <li><h:outputLink value="meinarchiv.xhtml">Archiv</h:outputLink></li>
                             </c:if>
                             <c:if test="#{hoererSession.hoererIstUnbekannt}">
                                 <li><h:outputLink value="/kontakt.html">Kontakt</h:outputLink></li>

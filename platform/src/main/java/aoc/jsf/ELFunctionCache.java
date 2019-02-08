@@ -35,7 +35,9 @@ public final class ELFunctionCache<T, R> {
         Objects.requireNonNull(parameter);
         LOGGER.trace("Updating value for '{}' through function", parameter);
         final R value = valueFunction.apply(parameter);
-        values.put(parameter, value);
+        if (null != value) {
+            values.put(parameter, value);
+        }
         invalidated.put(parameter, false);
         LOGGER.trace("Value for {} is now '{}'", parameter, value);
         return value;

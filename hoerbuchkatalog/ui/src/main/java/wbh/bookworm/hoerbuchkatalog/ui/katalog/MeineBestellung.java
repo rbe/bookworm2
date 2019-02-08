@@ -58,24 +58,16 @@ public class MeineBestellung {
 
     private String bestellungStatusNachricht;
 
-    //
-    // Lieferung
-    //
-
-    private final MeineDownloads meineDownloads;
-
     @Autowired
     public MeineBestellung(final HoererSession hoererSession,
                            final Navigation navigation,
                            final MeinWarenkorb meinWarenkorb,
-                           final BestellungService bestellungService,
-                           final MeineDownloads meineDownloads) {
+                           final BestellungService bestellungService) {
         LOGGER.trace("Initialisiere {}", hoererSession);
         this.hoererSession = hoererSession;
         this.navigation = navigation;
         this.meinWarenkorb = meinWarenkorb;
         this.bestellungService = bestellungService;
-        this.meineDownloads = meineDownloads;
     }
 
     public boolean hasHoerernummer() {

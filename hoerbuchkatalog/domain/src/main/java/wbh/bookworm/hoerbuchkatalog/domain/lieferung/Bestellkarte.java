@@ -6,32 +6,69 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.model.DomainValueObject;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public final class Bestellkarte extends DomainValueObject {
 
     private static final long serialVersionUID = -1L;
 
-    private final transient List<Titelnummer> titelnummern;
+    private final Hoerernummer hoerernummer;
+
+    private final Titelnummer titelnummer;
 
     private final LocalDate letztesBestelldatum;
 
-    public Bestellkarte(final List<Titelnummer> titelnummern, final LocalDate letztesBestelldatum) {
-        this.titelnummern = titelnummern;
+    public Bestellkarte(final Hoerernummer hoerernummer,
+                        final Titelnummer titelnummer, final LocalDate letztesBestelldatum) {
+        this.hoerernummer = hoerernummer;
+        this.titelnummer = titelnummer;
         this.letztesBestelldatum = letztesBestelldatum;
     }
 
-    public List<Titelnummer> getTitelnummern() {
-        return titelnummern;
+    public Hoerernummer getHoerernummer() {
+        return hoerernummer;
+    }
+
+    public Titelnummer getTitelnummer() {
+        return titelnummer;
     }
 
     public LocalDate getLetztesBestelldatum() {
         return letztesBestelldatum;
+    }
+
+    public String getLetztesBestelldatumAufDeutsch() {
+        return null != letztesBestelldatum
+                ? letztesBestelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final Bestellkarte that = (Bestellkarte) o;
+        return hoerernummer.equals(that.hoerernummer) &&
+                titelnummer.equals(that.titelnummer) &&
+                letztesBestelldatum.equals(that.letztesBestelldatum);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hoerernummer, titelnummer, letztesBestelldatum);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Bestellkarte{hoerernummer=%s, titelnummer=%s, letztesBestelldatum=%s}",
+                hoerernummer, titelnummer, letztesBestelldatum);
     }
 
 }

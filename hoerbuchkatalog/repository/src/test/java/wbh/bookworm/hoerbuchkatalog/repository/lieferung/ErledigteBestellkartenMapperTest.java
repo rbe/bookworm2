@@ -4,9 +4,10 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
+package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,22 +17,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-@SpringBootTest(classes = {NutzerdatenTestAppConfig.class})
+import java.util.List;
+
+@SpringBootTest(classes = {LieferungAppConfig.class})
 @ExtendWith(SpringExtension.class)
 class ErledigteBestellkartenMapperTest {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapperTest.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ErledigteBestellkartenMapperTest.class);
+
+    //private final ExecutorService executorService;
 
     private final ErledigteBestellkartenMapper erledigteBestellkartenMapper;
 
     @Autowired
-    ErledigteBestellkartenMapperTest(final ErledigteBestellkartenMapper erledigteBestellkartenMapper) {
+    ErledigteBestellkartenMapperTest(/*final ExecutorService executorService,*/
+                                     final ErledigteBestellkartenMapper erledigteBestellkartenMapper) {
+        //this.executorService = executorService;
         this.erledigteBestellkartenMapper = erledigteBestellkartenMapper;
     }
 
     @Test
     void shouldAlleErledigtenBestellkartenFuerHoererFinden() {
-        erledigteBestellkartenMapper.erledigteBestellkartenFuer(new Hoerernummer("80170"));
+        final List<ErledigteBestellkarte> fuerHoerer80170 =
+                erledigteBestellkartenMapper.erledigteBestellkartenFuer(new Hoerernummer("80170"));
+        LOGGER.info("{}", fuerHoerer80170);
+        //executorService.shutdownNow();
     }
 
 }

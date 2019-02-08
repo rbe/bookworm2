@@ -13,6 +13,7 @@ import aoc.ddd.model.DomainValueObject;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 public final class ErledigteBestellkarte extends DomainValueObject {
 
@@ -24,21 +25,11 @@ public final class ErledigteBestellkarte extends DomainValueObject {
 
     private final LocalDate ausleihdatum;
 
-    private ErledigteBestellkarte(final Hoerernummer hoerernummer,
-                                  final Titelnummer titelnummer, final LocalDate ausleihdatum) {
+    public ErledigteBestellkarte(final Hoerernummer hoerernummer,
+                                 final Titelnummer titelnummer, final LocalDate ausleihdatum) {
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
         this.ausleihdatum = ausleihdatum;
-    }
-
-    public static ErledigteBestellkarte of(final String hoerernummer,
-                                           final String titelnummer, final String ausleihdatum) {
-        LocalDate _ausleihdatum = null;
-        if (!ausleihdatum.equals("0")) {
-            _ausleihdatum = LocalDate.parse(ausleihdatum, DateTimeFormatter.BASIC_ISO_DATE);
-        }
-        return new ErledigteBestellkarte(new Hoerernummer(hoerernummer),
-                new Titelnummer(titelnummer), _ausleihdatum);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -51,6 +42,33 @@ public final class ErledigteBestellkarte extends DomainValueObject {
 
     public LocalDate getAusleihdatum() {
         return ausleihdatum;
+    }
+
+    public String getAusleihdatumAufDeutsch() {
+        return null != ausleihdatum
+                ? ausleihdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        final ErledigteBestellkarte that = (ErledigteBestellkarte) o;
+        return hoerernummer.equals(that.hoerernummer) &&
+                titelnummer.equals(that.titelnummer) &&
+                Objects.equals(ausleihdatum, that.ausleihdatum);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(hoerernummer, titelnummer, ausleihdatum);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ErledigteBestellkarte{hoerernummer=%s, titelnummer=%s, ausleihdatum=%s}",
+                hoerernummer, titelnummer, ausleihdatum);
     }
 
 }

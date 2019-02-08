@@ -75,8 +75,6 @@ final class GesamtDatToHoerbuchMapper {
                     .map(String::trim)
                     .filter(not(String::isBlank))
                     .map(this::ausGesamtDatEintrag)
-                    .peek(hb -> System.out.printf("%s: %s Anzahl CDs%n",
-                            hb.getTitelnummer(), hb.getAnzahlCD()))
                     .filter(Objects::nonNull)
                     .collect(Collectors.toSet());
             LOGGER.info("Insgesamt {} Hörbücher aus '{}' mit Zeichensatz {} importiert",

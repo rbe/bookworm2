@@ -186,6 +186,12 @@ public class Katalogsuchergebnis implements Serializable {
         return navigation.zumHoerbuchdetail();
     }
 
+    @Override
+    public String toString() {
+        return String.format("Katalogsuchergebnis{hoerernummer=%s, suchergebnis=%s, seitenanzahl=%d, aktuelleSeitennummer=%d}",
+                hoerernummer, suchergebnis, seitenanzahl, aktuelleSeitennummer);
+    }
+
     void leeren() {
         LOGGER.trace("{} wird geleert", this);
         suchergebnis = null;

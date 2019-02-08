@@ -4,6 +4,8 @@ services:
     image: wbh/hoerbuchkatalog:latest
     ports:
       - 80:9080
+    environment:
+      - HOERBUCHKATALOG_TEMPLATE=./template
     volumes:
       - hoerbuchkatalog_data:/var/hoerbuchkatalog
   nutzerbereich:

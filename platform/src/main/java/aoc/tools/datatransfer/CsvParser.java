@@ -39,7 +39,7 @@ public final class CsvParser implements LineFileParser {
             boolean quotedField = false;
             final StringBuilder temp = new StringBuilder();
             while (scanner.hasNext()) {
-                String token = scanner.next();
+                final String token = scanner.next();
                 if (token.equals(csvFormat.FIELD_QUOTE)) {
                     quotedField = !quotedField;
                 }
@@ -50,6 +50,8 @@ public final class CsvParser implements LineFileParser {
                     temp.append(token);
                 }
             }
+            // Add token before end-of-line
+            values.add(temp.toString());
         }
         final String[] arr = values.toArray(String[]::new);
         if (arr.length > 0) {

@@ -21,7 +21,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 
-@SpringBootTest(classes = {NutzerdatenTestAppConfig.class})
+@SpringBootTest(classes = {NutzerdatenAppConfig.class})
 @ExtendWith(SpringExtension.class)
 class HoererMapperTest {
 

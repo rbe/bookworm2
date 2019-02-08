@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDateTime;
-import java.util.Date;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public final class BlistaDownload extends DomainValueObject {
@@ -141,8 +141,10 @@ public final class BlistaDownload extends DomainValueObject {
         return bestelldatum;
     }
 
-    public Date getBestelldatumAsDate() {
-        return new Date(bestelldatum.toLocalDate().toEpochDay() * 24 * 3_600 * 1_000);
+    public String getBestelldatumAufDeutsch() {
+        return null != bestelldatum
+                ? bestelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public LocalDateTime getRueckgabedatum() {

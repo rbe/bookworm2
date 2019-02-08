@@ -25,19 +25,6 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
 
-    public static final Hoerbuch UNBEKANNT = new Hoerbuch(Sachgebiet.UNBEKANNT,
-            new Titelnummer("000000"),
-            "unbekannt",
-            "unbekannt", "unbekannt",
-            "unbekannt",
-            "unbekannt", "unbekannt", "unbekannt",
-            "unbekannt", "unbekannt", "0,00",
-            "unbekannt", "unbekannt",
-            "unbekannt",
-            "0",
-            "unbekannt",
-            "", null, false);
-
     private Titelnummer titelnummer; // 6 0 (nummerisch)
 
     private Sachgebiet sachgebiet;
@@ -137,13 +124,36 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         this.suchwoerter = suchwoerter;
         this.anzahlCD = anzahlCD;
         this.titelfamilie = titelfamilie;
-        einstelldatum(einstelldatum);
+        setEinstelldatum(einstelldatum);
         this.aghNummer = aghNummer;
         this.downloadbar = downloadbar;
     }
 
+    private static boolean isBlank(final String str) {
+        return null != str && !str.isBlank();
+    }
+
+    public static Hoerbuch unbekannt(final Titelnummer titelnummer) {
+        return new Hoerbuch(Sachgebiet.NA,
+                titelnummer,
+                "",
+                "Titel unbekannt", "",
+                "",
+                "", "", "",
+                "", "", "0,00",
+                "", "",
+                "",
+                "0",
+                "",
+                "", null, false);
+    }
+
+    public boolean isUnbekannt() {
+        return titel.equals("Titel unbekannt");
+    }
+
     public Sachgebiet getSachgebiet() {
-        return sachgebiet;
+        return null != sachgebiet ? sachgebiet : Sachgebiet.NA;
     }
 
     public void setSachgebiet(Sachgebiet sachgebiet) {
@@ -167,7 +177,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getAutor() {
-        return autor;
+        return !isBlank(autor) ? autor : "Autor leider unbekannt";
     }
 
     public void setAutor(String autor) {
@@ -175,7 +185,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getTitel() {
-        return titel;
+        return !isBlank(titel) ? titel : "Titel leider unbekannt";
     }
 
     public void setTitel(String titel) {
@@ -183,84 +193,40 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getUntertitel() {
-        return untertitel;
+        return !isBlank(untertitel) ? untertitel : "";
     }
-
-/*
-    public void setUntertitel(String untertitel) {
-        this.untertitel = untertitel;
-    }
-*/
 
     public String getErlaeuterung() {
-        return erlaeuterung;
+        return !isBlank(erlaeuterung) ? erlaeuterung : "";
     }
-
-/*
-    public void setErlaeuterung(String erlaeuterung) {
-        this.erlaeuterung = erlaeuterung;
-    }
-*/
 
     public String getVerlagsort() {
-        return verlagsort;
+        return isBlank(verlagsort) ? verlagsort : "";
     }
-
-/*
-    public void setVerlagsort(String verlagsort) {
-        this.verlagsort = verlagsort;
-    }
-*/
 
     public String getVerlag() {
-        return verlag;
+        return isBlank(verlag) ? verlag : "";
     }
-
-/*
-    public void setVerlag(String verlag) {
-        this.verlag = verlag;
-    }
-*/
 
     public String getDruckjahr() {
-        return druckjahr;
+        return isBlank(druckjahr) ? druckjahr : "";
     }
-
-/*
-    public void setDruckjahr(String druckjahr) {
-        this.druckjahr = druckjahr;
-    }
-*/
 
     public String getSprecher1() {
-        return sprecher1;
+        return isBlank(sprecher1) ? sprecher1 : "";
     }
-
-/*
-    public void setSprecher1(String sprecher1) {
-        this.sprecher1 = sprecher1;
-    }
-*/
 
     public String getSprecher2() {
-        return sprecher2;
+        return isBlank(sprecher2) ? sprecher2 : "";
     }
-
-/*
-    public void setSprecher2(String sprecher2) {
-        this.sprecher2 = sprecher2;
-    }
-*/
 
     public String getSprecher() {
         final StringBuilder builder = new StringBuilder();
-        final boolean sprecher1HatWert = null != sprecher1 && !sprecher1.trim().isEmpty();
-        if (sprecher1HatWert) {
+        if (!isBlank(sprecher1)) {
             builder.append(sprecher1);
         }
-        final boolean sprecher2HatWert = null != sprecher2 && !sprecher2.trim().isEmpty();
-        if (sprecher2HatWert) {
-            if (sprecher1HatWert) {
+        if (!isBlank(sprecher2)) {
+            if (!isBlank(sprecher1)) {
                 builder.append(", ");
             }
             builder.append(sprecher2);
@@ -269,97 +235,63 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getSpieldauer() {
-        String _spieldauer = "unbekannt";
-        if (null != spieldauer
-                && (spieldauer.contains(",") || spieldauer.contains("."))) {
+        String _spieldauer = "0,00";
+        final boolean spieldauerParsbar = !isBlank(spieldauer)
+                && (spieldauer.contains(",") || spieldauer.contains("."));
+        if (spieldauerParsbar) {
             String[] parts = spieldauer.split("[.,]");
-            if (!"00".equals(parts[1])) {
-                _spieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
-            } else {
+            if ("00".equals(parts[1])) {
                 _spieldauer = String.format("%s Stunden", parts[0]);
+            } else {
+                _spieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
             }
         }
-        if ("unbekannt".equalsIgnoreCase(spieldauer)) {
+        if ("0,00".equalsIgnoreCase(spieldauer)) {
             LOGGER.warn("Spieldauer ({}) von Hörbuch {} unbekannt", spieldauer, titelnummer);
         }
         return _spieldauer;
     }
 
-/*
-    public void setSpieldauer(String spieldauer) {
-        this.spieldauer = spieldauer;
-    }
-*/
-
     public String getProdOrt() {
-        return prodOrt;
+        return !isBlank(prodOrt) ? prodOrt : "";
     }
-
-/*
-    public void setProdOrt(String prodOrt) {
-        this.prodOrt = prodOrt;
-    }
-*/
 
     public String getProdJahr() {
-        return prodJahr;
+        return !isBlank(prodJahr) ? prodJahr : "";
     }
-
-/*
-    public void setProdJahr(String prodJahr) {
-        this.prodJahr = prodJahr;
-    }
-*/
 
     public String getSuchwoerter() {
-        return suchwoerter;
+        return !isBlank(suchwoerter) ? suchwoerter : "";
     }
-
-/*
-    public void setSuchwoerter(String suchwoerter) {
-        this.suchwoerter = suchwoerter;
-    }
-*/
 
     public String getAnzahlCD() {
-        return anzahlCD;
+        return !isBlank(anzahlCD) ? anzahlCD : "";
     }
-
-/*
-    public void setAnzahlCD(String anzahlCD) {
-        this.anzahlCD = anzahlCD;
-    }
-*/
 
     public String getTitelfamilie() {
-        return titelfamilie;
+        return !isBlank(titelfamilie) ? titelfamilie : "";
     }
-
-/*
-    public void setTitelfamilie(String titelfamilie) {
-        this.titelfamilie = titelfamilie;
-    }
-*/
 
     public LocalDate getEinstelldatum() {
         return einstelldatum;
     }
 
     public String getEinstelldatumAufDeutsch() {
-        return einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+        return null != einstelldatum
+                ? einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
-/*
-    public void setEinstelldatum(LocalDate einstelldatum) {
-        this.einstelldatum = einstelldatum;
-    }
-*/
-
-    private void einstelldatum(final String einstelldatum) {
-        try {
-            this.einstelldatum = LocalDate.parse(einstelldatum, DateTimeFormatter.BASIC_ISO_DATE);
-        } catch (DateTimeParseException e) {
-            throw new IllegalArgumentException(einstelldatum, e);
+    private void setEinstelldatum(final String einstelldatum) {
+        final boolean einstelldatumGesetzt = null != einstelldatum
+                && !einstelldatum.isBlank()
+                && !"0".equals(einstelldatum);
+        if (einstelldatumGesetzt) {
+            try {
+                this.einstelldatum = LocalDate.parse(einstelldatum, DateTimeFormatter.BASIC_ISO_DATE);
+            } catch (DateTimeParseException e) {
+                throw new IllegalArgumentException(einstelldatum, e);
+            }
         }
     }
 
@@ -371,16 +303,6 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         Objects.requireNonNull(aghNummer);
         return null != this.aghNummer && this.aghNummer.equals(aghNummer);
     }
-
-/*
-    public void setAghNummer(final AghNummer aghNummer) {
-        this.aghNummer = aghNummer;
-    }
-
-    public void setAghNummer(final String aghNummer) {
-        this.aghNummer = new AghNummer(aghNummer);
-    }
-*/
 
     public boolean isDownloadbar() {
         return downloadbar;
@@ -414,16 +336,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     @Override
     public String toString() {
-        return String.format("Hoerbuch{" +
-                        "titelnummer='%s'," +
-                        " aghNummer='%s'," +
-                        " sachgebiet='%s'," +
-                        " autor='%s'," +
-                        " titel='%s'" +
-                        " untertitel='%s'" +
-                        " erlaeuterung='%s'" +
-                        " suchwoerter='%s'" +
-                        "}",
+        return String.format("Hoerbuch{titelnummer='%s', aghNummer='%s', sachgebiet='%s', autor='%s', titel='%s' untertitel='%s' erlaeuterung='%s' suchwoerter='%s'}",
                 titelnummer, aghNummer, sachgebiet, autor, titel, untertitel, erlaeuterung, suchwoerter);
     }
 

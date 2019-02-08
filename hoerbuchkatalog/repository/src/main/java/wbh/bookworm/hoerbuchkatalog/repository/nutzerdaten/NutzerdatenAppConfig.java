@@ -6,8 +6,11 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -15,15 +18,20 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootApplication(scanBasePackageClasses = {
-        HoererMapper.class
+        HoererRepository.class
 })
 @SpringBootConfiguration
 @EnableConfigurationProperties
 public class NutzerdatenAppConfig {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(NutzerdatenAppConfig.class);
+
     @Bean
+    @ConditionalOnMissingBean
     public ExecutorService executorService() {
-        return Executors.newWorkStealingPool();
+        final ExecutorService executorService = Executors.newWorkStealingPool();
+        LOGGER.debug("Created {}", executorService);
+        return executorService;
     }
 
 }

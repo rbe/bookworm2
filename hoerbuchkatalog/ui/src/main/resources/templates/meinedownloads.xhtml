@@ -7,12 +7,13 @@
       xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
-      xmlns:of="http://omnifaces.org/functions"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="leading">
             <h2 class="contentheading">Meine Downloads</h2>
+            <h4 class="contentheading">Stand: #{meineDownloads.standVomAufDeutsch}</h4>
             <div class="contact-data">
                 <div class="hoerer">
                     <span class="entry-name">#{hoererSession.hoerername}</span>
@@ -21,8 +22,8 @@
                 </div>
             </div>
             <h:form id="meineDownloads">
-                <h:panelGroup id="blistaAbrufFehler"
-                              rendered="#{meineDownloads.blistaAbrufHatFehler}"
+                <h:panelGroup rendered="#{meineDownloads.blistaAbrufHatFehler}"
+                              id="blistaAbrufFehler"
                               layout="block" styleClass="row">
                     Die Downloads stehen temporär leider nicht zur Verfügung.<br/>
                     <br/>
@@ -42,6 +43,12 @@
                                      actionListener="#{meineDownloads.sucheNachStichwort}"
                                      styleClass="searchbutton"
                                      value="Suchen">
+                        <f:ajax event="action" execute="@form" render="@all"/>
+                    </h:commandButton>
+                    <h:commandButton id="sucheVergessen"
+                                     actionListener="#{meineDownloads.sucheVergessen}"
+                                     styleClass="searchbutton"
+                                     value="Alles anzeigen">
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
                 </h:panelGroup>
@@ -65,7 +72,7 @@
                                 <th style="text-align:center;">Download</th>
                                 <th style="text-align:center;">Verfügbar</th>
                             </tr>
-                            <ui:repeat value="#{meineDownloads.bezugsfaehigeDownloads}"
+                            <ui:repeat value="#{meineDownloads.gefilterteBezugsfaehigeDownloads}"
                                        var="download" varStatus="downloadStatus">
                                 <h:outputFormat rendered="#{downloadStatus.last}">
                                     <tr>
@@ -80,7 +87,7 @@
                                                 <td headers="Buchnummer">#{download.titelnummer}</td>
                                             </tr>
                                             <tr>
-                                                <td headers="Ausleihdatum">#{of:formatDate(download.bestelldatumAsDate, 'dd.MM.yyyy')}</td>
+                                                <td headers="Ausleihdatum">#{download.bestelldatumAufDeutsch}</td>
                                             </tr>
                                             </tbody>
                                         </table>
@@ -125,14 +132,15 @@
                     </div>
                 </h:panelGroup>
             </h:form>
-        </div>
-        <div class="noticetext">
+        </h:panelGroup>
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="noticetext">
             <h3>Hinweise zu Ihrer Downloadbestellung</h3>
             <p>Mit Ihrer Bestellung wird jeweils eine Hörbuchdatei inkl. Wasserzeichen generiert. Informationen zum Bearbeitungsstatus erhalten Sie in der Spalte "Download".</p>
             <p>Sobald Ihre Bestellung für einen Download bereit steht, ändert sich der Status auf "3: Bereitstellung abgeschlossen" und ein Link zum Herunterladen wird angezeigt.</p>
             <p>Sie können eine Hörbuchdatei bis zu 5 Mal herunterladen. Die Spalte "Verfügbar" gibt an, wie oft Sie die Datei erneut herunterladen können.</p>
             <p>Urheberrechtshinweis: Jede Downloaddatei wird mit einem individuellen Wasserzeichen versehen und kann bei Zweckentfremdung (unberechtigte Weitergabe) dem Verursacher zugeordnet werden.</p>
-        </div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

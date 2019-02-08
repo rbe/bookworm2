@@ -8,6 +8,8 @@ package aoc.tools.datatransfer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -18,17 +20,34 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+@Component
 public final class FileSplitter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FileSplitter.class);
 
-    private static class MyWriter implements Runnable {
+    private final ExecutorService executorService;
 
-        private static final Logger LOGGER = LoggerFactory.getLogger(MyWriter.class);
+    private ArrayBlockingQueue<String> queue;
+
+    private Path[] splittedPaths;
+
+    private ChunkWriter[] writer;
+
+    private List<Future<?>> futures;
+
+    private static class ChunkWriter implements Runnable {
+
+        private static final Logger LOGGER = LoggerFactory.getLogger(ChunkWriter.class);
 
         private final BlockingQueue<String> queue;
 
@@ -38,7 +57,7 @@ public final class FileSplitter {
 
         private boolean stopFlag;
 
-        private MyWriter(final BlockingQueue<String> queue, final Path path) throws IOException {
+        private ChunkWriter(final BlockingQueue<String> queue, final Path path) throws IOException {
             this.queue = queue;
             this.path = path;
             this.stream = Files.newBufferedWriter(path,
@@ -54,70 +73,103 @@ public final class FileSplitter {
         @Override
         public void run() {
             final LocalDateTime start = LocalDateTime.now();
-            LOGGER.debug("Start writing to {}", path);
+            LOGGER.debug("Start writing lines from queue to {}", path);
             while (!stopFlag) {
                 try {
                     final String item = queue.poll(100, TimeUnit.MILLISECONDS);
                     if (null != item) {
                         stream.write(item);
                         stream.newLine();
-                        if (++numLinesWritten % 100_000 == 0) {
-                            LOGGER.trace("Wrote {} lines", numLinesWritten);
+                        if (++numLinesWritten % 10_000 == 0 && LOGGER.isTraceEnabled()) {
+                            LOGGER.trace("Wrote {} lines to {}", numLinesWritten, path);
                         }
                     }
                 } catch (InterruptedException e) {
+                    closeStream();
                     Thread.currentThread().interrupt();
                 } catch (IOException e) {
                     LOGGER.error("", e);
                 }
             }
+            closeStream();
+            LOGGER.debug("Finished, wrote {} lines to {} in {}",
+                    numLinesWritten, path,
+                    Duration.between(start, LocalDateTime.now()));
+        }
+
+        private void closeStream() {
             try {
                 stream.flush();
                 stream.close();
             } catch (IOException e) {
                 LOGGER.error("", e);
             }
-            LOGGER.debug("Finished, wrote {} lines in {}", numLinesWritten,
-                    Duration.between(start, LocalDateTime.now()));
         }
 
     }
 
-    private FileSplitter() {
-        throw new AssertionError();
+    @Autowired
+    public FileSplitter(final ExecutorService executorService) {
+        this.executorService = executorService;
     }
 
-    public static Path[] split(final Path path, final Charset charset, int numWriters) throws IOException {
-        final Path[] splittedPaths = new Path[numWriters];
+    private void setup(final Path path, final int expectedLineCount,
+                       final int numWriters) throws IOException {
+        final int capacity = expectedLineCount / numWriters;
+        LOGGER.trace("Using queue with capacity {} ({} expected line count / {} writers)",
+                capacity, expectedLineCount, numWriters);
+        queue = new ArrayBlockingQueue<>(capacity);
+        splittedPaths = new Path[numWriters];
+        writer = new ChunkWriter[numWriters];
+        futures = new ArrayList<>(numWriters);
+        for (int i = 0; i < numWriters; i++) {
+            // TODO path.resolve?
+            splittedPaths[i] = Path.of(path.getFileName().toString() + "_" + i);
+            writer[i] = new ChunkWriter(queue, splittedPaths[i]);
+            futures.add(executorService.submit(writer[i]));
+        }
+        LOGGER.debug("Set up for splitting {} with expected number of lines {} and {} writers",
+                path, expectedLineCount, numWriters);
+    }
+
+    private void tearDown(int numWriters) {
+        while (!queue.isEmpty()) {
+            try {
+                int time = 250;
+                LOGGER.debug("Waiting {} milliseconds for writers to finish", time);
+                TimeUnit.MILLISECONDS.sleep(time);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }
+        }
+        for (int i = 0; i < numWriters; i++) {
+            writer[i].stop();
+        }
+        futures.forEach(f -> {
+            try {
+                f.get();
+            } catch (InterruptedException | ExecutionException e) {
+                Thread.currentThread().interrupt();
+            }
+        });
+    }
+
+    public Path[] split(final Path path, final Charset charset,
+                        int expectedLineCount, int numWriters) throws IOException {
         final LocalDateTime start = LocalDateTime.now();
         try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
-            final ArrayBlockingQueue<String> queue = new ArrayBlockingQueue<>(2_900_000);
-            final MyWriter[] writer = new MyWriter[numWriters];
-            for (int i = 0; i < numWriters; i++) {
-                splittedPaths[i] = Path.of(path.getFileName().toString() + "_" + i);
-                writer[i] = new MyWriter(queue, splittedPaths[i]);
-                new Thread(writer[i]).start();
-            }
+            setup(path, expectedLineCount, numWriters);
             String line;
             while (null != (line = reader.readLine())) {
                 if (!queue.offer(line)) {
                     throw new IllegalStateException("offer()==false");
                 }
             }
-            while (!queue.isEmpty()) {
-                try {
-                    LOGGER.debug("Waiting 1 seconds for writers to finish");
-                    TimeUnit.SECONDS.sleep(1);
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
-            }
-            for (int i = 0; i < numWriters; i++) {
-                writer[i].stop();
-            }
+            tearDown(numWriters);
         }
-        LOGGER.debug("Splitting {} into {} segments took {}",
-                path, numWriters,
+        // TODO Just return splittedPaths with content
+        LOGGER.debug("Splitted {} into {} segments {} in {}",
+                path, numWriters, Arrays.asList(splittedPaths),
                 Duration.between(start, LocalDateTime.now()));
         return splittedPaths;
     }

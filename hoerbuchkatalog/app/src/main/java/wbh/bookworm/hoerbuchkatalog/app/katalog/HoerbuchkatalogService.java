@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 
 @Service
@@ -33,7 +34,7 @@ public final class HoerbuchkatalogService {
     }
 
     public Suchergebnis sucheNachStichwort(final Hoerernummer hoerernummer, final String stichwort) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Stichwort {}", hoerernummer, stichwort);
         final Suchergebnis suchergebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
         LOGGER.info("Hörer {}: Suche nach Stichwort '{}' ergab {} Treffer",
                 hoerernummer, stichwort, suchergebnis.getAnzahl());
@@ -41,7 +42,7 @@ public final class HoerbuchkatalogService {
     }
 
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Suchparameter {}", hoerernummer, suchparameter);
         final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
         LOGGER.info("Hörer {}: Suche nach '{}' ergab {} Treffer",
                 hoerernummer, suchparameter, suchergebnis.getAnzahl());
@@ -49,22 +50,22 @@ public final class HoerbuchkatalogService {
     }
 
     public boolean hoerbuchVorhanden(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
         return hoerbuchkatalog.enthaelt(titelnummer);
     }
 
     public boolean hoerbuchDownloadbar(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
         return hoerbuchkatalog.hoerbuchDownloadbar(titelnummer);
     }
 
     public Hoerbuch hole(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
         return hoerbuchkatalog.hole(titelnummer);
     }
 
     public List<Hoerbuch> hole(final Hoerernummer hoerernummer, final Titelnummer... titelnummern) {
-        LOGGER.trace("");
+        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, Arrays.asList(titelnummern));
         return hoerbuchkatalog.hole(titelnummern);
     }
 

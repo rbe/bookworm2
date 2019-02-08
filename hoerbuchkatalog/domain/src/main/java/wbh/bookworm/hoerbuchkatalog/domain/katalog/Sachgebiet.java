@@ -36,7 +36,7 @@ public enum Sachgebiet {
     W("Hörspiele – Dramen"),
     X("Stimme des Autors"),
     Z("Bücher in leichter/einfacher Sprache"),
-    UNBEKANNT("Unbekannt");
+    NA("Sachgebiet unbekannt");
 
     private String description;
 

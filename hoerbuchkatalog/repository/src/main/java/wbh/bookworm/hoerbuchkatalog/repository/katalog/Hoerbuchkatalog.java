@@ -73,8 +73,14 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
         return katalog.get(titelnummer).isDownloadbar();
     }
 
+    /**
+     * Holt das Hörbuch zur Titelnummer.
+     * Gibt ein unbekanntes Hörbuch zurück, wenn die Titelnummer nicht im Katalog ist.
+     * @return {@link Hoerbuch}.
+     */
     public Hoerbuch hole(final Titelnummer titelnummer) {
-        /*TODO Unbekannt*/return katalog.get(titelnummer);
+        final Hoerbuch hoerbuch = katalog.get(titelnummer);
+        return null != hoerbuch ? hoerbuch : Hoerbuch.unbekannt(titelnummer);
     }
 
     public List<Hoerbuch> hole(final Titelnummer... titelnummern) {

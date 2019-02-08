@@ -42,31 +42,31 @@
                              rowClasses="result-row1,result-row2"
                              cellpadding="0" cellspacing="0"
                              rendered="#{katalogsuchergebnis.anzahl > 0}"
-                             value="#{katalogsuchergebnis.aktuelleSeite}" var="hoerbuch"
+                             value="#{katalogsuchergebnis.aktuelleSeite}" var="belastung"
                              rows="#{katalogsuchergebnis.anzahlHoerbuecherProSeite}">
                     <h:column headerClass="result-column-header">
                         <f:facet name="header">
                             Titelnummer
                         </f:facet>
-                        <h:outputText styleClass="result-column-content" value="#{hoerbuch.titelnummer}"/>
+                        <h:outputText styleClass="result-column-content" value="#{belastung.titelnummer}"/>
                     </h:column>
                     <h:column headerClass="result-column-header">
                         <f:facet name="header">
                             Autor
                         </f:facet>
-                        <h:outputText styleClass="result-column-content" value="#{hoerbuch.autor}"/>
+                        <h:outputText styleClass="result-column-content" value="#{belastung.autor}"/>
                     </h:column>
                     <h:column headerClass="result-column-header">
                         <f:facet name="header">
                             Titel
                         </f:facet>
-                        <h:outputText styleClass="result-column-content" value="#{hoerbuch.titel}"/>
+                        <h:outputText styleClass="result-column-content" value="#{belastung.titel}"/>
                     </h:column>
                     <h:column headerClass="result-column-header">
                         <f:facet name="header">
                             Details
                         </f:facet>
-                        <h:commandLink action="#{katalogsuchergebnis.ansehen(hoerbuch.titelnummer)}" value="Detail"/>
+                        <h:commandLink action="#{katalogsuchergebnis.ansehen(belastung.titelnummer)}" value="Detail"/>
                     </h:column>
                     <h:column headerClass="result-column-header">
                         <f:facet name="header">
@@ -74,40 +74,40 @@
                         </f:facet>
 
                         <h:commandLink id="cdWarenkorbHinzufuegenButton"
-                                       rendered="#{!meinWarenkorb.cdEnthalten(hoerbuch.titelnummer)}"
+                                       rendered="#{!meinWarenkorb.cdEnthalten(belastung.titelnummer)}"
                                        styleClass="basket-order-link post"
-                                       action="#{meinWarenkorb.cdHinzufuegen(hoerbuch.titelnummer)}"
+                                       action="#{meinWarenkorb.cdHinzufuegen(belastung.titelnummer)}"
                                        value="CD bestellen">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
-                        <h:commandLink rendered="#{meinWarenkorb.cdEnthalten(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{meinWarenkorb.cdEnthalten(belastung.titelnummer)}"
                                        styleClass="basket-remove-link"
-                                       action="#{meinWarenkorb.cdEntfernen(hoerbuch.titelnummer)}"
+                                       action="#{meinWarenkorb.cdEntfernen(belastung.titelnummer)}"
                                        value="CD Bestellung löschen">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <h:commandLink rendered="#{meinWarenkorb.isDownloadHinzufuegenAnzeigen(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{meinWarenkorb.isDownloadHinzufuegenAnzeigen(belastung.titelnummer)}"
                                        styleClass="basket-order-link download"
-                                       action="#{meinWarenkorb.downloadHinzufuegen(hoerbuch.titelnummer)}"
+                                       action="#{meinWarenkorb.downloadHinzufuegen(belastung.titelnummer)}"
                                        value="Download">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
-                        <h:commandLink rendered="#{meinWarenkorb.isDownloadEntfernenAnzeigen(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{meinWarenkorb.isDownloadEntfernenAnzeigen(belastung.titelnummer)}"
                                        styleClass="basket-remove-link clr"
-                                       action="#{meinWarenkorb.downloadEntfernen(hoerbuch.titelnummer)}"
+                                       action="#{meinWarenkorb.downloadEntfernen(belastung.titelnummer)}"
                                        value="Download Bestellung löschen">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <h:commandLink rendered="#{meineMerkliste.isMerklisteHinzufuegenAnzeigen(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{meineMerkliste.isMerklisteHinzufuegenAnzeigen(belastung.titelnummer)}"
                                        styleClass="basket-order-link wishlist"
-                                       action="#{meineMerkliste.hinzufuegen(hoerbuch.titelnummer)}" value="Merken">
+                                       action="#{meineMerkliste.hinzufuegen(belastung.titelnummer)}" value="Merken">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
-                        <h:commandLink rendered="#{meineMerkliste.isMerklisteEntfernenAnzeigen(hoerbuch.titelnummer)}"
+                        <h:commandLink rendered="#{meineMerkliste.isMerklisteEntfernenAnzeigen(belastung.titelnummer)}"
                                        styleClass="basket-remove-link clr"
-                                       action="#{meineMerkliste.entfernen(hoerbuch.titelnummer)}"
+                                       action="#{meineMerkliste.entfernen(belastung.titelnummer)}"
                                        value="Aus Merkliste löschen">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>

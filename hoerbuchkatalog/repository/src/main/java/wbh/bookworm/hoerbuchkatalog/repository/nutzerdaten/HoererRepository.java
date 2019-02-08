@@ -9,14 +9,17 @@ package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 
 import aoc.ddd.repository.DomainRespositoryComponent;
+import aoc.tools.datatransfer.Executor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
 
 @DomainRespositoryComponent
 public class HoererRepository {
@@ -25,30 +28,28 @@ public class HoererRepository {
 
     private final HoererMapper hoererMapper;
 
-    private final BestellkartenMapper bestellkartenMapper;
-
-    private final ErledigteBestellkartenMapper erledigteBestellkartenMapper;
-
     @Autowired
-    public HoererRepository(final HoererRepositoryConfig hoererRepositoryConfig,
-                            final HoererMapper hoererMapper,
-                            final BestellkartenMapper bestellkartenMapper,
-                            final ErledigteBestellkartenMapper erledigteBestellkartenMapper) {
+    public HoererRepository(final ExecutorService executorService,
+                            final HoererRepositoryConfig hoererRepositoryConfig,
+                            final HoererMapper hoererMapper) {
         this.hoererRepositoryConfig = hoererRepositoryConfig;
         this.hoererMapper = hoererMapper;
-        initialisiereHoerer();
-        this.bestellkartenMapper = bestellkartenMapper;
-        initialisiereBestellkarten();
-        this.erledigteBestellkartenMapper = erledigteBestellkartenMapper;
-        initialisiereErledigteBestellkarten();
+        Executor.invokeAllAndGet(executorService,
+                Collections.singletonList(new HoererMapperCallable()));
     }
 
-    private void initialisiereHoerer() {
-        hoererMapper.leseAs400Dateien(
-                StandardCharsets.ISO_8859_1, 9_000,
-                hoererRepositoryConfig.getDirectory().resolve("hoerstp.csv"),
-                hoererRepositoryConfig.getDirectory().resolve("hoekzstp.csv"),
-                hoererRepositoryConfig.getDirectory().resolve("hoebstp.csv"));
+    private class HoererMapperCallable implements Callable<Void> {
+
+        @Override
+        public Void call() throws Exception {
+            hoererMapper.leseAs400Dateien(
+                    StandardCharsets.ISO_8859_1, 9_000,
+                    hoererRepositoryConfig.getDirectory().resolve("hoerstp.csv"),
+                    hoererRepositoryConfig.getDirectory().resolve("hoekzstp.csv"),
+                    hoererRepositoryConfig.getDirectory().resolve("hoebstp.csv"));
+            return null;
+        }
+
     }
 
     public Hoerer hoerer(final Hoerernummer hoerernummer) {
@@ -57,22 +58,6 @@ public class HoererRepository {
 
     public List<Belastung> belastungen(final Hoerernummer hoerernummer) {
         return hoererMapper.belastungenFuer(hoerernummer);
-    }
-
-    private void initialisiereBestellkarten() {
-        bestellkartenMapper.leseAs400Datei(
-                hoererRepositoryConfig.getDirectory().resolve("bkstp.csv"),
-                StandardCharsets.ISO_8859_1, 9_000);
-    }
-
-    public List<Bestellkarte> bestellkarten(final Hoerernummer hoerernummer) {
-        return bestellkartenMapper.bestellkartenFuer(hoerernummer);
-    }
-
-    private void initialisiereErledigteBestellkarten() {
-        erledigteBestellkartenMapper.leseAs400Datei(
-                StandardCharsets.ISO_8859_1, 2_900_000,
-                hoererRepositoryConfig.getDirectory().resolve("bkrxstp.csv"));
     }
 
 }

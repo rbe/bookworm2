@@ -10,16 +10,37 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 @Configuration
 @Import({DlsLieferungAppConfig.class})
 @ComponentScan(basePackageClasses = {
         DownloadsRepository.class,
+        CdLieferungRepository.class,
         Hoerbuchkatalog.class,
         DlsLieferung.class
 })
+@EnableConfigurationProperties
 public class LieferungAppConfig {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(LieferungAppConfig.class);
+
+    @Bean
+    @ConditionalOnMissingBean
+    public ExecutorService executorService() {
+        final ExecutorService executorService = Executors.newWorkStealingPool();
+        LOGGER.debug("Created {}", executorService);
+        return executorService;
+    }
+
 }

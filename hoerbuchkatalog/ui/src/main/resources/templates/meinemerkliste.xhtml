@@ -11,7 +11,8 @@
       xmlns:hk="http://xmlns.jcp.org/jsf/composite/hoerbuchkatalog">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="leading">
             <h2 class="contentheading">Merkliste</h2>
             <h:form id="merkiste" styleClass="Wishlist">
                 <hk:navigation/>
@@ -78,11 +79,12 @@
                     </h:column>
                 </h:dataTable>
             </h:form>
-        </div>
-        <div class="noticetext">
+        </h:panelGroup>
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="noticetext">
             <h3>Hinweise zur Merkliste</h3>
             In der Merkliste sind alle Hörbücher aufgeführt, die Sie sich vorgemerkt haben. Hier haben Sie dann die Möglichkeit, die Titel als CD oder für den Download zu bestellen und Sie können natürlich auch Hörbücher wieder aus der Liste löschen.
-        </div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

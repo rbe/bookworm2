@@ -30,12 +30,7 @@ public final class Executor {
         try {
             executorService.invokeAll(runnables).forEach(f -> {
                 try {
-                    final T result = f.get();
-                    if (null == result) {
-                        throw new RuntimeException();
-                    } else {
-                        list.add(result);
-                    }
+                    list.add(f.get());
                 } catch (InterruptedException | ExecutionException e) {
                     LOGGER.warn("Thread interrupted or got exception while executing background thread", e);
                     Thread.currentThread().interrupt();

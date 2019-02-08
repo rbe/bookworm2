@@ -51,12 +51,12 @@ public class MeinWarenkorb {
 
     public String hoerbuchAutor(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoererSession.autor(titelnummer);
+        return hoererSession.autorCache(titelnummer);
     }
 
     public String hoerbuchTitel(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        return hoererSession.titel(titelnummer);
+        return hoererSession.titelCache(titelnummer);
     }
 
     //

@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
+import java.util.Objects;
 
 public final class ParseHelper {
 
@@ -21,24 +21,13 @@ public final class ParseHelper {
         throw new AssertionError();
     }
 
-    public static LocalDate parseDate(final String hoerernummer,
-                                      final String datum, final String str) {
-        try {
-            return null != str && !str.isBlank() && !"0".equals(str)
-                    ? LocalDate.parse(str, DateTimeFormatter.BASIC_ISO_DATE)
-                    : null;
-        } catch (DateTimeParseException e) {
-            try {
-                final LocalDate yyyyddMM = LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyddMM"));
-                LOGGER.warn("Hörer {} {} hat falsches Format: {}, korrigiert zu {}",
-                        hoerernummer, datum, str, yyyyddMM);
-                return yyyyddMM;
-            } catch (DateTimeParseException e2) {
-                LOGGER.warn("Hörer {} {} hat falsches Format: {}, Korrektur nicht möglich",
-                        hoerernummer, datum, str);
-                return null;
-            }
-        }
+    public static LocalDate parseDate(final String str) {
+        Objects.requireNonNull(str);
+        final String datum = str.replaceAll("-", "")
+                .replaceAll("\\.", "");
+        return !str.isBlank() && str.length() >= 8
+                ? LocalDate.parse(datum, DateTimeFormatter.BASIC_ISO_DATE)
+                : null;
     }
 
     public static Integer parseInt(final String str) {

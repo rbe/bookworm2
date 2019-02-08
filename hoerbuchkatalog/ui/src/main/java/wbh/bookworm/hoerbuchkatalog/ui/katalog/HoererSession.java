@@ -8,9 +8,10 @@ package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
+import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
@@ -21,6 +22,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
@@ -53,15 +55,19 @@ public class HoererSession implements Serializable {
 
     private final transient HttpSession session;
 
+    private final transient HoererService hoererService;
+
     @Autowired
     public HoererSession(final HttpServletRequest request,
                          final HttpSession session,
+                         final HoererService hoererService,
                          final HoerbuchkatalogService hoerbuchkatalogService,
                          final BestellungService bestellungService,
                          final MerklisteService merklisteService,
                          final DownloadsLieferungService downloadsLieferungService) {
         LOGGER.trace("Initialisiere für HttpSession {}", session.getId());
         this.session = session;
+        this.hoererService = hoererService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.merklisteService = merklisteService;
         this.bestellungService = bestellungService;
@@ -74,9 +80,9 @@ public class HoererSession implements Serializable {
         this.bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
         this.suchparameter = new Suchparameter();
         DomainEventPublisher.global()
-                .subscribe(new BestellungAufgegebenDomainEventSubscriber());
+                .subscribe(new BestellungAufgegebenSubscriber());
         DomainEventPublisher.global()
-                .subscribe(new HoerbuchkatalogAktualisiertDomainEventSubscriber());
+                .subscribe(new HoerbuchkatalogAktualisiertSubscriber());
     }
 
     //
@@ -91,8 +97,8 @@ public class HoererSession implements Serializable {
         if (null == hoerer || hoerer.isUnbekannt()) {
             LOGGER.trace("Setze Hörer {} in HttpSession {}", hoerernummer, session.getId());
             session.setAttribute(SessionKey.HOERERNUMMER, hoerernummer);
-            hoerer = /* TODO Daten aus Nutzerbereich abfragen oder per Request übergeben? */
-                    new Hoerer(hoerernummer, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT);
+            hoerer = hoererService.hoerer(hoerernummer)
+                    .orElse(new Hoerer(hoerernummer, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT));
             // Hörbuchkatalog
             hoerbuchValueCache = new ELFunctionCache<>(titelnummer ->
                     hoerbuchkatalogService.hole(hoerernummer, titelnummer));
@@ -112,7 +118,7 @@ public class HoererSession implements Serializable {
             // Lieferung
             blistaDownloadsELCache = new ELValueCache<>(null, () ->
                     downloadsLieferungService.lieferungen(hoerernummer));
-            LOGGER.debug("Hörer {} hat HttpSession {}", hoerernummer, session.getId());
+            LOGGER.info("Hörer {} erfolgreich angemeldet, HttpSession {}", hoerernummer, session.getId());
         } else {
             LOGGER.warn("Hörer {} bereits in HttpSession {} gesetzt", hoerernummer, session.getId());
         }
@@ -178,12 +184,24 @@ public class HoererSession implements Serializable {
         return hoerbuchValueCache.get(titelnummer).isDownloadbar();
     }
 
-    String autor(final Titelnummer titelnummer) {
+    Sachgebiet sachgebietCache(final Titelnummer titelnummer) {
+        return hoerbuchValueCache.get(titelnummer).getSachgebiet();
+    }
+
+    String autorCache(final Titelnummer titelnummer) {
         return hoerbuchValueCache.get(titelnummer).getAutor();
     }
 
-    String titel(final Titelnummer titelnummer) {
+    String titelCache(final Titelnummer titelnummer) {
         return hoerbuchValueCache.get(titelnummer).getTitel();
+    }
+
+    String spieldauerCache(final Titelnummer titelnummer) {
+        return hoerbuchValueCache.get(titelnummer).getSpieldauer();
+    }
+
+    String sprecherCache(final Titelnummer titelnummer) {
+        return hoerbuchValueCache.get(titelnummer).getSprecher();
     }
 
     Suchparameter getSuchparameter() {
@@ -391,42 +409,46 @@ public class HoererSession implements Serializable {
                 hoerer, bestellungSessionId, session.getId());
     }
 
-    private class BestellungAufgegebenDomainEventSubscriber
+    //
+    // Domain Events
+    //
+
+    private class BestellungAufgegebenSubscriber
             extends DomainEventSubscriber<BestellungAufgegeben> {
 
-        BestellungAufgegebenDomainEventSubscriber() {
+        BestellungAufgegebenSubscriber() {
             super(BestellungAufgegeben.class);
         }
 
         @Override
         public void handleEvent(final BestellungAufgegeben domainEvent) {
-            LOGGER.trace("Verarbeite {}", domainEvent);
+            logger.trace("Verarbeite {}", domainEvent);
             // cdWarenkorbVergessen
             cdWarenkorbValueCache.invalidate();
-            LOGGER.debug("Cache für CD-Warenkorb invalidiert");
+            logger.debug("Cache für CD-Warenkorb invalidiert");
             // downloadWarenkorbVergessen
             downloadWarenkorbValueCache.invalidate();
             maxDownloadsProTagErreicht.invalidate();
             maxDownloadsProMonatErreicht.invalidate();
-            LOGGER.debug("Cache für Download-Warenkorb invalidiert");
+            logger.debug("Cache für Download-Warenkorb invalidiert");
             // downloadsVergessen
             blistaDownloadsELCache.invalidate();
-            LOGGER.debug("Cache für Downloads invalidiert; erneute Abfrage bei blista notwendig");
+            logger.debug("Cache für Downloads invalidiert; erneute Abfrage bei blista notwendig");
         }
 
     }
 
-    private class HoerbuchkatalogAktualisiertDomainEventSubscriber
+    private class HoerbuchkatalogAktualisiertSubscriber
             extends DomainEventSubscriber<HoerbuchkatalogAktualisiert> {
 
         // TODO Klasse für das Event nur bei #subscribe angeben?
-        HoerbuchkatalogAktualisiertDomainEventSubscriber() {
+        HoerbuchkatalogAktualisiertSubscriber() {
             super(HoerbuchkatalogAktualisiert.class);
         }
 
         @Override
         public void handleEvent(final HoerbuchkatalogAktualisiert domainEvent) {
-            LOGGER.trace("Verarbeite {}", domainEvent);
+            logger.trace("Verarbeite {}", domainEvent);
         }
 
     }

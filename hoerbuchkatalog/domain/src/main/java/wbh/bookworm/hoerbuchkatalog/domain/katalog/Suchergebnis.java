@@ -51,7 +51,7 @@ public final class Suchergebnis extends DomainValueObject {
     }
 
     public boolean vorherigeVorhanden(final Titelnummer titelnummer) {
-        return titelnummern.indexOf(titelnummer) > 0;
+        return titelnummern.indexOf(titelnummer) > -1;
     }
 
     public Titelnummer vorherige(final Titelnummer titelnummer) {

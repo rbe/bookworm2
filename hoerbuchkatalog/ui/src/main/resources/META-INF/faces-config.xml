@@ -6,6 +6,9 @@
     <application>
         <resource-handler>wbh.bookworm.hoerbuchkatalog.ui.config.ExternalizedFaceletsResourceHandler</resource-handler>
     </application>
+    <lifecycle>
+        <phase-listener>aoc.jsf.LoggingPhaseListener</phase-listener>
+    </lifecycle>
     <!-- TODO JSF ExceptionHandler
     <factory>
         <exception-handler-factory>wbh.bookworm.hoerbuchkatalog.ui.config.FacesExceptionHandlerFactory</exception-handler-factory>

@@ -82,3 +82,101 @@ kill $(ps ax | grep hoerbuchkatalog | grep -v grep | awk '{print $1}')
 -XX:HeapDumpPath=heapdump.hprof
 -XX:StartFlightRecording=disk=true,dumponexit=true,filename=recording.jfr,maxsize=1024m,maxage=1d,settings=profile,path-to-gc-roots=true
 ----
+
+== Linux
+
+.Setup SSH login
+[source,bash,linenum]
+----
+pbcopy <.ssh/id_rsa.pub
+cat >>.ssh/authorized_keys
+<Press Cmd-V>
+<Press Ctrl-D>
+----
+
+.Setup entropy
+[source,bash,linenum]
+----
+cat /proc/sys/kernel/random/entropy_avail
+pacman -Syyu
+pacman -S haveged
+systemctl enable haveged
+systemctl start haveged
+reboot
+----
+
+.Setup storage for Docker and applications
+[source,bash,linenum]
+----
+fdisk /dev/sda
+pvcreate /dev/sda3
+vgcreate tank /dev/sda3
+lvcreate --name docker -L20G tank
+mkfs.ext4 /dev/tank/docker
+lvcreate --name data -L10G tank
+mkfs.ext4 /dev/tank/data
+cat >>/etc/fstab <<EOF
+/dev/tank/docker                                /var/lib/docker ext4            rw,noatime      0 2
+/dev/tank/data                                  /mnt/data       ext4            rw,noatime      0 2
+EOF
+sed -i'' -e "s#^HOOKS=.*#HOOKS=(base udev block autodetect modconf lvm2 filesystems keyboard fsck)#" /etc/mkinitcpio.conf
+mkinitcpio -p linux
+mkdir /var/lib/docker
+chmod 711 /var/lib/docker
+mkdir /mnt/data
+reboot
+----
+
+.Setup Docker
+[source,bash,linenum]
+----
+pacman -Syyu docker docker-compose
+systemctl enable docker
+systemctl start docker
+docker info
+----
+
+.Extend logical volume
+[source,bash,linenum]
+----
+# increase to 15 GB
+lvextend -L15G --resizefs tank/data
+# increase by 5 GB
+lvextend -L+5G --resizefs tank/data
+----
+
+.Linux LTS
+[source,bash,linenum]
+----
+uname -r
+pacman -Syyu linux-lts
+grub-mkconfig -o /boot/grub/grub.cfg
+reboot
+uname -r
+----
+
+./etc/netctl/eth0
+[source,bash,linenum]
+----
+Connection=ethernet
+IP=static
+Interface=eth0
+Address=( '37.120.184.54/22' )
+Gateway=37.120.184.1
+IP6=static
+Address6=( '2a03:4000:f:56b:280d:beff:feb0:d415/64' )
+Gateway6=fe80::1
+DNS=( '46.38.225.230' '46.38.252.230' '2a03:4000:0:1::e1e6' )
+----
+
+=== Resources
+
+* https://wiki.archlinux.org/index.php/Docker[.org Wiki: Docker]
+* https://wiki.archlinux.org/index.php/Network_configuration[.org Wiki: Network Configuration]
+* https://wiki.archlinux.org/index.php/Ext4[.org Wiki: ext4]
+* https://wiki.archlinux.org/index.php/XFS[.org Wiki: XFS]
+* https://wiki.archlinux.de/title/LVM[.de Wiki: LVM]
+* https://wiki.archlinux.org/index.php/LVM[.org Wiki: LVM]
+* https://wiki.archlinux.org/index.php/Haveged[.org Wiki: haveged]
+* https://wiki.archlinux.org/index.php/pacman[.org Wiki: Pacman]
+* https://wiki.archlinux.org/index.php/Help:Reading[.org Wiki: Help:Reading]

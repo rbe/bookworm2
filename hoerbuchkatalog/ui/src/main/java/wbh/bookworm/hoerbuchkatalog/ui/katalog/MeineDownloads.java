@@ -19,9 +19,9 @@ import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import java.io.IOException;
-import java.util.Collections;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Component
 @RequestScope
@@ -33,9 +33,11 @@ public class MeineDownloads {
 
     private final MeineBestellung meineBestellung;
 
-    private String stichwort;
+    //private String stichwort;
 
-    private List<BlistaDownload> nachStichwortGefilterteDownloads;
+    private final Stichwortsuche<BlistaDownload> stichwortsuche;
+
+    //private List<BlistaDownload> nachStichwortGefilterteDownloads;
 
     @Autowired
     public MeineDownloads(final HoererSession hoererSession,
@@ -43,13 +45,11 @@ public class MeineDownloads {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
         this.meineBestellung = meineBestellung;
-        nachStichwortGefilterteDownloads = Collections.emptyList();
+        //nachStichwortGefilterteDownloads = Collections.emptyList();
+        stichwortsuche = new Stichwortsuche<>(hoererSession.bezugsfaehigeDownloads());
     }
 
-    public boolean isStichwortEingegeben() {
-        return null != stichwort && !stichwort.isBlank();
-    }
-
+/*
     public String getStichwort() {
         return stichwort;
     }
@@ -61,9 +61,13 @@ public class MeineDownloads {
         }
     }
 
+    public boolean isStichwortEingegeben() {
+        return null != stichwort && !stichwort.isBlank();
+    }
+
     public void sucheNachStichwort() {
         if (isStichwortEingegeben()) {
-            nachStichwortGefilterteDownloads = hoererSession.alleDownloads()
+            nachStichwortGefilterteDownloads = hoererSession.bezugsfaehigeDownloads()
                     .stream()
                     .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
                             || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
@@ -79,13 +83,13 @@ public class MeineDownloads {
                 && !nachStichwortGefilterteDownloads.isEmpty();
     }
 
-    public List<BlistaDownload> getAlleDownloads() {
+    public List<BlistaDownload> getAlleGefiltertenDownloads() {
         return nachStichwortGefilterteDownloads.isEmpty()
                 ? hoererSession.alleDownloads()
                 : nachStichwortGefilterteDownloads;
     }
 
-    public List<BlistaDownload> getBezugsfaehigeDownloads() {
+    public List<BlistaDownload> getGefilterteBezugsfaehigeDownloads() {
         return nachStichwortGefilterteDownloads.isEmpty()
                 ? hoererSession.bezugsfaehigeDownloads()
                 : nachStichwortGefilterteDownloads;
@@ -96,6 +100,42 @@ public class MeineDownloads {
                 //&& meineBestellung.isBestellungenVorhanden()
                 && !hoererSession.bezugsfaehigeDownloads().isEmpty()
                 && (null == stichwort || stichwort.isBlank()))
+                || isStichwortHatTreffer();
+    }
+*/
+
+    public String getStichwort() {
+        return stichwortsuche.getStichwort();
+    }
+
+    public void setStichwort(final String stichwort) {
+        stichwortsuche.setStichwort(stichwort);
+    }
+
+    public boolean isStichwortEingegeben() {
+        return stichwortsuche.isStichwortEingegeben();
+    }
+
+    public void sucheNachStichwort() {
+        LOGGER.debug("Suche nach Stichwort '{}'", stichwortsuche.getStichwort());
+        stichwortsuche.sucheNachStichwort((blistaDownload, s) -> {
+            return blistaDownload.getTitel().contains(s)
+                    || blistaDownload.getAutor().contains(s);
+        });
+    }
+
+    public void sucheVergessen() {
+        stichwortsuche.stichwortVergessen();
+    }
+
+    public boolean isStichwortHatTreffer() {
+        return stichwortsuche.isStichwortHatTreffer();
+    }
+
+    public boolean isHoerbuecherAnzeigen() {
+        return (!hoererSession.isBlistaAbrufHatFehler()
+                && !hoererSession.bezugsfaehigeDownloads().isEmpty()
+                && stichwortsuche.isStichwortEingegeben())
                 || isStichwortHatTreffer();
     }
 
@@ -115,6 +155,21 @@ public class MeineDownloads {
         return !hoererSession.isBlistaAbrufHatFehler()
                 //&& meineBestellung.isBestellungenVorhanden()
                 && !hoererSession.bezugsfaehigeDownloads().isEmpty();
+    }
+
+    public String getStandVomAufDeutsch() {
+        final LocalDateTime standVom = hoererSession.standVomDerDownloads();
+        return null != standVom
+                ? standVom.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : LocalDateTime.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
+    }
+
+    public List<BlistaDownload> getGefilterteBezugsfaehigeDownloads() {
+        LOGGER.trace("stichwortsuche.isStichwortHatTreffer()={}, {} Ergebnisse",
+                stichwortsuche.isStichwortHatTreffer(), stichwortsuche.getGefiltert().size());
+        return stichwortsuche.isStichwortHatTreffer()
+                ? stichwortsuche.getGefiltert()
+                : hoererSession.bezugsfaehigeDownloads();
     }
 
     // TODO

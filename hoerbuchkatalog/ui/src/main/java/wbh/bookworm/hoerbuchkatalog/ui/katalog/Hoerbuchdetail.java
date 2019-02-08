@@ -6,7 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,8 +33,8 @@ public class Hoerbuchdetail implements Serializable {
         return null != hoererSession.gemerktesHoerbuch();
     }
 
-    public Sachgebiet getSachgebiet() {
-        return hoererSession.gemerktesHoerbuch().getSachgebiet();
+    public String getSachgebiet() {
+        return hoererSession.gemerktesHoerbuch().getSachgebiet().getLabel();
     }
 
     public Titelnummer getTitelnummer() {
