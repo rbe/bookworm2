@@ -4,14 +4,16 @@
 [source,bash,linenum]
 ----
 cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
-mkdir -p dist/var/hoerbuchkatalog
 cd dist
+mkdir -p var/hoerbuchkatalog
 cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
+mkdir -p var/nutzerdaten
+cp ../../var/nutzerdaten/*.csv var/nutzerdaten/
 cp -r ../../src/main/resources/conf .
 cp -r ../../src/main/resources/application*.yml .
 #cp -r ../../../ui/src/main/resources/static .
 cp -r ../../../ui/src/main/resources/templates .
-JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
+JAR=wbh.bookworm.hoerbuchkatalog.assembly.jar
 cp ../${JAR} .
 scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
 ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
@@ -27,29 +29,21 @@ cd dist
 #cp -r ../../src/main/resources/application*.yml .
 #cp -r ../../../ui/src/main/resources/static .
 cp -r ../../../ui/src/main/resources/templates .
-JAR=wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar
+JAR=wbh.bookworm.hoerbuchkatalog.assembly.jar
 cp ../${JAR} .
 scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
 ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 ----
 
-.Start (development)
-[source,bash,linenum]
-----
-export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
-java -jar ${JAR} \
-    --spring.profiles.active=development \
-    --spring.config.additional-location=conf/
-----
-
 .Start (development; www.wbh-online.de)
 [source,bash,linenum]
 ----
+cd $HOME/app/bookworm2
 export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
 export PATH=$JAVA_HOME/bin:$PATH
 export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
 nohup \
-    java -jar wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar \
+    java -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
     --spring.profiles.active=development \
     --spring.config.additional-location=conf/ \
     2>&1 1>hoerbuchkatalog.log &
@@ -58,11 +52,12 @@ nohup \
 .Start (production; www.wbh-online.de)
 [source,bash,linenum]
 ----
+cd $HOME/app/bookworm2
 export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
 export PATH=$JAVA_HOME/bin:$PATH
 export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
 nohup \
-    java -jar wbh.bookworm.hoerbuchkatalog.assembly-LocalBuild.jar \
+    java -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
     --spring.profiles.active=production \
     --spring.config.additional-location=conf/ \
     2>&1 1>hoerbuchkatalog.log &
@@ -83,7 +78,7 @@ kill $(ps ax | grep hoerbuchkatalog | grep -v grep | awk '{print $1}')
 -XX:StartFlightRecording=disk=true,dumponexit=true,filename=recording.jfr,maxsize=1024m,maxage=1d,settings=profile,path-to-gc-roots=true
 ----
 
-== Linux
+== Setup Arch Linux
 
 .Setup SSH login
 [source,bash,linenum]
@@ -101,8 +96,36 @@ cat /proc/sys/kernel/random/entropy_avail
 pacman -Syyu
 pacman -S haveged
 systemctl enable haveged
-systemctl start haveged
+----
+
+.Linux LTS
+[source,bash,linenum]
+----
+uname -r
+pacman -Syyu linux-lts
+grub-mkconfig -o /boot/grub/grub.cfg
+----
+
+.Reboot
+[source,bash,linenum]
+----
 reboot
+uname -r
+ps ax | grep haveged
+----
+
+./etc/netctl/eth0
+[source,bash,linenum]
+----
+Connection=ethernet
+IP=static
+Interface=eth0
+Address=( '37.120.184.54/22' )
+Gateway=37.120.184.1
+IP6=static
+Address6=( '2a03:4000:f:56b:280d:beff:feb0:d415/64' )
+Gateway6=fe80::1
+DNS=( '46.38.225.230' '46.38.252.230' '2a03:4000:0:1::e1e6' )
 ----
 
 .Setup storage for Docker and applications
@@ -143,30 +166,6 @@ docker info
 lvextend -L15G --resizefs tank/data
 # increase by 5 GB
 lvextend -L+5G --resizefs tank/data
-----
-
-.Linux LTS
-[source,bash,linenum]
-----
-uname -r
-pacman -Syyu linux-lts
-grub-mkconfig -o /boot/grub/grub.cfg
-reboot
-uname -r
-----
-
-./etc/netctl/eth0
-[source,bash,linenum]
-----
-Connection=ethernet
-IP=static
-Interface=eth0
-Address=( '37.120.184.54/22' )
-Gateway=37.120.184.1
-IP6=static
-Address6=( '2a03:4000:f:56b:280d:beff:feb0:d415/64' )
-Gateway6=fe80::1
-DNS=( '46.38.225.230' '46.38.252.230' '2a03:4000:0:1::e1e6' )
 ----
 
 === Resources

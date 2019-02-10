@@ -96,9 +96,9 @@ public class MeineBestellkarte {
             LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, bestellkarte.getTitelnummer());
             final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer,
                     bestellkarte.getTitelnummer());
-            return bestellkarte.getTitelnummer().getValue().equals(s)
-                    || hoerbuch.getTitel().contains(s)
-                    || hoerbuch.getAutor().contains(s);
+            return bestellkarte.getTitelnummer().getValue().equalsIgnoreCase(s)
+                    || hoerbuch.getTitel().toLowerCase().contains(s.toLowerCase())
+                    || hoerbuch.getAutor().toLowerCase().contains(s.toLowerCase());
         });
     }
 

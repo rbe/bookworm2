@@ -52,10 +52,9 @@
                                                                          src="templates/wbh/images/logo_wbh.gif"/></a>
                         </div>
                         <a name="logout"></a>
-                        <ui:fragment rendered="#{hoerernummer.bekannt}">
+                        <ui:fragment rendered="#{hoererSession.hoererIstBekannt}">
                             <h2 class="unsichtbar">Abmelden/Logout</h2>
-                            <h:panelGroup layout="block"
-                                          styleClass="logout button btn btn-primary">Ausloggen</h:panelGroup>
+                            <h:panelGroup layout="block" styleClass="logout button btn btn-primary">Ausloggen</h:panelGroup>
                         </ui:fragment>
                     </div>
                 </header>
@@ -68,7 +67,6 @@
                      alt="Grafik Westdeutsche Blindenhörbücherei e.V., Münster"/>
             </div>
         </div>
-
         <div class="navigation">
             <div class="wrapper">
                 <div class="topmenu">
@@ -96,7 +94,6 @@
                 </div>
             </div>
         </div>
-
         <div class="content">
             <div class="wrapper">
                 <div class="main">
@@ -108,7 +105,6 @@
                 </div>
             </div>
         </div>
-
         <div id="footer">
             <div class="wrapper">
                 <h1 class="unsichtbar">Fusszeile</h1>

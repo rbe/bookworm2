@@ -43,17 +43,19 @@ public class HoerernummerFilter implements Filter {
             logoutVerarbeiten(request);
         } else {
             hoerernummerHttpRequest.accept(request);
+            chain.doFilter(req, res);
         }
-        chain.doFilter(req, res);
     }
 
     private void logoutVerarbeiten(final HttpServletRequest request) {
-        LOGGER.trace("Melde Hörer ab");
+        LOGGER.trace("Melde Hörer ab (URI {})", request.getRequestURI());
         final HttpSession session = request.getSession(false);
-        /* TODO Richtig? */request.removeAttribute(SessionKey.HOERERNUMMER);
-        /* TODO Richtig? */session.removeAttribute(SessionKey.SCOPEDTARGET_HOERERSESSION);
-        session.invalidate();
-        LOGGER.debug("HttpSession {} invalidiert", session.getId());
+        //request.removeAttribute(SessionKey.HOERERNUMMER);
+        if (null != session) {
+            session.removeAttribute(SessionKey.SCOPEDTARGET_HOERERSESSION);
+            session.invalidate();
+            LOGGER.debug("HttpSession {} invalidiert", session.getId());
+        }
     }
 
 }

@@ -129,7 +129,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         this.downloadbar = downloadbar;
     }
 
-    private static boolean isBlank(final String str) {
+    private static boolean isNotBlank(final String str) {
         return null != str && !str.isBlank();
     }
 
@@ -177,7 +177,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getAutor() {
-        return !isBlank(autor) ? autor : "Autor leider unbekannt";
+        return isNotBlank(autor) ? autor : "Autor leider unbekannt";
     }
 
     public void setAutor(String autor) {
@@ -185,7 +185,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getTitel() {
-        return !isBlank(titel) ? titel : "Titel leider unbekannt";
+        return isNotBlank(titel) ? titel : "Titel leider unbekannt";
     }
 
     public void setTitel(String titel) {
@@ -193,40 +193,40 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getUntertitel() {
-        return !isBlank(untertitel) ? untertitel : "";
+        return isNotBlank(untertitel) ? untertitel : "";
     }
 
     public String getErlaeuterung() {
-        return !isBlank(erlaeuterung) ? erlaeuterung : "";
+        return isNotBlank(erlaeuterung) ? erlaeuterung : "";
     }
 
     public String getVerlagsort() {
-        return isBlank(verlagsort) ? verlagsort : "";
+        return isNotBlank(verlagsort) ? verlagsort : "";
     }
 
     public String getVerlag() {
-        return isBlank(verlag) ? verlag : "";
+        return isNotBlank(verlag) ? verlag : "";
     }
 
     public String getDruckjahr() {
-        return isBlank(druckjahr) ? druckjahr : "";
+        return isNotBlank(druckjahr) ? druckjahr : "";
     }
 
     public String getSprecher1() {
-        return isBlank(sprecher1) ? sprecher1 : "";
+        return isNotBlank(sprecher1) ? sprecher1 : "";
     }
 
     public String getSprecher2() {
-        return isBlank(sprecher2) ? sprecher2 : "";
+        return isNotBlank(sprecher2) ? sprecher2 : "";
     }
 
     public String getSprecher() {
         final StringBuilder builder = new StringBuilder();
-        if (!isBlank(sprecher1)) {
+        if (isNotBlank(sprecher1)) {
             builder.append(sprecher1);
         }
-        if (!isBlank(sprecher2)) {
-            if (!isBlank(sprecher1)) {
+        if (isNotBlank(sprecher2)) {
+            if (isNotBlank(sprecher1)) {
                 builder.append(", ");
             }
             builder.append(sprecher2);
@@ -236,7 +236,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     public String getSpieldauer() {
         String _spieldauer = "0,00";
-        final boolean spieldauerParsbar = !isBlank(spieldauer)
+        final boolean spieldauerParsbar = isNotBlank(spieldauer)
                 && (spieldauer.contains(",") || spieldauer.contains("."));
         if (spieldauerParsbar) {
             String[] parts = spieldauer.split("[.,]");
@@ -253,23 +253,23 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getProdOrt() {
-        return !isBlank(prodOrt) ? prodOrt : "";
+        return isNotBlank(prodOrt) ? prodOrt : "";
     }
 
     public String getProdJahr() {
-        return !isBlank(prodJahr) ? prodJahr : "";
+        return isNotBlank(prodJahr) ? prodJahr : "";
     }
 
     public String getSuchwoerter() {
-        return !isBlank(suchwoerter) ? suchwoerter : "";
+        return isNotBlank(suchwoerter) ? suchwoerter : "";
     }
 
     public String getAnzahlCD() {
-        return !isBlank(anzahlCD) ? anzahlCD : "";
+        return isNotBlank(anzahlCD) ? anzahlCD : "";
     }
 
     public String getTitelfamilie() {
-        return !isBlank(titelfamilie) ? titelfamilie : "";
+        return isNotBlank(titelfamilie) ? titelfamilie : "";
     }
 
     public LocalDate getEinstelldatum() {

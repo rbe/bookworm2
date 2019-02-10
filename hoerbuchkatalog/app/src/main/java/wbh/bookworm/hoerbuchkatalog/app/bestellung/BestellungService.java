@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.util.Optional;
 
 // TODO Peristenz für Warenkörbe nicht notwendig -> WK nur pro Session gültig, Session persistieren
+// TODO Ggf. splitten in WarenkorbService
 @Service
 public final class BestellungService {
 
@@ -220,8 +221,7 @@ public final class BestellungService {
      * Command
      */
     public Optional<BestellungId> bestellungAufgeben(final BestellungSessionId bestellungSessionId,
-            /* TODO Hoerer */
-                                                     final Hoerernummer hoerernummer,
+                                                     /* TODO Hoerer */final Hoerernummer hoerernummer,
                                                      final Hoerername hoerername,
                                                      final HoererEmail hoereremail,
                                                      final String bemerkung,

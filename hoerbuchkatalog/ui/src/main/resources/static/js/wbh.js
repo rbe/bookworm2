@@ -10,19 +10,19 @@ $(document).ready(function ($) {
             $.get("/hoerbuchkatalog/logout", function (data) {
                 console.log("Catalog logout was performed.");
             }),
-            $.get("/hoererdaten/logout", function (data) {
-                console.log("Customer logout was performed.");
-            }),
+            // $.get("/nutzerbereich/logout", function (data) {
+            //     console.log("Customer logout was performed.");
+            // }),
             $.get("/index.php?option=com_comprofiler&task=logout", function (data) {
                 console.log("Joomla logout was performed.");
             })
         ).then(
             function () {
-                console.log("redirect");
+                console.log("data/redirect");
                 window.location.replace("/");
             },
             function () {
-                console.log("error");
+                console.log("error/redirect");
                 window.location.replace("/");
             }
         );

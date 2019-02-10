@@ -6,7 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.hoerer;
 
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
@@ -21,7 +20,7 @@ import java.util.Optional;
 @Service
 public final class HoererService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CdLieferungService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(HoererService.class);
 
     private final HoererRepository hoererRepository;
 
@@ -36,8 +35,10 @@ public final class HoererService {
         } else {
             final Hoerer hoerer = hoererRepository.hoerer(hoerernummer);
             if (hoerer.isBekannt()) {
-                LOGGER.info("Hörerdaten für Hörer {} gefunden", hoerernummer);
+                LOGGER.debug("Hörerdaten für Hörer {} gefunden", hoerernummer);
                 return Optional.of(hoerer);
+            } else {
+                LOGGER.warn("Keine Hörerdaten für Hörer {} gefunden", hoerernummer);
             }
         }
         return Optional.empty();

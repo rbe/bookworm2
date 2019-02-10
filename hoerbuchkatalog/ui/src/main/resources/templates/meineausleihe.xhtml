@@ -28,12 +28,6 @@
                                      value="Suchen">
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
-                    <h:commandButton id="stichwortVergessen"
-                                     actionListener="#{meineAusleihe.stichwortVergessen}"
-                                     styleClass="searchbutton"
-                                     value="Alles anzeigen">
-                        <f:ajax event="action" execute="@form" render="@all"/>
-                    </h:commandButton>
                 </div>
                 <h:panelGroup rendered="#{!meineAusleihe.belastungenVorhanden()}"
                               layout="block" styleClass="row notitle">

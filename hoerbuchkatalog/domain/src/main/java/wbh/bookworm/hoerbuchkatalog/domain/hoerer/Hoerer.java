@@ -11,6 +11,7 @@ import aoc.ddd.model.DomainAggregate;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
@@ -21,7 +22,7 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
     /* HOERSTP, HOENN private String nachname; */
     /* HOERSTP */private Hoerername hoerername;
 
-    /* HOERSTP, HOEN2 (Nachnamenszusatz) */private String name2;
+    /* HOERSTP, HOEN2 */private String nachnamenszusatz;
 
     /* HOERSTP, HOESTR */private String strasse;
 
@@ -78,8 +79,9 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         this.hoereremail = hoereremail;
     }
 
+    @SuppressWarnings({"squid:S00107"})
     public Hoerer(final Hoerernummer hoerernummer,
-                  final String anrede, final Hoerername hoerername, final String name2,
+                  final String anrede, final Hoerername hoerername, final String nachnamenszusatz,
                   final String strasse, final String plz, final String ort, final String adresszusatz, final String land,
                   final LocalDate sperrTerminVon, final LocalDate sperrTerminBis,
                   final LocalDate urlaubVon, final LocalDate urlaubBis,
@@ -92,7 +94,7 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         super(hoerernummer);
         this.anrede = anrede;
         this.hoerername = hoerername;
-        this.name2 = name2;
+        this.nachnamenszusatz = nachnamenszusatz;
         this.strasse = strasse;
         this.plz = plz;
         this.ort = ort;
@@ -168,31 +170,31 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
     }
 
     public String getAnrede() {
-        return anrede;
+        return nonNullString(anrede);
     }
 
-    public String getName2() {
-        return name2;
+    public String getNachnamenszusatz() {
+        return nonNullString(nachnamenszusatz);
     }
 
     public String getStrasse() {
-        return strasse;
+        return nonNullString(strasse);
     }
 
     public String getPlz() {
-        return plz;
+        return nonNullString(plz);
     }
 
     public String getOrt() {
-        return ort;
+        return nonNullString(ort);
     }
 
     public String getAdresszusatz() {
-        return adresszusatz;
+        return nonNullString(adresszusatz);
     }
 
     public String getLand() {
-        return land;
+        return nonNullString(land);
     }
 
     public LocalDate getSperrTerminVon() {
@@ -212,39 +214,45 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
     }
 
     public String getUrlaubName2() {
-        return urlaubName2;
+        return nonNullString(urlaubName2);
     }
 
     public String getUrlaubStrasse() {
-        return urlaubStrasse;
+        return nonNullString(urlaubStrasse);
     }
 
     public String getUrlaubPlz() {
-        return urlaubPlz;
+        return nonNullString(urlaubPlz);
     }
 
     public String getUrlaubOrt() {
-        return urlaubOrt;
+        return nonNullString(urlaubOrt);
     }
 
     public String getUrlaubAdresszusatz() {
-        return urlaubAdresszusatz;
+        return nonNullString(urlaubAdresszusatz);
     }
 
     public String getUrlaubLand() {
-        return urlaubLand;
+        return nonNullString(urlaubLand);
     }
 
     public LocalDate getGeburtsdatum() {
         return geburtsdatum;
     }
 
+    public String getGeburtsdatumAufDeutsch() {
+        return null != geburtsdatum
+                ? geburtsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     public String getTelefonnummer() {
-        return telefonnummer;
+        return nonNullString(telefonnummer);
     }
 
     public Integer getMengenindex() {
-        return mengenindex;
+        return null != mengenindex ? mengenindex : 0;
     }
 
     public LocalDate getRueckbuchungsdatum() {

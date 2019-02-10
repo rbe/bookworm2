@@ -116,7 +116,7 @@ public final class FileSplitter {
     private void setup(final Path path, final int expectedLineCount,
                        final int numWriters) throws IOException {
         final int capacity = expectedLineCount / numWriters;
-        LOGGER.trace("Using queue with capacity {} ({} expected line count / {} writers)",
+        LOGGER.debug("Using queue with capacity {} ({} expected line count / {} writers)",
                 capacity, expectedLineCount, numWriters);
         queue = new ArrayBlockingQueue<>(capacity);
         splittedPaths = new Path[numWriters];
@@ -136,7 +136,8 @@ public final class FileSplitter {
         while (!queue.isEmpty()) {
             try {
                 int time = 250;
-                LOGGER.debug("Waiting {} milliseconds for writers to finish", time);
+                LOGGER.debug("Queue has {} items left, witing {} milliseconds for writers to finish",
+                        queue.size(), time);
                 TimeUnit.MILLISECONDS.sleep(time);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -161,8 +162,10 @@ public final class FileSplitter {
             setup(path, expectedLineCount, numWriters);
             String line;
             while (null != (line = reader.readLine())) {
-                if (!queue.offer(line)) {
-                    throw new IllegalStateException("offer()==false");
+                try {
+                    queue.put(line);
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
                 }
             }
             tearDown(numWriters);

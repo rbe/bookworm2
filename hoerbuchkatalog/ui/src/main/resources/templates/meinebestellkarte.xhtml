@@ -26,11 +26,6 @@
                                      styleClass="searchbutton">
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
-                    <h:commandButton actionListener="#{meineBestellkarte.sucheVergessen}"
-                                     value="Alles anzeigen"
-                                     styleClass="searchbutton">
-                        <f:ajax event="action" execute="@form" render="@all"/>
-                    </h:commandButton>
                 </div>
                 <h:panelGroup rendered="#{!meineBestellkarte.bestellkartenVorhanden()}"
                               layout="block" styleClass="row">

@@ -45,12 +45,6 @@
                                      value="Suchen">
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>
-                    <h:commandButton id="sucheVergessen"
-                                     actionListener="#{meineDownloads.sucheVergessen}"
-                                     styleClass="searchbutton"
-                                     value="Alles anzeigen">
-                        <f:ajax event="action" execute="@form" render="@all"/>
-                    </h:commandButton>
                 </h:panelGroup>
                 <h:panelGroup rendered="#{!meineDownloads.blistaAbrufHatFehler and !meineDownloads.hoerbucherAusgeliehen}"
                               layout="block" styleClass="row notitle">

@@ -7,15 +7,12 @@ services:
     environment:
       - HOERBUCHKATALOG_TEMPLATE=./template
     volumes:
-      - hoerbuchkatalog_data:/var/hoerbuchkatalog
-  nutzerbereich:
-    image: wbh/nutzerbereich:latest
+      - var_hoerbuchkatalog:/var/hoerbuchkatalog
+      - var_nutzerbereich:/var/nutzerbereich
+  nginx:
+    image: nginx/stable-alpine:latest
     ports:
-      - 80:9090
-    environment:
-      - NUTZERBEREICH_TEMPLATE=./template
-    volumes:
-      - nutzerbereich_data:/var/nutzerbereich
+      - 443:443
 networks:
   frontend:
     name: frontend

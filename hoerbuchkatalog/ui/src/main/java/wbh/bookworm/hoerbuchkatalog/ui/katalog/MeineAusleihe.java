@@ -78,9 +78,9 @@ public class MeineAusleihe {
         stichwortsuche.sucheNachStichwort((belastung, s) -> {
             final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer,
                     belastung.getTitelnummer());
-            return belastung.getTitelnummer().getValue().equals(s)
-                    || hoerbuch.getTitel().contains(s)
-                    || hoerbuch.getAutor().contains(s);
+            return belastung.getTitelnummer().getValue().equalsIgnoreCase(s)
+                    || hoerbuch.getTitel().toLowerCase().contains(s.toLowerCase())
+                    || hoerbuch.getAutor().toLowerCase().contains(s.toLowerCase());
         });
     }
 

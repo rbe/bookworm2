@@ -31,78 +31,14 @@ public class MeineDownloads {
 
     private final HoererSession hoererSession;
 
-    private final MeineBestellung meineBestellung;
-
-    //private String stichwort;
-
     private final Stichwortsuche<BlistaDownload> stichwortsuche;
 
-    //private List<BlistaDownload> nachStichwortGefilterteDownloads;
-
     @Autowired
-    public MeineDownloads(final HoererSession hoererSession,
-                          final MeineBestellung meineBestellung) {
+    public MeineDownloads(final HoererSession hoererSession) {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
-        this.meineBestellung = meineBestellung;
-        //nachStichwortGefilterteDownloads = Collections.emptyList();
         stichwortsuche = new Stichwortsuche<>(hoererSession.bezugsfaehigeDownloads());
     }
-
-/*
-    public String getStichwort() {
-        return stichwort;
-    }
-
-    public void setStichwort(final String stichwort) {
-        this.stichwort = stichwort;
-        if (!isStichwortEingegeben()) {
-            nachStichwortGefilterteDownloads = Collections.emptyList();
-        }
-    }
-
-    public boolean isStichwortEingegeben() {
-        return null != stichwort && !stichwort.isBlank();
-    }
-
-    public void sucheNachStichwort() {
-        if (isStichwortEingegeben()) {
-            nachStichwortGefilterteDownloads = hoererSession.bezugsfaehigeDownloads()
-                    .stream()
-                    .filter(h -> h.getAutor().toLowerCase().contains(stichwort.toLowerCase())
-                            || h.getTitel().toLowerCase().contains(stichwort.toLowerCase()))
-                    .collect(Collectors.toList());
-        } else {
-            nachStichwortGefilterteDownloads = Collections.emptyList();
-        }
-    }
-
-    public boolean isStichwortHatTreffer() {
-        return isStichwortEingegeben()
-                && !hoererSession.isBlistaAbrufHatFehler() && meineBestellung.isBestellungenVorhanden()
-                && !nachStichwortGefilterteDownloads.isEmpty();
-    }
-
-    public List<BlistaDownload> getAlleGefiltertenDownloads() {
-        return nachStichwortGefilterteDownloads.isEmpty()
-                ? hoererSession.alleDownloads()
-                : nachStichwortGefilterteDownloads;
-    }
-
-    public List<BlistaDownload> getGefilterteBezugsfaehigeDownloads() {
-        return nachStichwortGefilterteDownloads.isEmpty()
-                ? hoererSession.bezugsfaehigeDownloads()
-                : nachStichwortGefilterteDownloads;
-    }
-
-    public boolean isHoerbuecherAnzeigen() {
-        return (!hoererSession.isBlistaAbrufHatFehler()
-                //&& meineBestellung.isBestellungenVorhanden()
-                && !hoererSession.bezugsfaehigeDownloads().isEmpty()
-                && (null == stichwort || stichwort.isBlank()))
-                || isStichwortHatTreffer();
-    }
-*/
 
     public String getStichwort() {
         return stichwortsuche.getStichwort();
@@ -118,10 +54,9 @@ public class MeineDownloads {
 
     public void sucheNachStichwort() {
         LOGGER.debug("Suche nach Stichwort '{}'", stichwortsuche.getStichwort());
-        stichwortsuche.sucheNachStichwort((blistaDownload, s) -> {
-            return blistaDownload.getTitel().contains(s)
-                    || blistaDownload.getAutor().contains(s);
-        });
+        stichwortsuche.sucheNachStichwort((blistaDownload, s) ->
+                blistaDownload.getTitel().toLowerCase().contains(s.toLowerCase())
+                        || blistaDownload.getAutor().toLowerCase().contains(s.toLowerCase()));
     }
 
     public void sucheVergessen() {

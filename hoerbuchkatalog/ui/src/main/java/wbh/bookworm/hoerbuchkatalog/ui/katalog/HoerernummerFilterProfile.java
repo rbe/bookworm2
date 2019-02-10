@@ -45,10 +45,10 @@ public class HoerernummerFilterProfile {
                 TRUSTED_IP.contains(request.getRemoteAddr());
         final Consumer<HttpServletRequest> b = new HoerernummerInSessionSetzen();
         return request -> {
-            LOGGER.trace("Prüfe {}, remoteAddr={} remoteHost={}",
+            LOGGER.debug("Prüfe {}, remoteAddr={} remoteHost={}",
                     request, request.getRemoteAddr(), request.getRemoteHost());
             if (a.test(request)) {
-                LOGGER.trace("Request von remoteAddr={} remoteHost={} akzeptiert",
+                LOGGER.debug("Request von remoteAddr={} remoteHost={} akzeptiert",
                         request.getRemoteAddr(), request.getRemoteHost());
                 b.accept(request);
             } else {

@@ -19,17 +19,22 @@
             <h:form id="meinArchiv">
                 <div class="searchrow">
                     <h3>Suchen Sie innerhalb Ihres Archivs</h3>
-                    <label>Startdatum:</label><h:inputText value="#{meinArchiv.suchdatumAb}" class="searchdate"/> Format: Tag.Monat.Jahr<br/>
-                    <label>Suchtitel:</label><h:inputText value="#{meinArchiv.stichwort}" class="searchtitle"/>
+                    <h:messages for="suchdatumAb"
+                                showDetail="true" showSummary="false"
+                                style="color:red"/>
+                    <label>Startdatum:</label>
+                    <h:inputText value="#{meinArchiv.suchdatumAb}"
+                                 validatorMessage="Bitte ein Datum im Format TT.MM.JJJJ eingeben"
+                                 id="suchdatumAb"
+                                 class="searchdate">
+                        <f:validateRegex pattern="\d{1,2}\.\d{1,2}\.\d{4}"/>
+                    </h:inputText>
+                    (TT.MM.JJJJ)<br/>
+                    <label>Suchtitel:</label>
+                    <h:inputText value="#{meinArchiv.stichwort}" class="searchtitle"/>
                     <h:commandButton id="archivDurchsuchen"
                                      actionListener="#{meinArchiv.sucheNachStichwort}"
                                      value="Suchen"
-                                     styleClass="searchbutton">
-                        <f:ajax event="action" execute="@form" render="@all"/>
-                    </h:commandButton>
-                    <h:commandButton id="sucheVergessen"
-                                     actionListener="#{meinArchiv.sucheVergessen}"
-                                     value="Alles anzeigen"
                                      styleClass="searchbutton">
                         <f:ajax event="action" execute="@form" render="@all"/>
                     </h:commandButton>

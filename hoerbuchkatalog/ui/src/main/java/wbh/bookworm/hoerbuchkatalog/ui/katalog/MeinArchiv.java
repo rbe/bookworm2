@@ -119,13 +119,13 @@ public class MeinArchiv {
             if (null != suchdatumAb) {
                 return (null != erledigteBestellkarte.getAusleihdatum()
                         && erledigteBestellkarte.getAusleihdatum().isAfter(suchdatumAb))
-                        && (erledigteBestellkarte.getTitelnummer().getValue().equals(s)
-                        || hoerbuch.getTitel().contains(s)
-                        || hoerbuch.getAutor().contains(s));
+                        && (erledigteBestellkarte.getTitelnummer().getValue().equalsIgnoreCase(s)
+                        || hoerbuch.getTitel().toLowerCase().contains(s.toLowerCase())
+                        || hoerbuch.getAutor().toLowerCase().contains(s.toLowerCase()));
             } else {
-                return erledigteBestellkarte.getTitelnummer().getValue().equals(s)
-                        || hoerbuch.getTitel().contains(s)
-                        || hoerbuch.getAutor().contains(s);
+                return erledigteBestellkarte.getTitelnummer().getValue().equalsIgnoreCase(s)
+                        || hoerbuch.getTitel().toLowerCase().contains(s.toLowerCase())
+                        || hoerbuch.getAutor().toLowerCase().contains(s.toLowerCase());
             }
         });
     }

@@ -38,6 +38,10 @@ public abstract class DomainEntity
         return domainId;
     }
 
+    protected static String nonNullString(final String str) {
+        return null != str ? str : "";
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(domainId);

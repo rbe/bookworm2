@@ -63,7 +63,7 @@ public class MeineDaten {
 
     public String getNachnamenszusatz() {
         return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getName2)
+                .map(Hoerer::getNachnamenszusatz)
                 .orElse("unbekannt");
     }
 
@@ -75,7 +75,7 @@ public class MeineDaten {
 
     public String getGeburtsdatumAufDeutsch() {
         return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getGeburtsdatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
+                .map(Hoerer::getGeburtsdatumAufDeutsch)
                 .orElse("unbekannt");
     }
 
