@@ -51,6 +51,8 @@ public final class BlistaDownload extends DomainValueObject {
 
     private final String downloadLink;
 
+    private final int gesperrt;
+
     public BlistaDownload(final Hoerernummer hoerernummer,
                           final AghNummer aghNummer,
                           final Titelnummer titelnummer, final String titel,
@@ -59,7 +61,7 @@ public final class BlistaDownload extends DomainValueObject {
                           final LocalDateTime bestelldatum, final LocalDateTime rueckgabedatum,
                           final String dlsDescription,
                           final int downloadCount, final int maxDownload,
-                          final String downloadLink) {
+                          final String downloadLink, int gesperrt) {
         Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
         Objects.requireNonNull(aghNummer);
@@ -102,7 +104,10 @@ public final class BlistaDownload extends DomainValueObject {
         this.downloadCount = downloadCount;
         this.maxDownload = maxDownload;
         this.downloadLink = downloadLink;
-        this.bezugsfaehig &= /* TODO isUrl(String) */null != downloadLink && !downloadLink.trim().isEmpty();
+        this.gesperrt = gesperrt;
+        this.bezugsfaehig &= /* TODO isUrl(String) */
+                gesperrt == 0 &&
+                null != downloadLink && !downloadLink.trim().isEmpty();
     }
 
     public Hoerernummer getHoerernummer() {
@@ -167,6 +172,10 @@ public final class BlistaDownload extends DomainValueObject {
         return downloadLink;
     }
 
+    public int getGesperrt() {
+        return gesperrt;
+    }
+
     public void downloadCounterRuntersetzen() {
         downloadCount++;
     }
@@ -188,14 +197,14 @@ public final class BlistaDownload extends DomainValueObject {
 
     @Override
     public String toString() {
-        return String.format("BlistaDownload{hoerernummer=%s, aghNummer=%s," +
-                        " ausleihstatus=%d, bezugsfaehig=%s, bestelldatum=%s, rueckgabedatum=%s," +
+        return String.format("BlistaDownload{hoerernummer'=%s', aghNummer='%s'," +
+                        " ausleihstatus=%d, bezugsfaehig='%s', bestelldatum='%s', rueckgabedatum='%s'," +
                         " downloadCount=%d, maxDownload=%d," +
-                        " downloadLink='%s'}",
+                        " downloadLink='%s', gesperrt=%d}",
                 hoerernummer, aghNummer,
                 ausleihstatus, bezugsfaehig, bestelldatum, rueckgabedatum,
                 downloadCount, maxDownload,
-                downloadLink);
+                downloadLink, gesperrt);
     }
 
 }

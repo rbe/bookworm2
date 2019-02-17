@@ -35,12 +35,10 @@ scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
 ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
 ----
 
-.Start (development; www.wbh-online.de)
+.Start (development)
 [source,bash,linenum]
 ----
-cd $HOME/app/bookworm2
-export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
-export PATH=$JAVA_HOME/bin:$PATH
+cd $HOME/project/wbh.bookworm/hoerbuchkatalog
 export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
 nohup \
     java -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \

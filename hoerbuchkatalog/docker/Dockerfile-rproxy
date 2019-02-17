@@ -1,5 +1,14 @@
 FROM nginx:stable-alpine
 MAINTAINER Ralf Bensmann <ralf@art-of-coding.eu>
 LABEL vendor="Art of Coding UG"
+
+RUN apk update \
+    && apk add letsencrypt \
+    && rm -rf /var/cache/apk/*
+
+VOLUME ["/etc/nginx"]
+
 COPY nginx.conf /etc/nginx/nginx.conf
+COPY nginx.wbh.conf /etc/nginx/conf.d/wbh.conf
+
 COPY index.html /usr/share/nginx/html

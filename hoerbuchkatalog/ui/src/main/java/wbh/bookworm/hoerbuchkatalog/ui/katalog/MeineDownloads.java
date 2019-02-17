@@ -69,13 +69,13 @@ public class MeineDownloads {
 
     public boolean isHoerbuecherAnzeigen() {
         return (!hoererSession.isBlistaAbrufHatFehler()
-                && !hoererSession.bezugsfaehigeDownloads().isEmpty()
-                && stichwortsuche.isStichwortEingegeben())
+                && !hoererSession.bezugsfaehigeDownloads().isEmpty())
                 || isStichwortHatTreffer();
     }
 
     public boolean isBlistaAbrufHatFehler() {
-        return hoererSession.isBlistaAbrufHatFehler();
+        return hoererSession.isBlistaAbrufHatFehler()
+                && !hoererSession.blistaFehlercode().equals("202");
     }
 
     public String getBlistaFehlercode() {

@@ -24,10 +24,14 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.app" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung"
+            level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
@@ -46,6 +50,12 @@
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="aoc.jsf" level="TRACE" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="aoc.jsf.ELValueCache" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="aoc.jsf.ELValueCacheGroup" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">

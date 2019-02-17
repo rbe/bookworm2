@@ -16,15 +16,21 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestSer
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Optional;
 
 /**
  * Blista DLS
- * Agiert als ein ACL für Bestellungen -> domain.BlistaDownloads/BlistaDownload
+ * Agiert als ein Anti-Corruption-Layer?? für Bestellungen -> domain.BlistaDownloads/BlistaDownload
  */
 @Service
 public class DlsLieferung {
@@ -42,12 +48,7 @@ public class DlsLieferung {
         try {
             final URL url = new URL(String.format("%s/%s", dlsRestConfig.getWerkeurl(),
                     hoerernummer));
-            /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
-                    Files.newInputStream(downloadToFile(hoerernummer, "werke", url)));*/
-            final byte[] antwort = RestServiceClient.download(
-                    dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
-                    url);
-            // TODO antwort.length == 0
+            final byte[] antwort = abfrageSendenUndAntwortArchivieren(hoerernummer, url);
             if (antwort.length > 0) {
                 final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
                 if (dlsAntwort instanceof DlsWerke) {
@@ -75,14 +76,10 @@ public class DlsLieferung {
         try {
             final URL url = new URL(String.format("%s/%s/%s", dlsRestConfig.getWerkeurl(),
                     hoerernummer, aghNummer));
-            /* TODO Archivieren? final DlsAntwort dlsAntwort = werteAntwortAus(
-                    Files.newInputStream(downloadToFile(hoerernummer, "bestellung-" + aghNummer, url)));*/
-            final byte[] antwort = RestServiceClient.download(
-                    dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
-                    url);
+            final byte[] antwort = abfrageSendenUndAntwortArchivieren(hoerernummer, url);
             if (antwort.length > 0) {
                 final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
-                LOGGER.trace("{}: Abholen der Bestellung dauerte {} ms", Thread.currentThread().getName(),
+                LOGGER.trace("Abholen der Bestellung dauerte {} ms",
                         (System.nanoTime() - startBook) / 1_000_000);
                 if (dlsAntwort instanceof DlsBook) {
                     return Optional.of((DlsBook) dlsAntwort);
@@ -101,6 +98,31 @@ public class DlsLieferung {
         } catch (IOException e) {
             LOGGER.error("", e);
             return Optional.empty();
+        }
+    }
+
+    private byte[] abfrageSendenUndAntwortArchivieren(final String hoerernummer,
+                                                      final URL url) throws IOException {
+        final byte[] antwort = RestServiceClient.download(
+                dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
+                url);
+        if (LOGGER.isDebugEnabled()) {
+            archiviere(String.format("hoerer-%s-%s-%s.xml",
+                    hoerernummer,
+                    LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE),
+                    url.getPath().replaceAll("/", "_").substring(1)),
+                    antwort);
+        }
+        return antwort;
+    }
+
+    @Async
+    protected void archiviere(final String name, final byte[] daten) {
+        try {
+            Files.write(Path.of(/* TODO Konfigration */"var/blista-dls", name), daten,
+                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+        } catch (IOException e) {
+            LOGGER.error("", e);
         }
     }
 

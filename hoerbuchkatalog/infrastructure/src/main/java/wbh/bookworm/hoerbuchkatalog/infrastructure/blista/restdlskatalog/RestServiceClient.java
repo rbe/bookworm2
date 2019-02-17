@@ -17,6 +17,7 @@ import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.net.ConnectException;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -79,10 +80,11 @@ public final class RestServiceClient {
         connection.addRequestProperty("Accept", "text/xml;charset=UTF-8");
         final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
         try {
-            // TODO java.net.ConnectException: Operation timed out (Connection timed out)
             connection.getInputStream().transferTo(bytes);
-        } catch (SocketTimeoutException e) {
-            LOGGER.error("", e);
+        } catch (SocketTimeoutException | ConnectException e) {
+            LOGGER.error("Konnte keine Verbindung zu " + url + " aufbauen", e);
+        } catch (IOException e) {
+            LOGGER.error("Konnte keine Daten von " + url + " abrufen", e);
         } finally {
             connection.disconnect();
         }

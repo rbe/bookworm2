@@ -1,18 +1,30 @@
 version: '3.7'
 services:
-  hoerbuchkatalog:
+  datatransfer:
+    image: wbh/datatransfer:latest
+    ports:
+      - 2201:22
+    networks:
+      - public
+  hoerbuchkatalog-app:
     image: wbh/hoerbuchkatalog:latest
     ports:
-      - 80:9080
+      - 9080:9080
     environment:
       - HOERBUCHKATALOG_TEMPLATE=./template
     volumes:
       - var_hoerbuchkatalog:/var/hoerbuchkatalog
       - var_nutzerbereich:/var/nutzerbereich
-  nginx:
-    image: nginx/stable-alpine:latest
+    networks:
+      - private
+  hoerbuchkatalog-web:
+    image: wbh/reverse-proxy:latest
     ports:
+      - 80:80
       - 443:443
+    networks:
+      - public
+      - private
 networks:
   frontend:
     name: frontend
@@ -23,7 +35,9 @@ networks:
     driver: bridge
     external: false
 volumes:
-  hoerbuchkatalog_data:
+  datatransfer_etc_ssh:
     driver: local
-  nutzerbereich_data:
+  var_hoerbuchkatalog:
+    driver: local
+  var_nutzerbereich:
     driver: local

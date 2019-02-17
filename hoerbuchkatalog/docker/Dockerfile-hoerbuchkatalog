@@ -1,22 +1,26 @@
 FROM openjdk:11.0.1-jdk-slim-stretch
 MAINTAINER Ralf Bensmann <ralf@art-of-coding.eu>
+LABEL vendor="Art of Coding UG"
+
 ENV buildNumber=LocalBuild
 RUN echo Build number is $buildNumber
-LABEL vendor="Art of Coding UG"
+
 WORKDIR /opt/hoerbuchkatalog
 COPY assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
 COPY assembly/src/main/resources/conf conf
 COPY assembly/src/main/resources/application*.yml ./
-VOLUME /var/hoerbuchkatalog
-COPY assembly/var/hoerbuchkatalog/Gesamt*.dat ./var/hoerbuchkatalog/
-VOLUME /var/nutzerdaten
-COPY assembly/var/nutzerdaten/*.csv ./var/nutzerdaten/
-VOLUME /templates
-COPY ui/src/main/resources/templates /templates
-ENV HOERBUCHKATALOG_TEMPLATE /templates
+VOLUME ["/var/templates", "/var/wbh"]
+COPY assembly/var/hoerbuchkatalog/Gesamt*.dat ./var/wbh/hoerbuchkatalog/
+COPY assembly/var/nutzerdaten/*.csv ./var/wbh/nutzerdaten/
+COPY ui/src/main/resources/templates /var/templates
+ENV HOERBUCHKATALOG_TEMPLATE /var/templates
+
 HEALTHCHECK NONE
+
 EXPOSE 9080/tcp
+
 RUN ls -lR
+
 CMD ["java", \
     "-Xms2G", "-Xmx2G", \
     "-jar", "wbh.bookworm.hoerbuchkatalog.assembly.jar", \

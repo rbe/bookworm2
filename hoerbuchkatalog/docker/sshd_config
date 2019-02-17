@@ -1,0 +1,14 @@
+X11Forwarding no
+AllowTcpForwarding no
+Subsystem sftp internal-sftp
+
+Match User rbe
+    AuthorizedKeysFile authorized_keys_rbe
+
+Match User cew
+    AuthorizedKeysFile authorized_keys_cew
+
+Match User wbh
+    AuthorizedKeysFile authorized_keys_wbh
+    ChrootDirectory /var/wbh
+    ForceCommand internal-sftp

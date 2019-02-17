@@ -56,9 +56,9 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
                 LOGGER.debug("{}: Abholen von {} blista Werken für Hörer {} dauerte {} ms",
+                        Thread.currentThread().getName(),
                         bereitgestellteDownloads.size(),
                         hoerernummer,
-                        Thread.currentThread().getName(),
                         (System.nanoTime() - startWerke) / 1_000_000);
                 return new HoererBlistaDownloads(hoerernummer, bereitgestellteDownloads);
             } else {
@@ -80,20 +80,26 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
         if (bestellung.isPresent()) {
             final DlsBook dlsBook = bestellung.get();
             final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
-            return hoerbuch.map(h -> new BlistaDownload(
-                    hoerernummer,
-                    aghNummer,
-                    h.getTitelnummer(), h.getTitel(),
-                    h.getAutor(), h.getSpieldauer(),
-                    dlsBook.book.Ausleihstatus,
-                    dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
-                    dlsBook.book.DlsDescription,
-                    dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
-                    dlsBook.book.DownloadLink))
-                    .orElse(null);
+            if (hoerbuch.isEmpty()) {
+                LOGGER.warn("Hörer {}/AGH Nummer {}: Hörbuch nicht gefunden",
+                        hoerernummer, aghNummer);
+            } else {
+                final BlistaDownload blistaDownload = new BlistaDownload(hoerernummer, aghNummer,
+                        hoerbuch.get().getTitelnummer(), hoerbuch.get().getTitel(),
+                        hoerbuch.get().getAutor(), hoerbuch.get().getSpieldauer(),
+                        dlsBook.book.Ausleihstatus,
+                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                        dlsBook.book.DlsDescription,
+                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
+                        dlsBook.book.DownloadLink, dlsBook.book.Gesperrt);
+                LOGGER.debug("{}", blistaDownload);
+                return blistaDownload;
+            }
         } else {
-            return null;
+            LOGGER.warn("Hörer {}/AGH Nummer {}: Bestellung bei der blista nicht gefunden",
+                    hoerernummer, aghNummer);
         }
+        return null;
     }
 
 }
