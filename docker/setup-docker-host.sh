@@ -49,4 +49,55 @@ cat >>/home/bookworm/.ssh/authorized_keys <<EOF
 ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIEAmXh30WCFduH6OjsdIrLT0pT6TXOgKoeBClg8ixkOT4bLd+ePYa0gatsrsZ4DWMPBQBytgHeOH053tsgn9v1jDyLAyv4QTUxNMZjxMHd3ZCCj3jj5sxg0C5dx43egHbysi4G58AuoTIz+CmJ5hOxDA6Qt4QHxesWrVEBV+pi/C/8= wbh-rsa-key-20121105
 EOF
 
+keyfile=~/.ssh/id_rsa
+secretfile=${keyfile}.secret
+if [[ ! -f ${keyfile} || ! -f ${secretfile} ]]
+then
+    rm -f ${secretfile}
+    dd if=/dev/urandom bs=512 count=4 \
+        | tr -cd '[:alnum:]' \
+        | cut -b 1-32 \
+        >${secretfile}
+    chmod 400 ${secretfile}
+    rm -f ${keyfile}
+    ssh-keygen -t rsa -b 4096 \
+        -P"$(cat ${secretfile})" -N"$(cat ${secretfile})" \
+        -f ${keyfile}
+    chmod 400 ${keyfile}
+fi
+
+sudo pacman -Qi expect >/dev/null
+if [[ $? = 1 ]]
+then
+    sudo pacman --noconfirm -S expect
+fi
+
+eval $(ssh-agent)
+expect <<EOF
+  spawn ssh-add ${keyfile}
+  expect "Enter passphrase"
+  set pass [read [open "${secretfile}" r]]
+  send "\$pass\r"
+  expect eof
+EOF
+
+if [[ $(grep -Ec "^[Hh]ost bitbucket.org" ~/.ssh/config) = 0 ]]
+then
+    cat >>~/.ssh/config <<EOF
+Host bitbucket.org
+    HostName bitbucket.org
+    IdentityFile ~/.ssh/id_rsa
+    User git
+EOF
+fi
+
+[[ -f ~/.ssh/known_hosts ]] && chmod 600 ~/.ssh/known_hosts
+ssh-keyscan -46 -t rsa bitbucket.org >>~/.ssh/known_hosts
+
+sudo pacman --noconfirm -S jre-openjdk
+
+git clone --single-branch --branch develop --depth 1 git@bitbucket.org:artofcoding/bookworm2.git
+cd bookworm2
+./mvnw clean
+
 exit 0

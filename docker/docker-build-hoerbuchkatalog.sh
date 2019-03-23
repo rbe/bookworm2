@@ -12,13 +12,13 @@ set -o nounset
 build_docker_image() {
     local name=$1
     local version=$2
-    local basedir=${3:-$name}
+    local basedir=${3:-wbh-$name}
     echo "*"
     echo "* Building Docker image version wbh/${name}:${version}"
     echo "* Using $(pwd)/${basedir} as base directory"
     echo "*"
     # experimental --squash \
-    docker build \
+    sudo docker build \
         --rm \
         --tag wbh/${name}:${version} \
         -f wbh-${name}/Dockerfile ${basedir}
@@ -35,7 +35,7 @@ save_docker_image() {
     echo "*"
     echo "* Saving Docker image version wbh-${name}-${version}"
     echo "*"
-    docker save \
+    sudo docker save \
         wbh/${name}:${version} \
         | gzip -9 >wbh-${name}-${version}.tar.gz
     if [[ $? != 0 ]]

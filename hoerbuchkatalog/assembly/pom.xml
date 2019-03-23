@@ -73,43 +73,23 @@
             <id>bookworm.assembly</id>
             <build>
                 <plugins>
-                    <!--<plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-jar-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>jar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>-->
                     <plugin>
                         <groupId>org.springframework.boot</groupId>
                         <artifactId>spring-boot-maven-plugin</artifactId>
-                        <configuration>
-                            <layout>ZIP</layout>
-                            <excludeDevtools>true</excludeDevtools>
-                        </configuration>
                         <executions>
                             <execution>
                                 <phase>package</phase>
                                 <goals>
                                     <goal>repackage</goal>
                                 </goals>
+                                <configuration>
+                                    <layout>ZIP</layout>
+                                    <excludeDevtools>true</excludeDevtools>
+                                    <finalName>${project.artifactId}</finalName>
+                                </configuration>
                             </execution>
                         </executions>
                     </plugin>
-                    <!--<plugin>
-                        <groupId>com.google.cloud.tools</groupId>
-                        <artifactId>jib-maven-plugin</artifactId>
-                        <configuration>
-                            <to>
-                                <image>myimage</image>
-                            </to>
-                        </configuration>
-                    </plugin>-->
                 </plugins>
                 <finalName>${project.artifactId}</finalName>
             </build>
