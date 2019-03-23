@@ -8,11 +8,15 @@ package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
 import aoc.ddd.model.DomainSingleValueObject;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public final class Vorname extends DomainSingleValueObject<Vorname, String> {
 
     public static final Vorname UNBEKANNT = new Vorname("");
 
-    public Vorname(final String vorname) {
+    @JsonCreator
+    public Vorname(final @JsonProperty("value") String vorname) {
         super(vorname);
     }
 

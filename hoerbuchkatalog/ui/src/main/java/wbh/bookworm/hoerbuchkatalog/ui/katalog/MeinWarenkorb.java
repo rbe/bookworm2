@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
@@ -25,14 +25,14 @@ public class MeinWarenkorb {
 
     private final HoererSession hoererSession;
 
-    private final BestellungService bestellungService;
+    private final WarenkorbService warenkorbService;
 
     @Autowired
     MeinWarenkorb(final HoererSession hoererSession,
-                  final BestellungService bestellungService) {
+                  final WarenkorbService warenkorbService) {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
-        this.bestellungService = bestellungService;
+        this.warenkorbService = warenkorbService;
     }
 
     //
@@ -75,14 +75,14 @@ public class MeinWarenkorb {
 
     public void cdHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        bestellungService.inDenCdWarenkorb(
+        warenkorbService.inDenCdWarenkorb(
                 hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
         /* TODO CdInDenWarenkorbGelegtEvent */hoererSession.cdWarenkorbVergessen();
     }
 
     public void cdEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        bestellungService.ausDemCdWarenkorbEntfernen(
+        warenkorbService.ausDemCdWarenkorbEntfernen(
                 hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
         /* TODO CdInDenWarenkorbGelegtEvent */hoererSession.cdWarenkorbVergessen();
     }
@@ -103,14 +103,14 @@ public class MeinWarenkorb {
 
     public void downloadHinzufuegen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        bestellungService.inDenDownloadWarenkorb(
+        warenkorbService.inDenDownloadWarenkorb(
                 hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
         /* TODO DownloadInDenWarenkorbGelegtEvent */hoererSession.downloadWarenkorbVergessen();
     }
 
     public void downloadEntfernen(final Titelnummer titelnummer) {
         LOGGER.trace("");
-        bestellungService.ausDemDownloadWarenkorbEntfernen(
+        warenkorbService.ausDemDownloadWarenkorbEntfernen(
                 hoererSession.getBestellungSessionId(), hoererSession.getHoerernummer(), titelnummer);
         /* TODO DownloadInDenWarenkorbGelegtEvent */hoererSession.downloadWarenkorbVergessen();
     }

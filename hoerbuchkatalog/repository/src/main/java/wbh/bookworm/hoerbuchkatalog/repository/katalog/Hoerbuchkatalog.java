@@ -16,6 +16,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import aoc.ddd.model.DomainAggregate;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -94,6 +95,12 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
         return katalog.values().stream()
                 .filter(e -> e.hatAghNummer(aghNummer))
                 .findFirst();
+    }
+
+    public AghNummer[] titelnummerZuAghNummer(final Collection<Titelnummer> titelnummern) {
+        return titelnummern.stream()
+                .map(tn -> hole(tn).getAghNummer())
+                .toArray(AghNummer[]::new);
     }
 
     public Suchergebnis sucheNachStichwort(final String stichwort) {

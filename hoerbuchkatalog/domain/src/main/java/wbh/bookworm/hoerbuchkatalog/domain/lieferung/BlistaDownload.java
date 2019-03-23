@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.model.DomainValueObject;
@@ -84,9 +85,9 @@ public final class BlistaDownload extends DomainValueObject {
         bezugsfaehig = false;
         switch (ausleihstatus) {
             case 0:
-                if (dlsDescription.contains("doppelt bestellt")) {
+                /*if (dlsDescription.contains("doppelt bestellt")) {
                     bezugsfaehig = true;
-                }
+                }*/
                 break;
             case 1:
             case 2:
@@ -108,6 +109,23 @@ public final class BlistaDownload extends DomainValueObject {
         this.bezugsfaehig &= /* TODO isUrl(String) */
                 gesperrt == 0 &&
                 null != downloadLink && !downloadLink.trim().isEmpty();
+    }
+
+    public static BlistaDownload of(final Hoerernummer hoerernummer,
+                                    final Hoerbuch hoerbuch,
+                                    int ausleihstatus,
+                                    final LocalDateTime bestelldatum, final LocalDateTime rueckgabedatum,
+                                    final String dlsDescription,
+                                    int downloadCount, int maxDownload,
+                                    final String downloadLink, int gesperrt) {
+        return new BlistaDownload(hoerernummer, hoerbuch.getAghNummer(),
+                hoerbuch.getTitelnummer(), hoerbuch.getTitel(),
+                hoerbuch.getAutor(), hoerbuch.getSpieldauer(),
+                ausleihstatus,
+                bestelldatum, rueckgabedatum,
+                dlsDescription,
+                downloadCount, maxDownload,
+                downloadLink, gesperrt);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -186,22 +204,26 @@ public final class BlistaDownload extends DomainValueObject {
         if (o == null || getClass() != o.getClass()) return false;
         final BlistaDownload that = (BlistaDownload) o;
         return ausleihstatus == that.ausleihstatus &&
-                Objects.equals(aghNummer, that.aghNummer) &&
-                Objects.equals(titelnummer, that.titelnummer);
+                hoerernummer.equals(that.hoerernummer) &&
+                aghNummer.equals(that.aghNummer) &&
+                titelnummer.equals(that.titelnummer) &&
+                bestelldatum.equals(that.bestelldatum) &&
+                rueckgabedatum.equals(that.rueckgabedatum) &&
+                downloadLink.equals(that.downloadLink);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(aghNummer, titelnummer, ausleihstatus);
+        return Objects.hash(hoerernummer, aghNummer, titelnummer, ausleihstatus, bestelldatum, rueckgabedatum, downloadLink);
     }
 
     @Override
     public String toString() {
-        return String.format("BlistaDownload{hoerernummer'=%s', aghNummer='%s'," +
+        return String.format("BlistaDownload{hoerernummer'%s', titelnummer='%s', aghNummer='%s'," +
                         " ausleihstatus=%d, bezugsfaehig='%s', bestelldatum='%s', rueckgabedatum='%s'," +
                         " downloadCount=%d, maxDownload=%d," +
                         " downloadLink='%s', gesperrt=%d}",
-                hoerernummer, aghNummer,
+                hoerernummer, titelnummer, aghNummer,
                 ausleihstatus, bezugsfaehig, bestelldatum, rueckgabedatum,
                 downloadCount, maxDownload,
                 downloadLink, gesperrt);

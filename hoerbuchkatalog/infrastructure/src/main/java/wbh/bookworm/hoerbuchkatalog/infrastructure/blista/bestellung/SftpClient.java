@@ -12,6 +12,8 @@ import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
@@ -30,6 +32,8 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @Scope(SCOPE_PROTOTYPE)
 class SftpClient {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(SftpClient.class);
+
     private final DlsSftpConfig dlsSftpConfig;
 
     private Session session;
@@ -44,6 +48,7 @@ class SftpClient {
     private void openSftpChannel() {
         final JSch jsch = new JSch();
         try {
+            LOGGER.trace("Opening session with {}", dlsSftpConfig);
             session = jsch.getSession(dlsSftpConfig.getBibliothek(),
                     dlsSftpConfig.getHost(), dlsSftpConfig.getPort());
             session.setPassword(dlsSftpConfig.getBibkennwort());
@@ -61,7 +66,8 @@ class SftpClient {
 
     private Properties getSessionConfig() {
         final Properties config = new Properties();
-        /* TODO Security */config.put("StrictHostKeyChecking", "no");
+        /* TODO Security */
+        config.put("StrictHostKeyChecking", "no");
         return config;
     }
 

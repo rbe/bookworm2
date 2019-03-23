@@ -317,7 +317,7 @@ public abstract class JsonDomainRepository
     }
 
     @Override
-    public Optional<Set<AGG>> loadAll(final String domainIdPrefix) {
+    public Optional<Set<AGG>> loadAllWithPrefix(final String domainIdPrefix) {
         try (final Stream<Path> stream = aggregatePathsAsStream()
                 .filter(path -> path.startsWith(domainIdPrefix))) {
             return getAggs(stream);
@@ -333,11 +333,13 @@ public abstract class JsonDomainRepository
                 .collect(Collectors.toSet()));
     }
 
+    /** @deprecated Use #loadAllWithPrefix(String), NOTE: uses .startsWith(String) */
+    @Deprecated
     @Override
     @SuppressWarnings({"unchecked"})
-    public final Optional<Set<AGG>> find(final String domainIdPrefix) {
+    public final Optional<Set<AGG>> findByPrefix(final String domainIdPrefix) {
         Objects.requireNonNull(domainIdPrefix);
-        return loadAll(domainIdPrefix);
+        return loadAllWithPrefix(domainIdPrefix);
     }
 
     @Override
@@ -349,17 +351,16 @@ public abstract class JsonDomainRepository
 
     @Override
     @SuppressWarnings({"unchecked"})
-    public final Optional<Set<AGG>> find(final String domainIdPrefix,
-                                         final QueryPredicate... queryPredicates) {
+    public final Optional<Set<AGG>> findByPrefixAndPredicate(final String domainIdPrefix,
+                                                             final QueryPredicate... queryPredicates) {
         Objects.requireNonNull(domainIdPrefix);
         Objects.requireNonNull(queryPredicates);
-        return filterAggs(queryPredicates, loadAll(domainIdPrefix).orElseThrow());
+        return filterAggs(queryPredicates, loadAllWithPrefix(domainIdPrefix).orElseThrow());
     }
 
     private Optional<Set<AGG>> filterAggs(final QueryPredicate[] queryPredicates,
                                           final Set<AGG> aggs) {
-        return Optional.of(aggs
-                .stream()
+        return Optional.of(aggs.stream()
                 .filter(agg -> Arrays.stream(queryPredicates)
                         .anyMatch(predicate -> {
                             try {

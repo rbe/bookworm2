@@ -10,6 +10,8 @@ public interface InvalidatableValue<R> {
 
     R update();
 
+    R get();
+
     void invalidate();
 
 }

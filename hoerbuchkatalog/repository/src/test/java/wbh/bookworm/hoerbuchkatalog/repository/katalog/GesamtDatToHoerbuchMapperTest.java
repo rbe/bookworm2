@@ -27,8 +27,8 @@ class GesamtDatToHoerbuchMapperTest {
     @Test
     void shouldParseGesamtDat() {
         LocalDateTime start = LocalDateTime.now();
-        final Path path = Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/repository" +
-                "/src/test/var/hoerbuchkatalog/Gesamt-2018-12-19T13-23-53-53636.dat");
+        /* TODO Konfiguraiton */final Path path = Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/repository" +
+                "/src/test/var/wbh/hoerbuchkatalog/Gesamt-2018-12-19T13-23-53-53636.dat");
         final GesamtDatToHoerbuchMapper gesamtDatToHoerbuchMapper = new GesamtDatToHoerbuchMapper();
         final Set<Hoerbuch> hoerbuecher = gesamtDatToHoerbuchMapper.importiere(
                 path, StandardCharsets.ISO_8859_1);

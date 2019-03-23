@@ -74,6 +74,7 @@ public class DlsLieferung {
     public Optional<DlsBook> bestellungLaden(final String hoerernummer, final String aghNummer) {
         final long startBook = System.nanoTime();
         try {
+            // TODO WICHTIG Eindeutige URL für Bestellung erzeugen, bspw. AGH Nummer + Datum?
             final URL url = new URL(String.format("%s/%s/%s", dlsRestConfig.getWerkeurl(),
                     hoerernummer, aghNummer));
             final byte[] antwort = abfrageSendenUndAntwortArchivieren(hoerernummer, url);
@@ -119,7 +120,7 @@ public class DlsLieferung {
     @Async
     protected void archiviere(final String name, final byte[] daten) {
         try {
-            Files.write(Path.of(/* TODO Konfigration */"var/blista-dls", name), daten,
+            Files.write(Path.of(/* TODO Konfigration */"var/blista/dls", name), daten,
                     StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             LOGGER.error("", e);

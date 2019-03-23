@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Objects;
 import java.util.function.Supplier;
 
-public final class ELValueCache<R> implements InvalidatableValue<R> {
+public class ELValueCache<R> implements InvalidatableValue<R> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ELValueCache.class);
 
@@ -29,6 +29,7 @@ public final class ELValueCache<R> implements InvalidatableValue<R> {
         this.invalidated = true;
     }
 
+    @Override
     public R update() {
         LOGGER.trace("Updating value through supplier {}", valueSupplier);
         value = valueSupplier.get();
@@ -37,6 +38,7 @@ public final class ELValueCache<R> implements InvalidatableValue<R> {
         return value;
     }
 
+    @Override
     public R get() {
         if (!invalidated) {
             LOGGER.trace("Returning cached value: {}", value);
@@ -46,6 +48,7 @@ public final class ELValueCache<R> implements InvalidatableValue<R> {
         }
     }
 
+    @Override
     public void invalidate() {
         LOGGER.trace("Invalidating {} for {}", this, valueSupplier);
         invalidated = true;

@@ -105,9 +105,7 @@ public class MeineBestellung {
     }
 
     public boolean hasHoereremail() {
-        /* TODO Kann immer geändert werden!? */
-        return false;
-        //return hoererSession.hasHoereremail();
+        /* TODO */return hoererSession.hasHoereremail();
     }
 
     public String getHoereremail() {

@@ -55,9 +55,9 @@ public interface DomainRepository
         return Optional.empty();
     }
 
-    Optional<Set<AGG>> loadAll(String domainIdPrefix);
+    Optional<Set<AGG>> loadAllWithPrefix(String domainIdPrefix);
 
-    default Optional<Set<AGG>> find(String domainIdPrefix) {
+    default Optional<Set<AGG>> findByPrefix(String domainIdPrefix) {
         throw new UnsupportedOperationException();
     }
 
@@ -65,7 +65,7 @@ public interface DomainRepository
         return Optional.empty();
     }
 
-    default Optional<Set<AGG>> find(String domainIdPrefix, QueryPredicate... queryPredicates) {
+    default Optional<Set<AGG>> findByPrefixAndPredicate(String domainIdPrefix, QueryPredicate... queryPredicates) {
         throw new UnsupportedOperationException();
     }
 

@@ -37,9 +37,9 @@ class HoererMapperTest {
     @BeforeEach
     void beforeAll() {
         final String string = "/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/repository";
-        final Path hoerstp = Path.of(string + "/src/test/var/nutzerdaten/hoerstp.csv");
-        final Path hoebstp = Path.of(string + "/src/test/var/nutzerdaten/hoebstp.csv");
-        final Path hoekzstp = Path.of(string + "/src/test/var/nutzerdaten/hoekzstp.csv");
+        /* TODO Konfiguration */final Path hoerstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoerstp.csv");
+        /* TODO Konfiguration */final Path hoebstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoebstp.csv");
+        /* TODO Konfiguration */final Path hoekzstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoekzstp.csv");
         hoererMapper.leseAs400Dateien(StandardCharsets.ISO_8859_1, 9_000,
                 hoerstp, hoekzstp, hoebstp);
     }

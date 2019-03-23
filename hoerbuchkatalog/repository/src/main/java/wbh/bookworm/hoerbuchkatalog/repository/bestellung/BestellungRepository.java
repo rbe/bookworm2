@@ -15,6 +15,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.repository.JsonDomainRepository;
+import aoc.ddd.repository.QueryPredicate;
 
 import java.nio.file.Path;
 import java.util.Collection;
@@ -46,8 +47,9 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
         return save(aggregate);
     }
 
+    // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleMitDownloads(final Hoerernummer hoerernummer) {
-        return find(hoerernummer.getValue())
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::hatDownloadTitelnummern)
@@ -62,8 +64,9 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                 .sum();
     }
 
+    // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleVonHeuteMitDownloads(final Hoerernummer hoerernummer) {
-        return find(hoerernummer.getValue())
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::heuteAbgeschickt)
@@ -71,6 +74,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                 .collect(Collectors.toSet());
     }
 
+    // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     public long countAlleDownloadsVonHeute(final Hoerernummer hoerernummer) {
         return alleVonHeuteMitDownloads(hoerernummer)
                 .stream()
@@ -79,8 +83,9 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                 .sum();
     }
 
+    // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleInDiesemMonatMitDownloads(final Hoerernummer hoerernummer) {
-        return find(hoerernummer.getValue())
+        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::inAktuellemMonatAbgeschickt)
@@ -88,6 +93,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
                 .collect(Collectors.toSet());
     }
 
+    // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     public long countAlleDownloadsInDiesemMonat(final Hoerernummer hoerernummer) {
         return alleInDiesemMonatMitDownloads(hoerernummer)
                 .stream()

@@ -84,11 +84,11 @@ public class DlsBestellung {
                             LOGGER.debug("Bestellung der AGH Nummer {} für Benutzer {}" +
                                             " erfolgreich geprüft und übergeben",
                                     aghNummern, userId);
+                            auftragsquittung.uebermittlungOk();
                         } else {
                             LOGGER.error("Prüfung der AGH Nummer {} für Benutzer {} war ok," +
                                             " die Übermittlung leider erfolglos",
                                     aghNummern, userId);
-                            auftragsquittung.uebermittlungOk();
                         }
                         return auftragsquittung;
                     })

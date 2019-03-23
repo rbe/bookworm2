@@ -1,10 +1,12 @@
 FROM nginx:stable-alpine
-MAINTAINER Ralf Bensmann <ralf@art-of-coding.eu>
+LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 
+ENV buildNumber=LocalBuild
+
 RUN apk update \
-    && apk add letsencrypt \
-    && rm -rf /var/cache/apk/*
+    && apk --no-cache add --virtual .deps \
+        letsencrypt-nosudo
 
 VOLUME ["/etc/nginx"]
 

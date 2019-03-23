@@ -26,7 +26,7 @@ import java.nio.file.Path;
  * blista.dls.rest.bibliothek=
  * blista.dls.rest.bibkennwort=
  *
- * blista.dls.rest.directory=./var/blista-dls
+ * blista.dls.rest.directory=./var/blista/dls
  * </pre>
  */
 public final class DlsRestConfig {

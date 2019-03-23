@@ -22,7 +22,7 @@ import aoc.ddd.repository.JsonDomainRepository;
 import java.nio.file.Path;
 import java.util.Optional;
 
-// TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
+// TODO @DomainRespositoryComponent
 public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {
 
     /** Via @Bean erzeugen */

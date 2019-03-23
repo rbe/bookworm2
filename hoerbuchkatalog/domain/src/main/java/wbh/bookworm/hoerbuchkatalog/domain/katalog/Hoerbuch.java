@@ -148,6 +148,21 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
                 "", null, false);
     }
 
+    public static Hoerbuch unbekannt(final AghNummer aghNummer) {
+        return new Hoerbuch(Sachgebiet.NA,
+                new Titelnummer("000000"),
+                "",
+                "Titel unbekannt", "",
+                "",
+                "", "", "",
+                "", "", "0,00",
+                "", "",
+                "",
+                "0",
+                "",
+                "", aghNummer, true);
+    }
+
     public boolean isUnbekannt() {
         return titel.equals("Titel unbekannt");
     }

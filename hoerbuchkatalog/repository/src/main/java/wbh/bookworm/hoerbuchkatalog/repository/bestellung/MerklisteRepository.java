@@ -12,13 +12,12 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
 import java.util.Optional;
 
-// TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
+// TODO @DomainRespositoryComponent
 public class MerklisteRepository extends JsonDomainRepository<Merkliste, MerklisteId> {
 
     public MerklisteRepository(final Path storagePath) {

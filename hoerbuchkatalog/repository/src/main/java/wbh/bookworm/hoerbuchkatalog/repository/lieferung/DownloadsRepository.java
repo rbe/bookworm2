@@ -52,6 +52,9 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
             if (!alleWerke.hatFehler()) {
                 final List<BlistaDownload> bereitgestellteDownloads = alleWerke
                         .books.parallelStream()
+                        .filter(book -> book.Ausleihstatus.equals("1")
+                                || book.Ausleihstatus.equals("2")
+                                || book.Ausleihstatus.equals("3"))
                         .map(book -> toBlistaDownload(hoerernummer, book))
                         .filter(Objects::nonNull)
                         .collect(Collectors.toList());
@@ -83,10 +86,18 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
             if (hoerbuch.isEmpty()) {
                 LOGGER.warn("Hörer {}/AGH Nummer {}: Hörbuch nicht gefunden",
                         hoerernummer, aghNummer);
+                final BlistaDownload blistaDownload = BlistaDownload.of(hoerernummer,
+                        Hoerbuch.unbekannt(aghNummer),
+                        dlsBook.book.Ausleihstatus,
+                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                        dlsBook.book.DlsDescription,
+                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
+                        dlsBook.book.DownloadLink, dlsBook.book.Gesperrt);
+                LOGGER.debug("{}", blistaDownload);
+                return blistaDownload;
             } else {
-                final BlistaDownload blistaDownload = new BlistaDownload(hoerernummer, aghNummer,
-                        hoerbuch.get().getTitelnummer(), hoerbuch.get().getTitel(),
-                        hoerbuch.get().getAutor(), hoerbuch.get().getSpieldauer(),
+                final BlistaDownload blistaDownload = BlistaDownload.of(hoerernummer,
+                        hoerbuch.get(),
                         dlsBook.book.Ausleihstatus,
                         dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
                         dlsBook.book.DlsDescription,

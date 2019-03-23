@@ -26,7 +26,7 @@ import java.nio.file.Path;
  * blista.dls.sftp.bibliothek=
  * blista.dls.sftp.bibkennwort=
  *
- * blista.dls.sftp.directory=./var/blista-dls
+ * blista.dls.sftp.directory=./var/blista/dls
  * </pre>
  */
 final class DlsSftpConfig {
@@ -79,6 +79,12 @@ final class DlsSftpConfig {
 
     public void setDirectory(final Path directory) {
         this.directory = directory;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DlsSftpConfig{host='%s', port=%d, bibliothek='%s', bibkennwort='%s', directory=%s}",
+                host, port, bibliothek, null != bibkennwort ? bibkennwort.length() : "-1", directory);
     }
 
 }

@@ -1,4 +1,5 @@
 version: '3.7'
+
 services:
   docker-registry:
     image: registry:latest
@@ -29,15 +30,17 @@ services:
       - SONARQUBE_DATABASE_PASSWORD=bitnami1234
     volumes:
       - sonarqube_data:/bitnami
+
 networks:
   frontend:
     name: frontend
     driver: bridge
-    external: true
+    internal: false
   private:
     name: private
     driver: bridge
-    external: false
+    internal: true
+
 volumes:
   docker_registry_data:
     driver: local

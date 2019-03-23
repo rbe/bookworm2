@@ -1,0 +1,38 @@
+FROM alpine:latest
+LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
+LABEL vendor="Art of Coding UG"
+
+ENV buildNumber=LocalBuild
+
+VOLUME ["/etc/ssh"]
+WORKDIR /etc/ssh
+
+COPY setup-datatransfer-users.sh .
+
+# https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
+# https://www.cyberciti.biz/faq/10-alpine-linux-apk-command-examples/
+RUN apk update \
+    && apk --no-cache add --virtual .deps \
+        coreutils \
+        openssh \
+    && sed -i'' -E \
+        -e 's/^#(PermitRootLogin|HostKey)/\1/' \
+        -e 's/^#(ListenAddress 0|ListenAddress ::|Port)/\1/' \
+        /etc/ssh/sshd_config \
+    && sed -i'' -E \
+        -e 's#^(PermitRootLogin ).*#\1 without-password#' \
+        -e 's#(ListenAddress ).*#\1 0.0.0.0#' \
+        -e 's#(Port ).*#\1 22#' \
+        /etc/ssh/sshd_config \
+    && sed -i'' -E \
+        -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \
+        /etc/ssh/sshd_config \
+    && ssh-keygen -A \
+    && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key \
+    && chmod 700 setup-datatransfer-users.sh \
+        && ./setup-datatransfer-users.sh \
+        && rm setup-datatransfer-users.sh
+
+EXPOSE 22
+
+CMD ["/usr/sbin/sshd", "-D", "-e"]

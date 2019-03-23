@@ -9,6 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
@@ -32,6 +33,7 @@ import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.event.DomainEventSubscriber;
 import aoc.jsf.ELFunctionCache;
 import aoc.jsf.ELValueCache;
+import aoc.jsf.TimedCacheDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +48,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 @Component
 @SessionScope
@@ -57,12 +60,14 @@ public class HoererSession implements Serializable {
 
     private final transient HoererService hoererService;
 
+    @SuppressWarnings({"squid:S00107"})
     @Autowired
     public HoererSession(final HttpServletRequest request,
                          final HttpSession session,
                          final HoererService hoererService,
                          final HoerbuchkatalogService hoerbuchkatalogService,
                          final BestellungService bestellungService,
+                         final WarenkorbService warenkorbService,
                          final MerklisteService merklisteService,
                          final DownloadsLieferungService downloadsLieferungService) {
         LOGGER.trace("Initialisiere für HttpSession {}", session.getId());
@@ -70,7 +75,7 @@ public class HoererSession implements Serializable {
         this.hoererService = hoererService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.merklisteService = merklisteService;
-        this.bestellungService = bestellungService;
+        this.warenkorbService = warenkorbService;
         this.downloadsLieferungService = downloadsLieferungService;
         final String hnr = request.getParameter(SessionKey.HOERERNUMMER);
         final Hoerernummer hoerernummer = null != hnr && !hnr.isBlank()
@@ -83,73 +88,6 @@ public class HoererSession implements Serializable {
                 .subscribe(new BestellungAufgegebenSubscriber());
         DomainEventPublisher.global()
                 .subscribe(new HoerbuchkatalogAktualisiertSubscriber());
-    }
-
-    //
-    // Hörer
-    //
-
-    private Hoerer hoerer;
-
-    void hoererSetzen(final Hoerernummer hoerernummer) {
-        Objects.requireNonNull(hoerernummer);
-        // Nur (einmal) erlauben, wenn kein oder unbekannter Hörer
-        if (null == hoerer || hoerer.isUnbekannt()) {
-            LOGGER.trace("Setze Hörer {} in HttpSession {}", hoerernummer, session.getId());
-            session.setAttribute(SessionKey.HOERERNUMMER, hoerernummer);
-            hoerer = hoererService.hoerer(hoerernummer)
-                    .orElse(new Hoerer(hoerernummer, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT));
-            // Hörbuchkatalog
-            hoerbuchValueCache = new ELFunctionCache<>(titelnummer ->
-                    hoerbuchkatalogService.hole(hoerernummer, titelnummer));
-            // Merkliste
-            merklisteValueCache = new ELValueCache<>(null, () ->
-                    merklisteService.merklisteKopie(hoerernummer));
-            // CD Warenkorb
-            cdWarenkorbValueCache = new ELValueCache<>(null, () ->
-                    bestellungService.cdWarenkorbKopie(bestellungSessionId, hoerernummer));
-            // Download Warenkorb
-            downloadWarenkorbValueCache = new ELValueCache<>(null, () ->
-                    bestellungService.downloadWarenkorbKopie(bestellungSessionId, hoerernummer));
-            maxDownloadsProTagErreicht = new ELValueCache<>(Boolean.FALSE, () ->
-                    bestellungService.isMaxDownloadsProTagErreicht(bestellungSessionId, hoerernummer));
-            maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE, () ->
-                    bestellungService.isMaxDownloadsProMonatErreicht(bestellungSessionId, hoerernummer));
-            // Lieferung
-            blistaDownloadsELCache = new ELValueCache<>(null, () ->
-                    downloadsLieferungService.lieferungen(hoerernummer));
-            LOGGER.info("Hörer {} erfolgreich angemeldet, HttpSession {}", hoerernummer, session.getId());
-        } else {
-            LOGGER.warn("Hörer {} bereits in HttpSession {} gesetzt", hoerernummer, session.getId());
-        }
-    }
-
-    public Hoerernummer getHoerernummer() {
-        return hoerer.getHoerernummer();
-    }
-
-    public boolean isHoererIstBekannt() {
-        return hoerer.isBekannt();
-    }
-
-    public boolean isHoererIstUnbekannt() {
-        return hoerer.isUnbekannt();
-    }
-
-    boolean hasHoerername() {
-        return hoerer.hasHoerername();
-    }
-
-    public Hoerername getHoerername() {
-        return hoerer.getHoerername();
-    }
-
-    boolean hasHoereremail() {
-        return hoerer.hasHoereremail();
-    }
-
-    HoererEmail getHoereremail() {
-        return hoerer.getHoereremail();
     }
 
     //
@@ -301,7 +239,7 @@ public class HoererSession implements Serializable {
     // Bestellung
     //
 
-    private final transient BestellungService bestellungService;
+    private final transient WarenkorbService warenkorbService;
 
     private BestellungSessionId bestellungSessionId;
 
@@ -343,9 +281,9 @@ public class HoererSession implements Serializable {
 
     /* TODO Event? */
     void bestellteWarenkoerbeMerken() {
-        bestellterCdWarenkorb = bestellungService.cdWarenkorbKopie(
+        bestellterCdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungSessionId, hoerer.getHoerernummer());
-        bestellterDownloadWarenkorb = bestellungService.downloadWarenkorbKopie(
+        bestellterDownloadWarenkorb = warenkorbService.downloadWarenkorbKopie(
                 bestellungSessionId, hoerer.getHoerernummer());
     }
 
@@ -361,7 +299,7 @@ public class HoererSession implements Serializable {
 
     private final transient DownloadsLieferungService downloadsLieferungService;
 
-    private transient ELValueCache<HoererBlistaDownloads> blistaDownloadsELCache;
+    private transient TimedCacheDecorator<HoererBlistaDownloads> blistaDownloadsELCache;
 
     LocalDateTime standVomDerDownloads() {
         return blistaDownloadsELCache.get().getStandVom();
@@ -396,12 +334,73 @@ public class HoererSession implements Serializable {
         return blistaDownloadsELCache.get().bezuegsfaehige();
     }
 
-    /* TODO BestellungAufgegebenEvent
-    void downloadsVergessen() {
-        blistaDownloadsELCache.invalidate();
-        LOGGER.debug("Zwischengespeicherte Downloads geleert; erneute Abfrage bei blista notwendig");
+    //
+    // Hörer
+    //
+
+    private Hoerer hoerer;
+
+    void hoererSetzen(final Hoerernummer hoerernummer) {
+        Objects.requireNonNull(hoerernummer);
+        // Nur (einmal) erlauben, wenn kein oder unbekannter Hörer
+        if (null == hoerer || hoerer.isUnbekannt()) {
+            LOGGER.trace("Setze Hörer {} in HttpSession {}", hoerernummer, session.getId());
+            session.setAttribute(SessionKey.HOERERNUMMER, hoerernummer);
+            hoerer = hoererService.hoerer(hoerernummer)
+                    .orElse(new Hoerer(hoerernummer, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT));
+            // Hörbuchkatalog
+            hoerbuchValueCache = new ELFunctionCache<>(titelnummer ->
+                    hoerbuchkatalogService.hole(hoerernummer, titelnummer));
+            // Merkliste
+            merklisteValueCache = new ELValueCache<>(null, () ->
+                    merklisteService.merklisteKopie(hoerernummer));
+            // CD Warenkorb
+            cdWarenkorbValueCache = new ELValueCache<>(null, () ->
+                    warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer));
+            // Download Warenkorb
+            downloadWarenkorbValueCache = new ELValueCache<>(null, () ->
+                    warenkorbService.downloadWarenkorbKopie(bestellungSessionId, hoerernummer));
+            maxDownloadsProTagErreicht = new ELValueCache<>(Boolean.FALSE, () ->
+                    warenkorbService.isMaxDownloadsProTagErreicht(bestellungSessionId, hoerernummer));
+            maxDownloadsProMonatErreicht = new ELValueCache<>(Boolean.FALSE, () ->
+                    warenkorbService.isMaxDownloadsProMonatErreicht(bestellungSessionId, hoerernummer));
+            // Lieferung
+            this.blistaDownloadsELCache = new TimedCacheDecorator<>(new ELValueCache<>(
+                    null, () -> downloadsLieferungService.lieferungen(hoerernummer)),
+                    TimeUnit.MINUTES.toMillis(5));
+            LOGGER.info("Hörer {} erfolgreich angemeldet, HttpSession {}", hoerernummer, session.getId());
+        } else {
+            LOGGER.warn("Hörer {} bereits in HttpSession {} gesetzt", hoerernummer, session.getId());
+        }
     }
-    */
+
+    public Hoerernummer getHoerernummer() {
+        return hoerer.getHoerernummer();
+    }
+
+    public boolean isHoererIstBekannt() {
+        return hoerer.isBekannt();
+    }
+
+    public boolean isHoererIstUnbekannt() {
+        return hoerer.isUnbekannt();
+    }
+
+    boolean hasHoerername() {
+        return hoerer.hasHoerername();
+    }
+
+    public Hoerername getHoerername() {
+        return hoerer.getHoerername();
+    }
+
+    boolean hasHoereremail() {
+        return hoerer.hasHoereremail();
+    }
+
+    HoererEmail getHoereremail() {
+        return hoerer.getHoereremail();
+    }
 
     @Override
     public String toString() {
