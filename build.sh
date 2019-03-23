@@ -11,8 +11,8 @@ then
         ${PROJECT}
 fi
 
-git pull --autostash \
-    && ./mvnw -P bookworm.hoerbuchkatalog,bookworm.documentation,bookworm.assembly \
+git pull --rebase --autostash \
+    && ./mvnw -P aoc.platform,bookworm.hoerbuchkatalog,bookworm.documentation,bookworm.assembly \
               clean package \
     && cd docker \
     && ./docker-build-hoerbuchkatalog.sh 1

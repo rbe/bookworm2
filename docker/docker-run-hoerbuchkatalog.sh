@@ -22,18 +22,27 @@ function docker_check_vol() {
     exit_if $? "Docker volume ${vol} not found"
 }
 
-sudo docker network create \
-    -d bridge \
-    --attachable \
-    public
-sudo docker network create \
-    -d bridge \
-    --attachable \
-    --internal \
-    private
+sudo docker network inspect public 2>&1 1>/dev/null
+if [[ $? = 1 ]]
+then
+    sudo docker network create \
+        -d bridge \
+        --attachable \
+        public
+fi
+
+sudo docker network inspect private 2>&1 1>/dev/null
+if [[ $? = 1 ]]
+then
+    sudo docker network create \
+        -d bridge \
+        --attachable \
+        --internal \
+        private
+fi
 
 docker_check_vol datatransfer_etc_ssh
-docker_check_vol var_templates
+docker_check_vol opt_bookworm
 docker_check_vol var_wbh
 docker_check_vol rproxy_etc_nginx
 
@@ -50,6 +59,7 @@ sudo docker run \
     -d \
     -p 9080:9080 \
     --restart=always \
+    ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
     ${MOUNT_TPL},src=var_templates,dst=/var/templates \
     ${MOUNT_TPL},src=var_wbh,dst=/var/wbh \
     --name bookworm-hk \
