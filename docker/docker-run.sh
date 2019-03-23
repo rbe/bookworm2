@@ -1,4 +1,9 @@
 #!/usr/bin/env bash
+#
+# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
 
 declare MOUNT_TPL=--mount type=volume,volume-driver=local
 
