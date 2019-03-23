@@ -13,10 +13,10 @@ RUN apk --no-cache add --virtual .deps \
     && gem update asciidoctor
     && git clone https://bitbucket.org/artofcoding/asciidocserver
 
+VOLUME ["/opt/asciidocserver"]
+WORKDIR /opt/asciidocserver
+
 EXPOSE 80
 EXPOSE 443
-
-VOLUME ["/opt/artofcoding"]
-WORKDIR /opt/artofcoding
 
 CMD [""]
