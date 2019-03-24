@@ -10,9 +10,10 @@ declare MOUNT_TPL=--mount type=volume,volume-driver=local
 function exit_if {
     if [[ $1 -gt 0 ]]
     then
+        ret=$1
         shift
         echo $*
-        exit $1
+        exit ${ret}
     fi
 }
 
@@ -21,7 +22,7 @@ function docker_check_vol() {
     sudo docker inspect ${vol} >/dev/null
     if [[ $? -eq 1 ]]
     then
-        docker volume create -d ${vol}
+        sudo docker volume create -d ${vol}
     fi
     sudo docker inspect ${vol} >/dev/null
     exit_if $? "Docker volume ${vol} not found"

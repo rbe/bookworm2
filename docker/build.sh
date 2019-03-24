@@ -42,7 +42,8 @@ save_docker_image() {
     echo "*"
     sudo docker save \
         wbh/${name}:${version} \
-        | gzip -9 >wbh-${name}-${version}.tar.gz
+        | gzip -9 \
+        >wbh-${name}-${version}.tar.gz
     if [[ $? != 0 ]]
     then
         echo "Saving image of wbh/${name} failed"

@@ -9,14 +9,19 @@ PROJECT=~/project/wbh.bookworm
 REPO=artofcoding/bookworm2.git
 BRANCH=develop
 
-if [[ ! -d ${PROJECT} ]]
-then
-    git clone \
-        git@bitbucket.org:${REPO} \
-        ${PROJECT}
-fi
+function update_repo() {
+    if [[ ! -d ${PROJECT} ]]
+    then
+        git clone \
+            git@bitbucket.org:${REPO} \
+            ${PROJECT}
+    else
+        git stash
+        git pull
+    fi
+}
 
-function build() {
+function build()    {
     local profiles=$1
     ./mvnw -s settings.xml \
         -Dmaven.repo.local=$(pwd)/.mvn/repository \
@@ -29,37 +34,38 @@ function build() {
 mode=${1:-full}
 case "${mode}" in
     modules)
-        pushd ${PROJECT} >/dev/null \
-            && git pull --rebase --autostash \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog \
             && popd >/dev/null
     ;;
     report)
-        pushd ${PROJECT} >/dev/null \
-            && git pull --rebase --autostash \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis \
             && popd >/dev/null
     ;;
     documentation)
-        pushd ${PROJECT} >/dev/null \
-            && git pull --rebase --autostash \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && build bookworm.documentation \
             && popd >/dev/null
     ;;
     assembly)
-        pushd ${PROJECT} >/dev/null \
-            && git pull --rebase --autostash \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly \
             && popd >/dev/null
     ;;
     docker)
-        pushd ${PROJECT} >/dev/null \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && ( cd docker && ./docker-build.sh 1 ) \
             && popd >/dev/null
     ;;
     full)
-        pushd ${PROJECT} >/dev/null \
-            && git pull --rebase --autostash \
+        update_repo \
+            && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
             && ( cd docker && ./docker-build.sh 1 ) \
             && popd >/dev/null
