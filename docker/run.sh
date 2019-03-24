@@ -19,16 +19,16 @@ function exit_if {
 
 function docker_check_vol() {
     local vol=$1
-    sudo docker inspect ${vol} >/dev/null
+    sudo docker inspect ${vol} 2>/dev/null
     if [[ $? -eq 1 ]]
     then
-        sudo docker volume create -d ${vol}
+        sudo docker volume create -d local ${vol}
     fi
     sudo docker inspect ${vol} >/dev/null
     exit_if $? "Docker volume ${vol} not found"
 }
 
-sudo docker network inspect public 2>&1 1>/dev/null
+sudo docker network inspect public 2>/dev/null
 if [[ $? = 1 ]]
 then
     sudo docker network create \
@@ -37,7 +37,7 @@ then
         public
 fi
 
-sudo docker network inspect private 2>&1 1>/dev/null
+sudo docker network inspect private 2>/dev/null
 if [[ $? = 1 ]]
 then
     sudo docker network create \

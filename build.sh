@@ -60,14 +60,14 @@ case "${mode}" in
     docker)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && ( cd docker && ./docker-build.sh 1 ) \
+            && ( cd docker && ./build.sh 1 ) \
             && popd >/dev/null
     ;;
     full)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
-            && ( cd docker && ./docker-build.sh 1 ) \
+            && ( cd docker && ./build.sh 1 ) \
             && popd >/dev/null
     ;;
     *)
