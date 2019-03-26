@@ -1,6 +1,7 @@
 FROM alpine:latest
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
+LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
