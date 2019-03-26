@@ -4,15 +4,15 @@ Subsystem sftp internal-sftp
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/authorized_keys_rbe
-    #ChrootDirectory /var/wbh
+    ChrootDirectory /var/bookworm
     ForceCommand internal-sftp
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/authorized_keys_cew
-    ChrootDirectory /var/wbh
+    ChrootDirectory /var/bookworm
     ForceCommand internal-sftp
 
 Match User wbh
     AuthorizedKeysFile /etc/ssh/authorized_keys_wbh
-    ChrootDirectory /var/wbh
+    ChrootDirectory /var/bookworm/wbh
     ForceCommand internal-sftp

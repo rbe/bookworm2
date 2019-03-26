@@ -4,21 +4,31 @@ LABEL vendor="Art of Coding UG"
 
 ENV buildNumber=LocalBuild
 
-VOLUME ["/opt/bookworm", "/var/templates", "/var/wbh"]
-
 WORKDIR /opt/bookworm
-COPY assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
-COPY assembly/src/main/resources/conf conf
-COPY assembly/src/main/resources/application*.yml ./
-COPY ui/src/main/resources/templates /var/wbh/templates
+COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
+COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
+COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
+COPY hoerbuchkatalog/ui/src/main/resources/templates /var/wbh/templates
 
-RUN mkdir /var/wbh/hoerbuchkatalog \
-    && mkdir /var/wbh/nutzerdaten
+RUN    mkdir /var/bookworm/templates \
+    && mkdir /var/bookworm/repository \
+    && mkdir /var/bookworm/hoerbuchkatalog \
+    && mkdir /var/bookworm/nutzerdaten \
+    && mkdir /var/bookworm/blista
+
+VOLUME [
+    "/opt/bookworm",
+    "/var/bookworm/templates",
+    "/var/bookworm/repository",
+    "/var/bookworm/wbh",
+    "/var/bookworm/blista"
+]
 
 EXPOSE 9080/tcp
 
-ENV HOERBUCHKATALOG_TEMPLATE /var/wbh/templates
-CMD ["java", \
+ENV HOERBUCHKATALOG_TEMPLATE /var/bookworm/templates
+CMD [
+    "java", \
         "-Xms2G", "-Xmx2G", \
         "-jar", "wbh.bookworm.hoerbuchkatalog.assembly.jar", \
             "--spring.profiles.active=development", \

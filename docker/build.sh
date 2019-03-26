@@ -57,16 +57,13 @@ case "${CONTAINER}" in
         #save_docker_image rproxy ${VERSION}
     ;;
     hoerbuchkatalog)
-        build_docker_image hoerbuchkatalog ${VERSION} ../hoerbuchkatalog
+        build_docker_image hoerbuchkatalog ${VERSION}
         #save_docker_image hoerbuchkatalog ${VERSION}
     ;;
     full)
-        build_docker_image datatransfer ${VERSION}
-        #save_docker_image datatransfer ${VERSION}
-        build_docker_image rproxy ${VERSION}
-        #save_docker_image rproxy ${VERSION}
-        build_docker_image hoerbuchkatalog ${VERSION} ../hoerbuchkatalog
-        #save_docker_image hoerbuchkatalog ${VERSION}
+        $0 datatransfer
+        $0 rproxy
+        $0 hoerbuchkatalog
     ;;
     *)
         echo "usage: $0 { <container> | full } <version>"

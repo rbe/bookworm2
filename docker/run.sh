@@ -60,8 +60,10 @@ fi
 
 docker_check_vol datatransfer_etc_ssh
 docker_check_vol opt_bookworm
-docker_check_vol var_templates
-docker_check_vol var_wbh
+docker_check_vol var_bookworm_templates
+docker_check_vol var_bookworm_repository
+docker_check_vol var_bookworm_wbh
+docker_check_vol var_bookworm_blista
 docker_check_vol rproxy_etc_nginx
 
 sudo docker run \
@@ -69,8 +71,8 @@ sudo docker run \
     -p 2201:22 \
     --restart=always \
     ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
-    ${MOUNT_TPL},src=var_templates,dst=/var/templates \
-    ${MOUNT_TPL},src=var_wbh,dst=/var/wbh \
+    ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
+    ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
     --name bookworm-datatransfer \
     wbh/datatransfer:${version}
 
@@ -79,8 +81,10 @@ sudo docker run \
     -p 9080:9080 \
     --restart=always \
     ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
-    ${MOUNT_TPL},src=var_templates,dst=/var/templates \
-    ${MOUNT_TPL},src=var_wbh,dst=/var/wbh \
+    ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
+    ${MOUNT_TPL},src=var_bookworm_repository,dst=/var/bookworm/repository \
+    ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
+    ${MOUNT_TPL},src=var_bookworm_blista,dst=/var/bookworm/blista \
     --name bookworm-hk \
     wbh/hoerbuchkatalog:${version}
 
