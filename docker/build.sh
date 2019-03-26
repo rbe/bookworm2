@@ -5,15 +5,6 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-if [[ $# -lt 1 ]]
-then
-    echo "usage: $0 <version>"
-    exit 1
-fi
-
-VERSION=$1
-set -o nounset
-
 build_docker_image() {
     local name=$1
     local version=$2
@@ -51,14 +42,36 @@ save_docker_image() {
     fi
 }
 
-build_docker_image datatransfer ${VERSION}
-save_docker_image datatransfer ${VERSION}
+CONTAINER=${1:-full}
+VERSION=${2:-LocalBuild}
 
-build_docker_image rproxy ${VERSION}
-save_docker_image rproxy ${VERSION}
+set -o nounset
 
-build_docker_image hoerbuchkatalog ${VERSION} ../hoerbuchkatalog
-save_docker_image hoerbuchkatalog ${VERSION}
+case "${CONTAINER}" in
+    datatransfer)
+        build_docker_image datatransfer ${VERSION}
+        #save_docker_image datatransfer ${VERSION}
+    ;;
+    rproxy)
+        build_docker_image rproxy ${VERSION}
+        #save_docker_image rproxy ${VERSION}
+    ;;
+    hoerbuchkatalog)
+        build_docker_image hoerbuchkatalog ${VERSION} ../hoerbuchkatalog
+        #save_docker_image hoerbuchkatalog ${VERSION}
+    ;;
+    full)
+        build_docker_image datatransfer ${VERSION}
+        #save_docker_image datatransfer ${VERSION}
+        build_docker_image rproxy ${VERSION}
+        #save_docker_image rproxy ${VERSION}
+        build_docker_image hoerbuchkatalog ${VERSION} ../hoerbuchkatalog
+        #save_docker_image hoerbuchkatalog ${VERSION}
+    ;;
+    *)
+        echo "usage: $0 { <container> | full } <version>"
+    ;;
+esac
 
 echo "* Done"
 

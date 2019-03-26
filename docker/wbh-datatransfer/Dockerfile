@@ -4,11 +4,6 @@ LABEL vendor="Art of Coding UG"
 
 ENV buildNumber=LocalBuild
 
-VOLUME ["/etc/ssh"]
-WORKDIR /etc/ssh
-
-COPY setup-datatransfer-users.sh .
-
 # https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
 # https://www.cyberciti.biz/faq/10-alpine-linux-apk-command-examples/
 RUN apk update \
@@ -28,10 +23,15 @@ RUN apk update \
         -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
-    && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key \
-    && chmod 700 setup-datatransfer-users.sh \
+    && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
+
+WORKDIR /etc/ssh
+COPY setup-datatransfer-users.sh .
+RUN chmod 700 setup-datatransfer-users.sh \
         && ./setup-datatransfer-users.sh \
         && rm setup-datatransfer-users.sh
+
+VOLUME ["/etc/ssh"]
 
 EXPOSE 22
 

@@ -56,8 +56,8 @@ EOF
 
 sudo pacman --noconfirm -S jre-openjdk
 
-git clone --single-branch --branch develop --depth 1 git@bitbucket.org:artofcoding/bookworm2.git
-cd bookworm2
+git clone git@bitbucket.org:artofcoding/bookworm2.git wbh.bookworm
+cd wbh.bookworm
 ./mvnw clean
 
 exit 0

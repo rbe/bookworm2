@@ -19,4 +19,4 @@ WORKDIR /opt/asciidocserver
 EXPOSE 80
 EXPOSE 443
 
-CMD [""]
+CMD ["npm", "run"]

@@ -5,7 +5,16 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-declare MOUNT_TPL=--mount type=volume,volume-driver=local
+declare MOUNT_TPL="--mount type=volume,volume-driver=local"
+
+if [[ $# -lt 1 ]]
+then
+    echo "usage: $0 <version>"
+    exit 1
+fi
+
+VERSION=$1
+set -o nounset
 
 function exit_if {
     if [[ $1 -gt 0 ]]
@@ -22,7 +31,7 @@ function docker_check_vol() {
     sudo docker inspect ${vol} 2>/dev/null
     if [[ $? -eq 1 ]]
     then
-        sudo docker volume create -d local ${vol}
+        sudo docker volume create -d local ${vol} >/dev/null
     fi
     sudo docker inspect ${vol} >/dev/null
     exit_if $? "Docker volume ${vol} not found"
@@ -34,7 +43,8 @@ then
     sudo docker network create \
         -d bridge \
         --attachable \
-        public
+        public \
+        >/dev/null
 fi
 
 sudo docker network inspect private 2>/dev/null
@@ -44,11 +54,13 @@ then
         -d bridge \
         --attachable \
         --internal \
-        private
+        private \
+        >/dev/null
 fi
 
 docker_check_vol datatransfer_etc_ssh
 docker_check_vol opt_bookworm
+docker_check_vol var_templates
 docker_check_vol var_wbh
 docker_check_vol rproxy_etc_nginx
 
@@ -57,9 +69,10 @@ sudo docker run \
     -p 2201:22 \
     --restart=always \
     ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
+    ${MOUNT_TPL},src=var_templates,dst=/var/templates \
     ${MOUNT_TPL},src=var_wbh,dst=/var/wbh \
     --name bookworm-datatransfer \
-    wbh/datatransfer:latest
+    wbh/datatransfer:${version}
 
 sudo docker run \
     -d \
@@ -69,7 +82,7 @@ sudo docker run \
     ${MOUNT_TPL},src=var_templates,dst=/var/templates \
     ${MOUNT_TPL},src=var_wbh,dst=/var/wbh \
     --name bookworm-hk \
-    wbh/hoerbuchkatalog:latest
+    wbh/hoerbuchkatalog:${version}
 
 sudo docker run \
     -d \
@@ -78,6 +91,6 @@ sudo docker run \
     --restart=always \
     ${MOUNT_TPL},src=rproxy_etc_nginx,dst=/etc/nginx \
     --name bookworm-rproxy \
-    wbh/rproxy:latest
+    wbh/rproxy:${version}
 
 exit 0

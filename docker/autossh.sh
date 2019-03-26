@@ -26,7 +26,7 @@ then
 fi
 
 eval $(ssh-agent)
-expect <<EOF
+expect >/dev/null <<EOF
   spawn ssh-add ${keyfile}
   expect "Enter passphrase"
   set pass [read [open "${secretfile}" r]]

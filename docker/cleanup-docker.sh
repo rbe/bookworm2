@@ -5,12 +5,13 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-sudo docker rm $(sudo docker ps -qa)
+sudo docker rm -f $(sudo docker ps -qa)
 sudo docker volume prune -f
+sudo docker network prune -f
+
 sudo docker image rm wbh/datatransfer:1
 sudo docker image rm wbh/rproxy:1
 sudo docker image rm wbh/hoerbuchkatalog:1
 sudo docker image prune -f
-sudo docker network prune -f
 
 exit 0
