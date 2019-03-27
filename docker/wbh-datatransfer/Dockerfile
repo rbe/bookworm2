@@ -27,7 +27,7 @@ RUN apk update \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
 
 WORKDIR /etc/ssh
-COPY setup-datatransfer-users.sh .
+COPY docker/wbh-datatransfer/setup-datatransfer-users.sh .
 RUN chmod 700 setup-datatransfer-users.sh \
         && ./setup-datatransfer-users.sh \
         && rm setup-datatransfer-users.sh
