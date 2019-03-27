@@ -8,10 +8,10 @@
 build_docker_image() {
     local name=$1
     local version=$2
-    local basedir=${3:-wbh-$name}
+    local basedir=$(pushd .. >/dev/null ; pwd ; popd >/dev/null)
     echo "*"
     echo "* Building Docker image version wbh/${name}:${version}"
-    echo "* Using $(pwd)/${basedir} as base directory"
+    echo "* Using base directory ${basedir}"
     echo "*"
     # experimental --squash \
     sudo docker build \
@@ -50,15 +50,12 @@ set -o nounset
 case "${CONTAINER}" in
     datatransfer)
         build_docker_image datatransfer ${VERSION}
-        #save_docker_image datatransfer ${VERSION}
     ;;
     rproxy)
         build_docker_image rproxy ${VERSION}
-        #save_docker_image rproxy ${VERSION}
     ;;
     hoerbuchkatalog)
         build_docker_image hoerbuchkatalog ${VERSION}
-        #save_docker_image hoerbuchkatalog ${VERSION}
     ;;
     full)
         $0 datatransfer
