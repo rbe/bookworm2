@@ -5,7 +5,8 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-RUN    mkdir /var/bookworm/templates \
+RUN mkdir /var/bookworm \
+    && mkdir /var/bookworm/templates \
     && mkdir /var/bookworm/repository \
     && mkdir /var/bookworm/hoerbuchkatalog \
     && mkdir /var/bookworm/nutzerdaten \
@@ -18,21 +19,21 @@ COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
 
 COPY hoerbuchkatalog/ui/src/main/resources/templates /var/bookworm/templates/
 
-VOLUME [
-    "/opt/bookworm",
-    "/var/bookworm/templates",
-    "/var/bookworm/repository",
-    "/var/bookworm/wbh",
-    "/var/bookworm/blista"
+VOLUME [\
+    "/opt/bookworm",\
+    "/var/bookworm/templates",\
+    "/var/bookworm/repository",\
+    "/var/bookworm/wbh",\
+    "/var/bookworm/blista"\
 ]
 
 EXPOSE 9080/tcp
 
 ENV HOERBUCHKATALOG_TEMPLATE /var/bookworm/templates
-CMD [
-    "java", \
-        "-Xms2g", "-Xmx2g", \
-        "-jar", "wbh.bookworm.hoerbuchkatalog.assembly.jar", \
-            "--spring.profiles.active=development", \
-            "--spring.config.additional-location=conf/" \
+CMD [\
+    "java",\
+        "-Xms2g", "-Xmx2g",\
+        "-jar", "wbh.bookworm.hoerbuchkatalog.assembly.jar",\
+            "--spring.profiles.active=development",\
+            "--spring.config.additional-location=conf/"\
 ]
