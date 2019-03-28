@@ -5,6 +5,8 @@
 # All rights reserved. Use is subject to license terms.
 #
 
+set -o nounset
+
 archlinux_update() {
     sudo pacman --noconfirm -Syu
 }
