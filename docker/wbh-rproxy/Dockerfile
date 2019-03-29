@@ -15,3 +15,5 @@ COPY docker/wbh-rproxy/nginx.conf /etc/nginx/nginx.conf
 COPY docker/wbh-rproxy/nginx.wbh.conf /etc/nginx/conf.d/wbh.conf
 
 COPY docker/wbh-rproxy/index.html /usr/share/nginx/html
+
+CMD ["nginx"]

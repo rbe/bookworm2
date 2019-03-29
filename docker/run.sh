@@ -5,9 +5,9 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-declare MOUNT_TPL="--mount type=volume,volume-driver=local"
-
 set -o nounset
+
+declare MOUNT_TPL="--mount type=volume,volume-driver=local"
 
 function exit_if {
     if [[ $1 -gt 0 ]]
@@ -30,47 +30,41 @@ function docker_check_vol() {
     exit_if $? "Docker volume ${vol} not found"
 }
 
+function docker_check_network() {
+    sudo docker network inspect public 2>/dev/null
+    if [[ $? = 1 ]]
+    then
+        sudo docker network create \
+            -d bridge \
+            --attachable \
+            public \
+            >/dev/null
+    fi
+    sudo docker network inspect private 2>/dev/null
+    if [[ $? = 1 ]]
+    then
+        sudo docker network create \
+            -d bridge \
+            --attachable \
+            --internal \
+            private \
+            >/dev/null
+    fi
+}
+
 function show_usage() {
-    echo "usage: $0 { <mode> | full } <version>"
+    echo "usage: $0 { network | <container> | full } <version>"
     exit 1
 }
 
 mode=${1:-}
 shift
 case "${mode}" in
-    network)
-        sudo docker network inspect public 2>/dev/null
-        if [[ $? = 1 ]]
-        then
-            sudo docker network create \
-                -d bridge \
-                --attachable \
-                public \
-                >/dev/null
-        fi
-        sudo docker network inspect private 2>/dev/null
-        if [[ $? = 1 ]]
-        then
-            sudo docker network create \
-                -d bridge \
-                --attachable \
-                --internal \
-                private \
-                >/dev/null
-        fi
-    ;;
-    volumes)
-        docker_check_vol datatransfer_etc_ssh
-        docker_check_vol opt_bookworm
-        docker_check_vol var_bookworm_templates
-        docker_check_vol var_bookworm_repository
-        docker_check_vol var_bookworm_wbh
-        docker_check_vol var_bookworm_blista
-        docker_check_vol rproxy_etc_nginx
-    ;;
     datatransfer)
         [[ $# -lt 1 ]] && show_usage
         version=$1
+        docker_check_network
+        docker_check_vol datatransfer_etc_ssh
         sudo docker run \
             -d \
             -p 2201:22 \
@@ -84,6 +78,12 @@ case "${mode}" in
     hoerbuchkatalog)
         [[ $# -lt 1 ]] && show_usage
         version=$1
+        docker_check_network
+        docker_check_vol opt_bookworm
+        docker_check_vol var_bookworm_templates
+        docker_check_vol var_bookworm_repository
+        docker_check_vol var_bookworm_wbh
+        docker_check_vol var_bookworm_blista
         sudo docker run \
             -d \
             -p 9080:9080 \
@@ -93,12 +93,14 @@ case "${mode}" in
             ${MOUNT_TPL},src=var_bookworm_repository,dst=/var/bookworm/repository \
             ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
             ${MOUNT_TPL},src=var_bookworm_blista,dst=/var/bookworm/blista \
-            --name bookworm-hk \
+            --name bookworm-hoerbuchkatalog \
             wbh/hoerbuchkatalog:${version}
     ;;
     rproxy)
         [[ $# -lt 1 ]] && show_usage
         version=$1
+        docker_check_network
+        docker_check_vol rproxy_etc_nginx
         sudo docker run \
             -d \
             -p 80:80 \
@@ -109,8 +111,6 @@ case "${mode}" in
             wbh/rproxy:${version}
     ;;
     full)
-        $0 network
-        $0 volumes
         $0 datatransfer
         $0 hoerbuchkatalog
         $0 rproxy

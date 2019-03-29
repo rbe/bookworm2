@@ -67,6 +67,4 @@ case "${CONTAINER}" in
     ;;
 esac
 
-echo "* Done"
-
 exit $?

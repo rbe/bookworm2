@@ -9,7 +9,7 @@ Match User rbe
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/authorized_keys_cew
-    ChrootDirectory /var/bookworm
+    ChrootDirectory /var/bookworm/templates
     ForceCommand internal-sftp
 
 Match User wbh
