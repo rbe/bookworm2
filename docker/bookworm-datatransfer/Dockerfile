@@ -27,7 +27,7 @@ RUN apk update \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
 
 WORKDIR /etc/ssh/keys
-COPY docker/bookworm-datatransfer/keys/*_authorized_keys .
+COPY docker/bookworm-datatransfer/keys/*_authorized_keys ./
 
 WORKDIR /etc/ssh
 COPY docker/bin/setup-ssh-users.sh .
