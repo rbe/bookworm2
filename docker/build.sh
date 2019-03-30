@@ -34,6 +34,7 @@ case "${container}" in
         docker_build_image hoerbuchkatalog ${version}
     ;;
     full)
+        $0 admin ${version}
         $0 datatransfer ${version}
         $0 rproxy ${version}
         $0 hoerbuchkatalog ${version}
