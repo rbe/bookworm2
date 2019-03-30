@@ -24,7 +24,7 @@ RUN apk update \
         -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
-    && ssh-keygen -t rsa -b 4096 -q -N"" -f /etc/ssh/ssh_host_key
+    && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
 
 WORKDIR /etc/ssh
 COPY docker/var/authorized_keys_rbe .

@@ -17,7 +17,7 @@ RUN mkdir /var/bookworm/templates \
     && mkdir /var/bookworm/wbh \
     && mkdir /var/bookworm/wbh/hoerbuchkatalog \
     && mkdir /var/bookworm/wbh/nutzerdaten \
-    && mkdir /var/bookworm/blista
+    && mkdir /var/bookworm/blista \
     && ln -s /var/bookworm /opt/bookworm/var
 COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
