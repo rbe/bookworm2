@@ -5,6 +5,8 @@
 # All rights reserved. Use is subject to license terms.
 #
 
+set -o nounset
+
 build_docker_image() {
     local name=$1
     local version=$2
@@ -48,8 +50,6 @@ function show_usage() {
     echo "    container     datatransfer | hoerbuechkatalog | rproxy"
     exit 1
 }
-
-set -o nounset
 
 CONTAINER=${1:-full}
 VERSION=${2:-LocalBuild}

@@ -77,7 +77,7 @@ case "${mode}" in
             ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
             ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
             --name bookworm-datatransfer \
-            wbh/datatransfer:${version}
+            bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
         [[ $# -lt 1 ]] && show_usage
@@ -101,7 +101,7 @@ case "${mode}" in
             ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
             ${MOUNT_TPL},src=var_bookworm_blista,dst=/var/bookworm/blista \
             --name bookworm-hoerbuchkatalog \
-            wbh/hoerbuchkatalog:${version}
+            bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
         [[ $# -lt 1 ]] && show_usage
@@ -118,7 +118,7 @@ case "${mode}" in
             --restart=always \
             ${MOUNT_TPL},src=rproxy_etc_nginx,dst=/etc/nginx \
             --name bookworm-rproxy \
-            wbh/rproxy:${version}
+            bookworm/rproxy:${version}
         sudo docker network connect public bookworm-rproxy
     ;;
     full)
