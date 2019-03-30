@@ -20,19 +20,22 @@ function exit_if {
 }
 
 function docker_build_image() {
-    local name=$1
-    local version=$2
-    local basedir=$(pushd .. >/dev/null ; pwd ; popd >/dev/null)
-    local tag=bookworm/${name}:${version}
+    local vendor=$1
+    local name=$2
+    local version=$3
+    local tag=${vendor}/${name}:${version}
+    # TODO basedir not always ../..
+    local basedir=$(pushd ../.. >/dev/null ; pwd ; popd >/dev/null)
     echo "*"
-    echo "* Building Docker image version ${tag}"
+    echo "* Building Docker image ${tag}"
     echo "* Using base directory ${basedir}"
     echo "*"
     # experimental --squash \
+    # TODO Dockerfile not always in ../${vendor}-${name}
     sudo docker build \
         --rm \
         --tag ${tag} \
-        -f bookworm-${name}/Dockerfile ${basedir}
+        -f ../${vendor}-${name}/Dockerfile ${basedir}
     if [[ $? != 0 ]]
     then
         echo "Building image ${tag} failed"
@@ -41,12 +44,13 @@ function docker_build_image() {
 }
 
 function docker_save_image() {
-    local name=$1
-    local version=$2
-    local tag=bookworm/${name}:${version}
-    local archive=bookworm-${name}-${version}
+    local vendor=$1
+    local name=$2
+    local version=$3
+    local tag=${vendor}/${name}:${version}
+    local archive=${vendor}-${name}-${version}
     echo "*"
-    echo "* Saving Docker image version ${archive}"
+    echo "* Saving Docker image ${tag}"
     echo "*"
     sudo docker save ${tag} \
         | gzip -9 >${archive}.tar.gz

@@ -22,22 +22,22 @@ version=${2:-LocalBuild}
 
 case "${container}" in
     admin)
-        docker_build_image admin ${version}
+        docker_build_image bookworm admin ${version}
     ;;
     datatransfer)
-        docker_build_image datatransfer ${version}
-    ;;
-    rproxy)
-        docker_build_image rproxy ${version}
+        docker_build_image bookworm datatransfer ${version}
     ;;
     hoerbuchkatalog)
-        docker_build_image hoerbuchkatalog ${version}
+        docker_build_image bookworm hoerbuchkatalog ${version}
+    ;;
+    rproxy)
+        docker_build_image bookworm rproxy ${version}
     ;;
     full)
         $0 admin ${version}
         $0 datatransfer ${version}
-        $0 rproxy ${version}
         $0 hoerbuchkatalog ${version}
+        $0 rproxy ${version}
     ;;
     *)
         show_usage

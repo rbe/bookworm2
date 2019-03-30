@@ -38,6 +38,7 @@ case "${mode}" in
             -p 2202:22 \
             --restart=always \
             ${MOUNT_TPL},src=admin_etc_ssh,dst=/etc/ssh \
+            ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
             ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
             ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/var/repository \
             ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
