@@ -7,16 +7,16 @@ AllowTcpForwarding no
 Subsystem sftp internal-sftp
 
 Match User rbe
-    AuthorizedKeysFile /etc/ssh/authorized_keys_rbe
+    AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
     ChrootDirectory /opt/bookworm/var
     ForceCommand internal-sftp
 
 Match User cew
-    AuthorizedKeysFile /etc/ssh/authorized_keys_cew
-    ChrootDirectory /opt/bookworm/var
+    AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
+    ChrootDirectory /opt/bookworm/var/templates
     ForceCommand internal-sftp
 
 Match User wbh
-    AuthorizedKeysFile /etc/ssh/authorized_keys_wbh
+    AuthorizedKeysFile /etc/ssh/keys/wbh_authorized_keys
     ChrootDirectory /opt/bookworm/var/wbh
     ForceCommand internal-sftp

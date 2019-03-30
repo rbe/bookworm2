@@ -5,11 +5,6 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-WORKDIR /opt/bookworm
-COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
-COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
-COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
-
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
     && mkdir repository \
@@ -19,6 +14,13 @@ RUN mkdir templates \
     && mkdir blista
 COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
+WORKDIR /opt/bookworm
+COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
+COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
+COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
+
+EXPOSE 9080/tcp
+
 VOLUME [\
     "/opt/bookworm",\
     "/opt/bookworm/var/templates",\
@@ -27,9 +29,6 @@ VOLUME [\
     "/opt/bookworm/var/blista"\
 ]
 
-EXPOSE 9080/tcp
-
-WORKDIR /opt/bookworm
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
 CMD [\
     "java",\

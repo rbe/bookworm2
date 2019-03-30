@@ -26,10 +26,10 @@ RUN apk update \
     && ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
 
+WORKDIR /etc/ssh/keys
+COPY docker/bookworm-datatransfer/keys/*_authorized_keys .
+
 WORKDIR /etc/ssh
-COPY docker/etc/authorized_keys_rbe .
-COPY docker/etc/authorized_keys_cew .
-COPY docker/etc/authorized_keys_wbh .
 COPY docker/bin/setup-ssh-users.sh .
 COPY docker/bookworm-datatransfer/sshd_config_2 .
 RUN chmod 700 setup-ssh-users.sh \
@@ -37,10 +37,10 @@ RUN chmod 700 setup-ssh-users.sh \
         && rm setup-ssh-users.sh \
         && cat sshd_config_2 >>sshd_config \
         && rm sshd_config_2 \
-        && chmod 444 /etc/ssh/authorized_keys_*
+        && chmod 444 /etc/ssh/keys/*_authorized_keys
 
-VOLUME ["/etc/ssh"]
+VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-D", "-e", "-d"
+CMD ["/usr/sbin/sshd", "-D", "-e"]
