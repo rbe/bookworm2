@@ -100,10 +100,10 @@ case "${mode}" in
         sudo docker network connect public bookworm-rproxy
     ;;
     all)
-        $0 admin ${version}
-        $0 datatransfer ${version}
         $0 hoerbuchkatalog ${version}
         $0 rproxy ${version}
+        $0 datatransfer ${version}
+        $0 admin ${version}
     ;;
     *)
         show_usage
