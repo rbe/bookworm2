@@ -31,6 +31,7 @@ VOLUME [\
 
 EXPOSE 9080/tcp
 
+WORKDIR /opt/bookworm
 CMD [\
     "java",\
         "-Xms2g", "-Xmx2g",\
