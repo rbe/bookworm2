@@ -28,9 +28,12 @@ RUN apk update \
 
 WORKDIR /etc/ssh
 COPY docker/wbh-datatransfer/setup-datatransfer-users.sh .
+COPY docker/wbh-datatransfer/sshd_config_2 .
 RUN chmod 700 setup-datatransfer-users.sh \
         && ./setup-datatransfer-users.sh \
-        && rm setup-datatransfer-users.sh
+        && rm setup-datatransfer-users.sh \
+        && cat sshd_config_2 >>sshd_config \
+        && rm sshd_config_2
 
 VOLUME ["/etc/ssh"]
 

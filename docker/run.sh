@@ -31,7 +31,7 @@ function docker_check_vol() {
 }
 
 function docker_check_network() {
-    sudo docker network inspect public 2>/dev/null
+    sudo docker network inspect public 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
         sudo docker network create \
@@ -40,7 +40,7 @@ function docker_check_network() {
             public \
             >/dev/null
     fi
-    sudo docker network inspect private 2>/dev/null
+    sudo docker network inspect private 2>&1 >>/dev/null
     if [[ $? = 1 ]]
     then
         sudo docker network create \
@@ -55,6 +55,7 @@ function docker_check_network() {
 
 function show_usage() {
     echo "usage: $0 { network | <container> | full } <version>"
+    echo "    container     datatransfer | hoerbuechkatalog | rproxy"
     exit 1
 }
 
@@ -111,7 +112,7 @@ case "${mode}" in
             -d \
             --network private \
             --hostname bookworm-rproxy \
-            --ip 192.168.48.1 \
+            --ip 192.168.48.2 \
             -p 80:80 \
             -p 443:443 \
             --restart=always \

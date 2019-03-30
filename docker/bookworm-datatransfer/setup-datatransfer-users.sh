@@ -10,7 +10,7 @@ setup_user() {
     fi
     #/home/${name}/.ssh/authorized_keys
     touch /etc/ssh/authorized_keys_${name}
-    chmod 444 /etc/ssh/authorized_keys_${name}
+    chmod 400 /etc/ssh/authorized_keys_${name}
     passwd -u ${name}
 }
 

@@ -1,3 +1,7 @@
+#
+# WBH Bookworm
+#
+
 X11Forwarding no
 AllowTcpForwarding no
 Subsystem sftp internal-sftp

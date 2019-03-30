@@ -9,18 +9,19 @@ build_docker_image() {
     local name=$1
     local version=$2
     local basedir=$(pushd .. >/dev/null ; pwd ; popd >/dev/null)
+    local tag=bookworm/${name}:${version}
     echo "*"
-    echo "* Building Docker image version wbh/${name}:${version}"
+    echo "* Building Docker image version ${tag}"
     echo "* Using base directory ${basedir}"
     echo "*"
     # experimental --squash \
     sudo docker build \
         --rm \
-        --tag wbh/${name}:${version} \
-        -f wbh-${name}/Dockerfile ${basedir}
+        --tag ${tag} \
+        -f bookworm-${name}/Dockerfile ${basedir}
     if [[ $? != 0 ]]
     then
-        echo "Building image ${name}:${version} failed"
+        echo "Building image ${tag} failed"
         exit 1
     fi
 }
@@ -28,24 +29,30 @@ build_docker_image() {
 save_docker_image() {
     local name=$1
     local version=$2
+    local tag=bookworm/${name}:${version}
+    local archive=bookworm-${name}-${version}
     echo "*"
-    echo "* Saving Docker image version wbh-${name}-${version}"
+    echo "* Saving Docker image version ${archive}"
     echo "*"
-    sudo docker save \
-        wbh/${name}:${version} \
-        | gzip -9 \
-        >wbh-${name}-${version}.tar.gz
+    sudo docker save ${tag} \
+        | gzip -9 >${archive}.tar.gz
     if [[ $? != 0 ]]
     then
-        echo "Saving image of wbh/${name} failed"
+        echo "Saving image of ${tag} failed"
         exit 1
     fi
 }
 
-CONTAINER=${1:-full}
-VERSION=${2:-LocalBuild}
+function show_usage() {
+    echo "usage: $0 { <container> | full } <version>"
+    echo "    container     datatransfer | hoerbuechkatalog | rproxy"
+    exit 1
+}
 
 set -o nounset
+
+CONTAINER=${1:-full}
+VERSION=${2:-LocalBuild}
 
 case "${CONTAINER}" in
     datatransfer)
@@ -63,7 +70,7 @@ case "${CONTAINER}" in
         $0 hoerbuchkatalog
     ;;
     *)
-        echo "usage: $0 { <container> | full } <version>"
+        show_usage
     ;;
 esac
 
