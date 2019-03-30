@@ -10,8 +10,8 @@ libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
 . ${libdir}/docker.sh
 
 docker_clean_containers bookworm
-docker_clean_volume
-docker_clean_network
+docker_clean_volumes
+docker_clean_networks
 docker_clean_images bookworm
 
 exit 0

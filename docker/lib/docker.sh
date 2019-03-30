@@ -93,7 +93,11 @@ function docker_check_network() {
 
 function docker_clean_containers() {
     local t=$1
-    sudo docker rm -f $(sudo docker ps -qf name='${t}/*:*')
+    local ids=$(sudo docker ps -qf name="${t}/*:*")
+    if [[ ${#ids} -gt 0 ]]
+    then
+        sudo docker rm -f ${ids}
+    fi
 }
 
 function docker_clean_volumes() {
@@ -106,8 +110,16 @@ function docker_clean_networks() {
 
 function docker_clean_images() {
     local t=$1
-    sudo docker image rm $(sudo docker image ls -qf dangling=true)
-    sudo docker image rm $(sudo docker image ls -qf reference='${t}/*:*')
+    local ids=$(sudo docker image ls -qf dangling=true)
+    if [[ ${#ids} -gt 0 ]]
+    then
+        sudo docker image rm ${ids}
+    fi
+    ids=$(sudo docker image ls -qf reference="${t}/*:*")
+    if [[ ${#ids} -gt 0 ]]
+    then
+        sudo docker image rm ${ids}
+    fi
     sudo docker image prune -f
 }
 
