@@ -21,6 +21,9 @@ container=${1:-full}
 version=${2:-LocalBuild}
 
 case "${container}" in
+    admin)
+        docker_build_image admin ${version}
+    ;;
     datatransfer)
         docker_build_image datatransfer ${version}
     ;;

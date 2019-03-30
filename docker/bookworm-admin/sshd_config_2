@@ -1,5 +1,5 @@
 #
-# WBH Bookworm
+# WBH Bookworm - Admin
 #
 
 X11Forwarding no
@@ -8,15 +8,10 @@ Subsystem sftp internal-sftp
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/authorized_keys_rbe
-    ChrootDirectory /opt/bookworm/var
+    ChrootDirectory /opt/bookworm
     ForceCommand internal-sftp
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/authorized_keys_cew
-    ChrootDirectory /opt/bookworm/var
-    ForceCommand internal-sftp
-
-Match User wbh
-    AuthorizedKeysFile /etc/ssh/authorized_keys_wbh
-    ChrootDirectory /opt/bookworm/var/wbh
+    ChrootDirectory /opt/bookworm
     ForceCommand internal-sftp

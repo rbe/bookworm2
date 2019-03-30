@@ -23,11 +23,32 @@ mode=${1:-all}
 version=${2:-LocalBuild}
 
 case "${mode}" in
+    admin)
+        docker_check_network
+        docker_check_vol admin_etc_ssh
+        docker_check_vol bookworm_templates
+        docker_check_vol bookworm_repository
+        docker_check_vol bookworm_wbh
+        docker_check_vol bookworm_blista
+        sudo docker run \
+            -d \
+            --network public \
+            --name bookworm-admin \
+            --hostname bookworm-admin \
+            -p 2202:22 \
+            --restart=always \
+            ${MOUNT_TPL},src=admin_etc_ssh,dst=/etc/ssh \
+            ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/vartemplates \
+            ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/varrepository \
+            ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/varwbh \
+            ${MOUNT_TPL},src=bookworm_blista,dst=/opt/bookworm/varblista \
+            bookworm/datatransfer:${version}
+    ;;
     datatransfer)
         docker_check_network
         docker_check_vol datatransfer_etc_ssh
-        docker_check_vol var_bookworm_templates
-        docker_check_vol var_bookworm_wbh
+        docker_check_vol bookworm_templates
+        docker_check_vol bookworm_wbh
         sudo docker run \
             -d \
             --network public \
@@ -36,17 +57,17 @@ case "${mode}" in
             -p 2201:22 \
             --restart=always \
             ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
-            ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
-            ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
+            ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
+            ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
         docker_check_network
         docker_check_vol opt_bookworm
-        docker_check_vol var_bookworm_templates
-        docker_check_vol var_bookworm_repository
-        docker_check_vol var_bookworm_wbh
-        docker_check_vol var_bookworm_blista
+        docker_check_vol bookworm_templates
+        docker_check_vol bookworm_repository
+        docker_check_vol bookworm_wbh
+        docker_check_vol bookworm_blista
         sudo docker run \
             -d \
             --network private \
@@ -55,10 +76,10 @@ case "${mode}" in
             --ip ${PRIVNET}.3 \
             --restart=always \
             ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
-            ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
-            ${MOUNT_TPL},src=var_bookworm_repository,dst=/var/bookworm/repository \
-            ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
-            ${MOUNT_TPL},src=var_bookworm_blista,dst=/var/bookworm/blista \
+            ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
+            ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/var/repository \
+            ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
+            ${MOUNT_TPL},src=bookworm_blista,dst=/opt/bookworm/var/blista \
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
