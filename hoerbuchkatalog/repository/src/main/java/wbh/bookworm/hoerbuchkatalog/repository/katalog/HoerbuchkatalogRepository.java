@@ -108,6 +108,7 @@ public class HoerbuchkatalogRepository
         if (null == aktuellerHoerbuchkatalog.get()) {
             //throw new IllegalStateException("null == aktuellerHoerbuchkatalog");
             LOGGER.warn("Der Hörbuchkatalog ist leer!");
+            aktuellerHoerbuchkatalog.set(Hoerbuchkatalog.leererHoerbuchkatalog());
         }
         return aktuellerHoerbuchkatalog.get();
     }
