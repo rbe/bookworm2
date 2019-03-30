@@ -59,7 +59,7 @@ function show_usage() {
     exit 1
 }
 
-mode=${1:all}
+mode=${1:-all}
 version=${2:-LocalBuild}
 
 case "${mode}" in
