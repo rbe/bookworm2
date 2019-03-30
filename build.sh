@@ -5,6 +5,8 @@
 # All rights reserved. Use is subject to license terms.
 #
 
+set -o nounset
+
 PROJECT=~/project/wbh.bookworm
 REPO=artofcoding/bookworm2.git
 BRANCH=develop
@@ -21,7 +23,7 @@ function update_repo() {
     fi
 }
 
-function build()    {
+function build() {
     local profiles=$1
     ./mvnw -s settings.xml \
         -Dmaven.repo.local=$(pwd)/.mvn/repository \
@@ -32,6 +34,7 @@ function build()    {
 }
 
 mode=${1:-full}
+
 case "${mode}" in
     modules)
         update_repo \
@@ -59,15 +62,14 @@ case "${mode}" in
     ;;
     docker)
         update_repo \
-            && pushd ${PROJECT} >/dev/null \
-            && ( cd docker && ./build.sh 1 ) \
+            && pushd ${PROJECT}/docker >/dev/null \
+            && ./build.sh \
             && popd >/dev/null
     ;;
     full)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
             && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
-            && ( cd docker && ./build.sh 1 ) \
             && popd >/dev/null
     ;;
     *)

@@ -9,7 +9,7 @@ sudo docker rm -f $(sudo docker ps -qa)
 sudo docker volume prune -f
 sudo docker network prune -f
 sudo docker image rm $(sudo docker image ls -qf dangling=true)
-sudo docker image rm $(sudo docker image ls -qf reference='wbh/*:*')
+sudo docker image rm $(sudo docker image ls -qf reference='bookworm/*:*')
 sudo docker image prune -f
 
 exit 0

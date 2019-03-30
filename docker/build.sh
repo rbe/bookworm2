@@ -65,9 +65,9 @@ case "${CONTAINER}" in
         build_docker_image hoerbuchkatalog ${VERSION}
     ;;
     full)
-        $0 datatransfer
-        $0 rproxy
-        $0 hoerbuchkatalog
+        $0 datatransfer ${VERSION}
+        $0 rproxy ${VERSION}
+        $0 hoerbuchkatalog ${VERSION}
     ;;
     *)
         show_usage

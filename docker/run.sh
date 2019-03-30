@@ -21,12 +21,12 @@ function exit_if {
 
 function docker_check_vol() {
     local vol=$1
-    sudo docker inspect ${vol} 2>/dev/null
+    sudo docker inspect ${vol} 2>&1 >/dev/null
     if [[ $? -eq 1 ]]
     then
         sudo docker volume create -d local ${vol} >/dev/null
     fi
-    sudo docker inspect ${vol} >/dev/null
+    sudo docker inspect ${vol} 2>&1 >/dev/null
     exit_if $? "Docker volume ${vol} not found"
 }
 
@@ -40,7 +40,7 @@ function docker_check_network() {
             public \
             >/dev/null
     fi
-    sudo docker network inspect private 2>&1 >>/dev/null
+    sudo docker network inspect private 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
         sudo docker network create \
@@ -54,17 +54,16 @@ function docker_check_network() {
 }
 
 function show_usage() {
-    echo "usage: $0 { network | <container> | full } <version>"
+    echo "usage: $0 { <container> | all } <version>"
     echo "    container     datatransfer | hoerbuechkatalog | rproxy"
     exit 1
 }
 
-mode=${1:-}
-shift
+mode=${1:all}
+version=${2:-LocalBuild}
+
 case "${mode}" in
     datatransfer)
-        [[ $# -lt 1 ]] && show_usage
-        version=$1
         docker_check_network
         docker_check_vol datatransfer_etc_ssh
         sudo docker run \
@@ -80,8 +79,6 @@ case "${mode}" in
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
-        [[ $# -lt 1 ]] && show_usage
-        version=$1
         docker_check_network
         docker_check_vol opt_bookworm
         docker_check_vol var_bookworm_templates
@@ -104,8 +101,6 @@ case "${mode}" in
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
-        [[ $# -lt 1 ]] && show_usage
-        version=$1
         docker_check_network
         docker_check_vol rproxy_etc_nginx
         sudo docker run \
@@ -121,10 +116,10 @@ case "${mode}" in
             bookworm/rproxy:${version}
         sudo docker network connect public bookworm-rproxy
     ;;
-    full)
-        $0 datatransfer
-        $0 hoerbuchkatalog
-        $0 rproxy
+    all)
+        $0 datatransfer ${version}
+        $0 hoerbuchkatalog ${version}
+        $0 rproxy ${version}
     ;;
     *)
         show_usage
