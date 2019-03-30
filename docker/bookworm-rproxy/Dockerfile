@@ -11,9 +11,8 @@ RUN apk update \
 
 VOLUME ["/etc/nginx"]
 
-COPY docker/wbh-rproxy/nginx.conf /etc/nginx/nginx.conf
-COPY docker/wbh-rproxy/nginx.wbh.conf /etc/nginx/conf.d/wbh.conf
-
-COPY docker/wbh-rproxy/index.html /usr/share/nginx/html
+COPY docker/bookworm-rproxy/nginx.conf /etc/nginx/nginx.conf
+COPY docker/bookworm-rproxy/nginx.wbh.conf /etc/nginx/conf.d/wbh.conf
+COPY docker/bookworm-rproxy/index.html /usr/share/nginx/html
 
 CMD ["nginx"]
