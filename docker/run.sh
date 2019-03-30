@@ -47,6 +47,7 @@ function docker_check_network() {
             -d bridge \
             --attachable \
             --internal \
+            --subnet=192.168.48.0/24 \
             private \
             >/dev/null
     fi
@@ -67,6 +68,8 @@ case "${mode}" in
         docker_check_vol datatransfer_etc_ssh
         sudo docker run \
             -d \
+            --network public \
+            --hostname bookworm-datatransfer \
             -p 2201:22 \
             --restart=always \
             ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
@@ -86,6 +89,9 @@ case "${mode}" in
         docker_check_vol var_bookworm_blista
         sudo docker run \
             -d \
+            --network private \
+            --hostname bookworm-hoerbuchkatalog \
+            --ip 192.168.48.3 \
             -p 9080:9080 \
             --restart=always \
             ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
@@ -103,12 +109,16 @@ case "${mode}" in
         docker_check_vol rproxy_etc_nginx
         sudo docker run \
             -d \
+            --network private \
+            --hostname bookworm-rproxy \
+            --ip 192.168.48.1 \
             -p 80:80 \
             -p 443:443 \
             --restart=always \
             ${MOUNT_TPL},src=rproxy_etc_nginx,dst=/etc/nginx \
             --name bookworm-rproxy \
             wbh/rproxy:${version}
+        sudo docker network connect public bookworm-rproxy
     ;;
     full)
         $0 datatransfer
