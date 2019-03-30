@@ -27,9 +27,9 @@ RUN apk update \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
 
 WORKDIR /etc/ssh
-COPY docker/var/authorized_keys_rbe .
-COPY docker/var/authorized_keys_cew .
-COPY docker/var/authorized_keys_wbh .
+COPY docker/etc/authorized_keys_rbe .
+COPY docker/etc/authorized_keys_cew .
+COPY docker/etc/authorized_keys_wbh .
 COPY docker/bookworm-datatransfer/setup-datatransfer-users.sh .
 COPY docker/bookworm-datatransfer/sshd_config_2 .
 RUN chmod 700 setup-datatransfer-users.sh \
