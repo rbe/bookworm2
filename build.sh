@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
+# Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
 # Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
 # All rights reserved. Use is subject to license terms.
 #
@@ -11,27 +11,9 @@ PROJECT=~/project/wbh.bookworm
 REPO=artofcoding/bookworm2.git
 BRANCH=develop
 
-function update_repo() {
-    if [[ ! -d ${PROJECT} ]]
-    then
-        git clone \
-            git@bitbucket.org:${REPO} \
-            ${PROJECT}
-    else
-        git stash
-        git pull
-    fi
-}
-
-function build() {
-    local profiles=$1
-    ./mvnw -s settings.xml \
-        -Dmaven.repo.local=$(pwd)/.mvn/repository \
-        -Dmaven.artifact.threads=10 \
-        -P ${profiles} \
-        -T 4 \
-        clean install
-}
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+platformlibdir=$(pushd ${execdir}/platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+. ${platformlibdir}/git.sh
 
 mode=${1:-full}
 
@@ -39,38 +21,36 @@ case "${mode}" in
     modules)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && build aoc.platform,bookworm.hoerbuchkatalog \
+            && mvnw_build aoc.platform,bookworm.hoerbuchkatalog \
             && popd >/dev/null
     ;;
     report)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis \
+            && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis \
             && popd >/dev/null
     ;;
     documentation)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && build bookworm.documentation \
+            && mvnw_build bookworm.documentation \
             && popd >/dev/null
     ;;
     assembly)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly \
-            && popd >/dev/null
-    ;;
-    docker)
-        update_repo \
-            && pushd ${PROJECT}/docker >/dev/null \
-            && ./build.sh \
+            && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly \
             && popd >/dev/null
     ;;
     full)
         update_repo \
             && pushd ${PROJECT} >/dev/null \
-            && build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
+            && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
             && popd >/dev/null
+    ;;
+    docker)
+        $0 full
+        ${PROJECT}/docker/bin/build.sh
     ;;
     *)
         echo "usage: $0 { modules | report | documentation | assembly | docker | full }"

@@ -29,7 +29,7 @@ RUN apk update \
 WORKDIR /etc/ssh
 COPY docker/etc/authorized_keys_rbe .
 COPY docker/etc/authorized_keys_cew .
-COPY docker/lib/setup-ssh-users.sh .
+COPY docker/bin/setup-ssh-users.sh .
 COPY docker/bookworm-admin/sshd_config_2 .
 RUN chmod 700 setup-ssh-users.sh \
         && ./setup-ssh-users.sh \

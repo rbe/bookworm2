@@ -7,6 +7,20 @@
 
 set -o nounset
 
+function update_repo() {
+    local repo=$1
+    local dest=$2
+    if [[ ! -d ${dest} ]]
+    then
+        git clone \
+            git@bitbucket.org:${repo} \
+            ${dest}
+    else
+        git stash
+        git pull
+    fi
+}
+
 function git_add_sshconfig_for() {
     local hostname=$1
     if [[ $(grep -Ec "^[Hh]ost ${host}" ~/.ssh/config) = 0 ]]

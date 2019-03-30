@@ -8,8 +8,8 @@
 set -o nounset
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
-. ${libdir}/docker.sh
+platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+. ${platformlibdir}/docker.sh
 
 PRIVNET=192.168.48
 
@@ -38,11 +38,11 @@ case "${mode}" in
             -p 2202:22 \
             --restart=always \
             ${MOUNT_TPL},src=admin_etc_ssh,dst=/etc/ssh \
-            ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/vartemplates \
-            ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/varrepository \
-            ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/varwbh \
-            ${MOUNT_TPL},src=bookworm_blista,dst=/opt/bookworm/varblista \
-            bookworm/datatransfer:${version}
+            ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
+            ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/var/repository \
+            ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
+            ${MOUNT_TPL},src=bookworm_blista,dst=/opt/bookworm/var/blista \
+            bookworm/admin:${version}
     ;;
     datatransfer)
         docker_check_network

@@ -8,11 +8,11 @@
 set -o nounset
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
-. ${libdir}/archlinux.sh
-. ${libdir}/linux.sh
-. ${libdir}/ssh.sh
-. ${libdir}/docker.sh
+platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+. ${platformlibdir}/archlinux.sh
+. ${platformlibdir}/linux.sh
+. ${platformlibdir}/ssh.sh
+. ${platformlibdir}/docker.sh
 
 function archlinux_netcup_nfs() {
     sudo pacman --noconfirm -S nfs-utils

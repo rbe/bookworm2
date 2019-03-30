@@ -6,8 +6,8 @@
 #
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
-. ${libdir}/docker.sh
+platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+. ${platformlibdir}/docker.sh
 
 docker_clean_containers bookworm
 docker_clean_volumes

@@ -9,10 +9,13 @@ RUN apk update \
     && apk --no-cache add --virtual .deps \
         letsencrypt-nosudo
 
-VOLUME ["/etc/nginx"]
+WORKDIR /etc/nginx
+COPY docker/bookworm-rproxy/nginx.conf .
+COPY docker/bookworm-rproxy/nginx.wbh.conf .
 
-COPY docker/bookworm-rproxy/nginx.conf /etc/nginx/nginx.conf
-COPY docker/bookworm-rproxy/nginx.wbh.conf /etc/nginx/conf.d/wbh.conf
-COPY docker/bookworm-rproxy/index.html /usr/share/nginx/html
+WORKDIR /usr/share/nginx/html
+COPY docker/bookworm-rproxy/index.html .
+
+VOLUME ["/etc/nginx", "/usr/share/nginx/html"]
 
 CMD ["nginx"]

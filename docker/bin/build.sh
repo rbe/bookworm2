@@ -8,8 +8,8 @@
 set -o nounset
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
-. ${libdir}/docker.sh
+platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+. ${platformlibdir}/docker.sh
 
 function show_usage() {
     echo "usage: $0 { <container> | full } <version>"
