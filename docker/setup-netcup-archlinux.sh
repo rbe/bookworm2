@@ -7,18 +7,14 @@
 
 set -o nounset
 
-archlinux_update() {
-    sudo pacman --noconfirm -Syu
-}
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
+. ${libdir}/archlinux.sh
+. ${libdir}/linux.sh
+. ${libdir}/ssh.sh
+. ${libdir}/docker.sh
 
-archlinux_install_docker() {
-    # Docker needs iptables 1.8.0 for "docker run -p"
-    sudo pacman --noconfirm -U \
-        https://archive.archlinux.org/repos/2018/11/15/core/os/x86_64/iptables-1:1.8.0-1-x86_64.pkg.tar.xz
-    sudo pacman --noconfirm -S docker
-}
-
-archlinux_netcup_nfs() {
+function archlinux_netcup_nfs() {
     sudo pacman --noconfirm -S nfs-utils
     sudo systemctl enable rpcbind
     sudo systemctl start rpcbind
@@ -27,34 +23,14 @@ archlinux_netcup_nfs() {
 EOF'
 }
 
-setup_user_w_key_sudo() {
-    local name=$1
-    local sshkey=$2
-    getent passwd ${name}
-    if [[ $? -eq 2 ]]
-    then
-        groupadd ${name}
-        useradd -m -d /home/${name} -s /bin/bash -g ${name} ${name}
-    fi
-    mkdir /home/${name}/.ssh
-    touch /home/${name}/.ssh/authorized_keys
-    cat >>/home/${name}/.ssh/authorized_keys <<EOF
-${sshkey}
-EOF
-    chown -R ${name}:${name} /home/${name}
-    chmod 700 /home/${name}/.ssh
-    chmod 400 /home/${name}/.ssh/*
-    chmod 444 /home/${name}/.ssh/*.pub
-    cat >> /etc/sudoers.d/${name} <<EOF
-${name} ALL=(ALL) NOPASSWD: ALL
-EOF
-}
-
 archlinux_update
 archlinux_install_docker
+archlinux_install expect git jre-openjdk
 archlinux_netcup_nfs
 
-setup_user_w_key_sudo rbe "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA0QLYbvts23FUxRI6WUMMEN+kVNHMa1H4Agtfe/9+u7fQd/VmPMK5vn57gWfSX3A0iMZgvRvdeKRwbfOjbPAuWQGKWN5yKmJ+v4Q8VH1ryQrsPaBMi939/vs4yrwvceMT5NSm9OUZuNWkYWhX33osYChP2k9NY13S4Ia6yacSQ1YeY3/12XuPibgeS5mnKIFFkSrqtDwo7ms88cXlr1xPie53MAvjGj5eVa9SFBHIXE3RIgnVmx7WbJMTwl9gUQoCIhQFTY/L9vyB2L7GcGopMktnOiabvyKbDN45TZg5oKKoP8BBFVWOesVxhfTqFF0qY0CSbl/fV4/mLU6OrMySSQ== rbemac"
-setup_user_w_key_sudo cew "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAIEAwBv7zakSgsO5Y6IPp5nansr3InpMUjHVpLIbxLh8j38YRobX7wFyFEwXmIYPaS1v2hwpGWJa7/lZsBFoV901e57XrLuGoN2OBE7zCkb0D471gFLxX1XvzlInyhXW8fLHOlgQBoRj3ik2r3seMh3xM3FIDANvJ8owQl6p7xJSOC0= ceoffice_rsa-key-20091106"
+setup_user_w_sudo rbe
+ssh_setup_key rbe $(cat etc/authorized_keys rbe)
+setup_user_w_sudo cew
+ssh_setup_key cew $(cat etc/authorized_keys cew)
 
 exit 0

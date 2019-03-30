@@ -5,11 +5,13 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-sudo docker rm -f $(sudo docker ps -qa)
-sudo docker volume prune -f
-sudo docker network prune -f
-sudo docker image rm $(sudo docker image ls -qf dangling=true)
-sudo docker image rm $(sudo docker image ls -qf reference='bookworm/*:*')
-sudo docker image prune -f
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
+. ${libdir}/docker.sh
+
+docker_clean_containers bookworm
+docker_clean_volume
+docker_clean_network
+docker_clean_images bookworm
 
 exit 0

@@ -5,49 +5,17 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-chmod 500 $0
+set -o nounset
+
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
+. ${libdir}/ssh.sh
+. ${libdir}/git.sh
 
 keyfile=~/.ssh/id_rsa
 secretfile=${keyfile}.secret
-if [[ ! -f ${keyfile} || ! -f ${secretfile} ]]
-then
-    rm -f ${secretfile}
-    dd if=/dev/urandom bs=512 count=4 \
-        | tr -cd '[:alnum:]' \
-        | cut -b 1-32 \
-        >${secretfile}
-    chmod 400 ${secretfile}
-    rm -f ${keyfile}
-    ssh-keygen -t rsa -b 4096 \
-        -P"$(cat ${secretfile})" -N"$(cat ${secretfile})" \
-        -f ${keyfile}
-    chmod 400 ${keyfile}
-fi
+ssh_create_key_ifmissing ${keyfile} ${secretfile}
+ssh_auto_agent ${keyfile} ${secretfile}
 
-sudo pacman -Qi expect >/dev/null
-if [[ $? = 1 ]]
-then
-    sudo pacman --noconfirm -S expect
-fi
-
-eval $(ssh-agent)
-expect >/dev/null <<EOF
-  spawn ssh-add ${keyfile}
-  expect "Enter passphrase"
-  set pass [read [open "${secretfile}" r]]
-  send "\$pass\r"
-  expect eof
-EOF
-
-if [[ $(grep -Ec "^[Hh]ost bitbucket.org" ~/.ssh/config) = 0 ]]
-then
-    cat >>~/.ssh/config <<EOF
-Host bitbucket.org
-    HostName bitbucket.org
-    IdentityFile ~/.ssh/id_rsa
-    User git
-EOF
-fi
-
-[[ -f ~/.ssh/known_hosts ]] && chmod 600 ~/.ssh/known_hosts
-ssh-keyscan -46 -t rsa bitbucket.org >>~/.ssh/known_hosts
+git_add_sshconfig_for bitbucket.org
+ssh_scan_key bitbucket.org

@@ -7,43 +7,9 @@
 
 set -o nounset
 
-build_docker_image() {
-    local name=$1
-    local version=$2
-    local basedir=$(pushd .. >/dev/null ; pwd ; popd >/dev/null)
-    local tag=bookworm/${name}:${version}
-    echo "*"
-    echo "* Building Docker image version ${tag}"
-    echo "* Using base directory ${basedir}"
-    echo "*"
-    # experimental --squash \
-    sudo docker build \
-        --rm \
-        --tag ${tag} \
-        -f bookworm-${name}/Dockerfile ${basedir}
-    if [[ $? != 0 ]]
-    then
-        echo "Building image ${tag} failed"
-        exit 1
-    fi
-}
-
-save_docker_image() {
-    local name=$1
-    local version=$2
-    local tag=bookworm/${name}:${version}
-    local archive=bookworm-${name}-${version}
-    echo "*"
-    echo "* Saving Docker image version ${archive}"
-    echo "*"
-    sudo docker save ${tag} \
-        | gzip -9 >${archive}.tar.gz
-    if [[ $? != 0 ]]
-    then
-        echo "Saving image of ${tag} failed"
-        exit 1
-    fi
-}
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
+. ${libdir}/docker.sh
 
 function show_usage() {
     echo "usage: $0 { <container> | full } <version>"
@@ -51,27 +17,27 @@ function show_usage() {
     exit 1
 }
 
-CONTAINER=${1:-full}
-VERSION=${2:-LocalBuild}
+container=${1:-full}
+version=${2:-LocalBuild}
 
-case "${CONTAINER}" in
+case "${container}" in
     datatransfer)
-        build_docker_image datatransfer ${VERSION}
+        docker_build_image datatransfer ${version}
     ;;
     rproxy)
-        build_docker_image rproxy ${VERSION}
+        docker_build_image rproxy ${version}
     ;;
     hoerbuchkatalog)
-        build_docker_image hoerbuchkatalog ${VERSION}
+        docker_build_image hoerbuchkatalog ${version}
     ;;
     full)
-        $0 datatransfer ${VERSION}
-        $0 rproxy ${VERSION}
-        $0 hoerbuchkatalog ${VERSION}
+        $0 datatransfer ${version}
+        $0 rproxy ${version}
+        $0 hoerbuchkatalog ${version}
     ;;
     *)
         show_usage
     ;;
 esac
 
-exit $?
+exit 0

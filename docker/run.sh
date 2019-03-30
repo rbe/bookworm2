@@ -7,51 +7,11 @@
 
 set -o nounset
 
-declare MOUNT_TPL="--mount type=volume,volume-driver=local"
+execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+libdir=$(pushd ${execdir}/lib >/dev/null ; pwd ; popd >/dev/null)
+. ${libdir}/docker.sh
 
-function exit_if {
-    if [[ $1 -gt 0 ]]
-    then
-        ret=$1
-        shift
-        echo $*
-        exit ${ret}
-    fi
-}
-
-function docker_check_vol() {
-    local vol=$1
-    sudo docker inspect ${vol} 2>&1 >/dev/null
-    if [[ $? -eq 1 ]]
-    then
-        sudo docker volume create -d local ${vol} >/dev/null
-    fi
-    sudo docker inspect ${vol} 2>&1 >/dev/null
-    exit_if $? "Docker volume ${vol} not found"
-}
-
-function docker_check_network() {
-    sudo docker network inspect public 2>&1 >/dev/null
-    if [[ $? = 1 ]]
-    then
-        sudo docker network create \
-            -d bridge \
-            --attachable \
-            public \
-            >/dev/null
-    fi
-    sudo docker network inspect private 2>&1 >/dev/null
-    if [[ $? = 1 ]]
-    then
-        sudo docker network create \
-            -d bridge \
-            --attachable \
-            --internal \
-            --subnet=192.168.48.0/24 \
-            private \
-            >/dev/null
-    fi
-}
+PRIVNET=192.168.48
 
 function show_usage() {
     echo "usage: $0 { <container> | all } <version>"
@@ -66,16 +26,18 @@ case "${mode}" in
     datatransfer)
         docker_check_network
         docker_check_vol datatransfer_etc_ssh
+        docker_check_vol var_bookworm_templates
+        docker_check_vol var_bookworm_wbh
         sudo docker run \
             -d \
             --network public \
+            --name bookworm-datatransfer \
             --hostname bookworm-datatransfer \
             -p 2201:22 \
             --restart=always \
             ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
             ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
             ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
-            --name bookworm-datatransfer \
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
@@ -88,16 +50,15 @@ case "${mode}" in
         sudo docker run \
             -d \
             --network private \
+            --name bookworm-hoerbuchkatalog \
             --hostname bookworm-hoerbuchkatalog \
-            --ip 192.168.48.3 \
-            -p 9080:9080 \
+            --ip ${PRIVNET}.3 \
             --restart=always \
             ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
             ${MOUNT_TPL},src=var_bookworm_templates,dst=/var/bookworm/templates \
             ${MOUNT_TPL},src=var_bookworm_repository,dst=/var/bookworm/repository \
             ${MOUNT_TPL},src=var_bookworm_wbh,dst=/var/bookworm/wbh \
             ${MOUNT_TPL},src=var_bookworm_blista,dst=/var/bookworm/blista \
-            --name bookworm-hoerbuchkatalog \
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
@@ -106,13 +67,13 @@ case "${mode}" in
         sudo docker run \
             -d \
             --network private \
+            --name bookworm-rproxy \
             --hostname bookworm-rproxy \
-            --ip 192.168.48.2 \
+            --ip ${PRIVNET}.2 \
             -p 80:80 \
             -p 443:443 \
             --restart=always \
             ${MOUNT_TPL},src=rproxy_etc_nginx,dst=/etc/nginx \
-            --name bookworm-rproxy \
             bookworm/rproxy:${version}
         sudo docker network connect public bookworm-rproxy
     ;;

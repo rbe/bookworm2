@@ -4,20 +4,22 @@ LABEL vendor="Art of Coding UG"
 LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
-
-RUN mkdir /var/bookworm \
-    && mkdir /var/bookworm/templates \
-    && mkdir /var/bookworm/repository \
-    && mkdir /var/bookworm/hoerbuchkatalog \
-    && mkdir /var/bookworm/nutzerdaten \
-    && mkdir /var/bookworm/blista
+ENV HOERBUCHKATALOG_TEMPLATE /var/bookworm/templates
 
 WORKDIR /opt/bookworm
 COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
 COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
 COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
 
-COPY hoerbuchkatalog/ui/src/main/resources/templates /var/bookworm/templates/
+WORKDIR /var/bookworm
+RUN mkdir /var/bookworm/templates \
+    && mkdir /var/bookworm/repository \
+    && mkdir /var/bookworm/wbh \
+    && mkdir /var/bookworm/wbh/hoerbuchkatalog \
+    && mkdir /var/bookworm/wbh/nutzerdaten \
+    && mkdir /var/bookworm/blista
+    && ln -s /var/bookworm /opt/bookworm/var
+COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
 VOLUME [\
     "/opt/bookworm",\
@@ -29,7 +31,6 @@ VOLUME [\
 
 EXPOSE 9080/tcp
 
-ENV HOERBUCHKATALOG_TEMPLATE /var/bookworm/templates
 CMD [\
     "java",\
         "-Xms2g", "-Xmx2g",\

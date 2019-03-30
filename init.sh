@@ -9,8 +9,6 @@ PROJECT=~/project/wbh.bookworm
 REPO=artofcoding/bookworm2.git
 BRANCH=develop
 
-sudo pacman --noconfirm -S git jre-openjdk
-
 git clone -b ${BRANCH} git@bitbucket.org:${REPO} ${PROJECT}
 cd ${PROJECT}
 ./mvnw clean

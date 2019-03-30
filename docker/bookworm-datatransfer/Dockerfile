@@ -24,16 +24,20 @@ RUN apk update \
         -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
-    && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
+    && ssh-keygen -t rsa -b 4096 -q -N"" -f /etc/ssh/ssh_host_key
 
 WORKDIR /etc/ssh
+COPY docker/var/authorized_keys_rbe .
+COPY docker/var/authorized_keys_cew .
+COPY docker/var/authorized_keys_wbh .
 COPY docker/bookworm-datatransfer/setup-datatransfer-users.sh .
 COPY docker/bookworm-datatransfer/sshd_config_2 .
 RUN chmod 700 setup-datatransfer-users.sh \
         && ./setup-datatransfer-users.sh \
         && rm setup-datatransfer-users.sh \
         && cat sshd_config_2 >>sshd_config \
-        && rm sshd_config_2
+        && rm sshd_config_2 \
+        && chmod 444 /etc/ssh/authorized_keys_*
 
 VOLUME ["/etc/ssh"]
 
