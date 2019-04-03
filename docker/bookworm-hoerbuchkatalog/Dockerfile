@@ -34,5 +34,5 @@ VOLUME [\
 EXPOSE 9080/tcp
 
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-COPY run.sh .
+COPY docker/bookworm-hoerbuchkatalog/run.sh .
 CMD ["run.sh"]

@@ -102,8 +102,8 @@ function docker_check_public_network() {
 }
 
 function docker_clean_containers() {
-    local t=$1
-    local ids=$(sudo docker ps -qf name="${t}/*:*")
+    local prefix=$1
+    local ids=$(sudo docker ps -aqf name="${prefix}*")
     if [[ ${#ids} -gt 0 ]]
     then
         sudo docker rm -f ${ids}
