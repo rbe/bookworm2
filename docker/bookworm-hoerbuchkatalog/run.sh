@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
+
+set -o nounset
+
+SPRING_APPLICATION_JSON="$(cat secrets.json)" java \
+    -Xms2g -Xmx2g \
+    -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
+        --spring.profiles.active=production \
+        --spring.config.additional-location=../conf/
+
+exit 0

@@ -4,6 +4,8 @@ LABEL vendor="Art of Coding UG"
 LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
+RUN groupadd -r bookworm \
+    && useradd -r -g bookworm bookworm
 
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
@@ -14,26 +16,23 @@ RUN mkdir templates \
     && mkdir blista
 COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
-WORKDIR /opt/bookworm
+WORKDIR /opt/bookworm/app
 COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
 COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
-COPY hoerbuchkatalog/assembly/src/main/resources/application*.yml ./
-
-EXPOSE 9080/tcp
+COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
+COPY docker/bookworm-hoerbuchkatalog/secrets.json .
+COPY docker/bookworm-hoerbuchkatalog/run.sh .
 
 VOLUME [\
-    "/opt/bookworm",\
+    "/opt/bookworm/app",\
     "/opt/bookworm/var/templates",\
     "/opt/bookworm/var/repository",\
     "/opt/bookworm/var/wbh",\
     "/opt/bookworm/var/blista"\
 ]
 
+EXPOSE 9080/tcp
+
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-CMD [\
-    "java",\
-        "-Xms2g", "-Xmx2g",\
-        "-jar", "wbh.bookworm.hoerbuchkatalog.assembly.jar",\
-            "--spring.profiles.active=production",\
-            "--spring.config.additional-location=conf/"\
-]
+COPY run.sh .
+CMD ["run.sh"]

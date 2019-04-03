@@ -24,8 +24,9 @@ version=${2:-LocalBuild}
 
 case "${mode}" in
     admin)
-        docker_check_network
+        docker_check_public_network
         docker_check_vol admin_etc_ssh
+        docker_check_vol bookworm_app
         docker_check_vol bookworm_templates
         docker_check_vol bookworm_repository
         docker_check_vol bookworm_wbh
@@ -36,9 +37,9 @@ case "${mode}" in
             --name bookworm-admin \
             --hostname bookworm-admin \
             -p 2202:22 \
-            --restart=always \
+            --restart=no \
             ${MOUNT_TPL},src=admin_etc_ssh,dst=/etc/ssh \
-            ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
+            ${MOUNT_TPL},src=bookworm_app,dst=/opt/bookworm/app \
             ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
             ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/var/repository \
             ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
@@ -46,7 +47,7 @@ case "${mode}" in
             bookworm/admin:${version}
     ;;
     datatransfer)
-        docker_check_network
+        docker_check_public_network
         docker_check_vol datatransfer_etc_ssh
         docker_check_vol bookworm_templates
         docker_check_vol bookworm_wbh
@@ -56,15 +57,16 @@ case "${mode}" in
             --name bookworm-datatransfer \
             --hostname bookworm-datatransfer \
             -p 2201:22 \
-            --restart=always \
+            --restart=no \
             ${MOUNT_TPL},src=datatransfer_etc_ssh,dst=/etc/ssh \
             ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
             ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
-        docker_check_network
-        docker_check_vol opt_bookworm
+        docker_check_private_network
+        docker_check_public_network
+        docker_check_vol bookworm_app
         docker_check_vol bookworm_templates
         docker_check_vol bookworm_repository
         docker_check_vol bookworm_wbh
@@ -75,8 +77,8 @@ case "${mode}" in
             --name bookworm-hoerbuchkatalog \
             --hostname bookworm-hoerbuchkatalog \
             --ip ${PRIVNET}.3 \
-            --restart=always \
-            ${MOUNT_TPL},src=opt_bookworm,dst=/opt/bookworm \
+            --restart=no \
+            ${MOUNT_TPL},src=bookworm_app,dst=/opt/bookworm/app \
             ${MOUNT_TPL},src=bookworm_templates,dst=/opt/bookworm/var/templates \
             ${MOUNT_TPL},src=bookworm_repository,dst=/opt/bookworm/var/repository \
             ${MOUNT_TPL},src=bookworm_wbh,dst=/opt/bookworm/var/wbh \
@@ -84,7 +86,8 @@ case "${mode}" in
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
-        docker_check_network
+        docker_check_private_network
+        docker_check_public_network
         docker_check_vol rproxy_etc_nginx
         sudo docker run \
             -d \
@@ -94,7 +97,7 @@ case "${mode}" in
             --ip ${PRIVNET}.2 \
             -p 80:80 \
             -p 443:443 \
-            --restart=always \
+            --restart=no \
             ${MOUNT_TPL},src=rproxy_etc_nginx,dst=/etc/nginx \
             bookworm/rproxy:${version}
         sudo docker network connect public bookworm-rproxy

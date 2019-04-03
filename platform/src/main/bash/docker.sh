@@ -72,25 +72,31 @@ function docker_check_vol() {
     exit_if $? "Docker volume ${vol} not found"
 }
 
-function docker_check_network() {
-    sudo docker network inspect public 2>&1 >/dev/null
+function docker_check_internal_network() {
+    local name=$1
+    local subnet=$2
+    sudo docker network inspect ${name} 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
         sudo docker network create \
             -d bridge \
+            --internal \
+            --subnet=${subnet} \
             --attachable \
-            public \
+            ${name} \
             2>&1 >/dev/null
     fi
-    sudo docker network inspect private 2>&1 >/dev/null
+}
+
+function docker_check_public_network() {
+    local name=$1
+    sudo docker network inspect ${name} 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
         sudo docker network create \
             -d bridge \
             --attachable \
-            --internal \
-            --subnet=192.168.48.0/24 \
-            private \
+            ${name} \
             2>&1 >/dev/null
     fi
 }
