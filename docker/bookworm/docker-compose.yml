@@ -93,7 +93,6 @@ services:
     volumes:
       - rproxy_etc_nginx:/etc/nginx
     networks:
-      cms-backend:
       bookworm-backend:
         ipv4_address: "192.168.48.2"
       bookworm-public:

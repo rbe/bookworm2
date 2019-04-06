@@ -6,7 +6,7 @@ RUN apk --no-cache add --virtual .deps \
       bash \
       ca-certificates \
       curl \
-    && curl -LO /tmp/vault.zip \
+    && curl -Lo /tmp/vault.zip \
          https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip \
     && mkdir /vault \
     && mkdir /vault/config \
