@@ -142,4 +142,6 @@ function archlinux_install_docker() {
             https://archive.archlinux.org/repos/2018/11/15/core/os/x86_64/iptables-1:1.8.0-1-x86_64.pkg.tar.xz
         sudo pacman --noconfirm -S docker
     fi
+    sudo groupadd docker
+    sudo systemctl enable docker
 }

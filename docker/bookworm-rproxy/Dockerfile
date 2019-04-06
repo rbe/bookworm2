@@ -7,7 +7,12 @@ ENV buildNumber=LocalBuild
 
 RUN apk update \
     && apk --no-cache add --virtual .deps \
+        curl \
         letsencrypt-nosudo
+
+RUN groupadd -r bookworm \
+    && useradd -r -g bookworm bookworm
+USER bookworm:bookworm
 
 WORKDIR /etc/nginx
 COPY docker/bookworm-rproxy/nginx.conf .
@@ -17,5 +22,7 @@ WORKDIR /usr/share/nginx/html
 COPY docker/bookworm-rproxy/index.html .
 
 VOLUME ["/etc/nginx", "/usr/share/nginx/html"]
+
+HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 
 CMD ["nginx"]

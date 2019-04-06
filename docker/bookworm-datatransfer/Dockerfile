@@ -17,7 +17,7 @@ RUN apk update \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
         -e 's#^(PermitRootLogin ).*#\1 without-password#' \
-        -e 's#(ListenAddress ).*#\1 0.0.0.0#' \
+        -e 's#(ListenAddress 0).*#\1 0.0.0.0#' \
         -e 's#(Port ).*#\1 22#' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
@@ -43,4 +43,4 @@ VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-D", "-e"]
+CMD ["/usr/sbin/sshd", "-d"]

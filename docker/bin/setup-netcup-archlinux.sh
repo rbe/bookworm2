@@ -25,12 +25,17 @@ EOF'
 
 archlinux_update
 archlinux_install_docker
+sudo sysctl net.ipv4.conf.all.forwarding=1
+sudo iptables -P FORWARD ACCEPT
 archlinux_install expect git jre-openjdk
 archlinux_netcup_nfs
 
 setup_user_w_sudo rbe
 ssh_setup_key rbe $(cat etc/authorized_keys rbe)
+sudo usermod -aG docker rbe
+
 setup_user_w_sudo cew
 ssh_setup_key cew $(cat etc/authorized_keys cew)
+sudo usermod -aG docker cew
 
 exit 0

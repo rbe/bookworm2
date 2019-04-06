@@ -4,8 +4,10 @@ LABEL vendor="Art of Coding UG"
 LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
+
 RUN groupadd -r bookworm \
     && useradd -r -g bookworm bookworm
+USER bookworm:bookworm
 
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
@@ -20,7 +22,7 @@ WORKDIR /opt/bookworm/app
 COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
 COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
 COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
-COPY docker/bookworm-hoerbuchkatalog/secrets.json .
+COPY docker/bookworm-hoerbuchkatalog/secrets.json conf
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
 
 VOLUME [\
@@ -34,5 +36,4 @@ VOLUME [\
 EXPOSE 9080/tcp
 
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-COPY docker/bookworm-hoerbuchkatalog/run.sh .
-CMD ["run.sh"]
+CMD ["bash", "run.sh"]

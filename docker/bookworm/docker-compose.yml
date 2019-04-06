@@ -1,13 +1,33 @@
 version: '3.7'
 
 services:
+  wbh-online-db:
+    image: mysql:5.6
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+#      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+#      - MYSQL_ROOT_PASSWORD=
+#      - MYSQL_DATABASE=cache
+    networks:
+      - cms-backend
+    expose:
+      - "3306"
+    healthcheck:
+      test: ["CMD", "mysql" ,"-h", "localhost", "-P", "3306", "-u", "root", "-e", "SELECT 1", "cache"]
+      interval: 1s
+      timeout: 3s
+      retries: 10
   wbh-online-cms:
     image: joomla:3.9.3-fpm-alpine
     depends_on:
-      - wbh-online-db
+      wbh-online-db:
+        condition: service_healthy
     restart: "no"
     environment:
       JOOMLA_DB_HOST: wbh-online-db
+#DB NAME
+#USER
       JOOMLA_DB_PASSWORD: example
     networks:
       - cms-backend
@@ -19,21 +39,14 @@ services:
       timeout: 1s
       retries: 3
       start_period: 60s
-  wbh-online-db:
-    image: mysql:5.6
-    restart: "no"
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-    networks:
-      - cms-backend
-    expose:
-      - "3306"
-  vault:
+  bookworm-vault:
     build:
       context: ../bookworm-vault
       dockerfile: Dockerfile
     ports:
       - "8200:8200"
+    networks:
+      - bookworm-backend
     volumes:
       - ./vault/config:/vault/config
       - ./vault/policies:/vault/policies
@@ -50,6 +63,9 @@ services:
       dockerfile: docker/bookworm-hoerbuchkatalog/Dockerfile
     image: bookworm/hoerbuchkatalog:LocalBuild
     restart: "no"
+    depends_on:
+      bookworm-vault:
+        condition: service_healthy
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
@@ -59,12 +75,13 @@ services:
       - bookworm_blista:/opt/bookworm/var/blista
       - bookworm_repository:/opt/bookworm/var/repository
     networks:
+      bookworm-outside:
       bookworm-backend:
         ipv4_address: "192.168.48.3"
     expose:
       - "9080"
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://192.168.48.3:80"]
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 5m0s
       timeout: 1s
       retries: 3
@@ -75,11 +92,13 @@ services:
       dockerfile: docker/bookworm-datatransfer/Dockerfile
     image: bookworm/datatransfer:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      bookworm-hoerbuchkatalog:
+        condition: service_healthy
     restart: "no"
     ports:
       - "2201:22"
     volumes:
+      - datatransfer_etc_ssh:/etc/ssh
       - bookworm_templates:/opt/bookworm/var/templates
       - bookworm_wbh:/opt/bookworm/var/wbh
     networks:
@@ -90,11 +109,13 @@ services:
       dockerfile: docker/bookworm-admin/Dockerfile
     image: bookworm/admin:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      bookworm-hoerbuchkatalog:
+        condition: service_started
     restart: "no"
     ports:
       - "2202:22"
     volumes:
+      - admin_etc_ssh:/etc/ssh
       - bookworm_app:/opt/bookworm/app
       - bookworm_templates:/opt/bookworm/var/templates
       - bookworm_wbh:/opt/bookworm/var/wbh
@@ -108,7 +129,10 @@ services:
       dockerfile: docker/bookworm-rproxy/Dockerfile
     image: bookworm/rproxy:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      wbh-online-cms:
+        condition: service_healthy
+      bookworm-hoerbuchkatalog:
+        condition: service_healthy
     restart: "no"
     ports:
       - "80:80"
@@ -121,7 +145,7 @@ services:
         ipv4_address: "192.168.48.2"
       bookworm-public:
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://192.168.48.2:80"]
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
       interval: 5m0s
       timeout: 1s
       retries: 3
@@ -146,6 +170,11 @@ networks:
       driver: default
       config:
         - subnet: "192.168.48.0/24"
+  bookworm-outside:
+    name: bookworm-outside
+    driver: bridge
+    external: false
+    internal: false
   bookworm-public:
     name: bookworm-public
     driver: bridge

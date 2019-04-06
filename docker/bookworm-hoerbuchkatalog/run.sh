@@ -7,7 +7,7 @@
 
 set -o nounset
 
-SPRING_APPLICATION_JSON="$(cat secrets.json)" java \
+SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" java \
     -Xms2g -Xmx2g \
     -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
         --spring.profiles.active=production \
