@@ -24,10 +24,19 @@ EOF'
 }
 
 archlinux_update
+
+sudo pacman -Syyu linux-lts
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+
+sudo pacman --noconfirm -S haveged
+sudo systemctl enable haveged
+
 archlinux_install_docker
 sudo sysctl net.ipv4.conf.all.forwarding=1
 sudo iptables -P FORWARD ACCEPT
+
 archlinux_install expect git jre-openjdk
+
 archlinux_netcup_nfs
 
 setup_user_w_sudo rbe

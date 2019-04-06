@@ -17,7 +17,7 @@ RUN apk --no-cache add --virtual .deps \
     && rm /tmp/vault.zip \
     && chmod 555 /vault
 
-ENV PATH="PATH=$PATH:$PWD/vault"
+ENV PATH="PATH=$PATH:/vault"
 
 WORKDIR /vault
 COPY vault/config/vault-config.json config/vault-config.json

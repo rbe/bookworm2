@@ -8,15 +8,15 @@ ENV buildNumber=LocalBuild
 RUN apk update \
     && apk --no-cache add --virtual .deps \
         curl \
-        letsencrypt-nosudo
-
-RUN groupadd -r bookworm \
-    && useradd -r -g bookworm bookworm
-USER bookworm:bookworm
+        letsencrypt-nosudo \
+    && addgroup -S bookworm \
+    && adduser -S -G bookworm bookworm
 
 WORKDIR /etc/nginx
 COPY docker/bookworm-rproxy/nginx.conf .
 COPY docker/bookworm-rproxy/nginx.wbh.conf .
+
+USER bookworm:bookworm
 
 WORKDIR /usr/share/nginx/html
 COPY docker/bookworm-rproxy/index.html .

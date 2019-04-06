@@ -25,6 +25,7 @@ hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
 out/
 
 # Maven
+.mvn/repository/
 target/
 pom.xml.versionsBackup
 

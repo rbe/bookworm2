@@ -7,10 +7,11 @@
 
 set -o nounset
 
+cd /opt/bookworm
 SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" java \
     -Xms2g -Xmx2g \
-    -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
+    -jar app/wbh.bookworm.hoerbuchkatalog.assembly.jar \
         --spring.profiles.active=production \
-        --spring.config.additional-location=../conf/
+        --spring.config.additional-location=conf/
 
 exit 0

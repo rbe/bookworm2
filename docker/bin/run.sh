@@ -24,7 +24,7 @@ version=${2:-LocalBuild}
 
 case "${mode}" in
     admin)
-        docker_check_public_network
+        docker_check_public_network bookworm-public
         docker_check_vol admin_etc_ssh
         docker_check_vol bookworm_app
         docker_check_vol bookworm_templates
@@ -47,7 +47,7 @@ case "${mode}" in
             bookworm/admin:${version}
     ;;
     datatransfer)
-        docker_check_public_network
+        docker_check_public_network bookworm-public
         docker_check_vol datatransfer_etc_ssh
         docker_check_vol bookworm_templates
         docker_check_vol bookworm_wbh
@@ -64,8 +64,8 @@ case "${mode}" in
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
-        docker_check_private_network
-        docker_check_public_network
+        docker_check_private_network bookworm-backend 192.168.48.0/24
+        docker_check_public_network bookworm-public
         docker_check_vol bookworm_app
         docker_check_vol bookworm_templates
         docker_check_vol bookworm_repository
@@ -86,8 +86,8 @@ case "${mode}" in
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
-        docker_check_private_network
-        docker_check_public_network
+        docker_check_private_network bookworm-backend 192.168.48.0/24
+        docker_check_public_network bookworm-public
         docker_check_vol rproxy_etc_nginx
         sudo docker run \
             -d \

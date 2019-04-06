@@ -72,7 +72,7 @@ function docker_check_vol() {
     exit_if $? "Docker volume ${vol} not found"
 }
 
-function docker_check_internal_network() {
+function docker_check_private_network() {
     local name=$1
     local subnet=$2
     sudo docker network inspect ${name} 2>&1 >/dev/null
@@ -134,6 +134,7 @@ function docker_clean_images() {
 }
 
 function archlinux_install_docker() {
+    # docker
     sudo pacman -Qi docker 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
@@ -144,4 +145,13 @@ function archlinux_install_docker() {
     fi
     sudo groupadd docker
     sudo systemctl enable docker
+    # docker-compose
+    sudo pacman -Qi docker 2>&1 >/dev/null
+    if [[ $? = 1 ]]
+    then
+        pacman --noconfirm -S docker-compose
+    fi
+    systemctl enable docker
+    systemctl start docker
+    docker info
 }
