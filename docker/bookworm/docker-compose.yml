@@ -56,7 +56,6 @@ services:
       - "2201:22"
     volumes:
       - datatransfer_etc_ssh:/etc/ssh
-      - bookworm_templates:/opt/bookworm/var/templates
       - bookworm_wbh:/opt/bookworm/var/wbh
     networks:
       - bookworm-public

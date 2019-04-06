@@ -42,4 +42,4 @@ VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-d"]
+CMD ["/usr/sbin/sshd", "-D"]

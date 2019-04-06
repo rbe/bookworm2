@@ -8,12 +8,12 @@ Subsystem sftp internal-sftp
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
-    ChrootDirectory /opt/bookworm/var
+    ChrootDirectory /opt/bookworm/var/wbh
     ForceCommand internal-sftp
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
-    ChrootDirectory /opt/bookworm/var/templates
+    ChrootDirectory /opt/bookworm/var/wbh
     ForceCommand internal-sftp
 
 Match User wbh
