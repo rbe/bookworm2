@@ -1,44 +1,6 @@
 version: '3.7'
 
 services:
-  wbh-online-db:
-    image: mysql:5.6
-    restart: "no"
-    environment:
-      MYSQL_ROOT_PASSWORD: example
-#      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
-#      - MYSQL_ROOT_PASSWORD=
-#      - MYSQL_DATABASE=cache
-    networks:
-      - cms-backend
-    expose:
-      - "3306"
-    healthcheck:
-      test: ["CMD", "mysql" ,"-h", "localhost", "-P", "3306", "-u", "root", "-e", "SELECT 1", "cache"]
-      interval: 1s
-      timeout: 3s
-      retries: 10
-  wbh-online-cms:
-    image: joomla:3.9.3-fpm-alpine
-    depends_on:
-      wbh-online-db:
-        condition: service_healthy
-    restart: "no"
-    environment:
-      JOOMLA_DB_HOST: wbh-online-db
-#DB NAME
-#USER
-      JOOMLA_DB_PASSWORD: example
-    networks:
-      - cms-backend
-    expose:
-      - "80"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 5m0s
-      timeout: 1s
-      retries: 3
-      start_period: 60s
   bookworm-vault:
     build:
       context: ../bookworm-vault
@@ -48,10 +10,7 @@ services:
     networks:
       - bookworm-backend
     volumes:
-      - ./vault/config:/vault/config
-      - ./vault/policies:/vault/policies
-      - ./vault/data:/vault/data
-      - ./vault/logs:/vault/logs
+      - bookworm_vault:/vault
     environment:
       - VAULT_ADDR=http://127.0.0.1:8200
     command: server -config=/vault/config/vault-config.json
@@ -64,8 +23,7 @@ services:
     image: bookworm/hoerbuchkatalog:LocalBuild
     restart: "no"
     depends_on:
-      bookworm-vault:
-        condition: service_healthy
+      - bookworm-vault
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
@@ -92,8 +50,7 @@ services:
       dockerfile: docker/bookworm-datatransfer/Dockerfile
     image: bookworm/datatransfer:LocalBuild
     depends_on:
-      bookworm-hoerbuchkatalog:
-        condition: service_healthy
+      - bookworm-hoerbuchkatalog
     restart: "no"
     ports:
       - "2201:22"
@@ -109,8 +66,7 @@ services:
       dockerfile: docker/bookworm-admin/Dockerfile
     image: bookworm/admin:LocalBuild
     depends_on:
-      bookworm-hoerbuchkatalog:
-        condition: service_started
+      - bookworm-hoerbuchkatalog
     restart: "no"
     ports:
       - "2202:22"
@@ -129,10 +85,7 @@ services:
       dockerfile: docker/bookworm-rproxy/Dockerfile
     image: bookworm/rproxy:LocalBuild
     depends_on:
-      wbh-online-cms:
-        condition: service_healthy
-      bookworm-hoerbuchkatalog:
-        condition: service_healthy
+      - bookworm-hoerbuchkatalog
     restart: "no"
     ports:
       - "80:80"
@@ -152,15 +105,6 @@ services:
       start_period: 60s
 
 networks:
-  cms-backend:
-    name: cms-backend
-    driver: bridge
-    external: false
-    internal: true
-    ipam:
-      driver: default
-      config:
-        - subnet: "192.168.47.0/24"
   bookworm-backend:
     name: bookworm-backend
     driver: bridge
@@ -185,6 +129,8 @@ volumes:
   admin_etc_ssh:
     driver: local
   datatransfer_etc_ssh:
+    driver: local
+  bookworm_vault:
     driver: local
   bookworm_app:
     driver: local

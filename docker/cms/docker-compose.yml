@@ -1,0 +1,51 @@
+version: '3.7'
+
+services:
+  wbh-online-db:
+    image: mysql:5.6
+    restart: "no"
+    environment:
+      MYSQL_ROOT_PASSWORD: example
+    networks:
+      - cms-backend
+    expose:
+      - "3306"
+    healthcheck:
+      test: ["CMD", "mysql" ,"-h", "localhost", "-P", "3306", "-u", "root", "-e", "SELECT 1", "cache"]
+      interval: 1s
+      timeout: 3s
+      retries: 10
+  wbh-online-cms:
+    image: joomla:3.9.3-fpm-alpine
+    depends_on:
+      - wbh-online-db
+    restart: "no"
+    environment:
+      JOOMLA_DB_HOST: wbh-online-db
+      JOOMLA_DB_PASSWORD: example
+    networks:
+      - cms-backend
+    expose:
+      - "80"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 5m0s
+      timeout: 1s
+      retries: 3
+      start_period: 60s
+
+networks:
+  cms-backend:
+    name: cms-backend
+    driver: bridge
+    external: false
+    internal: true
+    ipam:
+      driver: default
+      config:
+        - subnet: "192.168.47.0/24"
+  cms-public:
+    name: cms-public
+    driver: bridge
+    external: false
+    internal: false

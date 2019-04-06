@@ -5,8 +5,8 @@ ENV VAULT_VERSION 1.1.0
 RUN apk --no-cache add --virtual .deps \
       bash \
       ca-certificates \
-      wget \
-    && wget --quiet --output-document=/tmp/vault.zip \
+      curl \
+    && curl -LO /tmp/vault.zip \
          https://releases.hashicorp.com/vault/${VAULT_VERSION}/vault_${VAULT_VERSION}_linux_amd64.zip \
     && mkdir /vault \
     && mkdir /vault/config \
@@ -19,7 +19,10 @@ RUN apk --no-cache add --virtual .deps \
 
 ENV PATH="PATH=$PATH:$PWD/vault"
 
-COPY vault/config/vault-config.json /vault/config/vault-config.json
+WORKDIR /vault
+COPY vault/config/vault-config.json config/vault-config.json
+
+VOLUME ["/vault"]
 
 EXPOSE 8200
 
