@@ -16,8 +16,6 @@ WORKDIR /etc/nginx
 COPY docker/bookworm-rproxy/nginx.conf .
 COPY docker/bookworm-rproxy/nginx.wbh.conf .
 
-USER bookworm:bookworm
-
 WORKDIR /usr/share/nginx/html
 COPY docker/bookworm-rproxy/index.html .
 

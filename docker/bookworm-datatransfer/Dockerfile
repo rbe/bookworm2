@@ -17,7 +17,6 @@ RUN apk update \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
         -e 's#^(PermitRootLogin ).*#\1 without-password#' \
-        -e 's#(ListenAddress 0).*#\1 0.0.0.0#' \
         -e 's#(Port ).*#\1 22#' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
