@@ -19,17 +19,17 @@ COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
 WORKDIR /opt/bookworm/app
 COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
-COPY hoerbuchkatalog/assembly/src/main/resources/conf conf
 COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 
 WORKDIR /opt/bookworm/conf
+COPY hoerbuchkatalog/assembly/src/main/resources/conf/* .
 COPY docker/bookworm-hoerbuchkatalog/secrets.json .
-
-RUN chown -R bookworm:bookworm /opt/bookworm/var
-USER bookworm:bookworm
 
 WORKDIR /opt/bookworm
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
+
+RUN chown -R bookworm:bookworm /opt/bookworm/var
+USER bookworm:bookworm
 
 VOLUME [\
     "/opt/bookworm/app",\

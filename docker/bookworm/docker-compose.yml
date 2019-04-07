@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-#  bookworm-vault:
+#  vault:
 #    build:
 #      context: ../bookworm-vault
 #      dockerfile: Dockerfile
@@ -16,7 +16,7 @@ services:
 #    command: server -config=/vault/config/vault-config.json
 #    cap_add:
 #      - IPC_LOCK
-  bookworm-hoerbuchkatalog:
+  hoerbuchkatalog:
     build:
       context: ../../
       dockerfile: docker/bookworm-hoerbuchkatalog/Dockerfile
@@ -27,11 +27,11 @@ services:
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
-      - bookworm_app:/opt/bookworm/app
-      - bookworm_templates:/opt/bookworm/var/templates
-      - bookworm_wbh:/opt/bookworm/var/wbh
-      - bookworm_blista:/opt/bookworm/var/blista
-      - bookworm_repository:/opt/bookworm/var/repository
+      - app:/opt/bookworm/app
+      - templates:/opt/bookworm/var/templates
+      - wbh:/opt/bookworm/var/wbh
+      - blista:/opt/bookworm/var/blista
+      - repository:/opt/bookworm/var/repository
     networks:
       bookworm-outside:
       bookworm-backend:
@@ -44,22 +44,7 @@ services:
       timeout: 1s
       retries: 3
       start_period: 60s
-  bookworm-datatransfer:
-    build:
-      context: ../../
-      dockerfile: docker/bookworm-datatransfer/Dockerfile
-    image: bookworm/datatransfer:LocalBuild
-    depends_on:
-      - bookworm-hoerbuchkatalog
-    restart: "no"
-    ports:
-      - "2201:22"
-    volumes:
-      - datatransfer_etc_ssh:/etc/ssh
-      - bookworm_wbh:/opt/bookworm/var/wbh
-    networks:
-      - bookworm-public
-  bookworm-admin:
+  admin:
     build:
       context: ../../
       dockerfile: docker/bookworm-admin/Dockerfile
@@ -71,14 +56,29 @@ services:
       - "2202:22"
     volumes:
       - admin_etc_ssh:/etc/ssh
-      - bookworm_app:/opt/bookworm/app
-      - bookworm_templates:/opt/bookworm/var/templates
-      - bookworm_wbh:/opt/bookworm/var/wbh
-      - bookworm_blista:/opt/bookworm/var/blista
-      - bookworm_repository:/opt/bookworm/var/repository
+      - app:/opt/bookworm/app
+      - templates:/opt/bookworm/var/templates
+      - wbh:/opt/bookworm/var/wbh
+      - blista:/opt/bookworm/var/blista
+      - repository:/opt/bookworm/var/repository
     networks:
       - bookworm-public
-  bookworm-rproxy:
+  datatransfer:
+    build:
+      context: ../../
+      dockerfile: docker/bookworm-datatransfer/Dockerfile
+    image: bookworm/datatransfer:LocalBuild
+    depends_on:
+      - bookworm-hoerbuchkatalog
+    restart: "no"
+    ports:
+      - "2201:22"
+    volumes:
+      - datatransfer_etc_ssh:/etc/ssh
+      - wbh:/opt/bookworm/var/wbh
+    networks:
+      - bookworm-public
+  rproxy:
     build:
       context: ../../
       dockerfile: docker/bookworm-rproxy/Dockerfile
@@ -128,17 +128,17 @@ volumes:
     driver: local
   datatransfer_etc_ssh:
     driver: local
-  bookworm_vault:
+  vault:
     driver: local
-  bookworm_app:
+  app:
     driver: local
-  bookworm_templates:
+  templates:
     driver: local
-  bookworm_wbh:
+  wbh:
     driver: local
-  bookworm_blista:
+  blista:
     driver: local
-  bookworm_repository:
+  repository:
     driver: local
   rproxy_etc_nginx:
     driver: local
