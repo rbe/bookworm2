@@ -1,29 +1,31 @@
 version: '3.7'
 
 services:
-#  vault:
-#    build:
-#      context: ../bookworm-vault
-#      dockerfile: Dockerfile
-#    networks:
-#      - bookworm-backend
-#    ports:
-#      - 8200:8200
-#    volumes:
-#      - bookworm_vault:/vault
+  vault:
+    build:
+      context: ../bookworm-vault
+      dockerfile: Dockerfile
+    image: bookworm/vault:LocalBuild
+    networks:
+      bookworm-backend:
+        ipv4_address: "192.168.48.3"
+    ports:
+      - 8200:8200
+    volumes:
+      - vault:/opt/vault
 #    environment:
 #      - VAULT_ADDR=http://127.0.0.1:8200
-#    command: server -config=/vault/config/vault-config.json
-#    cap_add:
-#      - IPC_LOCK
+    command: server -config=/opt/vault/config/vault-config.json
+    cap_add:
+      - IPC_LOCK
   hoerbuchkatalog:
     build:
       context: ../../
       dockerfile: docker/bookworm-hoerbuchkatalog/Dockerfile
     image: bookworm/hoerbuchkatalog:LocalBuild
     restart: "no"
-#    depends_on:
-#      - bookworm-vault
+    depends_on:
+      - vault
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
@@ -35,7 +37,7 @@ services:
     networks:
       bookworm-outside:
       bookworm-backend:
-        ipv4_address: "192.168.48.3"
+        ipv4_address: "192.168.48.4"
     expose:
       - 9080
     healthcheck:
@@ -50,7 +52,7 @@ services:
       dockerfile: docker/bookworm-admin/Dockerfile
     image: bookworm/admin:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      - hoerbuchkatalog
     restart: "no"
     ports:
       - "2202:22"
@@ -69,7 +71,7 @@ services:
       dockerfile: docker/bookworm-datatransfer/Dockerfile
     image: bookworm/datatransfer:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      - hoerbuchkatalog
     restart: "no"
     ports:
       - "2201:22"
@@ -84,7 +86,7 @@ services:
       dockerfile: docker/bookworm-rproxy/Dockerfile
     image: bookworm/rproxy:LocalBuild
     depends_on:
-      - bookworm-hoerbuchkatalog
+      - hoerbuchkatalog
     restart: "no"
     volumes:
       - rproxy_etc_nginx:/etc/nginx

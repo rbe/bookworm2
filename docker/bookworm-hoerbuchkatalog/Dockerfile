@@ -22,7 +22,7 @@ COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
 COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 
 WORKDIR /opt/bookworm/conf
-COPY hoerbuchkatalog/assembly/src/main/resources/conf/* .
+COPY hoerbuchkatalog/assembly/src/main/resources/conf/* ./
 COPY docker/bookworm-hoerbuchkatalog/secrets.json .
 
 WORKDIR /opt/bookworm
