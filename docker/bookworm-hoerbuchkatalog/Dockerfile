@@ -11,10 +11,15 @@ RUN groupadd -g 4801 bookworm \
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
     && mkdir repository \
+    && mkdir repository/Bestellung \
+    && mkdir repository/HtmlEmailTemplate \
+    && mkdir repository/Merkliste \
+    && mkdir repository/Warenkorb \
     && mkdir wbh \
     && mkdir wbh/hoerbuchkatalog \
     && mkdir wbh/nutzerdaten \
-    && mkdir blista
+    && mkdir blista \
+    && mkdir blista/dls
 COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
 WORKDIR /opt/bookworm/app
@@ -32,7 +37,14 @@ RUN chown -R root:root /opt/bookworm \
     && chown -R bookworm:bookworm /opt/bookworm/app \
     && chown -R bookworm:bookworm /opt/bookworm/conf \
     && chown root:root /opt/bookworm/var \
-    && chown bookworm:bookworm /opt/bookworm/var/*
+    && chown root:root /opt/bookworm/var/templates \
+    && chown bookworm:bookworm /opt/bookworm/var/templates/* \
+    && chown root:root /opt/bookworm/var/wbh \
+    && chown bookworm:bookworm /opt/bookworm/var/wbh/* \
+    && chown root:root /opt/bookworm/var/blista \
+    && chown bookworm:bookworm /opt/bookworm/var/blista/* \
+    && chown root:root /opt/bookworm/var/repository \
+    && chown bookworm:bookworm /opt/bookworm/var/repository/* \
 
 USER bookworm:bookworm
 

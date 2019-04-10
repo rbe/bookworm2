@@ -12,6 +12,7 @@ setup_user() {
         echo "Adding user ${name}"
         adduser -DHh /tmp -s /bin/false -G ${name} ${name}
     fi
+    passwd -u ${name}
     if [[ -n "${groups}" ]]
     then
         for g in ${groups}
@@ -20,7 +21,6 @@ setup_user() {
             usermod -G ${g} ${name}
         done
     fi
-    passwd -u ${name}
 }
 
 addgroup -g 4801 bookworm
