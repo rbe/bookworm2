@@ -6,11 +6,12 @@ LABEL project="Bookworm"
 ENV buildNumber=LocalBuild
 
 RUN apk update \
-    && apk --no-cache add --virtual .deps \
+    && apk --no-cache \
+        add \
         curl \
         letsencrypt-nosudo \
-    && addgroup -S bookworm \
-    && adduser -S -G bookworm bookworm
+    && addgroup bookworm \
+    && adduser -DHh /tmp -G bookworm bookworm
 
 WORKDIR /etc/nginx
 COPY docker/bookworm-rproxy/nginx.conf .

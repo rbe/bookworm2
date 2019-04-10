@@ -29,7 +29,7 @@ services:
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
-      - app:/opt/bookworm/app
+      - app:/opt/bookworm
       - templates:/opt/bookworm/var/templates
       - wbh:/opt/bookworm/var/wbh
       - blista:/opt/bookworm/var/blista
@@ -58,7 +58,7 @@ services:
       - "2202:22"
     volumes:
       - admin_etc_ssh:/etc/ssh
-      - app:/opt/bookworm/app
+      - app:/opt/bookworm
       - templates:/opt/bookworm/var/templates
       - wbh:/opt/bookworm/var/wbh
       - blista:/opt/bookworm/var/blista

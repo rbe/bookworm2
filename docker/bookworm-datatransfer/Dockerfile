@@ -5,12 +5,14 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-# https://wiki.alpinelinux.org/wiki/Alpine_Linux_package_management
-# https://www.cyberciti.biz/faq/10-alpine-linux-apk-command-examples/
 RUN apk update \
-    && apk --no-cache add --virtual .deps \
+    && apk --no-cache \
+        add \
         coreutils \
         openssh \
+    && apk --no-cache \
+        add --virtual .deps \
+        shadow \
     && sed -i'' -E \
         -e 's/^#(PermitRootLogin|HostKey)/\1/' \
         -e 's/^#(ListenAddress 0|ListenAddress ::|Port)/\1/' \
@@ -36,7 +38,10 @@ RUN chmod 700 setup-ssh-users.sh \
         && rm setup-ssh-users.sh \
         && cat sshd_config_2 >>sshd_config \
         && rm sshd_config_2 \
-        && chmod 444 /etc/ssh/keys/*_authorized_keys
+        && chmod 444 /etc/ssh/keys/*_authorized_keys \
+        && apk del .deps
+
+WORKDIR /
 
 VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 

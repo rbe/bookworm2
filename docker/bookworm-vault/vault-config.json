@@ -6,7 +6,8 @@
   },
   "listener": {
     "tcp": {
-      "address": "0.0.0.0:8200",
+      "address": "192.168.48.3:8200",
+      "api_addr": "http://192.168.48.3:8200",
       "tls_disable": 1
     }
   },

@@ -28,11 +28,12 @@ COPY docker/bookworm-hoerbuchkatalog/secrets.json .
 WORKDIR /opt/bookworm
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
 
-RUN chown -R bookworm:bookworm /opt/bookworm/var
+RUN chown -R bookworm:bookworm /opt/bookworm
+
 USER bookworm:bookworm
 
 VOLUME [\
-    "/opt/bookworm/app",\
+    "/opt/bookworm",\
     "/opt/bookworm/var/templates",\
     "/opt/bookworm/var/repository",\
     "/opt/bookworm/var/wbh",\
@@ -42,4 +43,4 @@ VOLUME [\
 EXPOSE 9080/tcp
 
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-CMD ["bash", "run.sh"]
+CMD ["bash", "/opt/bookworm/run.sh"]
