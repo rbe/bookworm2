@@ -5,8 +5,8 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-RUN groupadd -r bookworm \
-    && useradd -r -g bookworm bookworm
+RUN groupadd -g 4801 bookworm \
+    && useradd -u 4801 -g bookworm bookworm
 
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
@@ -28,7 +28,11 @@ COPY docker/bookworm-hoerbuchkatalog/secrets.json .
 WORKDIR /opt/bookworm
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
 
-RUN chown -R bookworm:bookworm /opt/bookworm
+RUN chown -R root:root /opt/bookworm \
+    && chown -R bookworm:bookworm /opt/bookworm/app \
+    && chown -R bookworm:bookworm /opt/bookworm/conf \
+    && chown root:root /opt/bookworm/var \
+    && chown bookworm:bookworm /opt/bookworm/var/*
 
 USER bookworm:bookworm
 

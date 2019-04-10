@@ -23,7 +23,7 @@ setup_user() {
     passwd -u ${name}
 }
 
-addgroup bookworm
+addgroup -g 4801 bookworm
 
 setup_user cew bookworm
 setup_user rbe bookworm
