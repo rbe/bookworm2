@@ -44,7 +44,7 @@ RUN chown -R root:root /opt/bookworm \
     && chown root:root /opt/bookworm/var/blista \
     && chown bookworm:bookworm /opt/bookworm/var/blista/* \
     && chown root:root /opt/bookworm/var/repository \
-    && chown bookworm:bookworm /opt/bookworm/var/repository/* \
+    && chown bookworm:bookworm /opt/bookworm/var/repository/*
 
 USER bookworm:bookworm
 
