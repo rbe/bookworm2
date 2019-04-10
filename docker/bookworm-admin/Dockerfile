@@ -14,12 +14,13 @@ RUN apk update \
         add --virtual .deps \
         shadow \
     && sed -i'' -E \
-        -e 's/^#(PermitRootLogin|HostKey)/\1/' \
+        -e 's/^#(HostKey)/\1/' \
+        -e 's/^#(PasswordAuthentication)/\1/' \
         -e 's/^#(ListenAddress 0|ListenAddress ::|Port)/\1/' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
-        -e 's#^(PermitRootLogin ).*#\1 without-password#' \
         -e 's#(Port ).*#\1 22#' \
+        -e 's#(PasswordAuthentication ).*#\1 no#' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
         -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \

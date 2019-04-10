@@ -4,7 +4,7 @@
 
 X11Forwarding no
 AllowTcpForwarding no
-Subsystem sftp internal-sftp
+Subsystem sftp internal-sftp -u 0006
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
