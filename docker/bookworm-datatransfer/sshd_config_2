@@ -4,19 +4,19 @@
 
 X11Forwarding no
 AllowTcpForwarding no
-Subsystem sftp internal-sftp -u 0006
+Subsystem sftp internal-sftp
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
     ChrootDirectory /opt/bookworm/var/wbh
-    ForceCommand internal-sftp
+    ForceCommand internal-sftp -u 0006
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
     ChrootDirectory /opt/bookworm/var/wbh
-    ForceCommand internal-sftp
+    ForceCommand internal-sftp -u 0006
 
 Match User wbh
     AuthorizedKeysFile /etc/ssh/keys/wbh_authorized_keys
     ChrootDirectory /opt/bookworm/var/wbh
-    ForceCommand internal-sftp
+    ForceCommand internal-sftp -u 0006

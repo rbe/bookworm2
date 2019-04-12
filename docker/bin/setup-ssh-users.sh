@@ -7,12 +7,9 @@ setup_user() {
     getent passwd ${name}
     if [[ -n "${name}" ]]
     then
-        echo "Adding group ${name}"
-        addgroup ${name}
         echo "Adding user ${name}"
-        adduser -DHh /tmp -s /bin/false -G ${name} ${name}
+        adduser -DHh /tmp -s /bin/false -G bookworm ${name}
     fi
-    passwd -u ${name}
     passwd -u ${name}
     if [[ -n "${groups}" ]]
     then
@@ -26,8 +23,8 @@ setup_user() {
 
 addgroup -g 4801 bookworm
 
-setup_user cew bookworm
-setup_user rbe bookworm
-setup_user wbh bookworm
+setup_user cew
+setup_user rbe
+setup_user wbh
 
 exit 0
