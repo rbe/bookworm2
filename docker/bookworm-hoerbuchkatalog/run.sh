@@ -8,7 +8,7 @@
 set -o nounset
 
 cd /opt/bookworm
-umask 0006
+umask 0007
 SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" \
     java \
         -Xms2g -Xmx2g \

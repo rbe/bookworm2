@@ -10,9 +10,6 @@ RUN apk update \
         add \
         coreutils \
         openssh \
-    && apk --no-cache \
-        add --virtual .deps \
-        shadow \
     && sed -i'' -E \
         -e 's/^#(HostKey)/\1/' \
         -e 's/^#(PasswordAuthentication)/\1/' \
@@ -23,7 +20,7 @@ RUN apk update \
         -e 's#(PasswordAuthentication ).*#\1 no#' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
-        -e 's/^(Subsystem.*sftp.*sftp-server.*)/#\1/' \
+        -e 's/^(Subsystem.*sftp.*)(sftp-server.*)/#\1\2/' \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
@@ -39,8 +36,7 @@ RUN chmod 700 setup-ssh-users.sh \
         && rm setup-ssh-users.sh \
         && cat sshd_config_2 >>sshd_config \
         && rm sshd_config_2 \
-        && chmod 444 /etc/ssh/keys/*_authorized_keys \
-        && apk del .deps
+        && chmod 444 /etc/ssh/keys/*_authorized_keys
 
 WORKDIR /
 

@@ -10,7 +10,7 @@ services:
       bookworm-backend:
         ipv4_address: "192.168.48.3"
     ports:
-      - 8200:8200
+      - "8200:8200"
     volumes:
       - vault:/opt/vault
 #    environment:

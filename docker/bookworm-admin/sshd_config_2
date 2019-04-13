@@ -9,9 +9,9 @@ Subsystem sftp internal-sftp
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
     ChrootDirectory /opt/bookworm
-    ForceCommand internal-sftp -u 0006
+    ForceCommand internal-sftp -u 0007
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew/authorized_keys
     ChrootDirectory /opt/bookworm
-    ForceCommand internal-sftp -u 0006
+    ForceCommand internal-sftp -u 0007

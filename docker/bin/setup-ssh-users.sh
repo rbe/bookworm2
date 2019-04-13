@@ -11,14 +11,14 @@ setup_user() {
         adduser -DHh /tmp -s /bin/false -G bookworm ${name}
     fi
     passwd -u ${name}
-    if [[ -n "${groups}" ]]
-    then
-        for g in ${groups}
-        do
-            echo "Adding user ${name} to group ${g}"
-            usermod -G ${g} ${name}
-        done
-    fi
+#    if [[ -n "${groups}" ]]
+#    then
+#        for g in ${groups}
+#        do
+#            echo "Adding user ${name} to group ${g}"
+#            usermod -G ${g} ${name}
+#        done
+#    fi
 }
 
 addgroup -g 4801 bookworm
