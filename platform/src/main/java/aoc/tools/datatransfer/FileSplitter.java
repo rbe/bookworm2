@@ -129,8 +129,8 @@ public final class FileSplitter {
         writer = new ChunkWriter[numWriters];
         futures = new ArrayList<>(numWriters);
         for (int i = 0; i < numWriters; i++) {
-            // TODO path.resolve?
-            splittedPaths[i] = Path.of(path.getFileName().toString() + "_" + i);
+            final Path directory = path.getParent();
+            splittedPaths[i] = directory.resolve(path.getFileName().toString() + "_" + i);
             writer[i] = new ChunkWriter(queue, splittedPaths[i]);
             futures.add(executorService.submit(writer[i]));
         }
