@@ -15,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -60,8 +61,13 @@ public final class FileSplitter {
         private ChunkWriter(final BlockingQueue<String> queue, final Path path) throws IOException {
             this.queue = queue;
             this.path = path;
-            this.stream = Files.newBufferedWriter(path,
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            try {
+                this.stream = Files.newBufferedWriter(path,
+                        StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            } catch (AccessDeniedException e) {
+                LOGGER.error("Could not create file " + path.toAbsolutePath(), e);
+                throw new IllegalStateException(e);
+            }
         }
 
         public synchronized void stop() {
