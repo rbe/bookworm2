@@ -19,31 +19,31 @@ mode=${1:-full}
 
 case "${mode}" in
     modules)
-        update_repo \
+        update_repo ${REPO} ${PROJECT} \
             && pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog \
             && popd >/dev/null
     ;;
     report)
-        update_repo \
+        update_repo ${REPO} ${PROJECT} \
             && pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis \
             && popd >/dev/null
     ;;
     documentation)
-        update_repo \
+        update_repo ${REPO} ${PROJECT} \
             && pushd ${PROJECT} >/dev/null \
             && mvnw_build bookworm.documentation \
             && popd >/dev/null
     ;;
     assembly)
-        update_repo \
+        update_repo ${REPO} ${PROJECT} \
             && pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly \
             && popd >/dev/null
     ;;
     full)
-        update_repo \
+        update_repo ${REPO} ${PROJECT} \
             && pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
             && popd >/dev/null
