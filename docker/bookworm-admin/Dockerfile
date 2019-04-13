@@ -20,7 +20,7 @@ RUN apk update \
         -e 's#(PasswordAuthentication ).*#\1 no#' \
         /etc/ssh/sshd_config \
     && sed -i'' -E \
-        -e "s/^(Subsystem.*sftp)(.*sftp-server.*)/#\1\2" \
+        -e 's/^(Subsystem.*sftp)(.*sftp-server.*)/#\1\2/' \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key

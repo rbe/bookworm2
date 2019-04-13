@@ -17,6 +17,7 @@ platformlibdir=$(pushd ${execdir}/platform/src/main/bash >/dev/null ; pwd ; popd
 . ${platformlibdir}/maven.sh
 
 mode=${1:-full}
+echo "Building ${mode}"
 
 case "${mode}" in
     modules)
