@@ -10,12 +10,13 @@ RUN apk update \
         add \
         curl \
         letsencrypt-nosudo \
+    && rm /etc/nginx/conf.d/default.conf \
     && addgroup bookworm \
     && adduser -DHh /tmp -G bookworm bookworm
 
 WORKDIR /etc/nginx
 COPY docker/bookworm-rproxy/nginx.conf .
-COPY docker/bookworm-rproxy/nginx.wbh.conf .
+COPY docker/bookworm-rproxy/nginx.bookworm.conf conf.d/bookworm.conf
 
 WORKDIR /usr/share/nginx/html
 COPY docker/bookworm-rproxy/index.html .

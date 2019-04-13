@@ -9,12 +9,12 @@ services:
     networks:
       bookworm-backend:
         ipv4_address: "192.168.48.3"
-    ports:
-      - "8200:8200"
+    expose:
+      - 8200
     volumes:
       - vault:/opt/vault
 #    environment:
-#      - VAULT_ADDR=http://127.0.0.1:8200
+#      - VAULT_ADDR=http://1192.168.48.3:8200
     command: server -config=/opt/vault/config/vault-config.json
     cap_add:
       - IPC_LOCK
@@ -41,7 +41,7 @@ services:
     expose:
       - 9080
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      test: ["CMD", "curl", "-f", "http://192.168.48.4:9080"]
       interval: 5m0s
       timeout: 1s
       retries: 3

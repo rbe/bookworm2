@@ -20,33 +20,31 @@ mode=${1:-full}
 echo "Building ${mode}"
 
 case "${mode}" in
+    update-repo)
+        update_repo ${REPO} ${PROJECT}
+    ;;
     modules)
-        update_repo ${REPO} ${PROJECT} \
-            && pushd ${PROJECT} >/dev/null \
+        pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog \
             && popd >/dev/null
     ;;
     report)
-        update_repo ${REPO} ${PROJECT} \
-            && pushd ${PROJECT} >/dev/null \
+        pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis \
             && popd >/dev/null
     ;;
     documentation)
-        update_repo ${REPO} ${PROJECT} \
-            && pushd ${PROJECT} >/dev/null \
+        pushd ${PROJECT} >/dev/null \
             && mvnw_build bookworm.documentation \
             && popd >/dev/null
     ;;
     assembly)
-        update_repo ${REPO} ${PROJECT} \
-            && pushd ${PROJECT} >/dev/null \
+        pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly \
             && popd >/dev/null
     ;;
     full)
-        update_repo ${REPO} ${PROJECT} \
-            && pushd ${PROJECT} >/dev/null \
+        pushd ${PROJECT} >/dev/null \
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
             && popd >/dev/null
     ;;

@@ -5,7 +5,8 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-RUN groupadd -g 4801 bookworm \
+RUN apt-get install curl \
+    && groupadd -g 4801 bookworm \
     && useradd -u 4801 -g bookworm bookworm
 
 WORKDIR /opt/bookworm/var
