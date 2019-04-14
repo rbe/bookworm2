@@ -10,6 +10,8 @@ RUN apk update \
         add \
         curl \
         letsencrypt-nosudo \
+        certbot-nginx \
+        nginx-mod-http-headers-more \
     && rm /etc/nginx/conf.d/default.conf \
     && addgroup bookworm \
     && adduser -DHh /tmp -G bookworm bookworm

@@ -11,7 +11,7 @@ execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
 platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
 . ${platformlibdir}/docker.sh
 
-PRIVNET=192.168.48
+PRIVNET=172.16.48
 
 function show_usage() {
     echo "usage: $0 { <container> | all } <version>"
@@ -64,7 +64,7 @@ case "${mode}" in
             bookworm/datatransfer:${version}
     ;;
     hoerbuchkatalog)
-        docker_check_private_network bookworm-backend 192.168.48.0/24
+        docker_check_private_network bookworm-backend 172.16.48.0/24
         docker_check_public_network bookworm-public
         docker_check_vol bookworm_app
         docker_check_vol bookworm_templates
@@ -86,7 +86,7 @@ case "${mode}" in
             bookworm/hoerbuchkatalog:${version}
     ;;
     rproxy)
-        docker_check_private_network bookworm-backend 192.168.48.0/24
+        docker_check_private_network bookworm-backend 172.16.48.0/24
         docker_check_public_network bookworm-public
         docker_check_vol rproxy_etc_nginx
         sudo docker run \

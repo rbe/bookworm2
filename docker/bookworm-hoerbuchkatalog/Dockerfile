@@ -5,8 +5,7 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
-RUN apt-get install curl \
-    && groupadd -g 4801 bookworm \
+RUN groupadd -g 4801 bookworm \
     && useradd -u 4801 -g bookworm bookworm
 
 WORKDIR /opt/bookworm/var
@@ -25,13 +24,13 @@ COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
 WORKDIR /opt/bookworm/app
 COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
-COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 
 WORKDIR /opt/bookworm/conf
 COPY hoerbuchkatalog/assembly/src/main/resources/conf/* ./
 COPY docker/bookworm-hoerbuchkatalog/secrets.json .
 
 WORKDIR /opt/bookworm
+COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
 
 RUN chown -R root:root /opt/bookworm \
@@ -43,13 +42,13 @@ RUN chown -R root:root /opt/bookworm \
     && chown root:root /opt/bookworm/var \
     && chown root:root /opt/bookworm/var/templates \
     && chown bookworm:bookworm /opt/bookworm/var/templates/* \
-    && find /opt/bookworm/var/templates/ -type d -print0 | xargs -0 chmod 770 \
-    && find /opt/bookworm/var/templates/ -type f -print0 | xargs -0 chmod 660 \
-    && chmod 775 /opt/bookworm/var/templates \
+    && chmod 755 /opt/bookworm/var/templates \
+    && find /opt/bookworm/var/templates/ -type d -print0 | xargs -0 chmod 775 \
+    && find /opt/bookworm/var/templates/ -type f -print0 | xargs -0 chmod 664 \
     && chown root:root /opt/bookworm/var/wbh \
     && chown bookworm:bookworm /opt/bookworm/var/wbh/* \
     && chmod 770 /opt/bookworm/var/wbh/* \
-    && chown root:root /opt/bookworm/var/blista \
+    && chown ro ot:root /opt/bookworm/var/blista \
     && chown bookworm:bookworm /opt/bookworm/var/blista/* \
     && chown root:root /opt/bookworm/var/repository \
     && chown bookworm:bookworm /opt/bookworm/var/repository/* \

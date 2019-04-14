@@ -43,7 +43,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: "192.168.47.0/24"
+        - subnet: "172.16.47.0/24"
   cms-public:
     name: cms-public
     driver: bridge

@@ -30,7 +30,10 @@ public class HoerernummerFilterProfile {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerernummerFilterProfile.class);
 
-    private static final List<String> TRUSTED_IP = Arrays.asList("127.0.0.1");
+    private static final List<String> TRUSTED_IP = Arrays.asList(
+            "127.0.0.1",
+            "172.16.",
+            "192.168.");
 
     @Bean
     @Profile({"development", "test"})
@@ -42,7 +45,7 @@ public class HoerernummerFilterProfile {
     @Profile({"production"/*, "development"*//*, "test"*/})
     public Consumer<HttpServletRequest> hoerernummerHttpRequestProduction() {
         final Predicate<HttpServletRequest> a = request ->
-                TRUSTED_IP.contains(request.getRemoteAddr());
+                TRUSTED_IP.stream().anyMatch(t -> request.getRemoteAddr().contains(t));
         final Consumer<HttpServletRequest> b = new HoerernummerInSessionSetzen();
         return request -> {
             LOGGER.debug("Prüfe {}, remoteAddr={} remoteHost={}",

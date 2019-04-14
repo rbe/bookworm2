@@ -28,6 +28,7 @@ case "${mode}" in
         $0 volumes
         $0 networks
         $0 images
+        docker rm $(docker ps -aq)
     ;;
     *)
         echo "usage: $0 { containers | volumes | networks | images | all }"

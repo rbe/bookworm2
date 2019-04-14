@@ -87,29 +87,16 @@ cat >>.ssh/authorized_keys
 <Press Ctrl-D>
 ----
 
-.Setup entropy
+.netcup@ArchLinux
 [source,bash,linenum]
 ----
-cat /proc/sys/kernel/random/entropy_avail
-pacman -Syyu
-pacman -S haveged
-systemctl enable haveged
-----
-
-.Linux LTS
-[source,bash,linenum]
-----
-uname -r
-pacman -Syyu linux-lts
-grub-mkconfig -o /boot/grub/grub.cfg
+setup-netcup-archlinux.sh
 ----
 
 .Reboot
 [source,bash,linenum]
 ----
 reboot
-uname -r
-ps ax | grep haveged
 ----
 
 ./etc/netctl/eth0
@@ -129,7 +116,9 @@ DNS=( '46.38.225.230' '46.38.252.230' '2a03:4000:0:1::e1e6' )
 .Setup storage for Docker and applications
 [source,bash,linenum]
 ----
-fdisk /dev/sda
+sfdisk /dev/sda <<EOF
+3,,L
+EOF
 pvcreate /dev/sda3
 vgcreate tank /dev/sda3
 lvcreate --name docker -L20G tank
