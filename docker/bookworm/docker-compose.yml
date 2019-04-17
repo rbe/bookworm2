@@ -12,7 +12,7 @@ services:
     expose:
       - 8200
     volumes:
-      - vault:/opt/vault
+      - vault:/opt/vault:rw
 #    environment:
 #      - VAULT_ADDR=http://172.16.1.3:8200
     command: server -config=/opt/vault/config/vault-config.json
@@ -29,11 +29,11 @@ services:
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
-      - app:/opt/bookworm
-      - templates:/opt/bookworm/var/templates
-      - wbh:/opt/bookworm/var/wbh
-      - blista:/opt/bookworm/var/blista
-      - repository:/opt/bookworm/var/repository
+      - app:/opt/bookworm:ro
+      - templates:/opt/bookworm/var/templates:ro
+      - wbh:/opt/bookworm/var/wbh:rw
+      - blista:/opt/bookworm/var/blista:rw
+      - repository:/opt/bookworm/var/repository:rw
     networks:
       bookworm-outside:
       bookworm-backend:
@@ -59,12 +59,12 @@ services:
     ports:
       - "2202:22"
     volumes:
-      - admin_etc_ssh:/etc/ssh
-      - app:/opt/bookworm
-      - templates:/opt/bookworm/var/templates
-      - wbh:/opt/bookworm/var/wbh
-      - blista:/opt/bookworm/var/blista
-      - repository:/opt/bookworm/var/repository
+      - admin_etc_ssh:/etc/ssh:ro
+      - app:/opt/bookworm:rw
+      - templates:/opt/bookworm/var/templates:rw
+      - wbh:/opt/bookworm/var/wbh:rw
+      - blista:/opt/bookworm/var/blista:ro
+      - repository:/opt/bookworm/var/repository:rw
     networks:
       - bookworm-public
   datatransfer:
@@ -78,8 +78,8 @@ services:
     ports:
       - "2201:22"
     volumes:
-      - datatransfer_etc_ssh:/etc/ssh
-      - wbh:/opt/bookworm/var/wbh
+      - datatransfer_etc_ssh:/etc/ssh:rw
+      - wbh:/opt/bookworm/var/wbh:rw
     networks:
       - bookworm-public
   rproxy:
@@ -91,11 +91,13 @@ services:
       - hoerbuchkatalog
     restart: "no"
     volumes:
-      - rproxy_etc_nginx:/etc/nginx
+      - rproxy_etc_nginx:/etc/nginx:ro
       - rproxy_certs:/etc/nginx/certs:ro
     networks:
       bookworm-backend:
         ipv4_address: "172.16.48.2"
+      bookworm-secure:
+        ipv4_address: "172.16.1.2"
       bookworm-public:
     ports:
       - "80:80"

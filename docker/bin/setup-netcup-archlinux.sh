@@ -31,6 +31,28 @@ sudo grub-mkconfig -o /boot/grub/grub.cfg
 sudo pacman --noconfirm -S haveged
 sudo systemctl enable haveged
 
+sfdisk /dev/sda <<EOF
+3,,L
+EOF
+pvcreate /dev/sda3
+vgcreate tank /dev/sda3
+lvcreate --name docker -L4G tank
+mkfs.ext4 /dev/tank/docker
+lvcreate --name dockervolumes -L10G tank
+mkfs.ext4 /dev/tank/dockervolumes
+cat >>/etc/fstab <<EOF
+/dev/tank/docker         /var/lib/docker          ext4  rw,noatime  0  2
+/dev/tank/dockervolumes  /var/lib/docker/volumes  ext4  rw,noatime  0  2
+EOF
+sed -i'' \
+    -e "s#^HOOKS=.*#HOOKS=(base udev block autodetect modconf lvm2 filesystems keyboard fsck)#" \
+    /etc/mkinitcpio.conf
+mkinitcpio -p linux
+mkdir /var/lib/docker
+chmod 711 /var/lib/docker
+mkdir /var/lib/docker/volumes
+chmod 711 /var/lib/docker
+
 archlinux_install_docker
 sudo sysctl net.ipv4.conf.all.forwarding=1
 sudo iptables -P FORWARD ACCEPT
