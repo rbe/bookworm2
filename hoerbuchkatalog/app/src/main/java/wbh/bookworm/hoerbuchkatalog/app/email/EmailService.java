@@ -55,7 +55,7 @@ public final class EmailService {
             helper.setSubject(subject);
             helper.setText(text, true);
             javaMailSender.send(mimeMessage);
-            LOGGER.info("E-Mail an {}, Cc {}, Betreff {} gesendet", to, cc, subject);
+            LOGGER.info("E-Mail an '{}', Cc '{}', Betreff '{}' gesendet", to, cc, subject);
         } catch (UnsupportedEncodingException | MessagingException e) {
             LOGGER.error("", e);
         }

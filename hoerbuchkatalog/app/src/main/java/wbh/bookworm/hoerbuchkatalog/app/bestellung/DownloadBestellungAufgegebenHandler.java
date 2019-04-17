@@ -117,9 +117,10 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
                     /* AUSLDT, Ausleihdatum */now.format(YYYY_MM_DD), /* AUSLZT, Ausleihdatum */now.format(HH_MM_SS),
                     /* RUEGDT */rueckgabedatum.format(YYYY_MM_DD), /* RUEGZT */rueckgabedatum.format(HH_MM_SS));
         }).collect(Collectors.toUnmodifiableList());
-        // TODO Synchronize, per Queue?
-        final Path path = Path.of("webhoer-", now.format(YYYY_MM_DD));
+        // TODO Konfiguration
+        final Path path = Path.of("var/wbh/hoerbuchkatalog/webhoer-" + now.format(YYYY_MM_DD) + ".csv");
         try {
+            // TODO Synchronize, per Queue?
             Files.write(path, strings, StandardCharsets.ISO_8859_1,
                     StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
         } catch (IOException e) {
@@ -131,7 +132,7 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
     private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
                                                       final Bestellung bestellung,
                                                       final Set<Hoerbuch> hoerbucher,
-                                                      final List<Auftragsquittung> auftragsquittungen) {
+                                                      /* TODO Auftragsquittungen in E-Mail berücksichtigen*/final List<Auftragsquittung> auftragsquittungen) {
         final String htmlEmail = emailTemplateBuilder.build(
                 "BestellbestaetigungDownload.html",
                 Map.of("bestellung", bestellung,

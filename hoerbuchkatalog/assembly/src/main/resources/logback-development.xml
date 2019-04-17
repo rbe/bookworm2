@@ -27,10 +27,6 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung"
-            level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>

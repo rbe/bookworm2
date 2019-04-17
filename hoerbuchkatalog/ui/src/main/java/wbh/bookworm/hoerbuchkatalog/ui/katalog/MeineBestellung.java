@@ -109,9 +109,12 @@ public class MeineBestellung {
     }
 
     public String getHoereremail() {
-        return hasHoereremail()
+        return null != hoereremailAusFormular
+                ? hoereremailAusFormular
+                : hoererSession.getHoereremail().toString();
+        /*return hasHoereremail()
                 ? hoererSession.getHoereremail().toString()
-                : hoereremailAusFormular;
+                : hoereremailAusFormular;*/
     }
 
     public void setHoereremail(final String hoereremailAusFormular) {
