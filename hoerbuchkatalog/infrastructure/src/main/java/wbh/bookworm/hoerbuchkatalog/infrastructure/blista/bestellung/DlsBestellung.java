@@ -39,6 +39,7 @@ public class DlsBestellung {
     @Autowired
     DlsBestellung(final DlsRestConfig dlsRestConfig,
                   final Auftragsuebermittlung auftragsuebermittlung) {
+        LOGGER.info("dlsRestConfig={}", dlsRestConfig);
         this.dlsRestConfig = dlsRestConfig;
         this.auftragsuebermittlung = auftragsuebermittlung;
     }

@@ -11,6 +11,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 
 import java.nio.file.Path;
+import java.util.Arrays;
 
 @Component
 @PropertySource({"classpath:/conf/blista-dls.properties"})
@@ -79,6 +80,12 @@ public final class DlsRestConfig {
 
     public void setDirectory(final Path directory) {
         this.directory = directory;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DlsRestConfig{werkeurl='%s', checkurl='%s', bibliothek=%s, bibkennwort=%d, directory=%s}",
+                werkeurl, checkurl, Arrays.toString(bibliothek), bibkennwort.length, directory);
     }
 
 }
