@@ -32,4 +32,12 @@ class RestServiceClientTest {
                 .werteAntwortAus(inputStream.readAllBytes());
     }
 
+    @Test
+    void shouldBlistaReparieren() throws Exception {
+        final InputStream in = RestServiceClientTest.class.getResourceAsStream(
+                "/blista-xml/xml-defekt-ampersand.xml");
+        byte[] b = in.readAllBytes();
+        System.out.println(new String(RestServiceClient.blistaReparieren(b)));
+    }
+
 }

@@ -129,10 +129,14 @@ class Auftragsuebermittlung {
                 final String filename = String.format("%s-%s.blt", billet.getUserId(), billet.getAghNummer());
                 delegate.putOverwrite(billetXml, filename);
             });
-            LOGGER.debug("Bestellung für {} / {} per SFTP übergeben: {}", userId, aghNummer, billet);
+            LOGGER.debug("Bestellung für {} / {} per SFTP übergeben: {}",
+                    userId, aghNummer, billet);
             return true;
         } catch (SftpClientException e) {
-            LOGGER.error("Konnte Bestellung für {} / {} nicht per SFTP übergeben: {}", e);
+            LOGGER.error(String.format(
+                    "Konnte Bestellung für %s / %s nicht per SFTP übergeben: %s",
+                    userId, aghNummer, billet),
+                    e);
             return false;
         }
     }
