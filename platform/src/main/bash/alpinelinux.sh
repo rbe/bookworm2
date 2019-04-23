@@ -1,11 +1,11 @@
 #!/bin/ash
 #
-# Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
+# Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
 # Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
 # All rights reserved. Use is subject to license terms.
 #
 
-alpinelinux_setup_user() {
+function alpinelinux_setup_user() {
     local name=$1
     shift
     local groups=$*
@@ -16,19 +16,12 @@ alpinelinux_setup_user() {
         adduser -DHh /tmp -s /bin/false -G bookworm ${name}
     fi
     passwd -u ${name}
+    if [[ -n "${groups}" ]]
+    then
+        for g in ${groups}
+        do
+            echo "Adding user ${name} to group ${g}"
+            usermod -G ${g} ${name}
+        done
+    fi
 }
-
-addgroup -g 4801 bookworm
-
-if [[ $# -eq 0 ]]
-then
-    echo "usage: $0 user1[ user2 ... userN]"
-    exit 1
-fi
-
-for user in $*
-do
-    alpinelinux_setup_user ${user}
-done
-
-exit 0

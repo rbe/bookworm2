@@ -32,3 +32,7 @@ pom.xml.versionsBackup
 # IntelliJ
 *.iml
 .idea/
+
+# Docker
+docker/bkinit/
+.env

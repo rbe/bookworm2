@@ -54,6 +54,12 @@ function ssh_auto_agent() {
     local keyfile=$1
     local secretfile=$2
     eval $(ssh-agent)
+    if [[ $(grep -c "kill \${SSH_AGENT_PID}" ${HOME}/.bash_logout) = 0 ]]
+    then
+        cat >>${HOME}/.bash_logout <<EOF
+kill \${SSH_AGENT_PID}
+EOF
+    fi
     expect >/dev/null <<EOF
   spawn ssh-add ${keyfile}
   expect "Enter passphrase"

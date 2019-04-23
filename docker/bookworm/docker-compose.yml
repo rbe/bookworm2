@@ -5,7 +5,7 @@ services:
     build:
       context: ../bookworm-vault
       dockerfile: Dockerfile
-    image: bookworm/vault:LocalBuild
+    image: bookworm/vault:${VERSION}
     networks:
       bookworm-secure:
         ipv4_address: "172.16.1.3"
@@ -22,7 +22,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/bookworm-hoerbuchkatalog/Dockerfile
-    image: bookworm/hoerbuchkatalog:LocalBuild
+    image: bookworm/hoerbuchkatalog:${VERSION}
     restart: "no"
     depends_on:
       - vault
@@ -35,11 +35,11 @@ services:
       - blista:/opt/bookworm/var/blista:rw
       - repository:/opt/bookworm/var/repository:rw
     networks:
-      bookworm-outside:
       bookworm-backend:
         ipv4_address: "172.16.48.4"
       bookworm-secure:
         ipv4_address: "172.16.1.4"
+      bookworm-outside:
     expose:
       - 9080
     healthcheck:
@@ -52,9 +52,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/bookworm-admin/Dockerfile
-    image: bookworm/admin:LocalBuild
-    depends_on:
-      - hoerbuchkatalog
+    image: bookworm/admin:${VERSION}
     restart: "no"
     ports:
       - "2202:22"
@@ -71,43 +69,15 @@ services:
     build:
       context: ../../
       dockerfile: docker/bookworm-datatransfer/Dockerfile
-    image: bookworm/datatransfer:LocalBuild
-    depends_on:
-      - hoerbuchkatalog
+    image: bookworm/datatransfer:${VERSION}
     restart: "no"
     ports:
       - "2201:22"
     volumes:
-      - datatransfer_etc_ssh:/etc/ssh:rw
+      - datatransfer_etc_ssh:/etc/ssh:ro
       - wbh:/opt/bookworm/var/wbh:rw
     networks:
       - bookworm-public
-  rproxy:
-    build:
-      context: ../../
-      dockerfile: docker/bookworm-rproxy/Dockerfile
-    image: bookworm/rproxy:LocalBuild
-    depends_on:
-      - hoerbuchkatalog
-    restart: "no"
-    volumes:
-      - rproxy_etc_nginx:/etc/nginx:ro
-      - rproxy_certs:/etc/nginx/certs:ro
-    networks:
-      bookworm-backend:
-        ipv4_address: "172.16.48.2"
-      bookworm-secure:
-        ipv4_address: "172.16.1.2"
-      bookworm-public:
-    ports:
-      - "80:80"
-      - "443:443"
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:80"]
-      interval: 5m0s
-      timeout: 1s
-      retries: 3
-      start_period: 60s
 
 networks:
   bookworm-backend:
@@ -155,8 +125,4 @@ volumes:
   blista:
     driver: local
   repository:
-    driver: local
-  rproxy_etc_nginx:
-    driver: local
-  rproxy_certs:
     driver: local

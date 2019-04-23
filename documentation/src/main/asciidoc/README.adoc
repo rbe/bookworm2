@@ -1,103 +1,31 @@
-== Deployment
-
-.Full deployment
-[source,bash,linenum]
-----
-cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
-cd dist
-mkdir -p var/hoerbuchkatalog
-cp ../../var/hoerbuchkatalog/Gesamt*.dat var/hoerbuchkatalog/Gesamt.dat
-mkdir -p var/nutzerdaten
-cp ../../var/nutzerdaten/*.csv var/nutzerdaten/
-cp -r ../../src/main/resources/conf .
-cp -r ../../src/main/resources/application*.yml .
-#cp -r ../../../ui/src/main/resources/static .
-cp -r ../../../ui/src/main/resources/templates .
-JAR=wbh.bookworm.hoerbuchkatalog.assembly.jar
-cp ../${JAR} .
-scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
-ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
-----
-
-.Update application
-[source,bash,linenum]
-----
-cd $HOME/project/wbh.bookworm/hoerbuchkatalog/assembly/target
-mkdir dist
-cd dist
-#cp -r ../../src/main/resources/conf .
-#cp -r ../../src/main/resources/application*.yml .
-#cp -r ../../../ui/src/main/resources/static .
-cp -r ../../../ui/src/main/resources/templates .
-JAR=wbh.bookworm.hoerbuchkatalog.assembly.jar
-cp ../${JAR} .
-scp -Cr * root@medienhof9:/home/wbh/app/bookworm2
-ssh root@medienhof9 chown -R wbh:cew /home/wbh/app/bookworm2
-----
-
-.Start (development)
-[source,bash,linenum]
-----
-cd $HOME/project/wbh.bookworm/hoerbuchkatalog
-export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
-nohup \
-    java -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
-    --spring.profiles.active=development \
-    --spring.config.additional-location=conf/ \
-    2>&1 1>hoerbuchkatalog.log &
-----
-
-.Start (production; www.wbh-online.de)
-[source,bash,linenum]
-----
-cd $HOME/app/bookworm2
-export JAVA_HOME=$HOME/.sdkman/candidates/java/11.0.1-open/
-export PATH=$JAVA_HOME/bin:$PATH
-export HOERBUCHKATALOG_TEMPLATE=$(pwd)/templates
-nohup \
-    java -jar wbh.bookworm.hoerbuchkatalog.assembly.jar \
-    --spring.profiles.active=production \
-    --spring.config.additional-location=conf/ \
-    2>&1 1>hoerbuchkatalog.log &
-----
-
-.Stop (www.wbh-online.de)
-[source,bash,linenum]
-----
-kill $(ps ax | grep hoerbuchkatalog | grep -v grep | awk '{print $1}')
-----
-
-.Java Flight Recorder
-[source,bash,linenum]
-----
--Xlog:gc*=debug:file=gc.log:utctime,uptime,tid,level:filecount=10,filesize=128m
--XX:+HeapDumpOnOutOfMemoryError
--XX:HeapDumpPath=heapdump.hprof
--XX:StartFlightRecording=disk=true,dumponexit=true,filename=recording.jfr,maxsize=1024m,maxage=1d,settings=profile,path-to-gc-roots=true
-----
-
 == Setup Arch Linux
 
-.Setup SSH login
+=== Secure Shell
+
+.Auf dem eigenen macOS im Terminal
 [source,bash,linenum]
 ----
+cd
 pbcopy <.ssh/id_rsa.pub
-cat >>.ssh/authorized_keys
-<Press Cmd-V>
-<Press Ctrl-D>
+----
+
+.Auf dem netcup Server als root
+[source,bash,linenum]
+----
+cat >>/root/.ssh/authorized_keys
+<Cmd-V>
+<Ctrl-D>
 ----
 
 .netcup@ArchLinux
 [source,bash,linenum]
 ----
-setup-netcup-archlinux.sh
+scp docker/bin/setup-netcup-archlinux.sh root@netcup:
+ssh netcup
+bash setup-netcup-archlinux.sh
 ----
 
-.Reboot
-[source,bash,linenum]
-----
-reboot
-----
+=== Netzwerk
 
 ./etc/netctl/eth0
 [source,bash,linenum]
@@ -111,50 +39,6 @@ IP6=static
 Address6=( '2a03:4000:f:56b:280d:beff:feb0:d415/64' )
 Gateway6=fe80::1
 DNS=( '46.38.225.230' '46.38.252.230' '2a03:4000:0:1::e1e6' )
-----
-
-.Setup storage for Docker and applications
-[source,bash,linenum]
-----
-sfdisk /dev/sda <<EOF
-3,,L
-EOF
-pvcreate /dev/sda3
-vgcreate tank /dev/sda3
-lvcreate --name docker -L20G tank
-mkfs.ext4 /dev/tank/docker
-lvcreate --name dockervolumes -L10G tank
-mkfs.ext4 /dev/tank/dockervolumes
-cat >>/etc/fstab <<EOF
-/dev/tank/docker  /var/lib/docker          ext4  rw,noatime  0  2
-/dev/tank/data    /var/lib/docker/volumes  ext4  rw,noatime  0  2
-EOF
-sed -i'' \
-    -e "s#^HOOKS=.*#HOOKS=(base udev block autodetect modconf lvm2 filesystems keyboard fsck)#" \
-    /etc/mkinitcpio.conf
-mkinitcpio -p linux
-mkdir /var/lib/docker
-chmod 711 /var/lib/docker
-mkdir /mnt/data
-reboot
-----
-
-.Setup Docker
-[source,bash,linenum]
-----
-pacman -Syyu docker docker-compose
-systemctl enable docker
-systemctl start docker
-docker info
-----
-
-.Extend logical volume
-[source,bash,linenum]
-----
-# increase to 15 GB
-lvextend -L15G --resizefs tank/data
-# increase by 5 GB
-lvextend -L+5G --resizefs tank/data
 ----
 
 === Resources

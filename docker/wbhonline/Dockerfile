@@ -1,4 +1,4 @@
-FROM nginx:stable-alpine
+FROM nginx:1.14.2-alpine
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="Bookworm"
@@ -9,19 +9,17 @@ RUN apk update \
     && apk --no-cache \
         add \
         curl \
-        letsencrypt-nosudo \
-        certbot-nginx \
         nginx-mod-http-headers-more \
-    && rm /etc/nginx/conf.d/default.conf \
-    && addgroup bookworm \
-    && adduser -DHh /tmp -G bookworm bookworm
+    && rm /etc/nginx/conf.d/default.conf*
+#    && addgroup -g 82 -S www-data \
+#    && adduser -u 82 -D -S -G www-data www-data
 
 WORKDIR /etc/nginx
-COPY docker/bookworm-rproxy/nginx.conf .
-COPY docker/bookworm-rproxy/nginx.bookworm.conf conf.d/bookworm.conf
+COPY nginx.conf .
+COPY nginx.wbhonline.conf conf.d/wbhonline.conf
 
 WORKDIR /usr/share/nginx/html
-COPY docker/bookworm-rproxy/index.html .
+COPY index.html .
 
 VOLUME ["/etc/nginx", "/usr/share/nginx/html"]
 

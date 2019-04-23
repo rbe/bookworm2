@@ -7,7 +7,14 @@
 
 set -o nounset
 
+if [[ $(id -un) != root ]]
+then
+    echo "Please execute as root"
+    exit 1
+fi
+
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+etcdir=$(pushd ${execdir}/../etc >/dev/null ; pwd ; popd >/dev/null)
 platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
 . ${platformlibdir}/archlinux.sh
 . ${platformlibdir}/linux.sh
@@ -15,49 +22,67 @@ platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd 
 . ${platformlibdir}/docker.sh
 
 function archlinux_netcup_nfs() {
-    sudo pacman --noconfirm -S nfs-utils
-    sudo systemctl enable rpcbind
-    sudo systemctl start rpcbind
-    sudo bash -c 'cat >>/etc/fstab <<EOF
-46.38.248.210:/voln80726a1	/mnt/backup	nfs	rw,rsize=1048576,wsize=1048576	0	0
-EOF'
+    cat >>/etc/fstab <<EOF
+46.38.248.210:/voln80726a1  /mnt/backup  nfs  rw,rsize=1048576,wsize=1048576  0  0
+EOF
 }
 
 archlinux_update
 
-sudo pacman --noconfirm -S linux-lts
-sudo grub-mkconfig -o /boot/grub/grub.cfg
+pacman --noconfirm -S linux-lts
+grub-mkconfig -o /boot/grub/grub.cfg
 
-sudo pacman --noconfirm -S haveged
-sudo systemctl enable haveged
+pacman --noconfirm -S haveged
+systemctl enable haveged
+
+pacman --noconfirm -S nfs-utils
+systemctl enable rpcbind
+systemctl start rpcbind
+
+archlinux_install gnupg
+archlinux_install git
+archlinux_install expect
 
 sfdisk /dev/sda <<EOF
 3,,L
 EOF
+
 pvcreate /dev/sda3
 vgcreate tank /dev/sda3
+
 lvcreate --name docker -L4G tank
 mkfs.ext4 /dev/tank/docker
-lvcreate --name dockervolumes -L10G tank
+
+lvcreate --name dockervolumes -L8G tank
 mkfs.ext4 /dev/tank/dockervolumes
+
+lvcreate --name joomla_images -L4G tank
+mkfs.ext4 /dev/tank/wbhonline_joomla_images
+lvcreate --name joomla_joomlatools_files -L4G tank
+mkfs.ext4 /dev/tank/wbhonline_joomla_joomlatools_files
+
 cat >>/etc/fstab <<EOF
 /dev/tank/docker         /var/lib/docker          ext4  rw,noatime  0  2
 /dev/tank/dockervolumes  /var/lib/docker/volumes  ext4  rw,noatime  0  2
+/dev/tank/wbhonline_joomla_images             /var/lib/docker/volumes/wbhonline_joomla_images             ext4  rw,noatime  0  2
+/dev/tank/wbhonline_joomla_joomlatools_files  /var/lib/docker/volumes/wbhonline_joomla_joomlatools_files  ext4  rw,noatime  0  2
 EOF
+mkdir /var/lib/docker
+chmod 711 /var/lib/docker
+mkdir /var/lib/docker/volumes
+chmod 711 /var/lib/docker/volumes
+mkdir /var/lib/docker/volumes/wbhonline_joomla_images
+mkdir /var/lib/docker/volumes/wbhonline_joomla_joomlatools_files
+mount -a
+
 sed -i'' \
     -e "s#^HOOKS=.*#HOOKS=(base udev block autodetect modconf lvm2 filesystems keyboard fsck)#" \
     /etc/mkinitcpio.conf
 mkinitcpio -p linux
-mkdir /var/lib/docker
-chmod 711 /var/lib/docker
-mkdir /var/lib/docker/volumes
-chmod 711 /var/lib/docker
 
 archlinux_install_docker
 sudo sysctl net.ipv4.conf.all.forwarding=1
 sudo iptables -P FORWARD ACCEPT
-
-archlinux_install expect git
 
 archlinux_netcup_nfs
 

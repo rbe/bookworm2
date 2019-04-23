@@ -32,7 +32,7 @@ function docker_build_image() {
     echo "*"
     # experimental --squash \
     # TODO Dockerfile not always in ../${vendor}-${name}
-    sudo docker build \
+    docker build \
         --rm \
         --tag ${tag} \
         -f ../${vendor}-${name}/Dockerfile ${basedir}
@@ -52,7 +52,7 @@ function docker_save_image() {
     echo "*"
     echo "* Saving Docker image ${tag}"
     echo "*"
-    sudo docker save ${tag} \
+    docker save ${tag} \
         | gzip -9 >${archive}.tar.gz
     if [[ $? != 0 ]]
     then
@@ -63,22 +63,22 @@ function docker_save_image() {
 
 function docker_check_vol() {
     local vol=$1
-    sudo docker inspect ${vol} 2>&1 >/dev/null
+    docker inspect ${vol} 2>&1 >/dev/null
     if [[ $? -eq 1 ]]
     then
-        sudo docker volume create -d local ${vol} 2>&1 >/dev/null
+        docker volume create -d local ${vol} 2>&1 >/dev/null
     fi
-    sudo docker inspect ${vol} 2>&1 >/dev/null
+    docker inspect ${vol} 2>&1 >/dev/null
     exit_if $? "Docker volume ${vol} not found"
 }
 
 function docker_check_private_network() {
     local name=$1
     local subnet=$2
-    sudo docker network inspect ${name} 2>&1 >/dev/null
+    docker network inspect ${name} 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
-        sudo docker network create \
+        docker network create \
             -d bridge \
             --internal \
             --subnet=${subnet} \
@@ -90,10 +90,10 @@ function docker_check_private_network() {
 
 function docker_check_public_network() {
     local name=$1
-    sudo docker network inspect ${name} 2>&1 >/dev/null
+    docker network inspect ${name} 2>&1 >/dev/null
     if [[ $? = 1 ]]
     then
-        sudo docker network create \
+        docker network create \
             -d bridge \
             --attachable \
             ${name} \
@@ -103,34 +103,34 @@ function docker_check_public_network() {
 
 function docker_clean_containers() {
     local prefix=$1
-    local ids=$(sudo docker ps -aqf name="${prefix}*")
+    local ids=$(docker ps -aqf name="${prefix}*")
     if [[ ${#ids} -gt 0 ]]
     then
-        sudo docker rm -f ${ids}
+        docker rm -f ${ids}
     fi
 }
 
 function docker_clean_volumes() {
-    sudo docker volume prune -f
+    docker volume prune -f
 }
 
 function docker_clean_networks() {
-    sudo docker network prune -f
+    docker network prune -f
 }
 
 function docker_clean_images() {
     local t=$1
-    local ids=$(sudo docker image ls -qf dangling=true)
+    local ids=$(docker image ls -qf dangling=true)
     if [[ ${#ids} -gt 0 ]]
     then
-        sudo docker image rm ${ids}
+        docker image rm ${ids}
     fi
-    ids=$(sudo docker image ls -qf reference="${t}/*:*")
+    ids=$(docker image ls -qf reference="${t}/*:*")
     if [[ ${#ids} -gt 0 ]]
     then
-        sudo docker image rm ${ids}
+        docker image rm ${ids}
     fi
-    sudo docker image prune -f
+    docker image prune -f
 }
 
 function archlinux_install_docker() {

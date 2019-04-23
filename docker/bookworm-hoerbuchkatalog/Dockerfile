@@ -53,7 +53,8 @@ RUN chown -R root:root /opt/bookworm \
     && chown bookworm:bookworm /opt/bookworm/var/blista/* \
     && chown root:root /opt/bookworm/var/repository \
     && chown bookworm:bookworm /opt/bookworm/var/repository/* \
-    && chmod 770 /opt/bookworm/var/repository/*
+    && chmod 770 /opt/bookworm/var/repository/* \
+    && chmod 500 /opt/bookworm/run.sh
 
 USER bookworm:bookworm
 
@@ -68,4 +69,4 @@ VOLUME [\
 EXPOSE 9080/tcp
 
 ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-CMD ["bash", "/opt/bookworm/run.sh"]
+CMD ["/opt/bookworm/run.sh"]
