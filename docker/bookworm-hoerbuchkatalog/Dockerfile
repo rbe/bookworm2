@@ -8,6 +8,13 @@ ENV buildNumber=LocalBuild
 RUN groupadd -g 4801 bookworm \
     && useradd -u 4801 -g bookworm bookworm
 
+WORKDIR /opt/bookworm/app
+COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
+
+WORKDIR /opt/bookworm/conf
+COPY hoerbuchkatalog/assembly/src/main/resources/conf/* ./
+COPY docker/bookworm-hoerbuchkatalog/secrets.json .
+
 WORKDIR /opt/bookworm/var
 RUN mkdir templates \
     && mkdir repository \
@@ -22,39 +29,32 @@ RUN mkdir templates \
     && mkdir blista/dls
 COPY hoerbuchkatalog/ui/src/main/resources/templates templates/
 
-WORKDIR /opt/bookworm/app
-COPY hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar .
-
-WORKDIR /opt/bookworm/conf
-COPY hoerbuchkatalog/assembly/src/main/resources/conf/* ./
-COPY docker/bookworm-hoerbuchkatalog/secrets.json .
-
 WORKDIR /opt/bookworm
 COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
-
-RUN chown -R root:root /opt/bookworm \
-    && chown -R bookworm:bookworm /opt/bookworm/app \
-    && chown bookworm:bookworm /opt/bookworm/*.yml \
-    && chmod 660 /opt/bookworm/*.yml \
-    && chown -R bookworm:bookworm /opt/bookworm/conf \
-    && chmod 770 /opt/bookworm/conf \
-    && chmod 660 /opt/bookworm/conf/* \
-    && chown root:root /opt/bookworm/var \
-    && chown root:root /opt/bookworm/var/templates \
-    && chown bookworm:bookworm /opt/bookworm/var/templates/* \
-    && chmod 755 /opt/bookworm/var/templates \
-    && find /opt/bookworm/var/templates/ -type d -print0 | xargs -0 chmod 775 \
-    && find /opt/bookworm/var/templates/ -type f -print0 | xargs -0 chmod 664 \
-    && chown root:root /opt/bookworm/var/wbh \
-    && chown bookworm:bookworm /opt/bookworm/var/wbh/* \
-    && chmod 770 /opt/bookworm/var/wbh/* \
-    && chown root:root /opt/bookworm/var/blista \
-    && chown bookworm:bookworm /opt/bookworm/var/blista/* \
-    && chown root:root /opt/bookworm/var/repository \
-    && chown bookworm:bookworm /opt/bookworm/var/repository/* \
-    && chmod 770 /opt/bookworm/var/repository/* \
-    && chmod 500 /opt/bookworm/run.sh
+RUN chown -R bookworm:bookworm . \
+    && chown root:root . \
+    && chmod 550 . \
+    && chmod 550 run.sh \
+    && chmod 550 app \
+    && chmod 400 app/* \
+    && chmod 660 *.yml \
+    && chmod 550 conf \
+    && chmod 660 conf/* \
+    && chown root:root var \
+    && chmod 555 var \
+    && chmod 555 var/* \
+    && chown root:root var/templates \
+    && find var/templates -type d -print0 | xargs -0 chmod 770 \
+    && find var/templates -type f -print0 | xargs -0 chmod 660 \
+    && chmod 555 var/templates \
+    && chown root:root var/wbh \
+    && chmod 750 var/wbh/hoerbuchkatalog \
+    && chmod 750 var/wbh/nutzerdaten \
+    && chown root:root var/repository \
+    && chmod 750 var/repository/* \
+    && chown root:root var/blista \
+    && chmod 750 var/blista/dls
 
 USER bookworm:bookworm
 

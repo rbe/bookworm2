@@ -18,6 +18,7 @@ alpinelinux_setup_user() {
     passwd -u ${name}
 }
 
+adduser -u 4801 bookworm
 addgroup -g 4801 bookworm
 
 if [[ $# -eq 0 ]]

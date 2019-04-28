@@ -7,9 +7,12 @@ documentation/src/main/resources/architecture/
 documentation/src/main/resources/WBH/
 documentation/src/main/resources/blista/
 
+#
+# Hoerbuchkatalog
+#
+
 approxy/src/main/php/approxy/vendor/
 
-# Hoerbuchkatalog
 # static resources
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/

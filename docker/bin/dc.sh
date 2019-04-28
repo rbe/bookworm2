@@ -10,12 +10,16 @@ set -o nounset
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
 platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
 
+if [[ -z "${VERSION:-}" ]]
+then
+    echo "Please set VERSION, e.g. export VERSION=LocalBuild"
+    exit 1
+fi
+
 mode=${1:-}
 shift
 
 function bookworm_docker() {
-    local version=$1 ; shift
-    VERSION=${version}; export VERSION
     pushd ${execdir}/.. >/dev/null
     docker-compose \
         -p wbhonline \
@@ -34,39 +38,30 @@ case "${mode}" in
         popd >/dev/null
     ;;
     init)
-        if [[ $# -lt 1 ]]
-        then
-            echo "usage: $0 <version>"
-            exit 1
-        fi
-        bookworm_docker $1 build --compress --force-rm --parallel \
-            && bookworm_docker $1 up --no-start
+        # --parallel
+        bookworm_docker build --compress --force-rm \
+            && bookworm_docker up --no-start
     ;;
-    init-data)
-        hk=wbhonline_hoerbuchkatalog_1
+    copy-data)
         admin=wbhonline_admin_1
         pushd ${execdir}/../bkinit >/dev/null
         docker cp conf/secrets.json ${admin}:/opt/bookworm/conf
         for d in hoerbuchkatalog/*.dat
         do
             echo "${d}"
-            docker cp -a ${d} ${hk}:/opt/bookworm/var/wbh/hoerbuchkatalog
+            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/hoerbuchkatalog
         done
         for d in hoerbuchkatalog/*.zip
         do
             echo "${d}"
-            docker cp -a ${d} ${hk}:/opt/bookworm/var/wbh/hoerbuchkatalog
+            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/hoerbuchkatalog
         done
         for d in nutzerdaten/*.csv
         do
             echo "${d}"
-            docker cp -a ${d} ${hk}:/opt/bookworm/var/wbh/nutzerdaten
+            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/nutzerdaten
         done
         popd >/dev/null
-        # TODO Start admin container, use scp to copy data
-        #docker exec container bash -c 'chmod 664 ${dockervol}/bookworm_app/_data/conf/secrets.json'
-        #docker exec container bash -c 'chown 4801:4801 ${dockervol}/bookworm_wbh/_data/hoerbuchkatalog/*'
-        #docker exec container bash -c 'chown 4801:4801 ${dockervol}/bookworm_wbh/_data/nutzerdaten/*'
     ;;
     clean)
         . ${platformlibdir}/docker.sh
@@ -88,14 +83,14 @@ case "${mode}" in
             ;;
             all)
                 $0 clean containers
-                $0 clean volumes
-                $0 clean networks
-                $0 clean images
                 ids=$(docker ps -aq)
                 if [[ -n "${ids}" ]]
                 then
                     docker rm $(docker ps -aq)
                 fi
+                $0 clean volumes
+                $0 clean networks
+                $0 clean images
             ;;
             *)
                 echo "usage: $0 clean { containers | volumes | networks | images | all }"
@@ -103,59 +98,65 @@ case "${mode}" in
             ;;
         esac
     ;;
-    up)
-        if [[ $# -lt 1 ]]
-        then
-            echo "usage: $0 <version>"
-            exit 1
-        fi
-        bookworm_docker $1 up -d
+    start)
+        bookworm_docker start admin
+        bookworm_docker exec admin chmod 660 /opt/bookworm/conf/secrets.json
+        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/conf/secrets.json
+        bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/hoerbuchkatalog
+        bookworm_docker exec admin 'find /opt/bookworm/var/wbh/hoerbuchkatalog -type f -print0 | xargs -0 chmod 660'
+        bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/nutzerdaten
+        bookworm_docker exec admin 'find /opt/bookworm/var/wbh/nutzerdaten -type f -print0 | xargs -0 chmod 660'
+        bookworm_docker start
+    ;;
+    stop)
+        bookworm_docker stop
     ;;
     ps)
-        if [[ $# -lt 1 ]]
-        then
-            echo "usage: $0 <version>"
-            exit 1
-        fi
-        bookworm_docker $1 ps
+        bookworm_docker ps
+    ;;
+    logs)
+        bookworm_docker logs $1
     ;;
     restart)
-        if [[ $# -lt 2 ]]
-        then
-            echo "usage: $0 restart <version> <service...>"
-            exit 1
-        fi
-        VERSION=$1 ; shift
-        bookworm_docker ${VERSION} restart $*
-    ;;
-    down)
         if [[ $# -lt 1 ]]
         then
-            echo "usage: $0 down <version>"
+            echo "usage: $0 restart <service...>"
             exit 1
         fi
-        bookworm_docker $1 down
+        bookworm_docker restart $*
+    ;;
+    down)
+        bookworm_docker down
     ;;
     exec)
-        if [[ $# -lt 2 ]]
+        if [[ $# -lt 1 ]]
         then
-            echo "usage: $0 exec <version> <docker exec args>"
+            echo "usage: $0 exec <docker exec args>"
             exit 1
         fi
-        VERSION=$1 ; shift
-        bookworm_docker ${VERSION} exec $*
+        bookworm_docker exec $*
     ;;
     health)
         docker inspect --format='{{json .State.Health}}'
     ;;
+    recreate-all)
+        $0 down
+        $0 clean all
+        $0 build
+        $0 init
+        $0 copy-data
+        $0 start
+    ;;
     *)
-        echo "usage: $0 { init | clean | up | restart | down | exec | health } <version> ..."
-        echo "  init <version>"
+        echo "usage: $0 { init | clean | start | stop | restart | down | exec | health }"
+        echo "  init"
+        echo "  copy-data"
         echo "  clean { containers | volumes | networks | images | all }"
-        echo "  up <version>"
-        echo "  restart <version>"
-        echo "  down <version>"
-        echo "  exec <version> <container> <command>"
+        echo "  start"
+        echo "  stop"
+        echo "  restart"
+        echo "  down"
+        echo "  exec <container> <command>"
         echo "  health"
         exit 1
     ;;

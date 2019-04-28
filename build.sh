@@ -16,7 +16,7 @@ platformlibdir=$(pushd ${execdir}/platform/src/main/bash >/dev/null ; pwd ; popd
 . ${platformlibdir}/git.sh
 . ${platformlibdir}/maven.sh
 
-mode=${1:-full}
+mode=${1:-}
 echo "Building ${mode}"
 
 case "${mode}" in
@@ -53,7 +53,7 @@ case "${mode}" in
         ${PROJECT}/docker/bin/build.sh
     ;;
     *)
-        echo "usage: $0 { modules | report | documentation | assembly | docker | full }"
+        echo "usage: $0 { update-repo | modules | report | documentation | assembly | docker | full }"
         exit 1
     ;;
 esac
