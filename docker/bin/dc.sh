@@ -103,9 +103,10 @@ case "${mode}" in
         bookworm_docker exec admin chmod 660 /opt/bookworm/conf/secrets.json
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/conf/secrets.json
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/hoerbuchkatalog
-        bookworm_docker exec admin 'find /opt/bookworm/var/wbh/hoerbuchkatalog -type f -print0 | xargs -0 chmod 660'
+        bookworm_docker exec admin chmod 660 /opt/bookworm/var/wbh/hoerbuchkatalog/Gesamt.dat
+        bookworm_docker exec admin chmod 660 /opt/bookworm/var/wbh/hoerbuchkatalog/isofiles.zip
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/nutzerdaten
-        bookworm_docker exec admin 'find /opt/bookworm/var/wbh/nutzerdaten -type f -print0 | xargs -0 chmod 660'
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/nutzerdaten/
         bookworm_docker start
     ;;
     stop)

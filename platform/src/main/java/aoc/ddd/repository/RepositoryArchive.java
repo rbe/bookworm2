@@ -30,12 +30,12 @@ public final class RepositoryArchive {
 
     public RepositoryArchive(final Path archiveDirectory) {
         this.archiveDirectory = archiveDirectory;
-        createDirectoryOrFail();
+        // TODO Funktioniert nicht mit Docker; sftp chroot/Dateisystemrechten createDirectoryOrFail();
     }
 
     private void createDirectoryOrFail() {
         LOGGER.trace("Checking directory '{}", archiveDirectory);
-        final boolean directoryExists = Files.exists(archiveDirectory);
+        final boolean directoryExists = Files.exists(archiveDirectory) || archiveDirectory.toFile().exists();
         if (!directoryExists) {
             try {
                 Files.createDirectories(archiveDirectory);

@@ -48,12 +48,8 @@ case "${mode}" in
             && mvnw_build aoc.platform,bookworm.hoerbuchkatalog,bookworm.security,bookworm.staticanalysis,bookworm.documentation,bookworm.assembly \
             && popd >/dev/null
     ;;
-    docker)
-        $0 full
-        ${PROJECT}/docker/bin/build.sh
-    ;;
     *)
-        echo "usage: $0 { update-repo | modules | report | documentation | assembly | docker | full }"
+        echo "usage: $0 { update-repo | modules | report | documentation | assembly | full }"
         exit 1
     ;;
 esac

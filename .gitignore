@@ -31,6 +31,7 @@ out/
 .mvn/repository/
 target/
 pom.xml.versionsBackup
+maven.log
 
 # IntelliJ
 *.iml

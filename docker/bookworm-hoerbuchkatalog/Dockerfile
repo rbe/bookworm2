@@ -34,7 +34,7 @@ COPY hoerbuchkatalog/assembly/src/main/resources/application-production.yml .
 COPY docker/bookworm-hoerbuchkatalog/run.sh .
 RUN chown -R bookworm:bookworm . \
     && chown root:root . \
-    && chmod 550 . \
+    && chmod 555 . \
     && chmod 550 run.sh \
     && chmod 550 app \
     && chmod 400 app/* \
