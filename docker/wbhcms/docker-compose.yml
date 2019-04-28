@@ -84,3 +84,5 @@ volumes:
     driver: local
   joomla_joomlatools_files:
     driver: local
+  assets_etc_ssh:
+    driver: local
