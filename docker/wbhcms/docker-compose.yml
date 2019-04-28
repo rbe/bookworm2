@@ -40,6 +40,19 @@ services:
       timeout: 1s
       retries: 3
       start_period: 60s
+  assets:
+    build:
+      context: ../../
+      dockerfile: docker/wbhcms-assets/Dockerfile
+    image: wbhcms/assets:${VERSION}
+    restart: "no"
+    ports:
+      - "2203:22"
+    volumes:
+      - assets_etc_ssh:/etc/ssh:ro
+      - joomla_html:/var/www/html:rw
+    networks:
+      - cms-public
 
 networks:
   cms-backend:
@@ -53,6 +66,11 @@ networks:
         - subnet: "172.16.47.0/24"
   cms-outside:
     name: cms-outside
+    driver: bridge
+    external: false
+    internal: false
+  cms-public:
+    name: cms-public
     driver: bridge
     external: false
     internal: false

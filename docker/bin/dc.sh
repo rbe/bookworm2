@@ -41,8 +41,6 @@ case "${mode}" in
         # --parallel
         bookworm_docker build --compress --force-rm \
             && bookworm_docker up --no-start
-    ;;
-    copy-data)
         admin=wbhonline_admin_1
         pushd ${execdir}/../bkinit >/dev/null
         docker cp conf/secrets.json ${admin}:/opt/bookworm/conf
@@ -103,10 +101,11 @@ case "${mode}" in
         bookworm_docker exec admin chmod 660 /opt/bookworm/conf/secrets.json
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/conf/secrets.json
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/hoerbuchkatalog
-        bookworm_docker exec admin chmod 660 /opt/bookworm/var/wbh/hoerbuchkatalog/Gesamt.dat
-        bookworm_docker exec admin chmod 660 /opt/bookworm/var/wbh/hoerbuchkatalog/isofiles.zip
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/hoerbuchkatalog/
+        bookworm_docker exec admin chmod -R 770 /opt/bookworm/var/wbh/hoerbuchkatalog
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/nutzerdaten
         bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/nutzerdaten/
+        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/nutzerdaten
         bookworm_docker start
     ;;
     stop)
@@ -145,7 +144,6 @@ case "${mode}" in
         $0 clean all
         $0 build
         $0 init
-        $0 copy-data
         $0 start
     ;;
     *)

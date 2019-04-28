@@ -1,7 +1,7 @@
 FROM nginx:1.14.2-alpine
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
-LABEL project="Bookworm"
+LABEL project="wbhonline"
 
 ENV buildNumber=LocalBuild
 
