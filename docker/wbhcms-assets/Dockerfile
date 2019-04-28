@@ -34,7 +34,7 @@ WORKDIR /etc/ssh
 COPY docker/bin/setup-ssh-users.sh .
 COPY docker/wbhcms-assets/sshd_config_2 .
 RUN chmod 700 setup-ssh-users.sh \
-        && ./setup-ssh-users.sh rbe cew wbh \
+        && ./setup-ssh-users.sh rbe cew mysql wbh \
         && rm setup-ssh-users.sh \
         && cat sshd_config_2 >>sshd_config \
         && rm sshd_config_2 \

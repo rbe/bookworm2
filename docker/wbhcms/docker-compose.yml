@@ -52,7 +52,9 @@ services:
       - assets_etc_ssh:/etc/ssh:ro
       - joomla_html:/var/www/html:rw
     networks:
-      - cms-public
+      cms-backend:
+        ipv4_address: "172.16.47.7"
+      cms-public:
 
 networks:
   cms-backend:
