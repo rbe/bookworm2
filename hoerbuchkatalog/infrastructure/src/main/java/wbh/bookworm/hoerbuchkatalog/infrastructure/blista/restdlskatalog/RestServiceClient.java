@@ -6,7 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog;
 
-import com.ctc.wstx.api.WstxInputProperties;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,9 +65,8 @@ public final class RestServiceClient {
             LOGGER.trace("valueType={}", valueType);
             final XmlMapper xmlMapper = new XmlMapper();
             final XMLInputFactory factory = XMLInputFactory.newFactory();
-            factory.setProperty(WstxInputProperties.P_ALLOW_XML11_ESCAPED_CHARS_IN_XML10, true);
             final XMLStreamReader xmlReader = factory.createXMLStreamReader(
-                    new ByteArrayInputStream(blistaReparieren(antwort)));
+                    new ByteArrayInputStream(antwort));
             return xmlMapper.readValue(xmlReader, valueType);
         } catch (IOException | XMLStreamException e) {
             LOGGER.error("", e);
