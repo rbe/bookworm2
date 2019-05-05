@@ -6,22 +6,17 @@ X11Forwarding no
 AllowTcpForwarding no
 Subsystem sftp internal-sftp -u 0007
 
-Match User rbe
-    AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
-    ChrootDirectory /var/www/html
-    ForceCommand internal-sftp -u 0007
-
-Match User cew
-    AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
-    ChrootDirectory /var/www/html
+Match User www-data
+    AuthorizedKeysFile /etc/ssh/keys/www-data_authorized_keys
+    ChrootDirectory /var/www
     ForceCommand internal-sftp -u 0007
 
 Match User mysql
     AuthorizedKeysFile /etc/ssh/keys/mysql_authorized_keys
-    ChrootDirectory /var/www/html
+    ChrootDirectory /var/www
     AllowTcpForwarding yes
 
 Match User wbh
     AuthorizedKeysFile /etc/ssh/keys/wbh_authorized_keys
-    ChrootDirectory /var/www/html
+    ChrootDirectory /var/www
     ForceCommand internal-sftp -u 0007

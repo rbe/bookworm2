@@ -36,9 +36,12 @@ COPY docker/wbhcms-assets/sshd_config_2 .
 RUN chmod 700 setup-ssh-users.sh \
         && ./setup-ssh-users.sh rbe cew mysql wbh \
         && rm setup-ssh-users.sh \
+        && passwd -u www-data \
         && cat sshd_config_2 >>sshd_config \
         && rm sshd_config_2 \
-        && chmod 444 /etc/ssh/keys/*_authorized_keys
+        && chmod 444 /etc/ssh/keys/*_authorized_keys \
+        && chown www-data:www-data /var/www/html/images \
+        && chown www-data:www-data /var/www/html/joomlatools-files
 
 WORKDIR /
 
