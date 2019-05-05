@@ -136,6 +136,14 @@ case "${mode}" in
         fi
         bookworm_docker exec $*
     ;;
+    console)
+        if [[ $# -lt 1 ]]
+        then
+            echo "usage: $0 console <service>"
+            exit 1
+        fi
+        bookworm_docker exec $1 sh
+    ;;
     health)
         docker inspect --format='{{json .State.Health}}'
     ;;
