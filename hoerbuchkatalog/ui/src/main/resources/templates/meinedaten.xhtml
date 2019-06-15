@@ -5,6 +5,10 @@
       xmlns:ui="http://java.sun.com/jsf/facelets">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
+        <h:panelGroup rendered="#{hoererSession.hoererIstUnbekannt}">
+            Leider ist Ihre Hörernummer dem Hörbuchkatalog-System nicht bekannt.<br/>
+            Bitte melden Sie sich <a href="/cb-login.html">hier</a> an oder wenden Sie sich an die WBH.
+        </h:panelGroup>
         <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
                       layout="block" styleClass="leading hoererdaten">
             <h2 class="contentheading ">Hörerdaten</h2>

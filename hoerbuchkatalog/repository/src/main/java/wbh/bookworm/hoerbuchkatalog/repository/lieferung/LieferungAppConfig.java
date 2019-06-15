@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
 import org.slf4j.Logger;
@@ -25,6 +26,7 @@ import java.util.concurrent.Executors;
 @Configuration
 @Import({DlsLieferungAppConfig.class})
 @ComponentScan(basePackageClasses = {
+        RepositoryResolver.class,
         DownloadsRepository.class,
         CdLieferungRepository.class,
         Hoerbuchkatalog.class,
@@ -36,9 +38,10 @@ public class LieferungAppConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(LieferungAppConfig.class);
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean({ExecutorService.class})
     public ExecutorService executorService() {
-        final ExecutorService executorService = Executors.newWorkStealingPool();
+        final ExecutorService executorService = Executors.newWorkStealingPool(
+                Runtime.getRuntime().availableProcessors());
         LOGGER.debug("Created {}", executorService);
         return executorService;
     }

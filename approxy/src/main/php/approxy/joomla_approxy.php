@@ -60,6 +60,7 @@ function getHoerernummer()
 //
 
 include_once 'autoload.php';
+
 use ApProxy\AppInfo;
 use ApProxy\ApProxyFactory;
 
@@ -84,13 +85,13 @@ function sendHttpRedirectIfNoUser()
  * @param array $params
  * @return string
  */
-function removeQueryParameter($parsedRequestUri, $params)
+function removeQueryParameter($query, $params)
 {
-    parse_str($parsedRequestUri['query'], $queryParameters);
-    foreach ($params as $p) {
-        unset($queryParameters[$p]);
-    }
-    return http_build_query($queryParameters);
+    parse_str($query, $queryParameters);
+    $filtered = array_filter($queryParameters, function ($k) {
+        return $k !== 'hnr';
+    }, ARRAY_FILTER_USE_KEY);
+    return http_build_query($filtered);
 }
 
 /**
@@ -98,29 +99,37 @@ function removeQueryParameter($parsedRequestUri, $params)
  */
 function proxyRequestToApp()
 {
-    ApProxyFactory::configure(new AppInfo('hoerbuchkatalog', 'http://127.0.0.1:9080', '/hoerbuchkatalog'));
-    ApProxyFactory::configure(new AppInfo('nutzerbereich', 'http://127.0.0.1:9090', '/nutzerbereich'));
+    ApProxyFactory::configure(new AppInfo('hoerbuchkatalog',
+        'http://hoerbuchkatalog:9080', '/hoerbuchkatalog'));
     $approxy = ApProxyFactory::create($_SERVER['REQUEST_URI']);
     if (isset($approxy)) {
         $customizeUriDelegate = function ($appInfo, $requestUri) {
             $hnr = getHoerernummer();
-            $parsedRequestUri = parse_url($requestUri);
-            $uriHasQuery = isset($parsedRequestUri['query']);
-            if ($uriHasQuery) {
-                // TODO Rebuild request URI
-                // TODO $queryParameters = removeQueryParameter($parsedRequestUri['query'], 'hnr');
-                $appUri = $requestUri . '&hnr=' . $hnr;
+            $parsedUri = parse_url($requestUri) or die('Cannot parse URL');
+            if (isset($parsedUri['query'])) {
+                $filteredQuery = removeQueryParameter($parsedUri['query'], ['hnr']);
+                $appUri = $parsedUri['path'] . '?' . $filteredQuery;
             } else {
-                $appUri = $requestUri . '?hnr=' . $hnr;
+                $appUri = $requestUri;
             }
+            if (isset($hnr)) {
+                if (isset($parsedUri['query'])) {
+                    $appUri .= '&';
+                } else {
+                    $appUri .= '?';
+                }
+                $appUri .= 'hnr=' . $hnr;
+            }
+            //echo $appUri; return;
             return $appUri;
         };
+        /*
         $requestUri = $_SERVER['REQUEST_URI'];
         if (strpos($requestUri, "nutzerbereich") > 0) {
             sendHttpRedirectIfNoUser() or $approxy->perform($customizeUriDelegate);
-        } else if (strpos($requestUri, "hoerbuchkatalog") > 0) {
-            $approxy->perform($customizeUriDelegate);
-        }
+        } else
+        */
+        $approxy->perform($customizeUriDelegate);
     } else {
         ApProxy\HttpHelper::sendHttpRedirectWithStatus('NO_APPROXY');
     }

@@ -58,7 +58,8 @@ public enum Sachgebiet {
 
     @Override
     public String toString() {
-        return getLabel();
+        //return getLabel();
+        return getName();
     }
 
 }

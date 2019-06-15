@@ -5,6 +5,8 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
+ENV TZ Europe/Berlin
+
 RUN apk update \
     && apk --no-cache \
         add \

@@ -5,4 +5,19 @@
     <pluginGroups>
         <pluginGroup>org.sonarsource.scanner.maven</pluginGroup>
     </pluginGroups>
+    <profiles>
+        <profile>
+            <id>repo.jcenter</id>
+            <repositories>
+                <repository>
+                    <id>bintray</id>
+                    <name>bintray</name>
+                    <snapshots>
+                        <enabled>false</enabled>
+                    </snapshots>
+                    <url>https://jcenter.bintray.com</url>
+                </repository>
+            </repositories>
+        </profile>
+    </profiles>
 </settings>

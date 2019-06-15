@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+// TODO Peristenz für Warenkörbe nicht notwendig -> WK nur pro Session gültig, Session persistieren
 @Service
 public class WarenkorbService {
 
@@ -100,6 +101,12 @@ public class WarenkorbService {
         }
     }
 
+    public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
+                                    final Hoerernummer hoerernummer) {
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        warenkorbRepository.delete(warenkorbId);
+    }
+
     //
     // Download Warenkorb
     //
@@ -160,20 +167,28 @@ public class WarenkorbService {
         return downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
     }
 
+    /* TODO Im DownloadsService; Anzahl Bestellungen pro Tag aus blista Abruf ermitteln */
     public boolean isMaxDownloadsProTagErreicht(final BestellungSessionId bestellungSessionId,
                                                 final Hoerernummer hoerernummer) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
-        // TODO Aus blista Abruf ermitteln
-        return (bestellungRepository.countAlleDownloadsVonHeute(hoerernummer) +
-                downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl()) >= /* TODO Konfigurieren */5;
+        final long vonHeute = bestellungRepository.countAlleDownloadsVonHeute(hoerernummer);
+        final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
+        return (vonHeute + imWarenkorb) >= /* TODO Konfigurieren */5;
     }
 
+    /* TODO Im DownloadsService; Anzahl Bestellungen pro Tag aus blista Abruf ermitteln */
     public boolean isMaxDownloadsProMonatErreicht(final BestellungSessionId bestellungSessionId,
                                                   final Hoerernummer hoerernummer) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
-        // TODO Aus blista Abruf ermitteln
-        return (bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer) +
-                downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl()) >= /* TODO Konfigurieren */10;
+        final long inDiesemMonat = bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer);
+        final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
+        return (inDiesemMonat + imWarenkorb) >= /* TODO Konfigurieren */10;
+    }
+
+    public void downloadWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
+                                          final Hoerernummer hoerernummer) {
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        warenkorbRepository.delete(warenkorbId);
     }
 
     //

@@ -34,7 +34,7 @@ public class TimedCacheDecorator<R> implements InvalidatableValue<R> {
     public R get() {
         final LocalDateTime now = LocalDateTime.now();
         final Duration between = Duration.between(now, lastUpdated);
-        if (between.compareTo(maxAgeMilliseconds) == 1) {
+        if (between.compareTo(maxAgeMilliseconds) > 0) {
             LOGGER.trace("Timeout; lastUpdated={} maxAge={} now={} difference={}",
                     lastUpdated, maxAgeMilliseconds, now, between);
             invalidate();
@@ -53,6 +53,12 @@ public class TimedCacheDecorator<R> implements InvalidatableValue<R> {
     @Override
     public void invalidate() {
         delegate.invalidate();
+    }
+
+    private boolean isUpdateTimeoutReached() {
+        final LocalDateTime now = LocalDateTime.now();
+        final Duration between = Duration.between(now, lastUpdated);
+        return between.compareTo(maxAgeMilliseconds) > 0;
     }
 
     public static void main(String[] args) {

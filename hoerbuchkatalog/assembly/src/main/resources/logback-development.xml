@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration scan="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <include resource="logback-properties.xml"/>
+    <jmxConfigurator/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <!--<pattern>
@@ -27,13 +28,22 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.repository" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.repository.katalog" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="aoc" level="DEBUG" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="aoc.fs" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="aoc.ddd.event" level="DEBUG" additivity="false">

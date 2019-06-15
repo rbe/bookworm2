@@ -31,12 +31,14 @@
         <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
-        <jib-maven-plugin.version>0.9.7</jib-maven-plugin.version>
+        <!-- Docker -->
+        <!--jib-maven-plugin.version>0.9.7</jib-maven-plugin.version-->
         <!-- Java -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <!-- Hazelcast -->
+        <!-- Hazelcast
         <hazelcast.version>3.11</hazelcast.version>
+        -->
         <!-- Jackson -->
         <jackson.version>2.9.6</jackson.version>
         <!-- Spring -->
@@ -280,74 +282,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <dependencies>
-        <!-- Java EE -->
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-        </dependency>
-        <!-- Spring Boot -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-logging</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-devtools</artifactId>
-        </dependency>
-        <!-- Test -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-test-autoconfigure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.vintage</groupId>
-            <artifactId>junit-vintage-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.junit.jupiter</groupId>
-            <artifactId>junit-jupiter-api</artifactId>
-        </dependency>
-        <!-- Architecture -->
-        <dependency>
-            <groupId>com.tngtech.archunit</groupId>
-            <artifactId>archunit</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <!-- Logging -->
-        <dependency>
-            <groupId>org.codehaus.janino</groupId>
-            <artifactId>janino</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-        </dependency>
-    </dependencies>
     <build>
         <plugins>
             <plugin>
@@ -603,6 +537,12 @@
             <id>bookworm.nutzerbereich</id>
             <modules>
                 <module>nutzerbereich</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>bookworm.datatransfer</id>
+            <modules>
+                <module>datatransfer</module>
             </modules>
         </profile>
         <profile>

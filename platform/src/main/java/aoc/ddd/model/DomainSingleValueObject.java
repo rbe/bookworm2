@@ -29,6 +29,7 @@ public abstract class DomainSingleValueObject
         this.value = value;
     }
 
+    // TODO public und VALUE? Wenn public dann static oder ohne Parameter -> Feld
     public boolean checkValue(VALUE value) {
         Objects.requireNonNull(value);
         return true;

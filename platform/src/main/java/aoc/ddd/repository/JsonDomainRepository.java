@@ -109,7 +109,8 @@ public abstract class JsonDomainRepository
 
     private Stream<Path> aggregatePathsAsStream() throws IOException {
         return Files.list(aggregateStoragePath)
-                .filter(p -> !p.getFileName().equals(idSequenceFilename));
+                .filter(p -> p.getFileName().toString().endsWith(".json")
+                        && !p.getFileName().equals(idSequenceFilename));
     }
 
     @Override
@@ -333,7 +334,9 @@ public abstract class JsonDomainRepository
                 .collect(Collectors.toSet()));
     }
 
-    /** @deprecated Use #loadAllWithPrefix(String), NOTE: uses .startsWith(String) */
+    /**
+     * @deprecated Use #loadAllWithPrefix(String), NOTE: uses .startsWith(String)
+     */
     @Deprecated
     @Override
     @SuppressWarnings({"unchecked"})

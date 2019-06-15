@@ -10,6 +10,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.CdLieferungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
 
@@ -27,22 +28,19 @@ public final class CdLieferungService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CdLieferungService.class);
 
-    private final HoererRepository hoererRepository;
-
-    private final CdLieferungRepository cdLieferungRepository;
+    private final RepositoryResolver repositoryResolver;
 
     @Autowired
-    public CdLieferungService(final HoererRepository hoererRepository,
-                              final CdLieferungRepository cdLieferungRepository) {
+    public CdLieferungService(final RepositoryResolver repositoryResolver) {
         LOGGER.trace("Initializing");
-        this.hoererRepository = hoererRepository;
-        this.cdLieferungRepository = cdLieferungRepository;
+        this.repositoryResolver = repositoryResolver;
     }
 
     public List<Belastung> belastungen(final Hoerernummer hoerernummer) {
         /* TODO Security Context */if (hoerernummer.isUnbekannt()) {
             return Collections.emptyList();
         } else {
+            final HoererRepository hoererRepository = repositoryResolver.hoererRepository();
             final List<Belastung> belastungen = hoererRepository.belastungen(hoerernummer);
             belastungen.sort(Comparator.nullsFirst(
                     Comparator.comparing(Belastung::getBelastungsdatum,
@@ -53,10 +51,16 @@ public final class CdLieferungService {
         }
     }
 
+    public boolean hatBestellkarten() {
+        final CdLieferungRepository cdLieferungRepository = repositoryResolver.cdLieferungRepository();
+        return cdLieferungRepository.hatBestellkarten();
+    }
+
     public List<Bestellkarte> bestellkarten(final Hoerernummer hoerernummer) {
         /* TODO Security Context */if (hoerernummer.isUnbekannt()) {
             return Collections.emptyList();
         } else {
+            final CdLieferungRepository cdLieferungRepository = repositoryResolver.cdLieferungRepository();
             final List<Bestellkarte> bestellkarten = cdLieferungRepository.bestellkarten(hoerernummer);
             bestellkarten.sort(Comparator.nullsFirst(
                     Comparator.comparing(/*TODO ::getTitelnummer, Comparable<Titelnummer>*/Bestellkarte::toString,
@@ -68,10 +72,16 @@ public final class CdLieferungService {
         }
     }
 
+    public boolean hatErledigteBestellkarten() {
+        final CdLieferungRepository cdLieferungRepository = repositoryResolver.cdLieferungRepository();
+        return cdLieferungRepository.hatErledigteBestellkarten();
+    }
+
     public List<ErledigteBestellkarte> erledigteBestellkarten(final Hoerernummer hoerernummer) {
         /* TODO Security Context */if (hoerernummer.isUnbekannt()) {
             return Collections.emptyList();
         } else {
+            final CdLieferungRepository cdLieferungRepository = repositoryResolver.cdLieferungRepository();
             final List<ErledigteBestellkarte> erledigteBestellkarten =
                     cdLieferungRepository.erledigteBestellkarten(hoerernummer);
             erledigteBestellkarten.sort(Comparator.nullsFirst(

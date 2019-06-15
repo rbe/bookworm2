@@ -22,7 +22,7 @@ import java.util.TreeSet;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
-@DomainRespositoryComponent
+@DomainRepositoryComponent
 @SuppressWarnings({"squid:S00119"})
 public interface DomainRepository
         <AGG extends DomainAggregate<AGG, ID>, ID extends DomainId<String>> {

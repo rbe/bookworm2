@@ -7,27 +7,13 @@
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
 import aoc.ddd.search.LuceneIndex;
 
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Scope;
-import org.springframework.core.task.TaskExecutor;
-import org.springframework.scheduling.TaskScheduler;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
-
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
-import static org.springframework.beans.factory.config.ConfigurableBeanFactory.SCOPE_PROTOTYPE;
 
 @Configuration
 @ComponentScan(basePackageClasses = {
@@ -39,29 +25,23 @@ import static org.springframework.beans.factory.config.ConfigurableBeanFactory.S
 @EnableConfigurationProperties
 public class KatalogAppConfig {
 
-    static final String HOERBUCHKATALOG_MAP = "hoerbuchkatalogMap";
-
-    @Bean(HOERBUCHKATALOG_MAP)
-    @Scope(SCOPE_PROTOTYPE)
-    public Map<Titelnummer, Hoerbuch> hoerbuchkatalogMap() {
-        return new ConcurrentHashMap<>();
-    }
-
+/*
     @Bean
-    @ConditionalOnMissingBean
-    public TaskExecutor taskExecutor() {
+    @ConditionalOnMissingBean({ThreadPoolTaskExecutor.class})
+    public TaskExecutor threadPoolTaskExecutor() {
         final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(5);
-        taskExecutor.setMaxPoolSize(10);
         taskExecutor.setThreadNamePrefix("hoerbuchkatalogRepositoryExecutor-");
+        taskExecutor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        taskExecutor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 10);
         taskExecutor.initialize();
         return taskExecutor;
     }
 
     @Bean
-    @ConditionalOnMissingBean
-    public TaskScheduler taskScheduler() {
+    @ConditionalOnMissingBean({ThreadPoolTaskScheduler.class})
+    public TaskScheduler threadPoolTaskScheduler() {
         return new ThreadPoolTaskScheduler();
     }
+*/
 
 }

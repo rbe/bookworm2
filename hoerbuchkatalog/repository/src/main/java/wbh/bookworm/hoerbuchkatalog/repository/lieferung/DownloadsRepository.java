@@ -14,9 +14,10 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsBook;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerke;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
+import aoc.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,25 +28,25 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@DomainRespositoryComponent
+@DomainRepositoryComponent
 public class DownloadsRepository /* TODO implements DomainRepository<> */ {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadsRepository.class);
 
+    private final RepositoryResolver repositoryResolver;
+
     private final DlsLieferung dlsLieferung;
 
-    private final Hoerbuchkatalog hoerbuchkatalog;
-
     @Autowired
-    DownloadsRepository(final DlsLieferung dlsLieferung, final Hoerbuchkatalog hoerbuchkatalog) {
+    DownloadsRepository(final RepositoryResolver repositoryResolver,
+                        final DlsLieferung dlsLieferung) {
+        this.repositoryResolver = repositoryResolver;
         this.dlsLieferung = dlsLieferung;
-        this.hoerbuchkatalog = hoerbuchkatalog;
     }
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
         LOGGER.trace("Hole blista Werke für Hörer {}", hoerernummer);
         long startWerke = System.nanoTime();
-        // TODO DownloadsArchiv
         final Optional<DlsWerke> maybeAlleWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
         if (maybeAlleWerke.isPresent()) {
             final DlsWerke alleWerke = maybeAlleWerke.get();
@@ -82,27 +83,34 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                 dlsLieferung.bestellungLaden(hoerernummer.getValue(), aghNummer.getValue());
         if (bestellung.isPresent()) {
             final DlsBook dlsBook = bestellung.get();
+            final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
             final Optional<Hoerbuch> hoerbuch = hoerbuchkatalog.hole(aghNummer);
             if (hoerbuch.isEmpty()) {
                 LOGGER.warn("Hörer {}/AGH Nummer {}: Hörbuch nicht gefunden",
                         hoerernummer, aghNummer);
                 final BlistaDownload blistaDownload = BlistaDownload.of(hoerernummer,
-                        Hoerbuch.unbekannt(aghNummer),
+                        Hoerbuch.unbekannterDownload(aghNummer, book.Title),
                         dlsBook.book.Ausleihstatus,
-                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                        dlsBook.book.Bestelldatum,
+                        dlsBook.book.Rueckgabedatum,
                         dlsBook.book.DlsDescription,
-                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
-                        dlsBook.book.DownloadLink, dlsBook.book.Gesperrt);
+                        dlsBook.book.DownloadCount,
+                        dlsBook.book.MaxDownload,
+                        dlsBook.book.DownloadLink,
+                        dlsBook.book.Gesperrt);
                 LOGGER.debug("{}", blistaDownload);
                 return blistaDownload;
             } else {
                 final BlistaDownload blistaDownload = BlistaDownload.of(hoerernummer,
-                        hoerbuch.get(),
+                        hoerbuch.orElseThrow(IllegalStateException::new),
                         dlsBook.book.Ausleihstatus,
-                        dlsBook.book.Bestelldatum, dlsBook.book.Rueckgabedatum,
+                        dlsBook.book.Bestelldatum,
+                        dlsBook.book.Rueckgabedatum,
                         dlsBook.book.DlsDescription,
-                        dlsBook.book.DownloadCount, dlsBook.book.MaxDownload,
-                        dlsBook.book.DownloadLink, dlsBook.book.Gesperrt);
+                        dlsBook.book.DownloadCount,
+                        dlsBook.book.MaxDownload,
+                        dlsBook.book.DownloadLink,
+                        dlsBook.book.Gesperrt);
                 LOGGER.debug("{}", blistaDownload);
                 return blistaDownload;
             }

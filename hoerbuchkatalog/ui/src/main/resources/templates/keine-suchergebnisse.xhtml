@@ -11,22 +11,20 @@
       xmlns:ks="http://xmlns.jcp.org/jsf/composite/katalogsuche">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <h:form id="keinesuchergebnisseForm">
-            <div class="leading">
-                <h2 class="contentheading">Onlinekatalog Suche</h2>
-                <div class="noticetext">
-                    <h3>Keine Suchergebnisse</h3>
+        <h:panelGroup layout="block" styleClass="leading">
+            <h2 class="contentheading">Onlinekatalog Suche</h2>
+            <h:panelGroup layout="block" styleClass="noticetext">
+                <h3>Keine Suchergebnisse</h3>
+                <p>
                     Es wurden keine Treffer zu Ihrer Suche gefunden.<br/>
                     Bitte geben Sie Suchbegriffe mit mindestens 3 Zeichen ein!
-                </div>
-                <hk:navigation/>
-                <ks:suchformular/>
-            </div>
+                </p>
+            </h:panelGroup>
+        </h:panelGroup>
+        <h:form id="katalogsucheForm">
+            <hk:navigation/>
+            <ks:suchformular/>
         </h:form>
-        <div class="noticetext">
-            <h3>Platz für Hinweistext</h3>
-            Hier kann eine Erklärung stehen.....
-        </div>
     </ui:define>
 </ui:composition>
 </html>

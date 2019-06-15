@@ -79,6 +79,14 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         this.hoereremail = hoereremail;
     }
 
+    public static final Hoerer UNBEKANNT = new Hoerer(Hoerernummer.UNBEKANNT, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT);
+
+    /*
+    public static Hoerer unbekannt(final Hoerernummer hoerernummer) {
+        return new Hoerer(hoerernummer, Hoerername.UNBEKANNT, HoererEmail.UNBEKANNT);
+    }
+    */
+
     @SuppressWarnings({"squid:S00107"})
     public Hoerer(final Hoerernummer hoerernummer,
                   final String anrede, final Hoerername hoerername, final String nachnamenszusatz,
@@ -197,20 +205,52 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         return nonNullString(land);
     }
 
+    public boolean hasSperrtermin() {
+        return null != sperrTerminVon || null != sperrTerminBis;
+    }
+
     public LocalDate getSperrTerminVon() {
         return sperrTerminVon;
+    }
+
+    public String getSperrterminVonAufDeutsch() {
+        return null != sperrTerminVon
+                ? sperrTerminVon.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public LocalDate getSperrTerminBis() {
         return sperrTerminBis;
     }
 
+    public String getSperrterminBisAufDeutsch() {
+        return null != sperrTerminBis
+                ? sperrTerminBis.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
+    public boolean hasUrlaub() {
+        return null != urlaubVon || null != urlaubBis;
+    }
+
     public LocalDate getUrlaubVon() {
         return urlaubVon;
     }
 
+    public String getUrlaubVonAufDeutsch() {
+        return null != urlaubVon
+                ? urlaubVon.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     public LocalDate getUrlaubBis() {
         return urlaubBis;
+    }
+
+    public String getUrlaubBisAufDeutsch() {
+        return null != urlaubBis
+                ? urlaubBis.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public String getUrlaubName2() {
@@ -259,6 +299,12 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
         return rueckbuchungsdatum;
     }
 
+    public String getRueckbuchungsdatumAufDeutsch() {
+        return null != rueckbuchungsdatum
+                ? rueckbuchungsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(domainId);
@@ -279,8 +325,7 @@ public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 
     @Override
     public String toString() {
-        return String.format("Hoerer{hoerernummer=%s, hoerername='%s', hoereremail='%s'}",
-                domainId, hoerername, hoereremail);
+        return String.format("Hoerer{hoerernummer=%s}", domainId);
     }
 
 }

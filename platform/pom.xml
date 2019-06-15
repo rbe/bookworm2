@@ -36,7 +36,7 @@
         <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
         <jib-maven-plugin.version>0.9.7</jib-maven-plugin.version>
         <!-- Lucene -->
-        <lucene-core.version>7.5.0</lucene-core.version>
+        <lucene.version>7.5.0</lucene.version>
         <lucene-analyzers.version>3.6.2</lucene-analyzers.version>
         <!-- Jackson -->
         <jackson.version>2.9.6</jackson.version>
@@ -58,13 +58,29 @@
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-core</artifactId>
-            <version>${lucene-core.version}</version>
+            <version>${lucene.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-queries</artifactId>
+            <version>${lucene.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-queryparser</artifactId>
-            <version>${lucene-core.version}</version>
+            <version>${lucene.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.apache.lucene</groupId>
+                    <artifactId>lucene-sandbox</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!--<dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-sandbox</artifactId>
+            <version>${lucene-core.version}</version>
+        </dependency>-->
         <!--dependency>
             <groupId>org.apache.lucene</groupId>
             <artifactId>lucene-analyzers</artifactId>

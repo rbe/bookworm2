@@ -17,7 +17,7 @@ import aoc.ddd.model.DomainAggregate;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -35,16 +35,14 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
     private transient HoerbuchkatalogSuche hoerbuchkatalogSuche;
 
     public Hoerbuchkatalog(final HoerbuchkatalogId hoerbuchkatalogId,
-                           final Map<Titelnummer, Hoerbuch> katalog,
                            final long version) {
         super(hoerbuchkatalogId);
-        this.katalog = katalog;
+        this.katalog = new HashMap<>();
         this.version.set(version);
     }
 
     public static Hoerbuchkatalog leererHoerbuchkatalog() {
-        return new Hoerbuchkatalog(new HoerbuchkatalogId("Leer.dat"),
-                Collections.emptyMap(), 0);
+        return new Hoerbuchkatalog(new HoerbuchkatalogId("Leer.dat"), 0);
     }
 
     void setHoerbuchkatalogSuche(final HoerbuchkatalogSuche hoerbuchkatalogSuche) {
@@ -92,8 +90,7 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
 
     public List<Hoerbuch> hole(final Titelnummer... titelnummern) {
         return Arrays.stream(titelnummern)
-                .map(katalog::get)
-                //.collect(Collectors.toCollection(LinkedList::new))
+                .map(this::hole)
                 .collect(Collectors.toUnmodifiableList());
     }
 

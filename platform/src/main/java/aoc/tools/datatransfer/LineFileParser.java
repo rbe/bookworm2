@@ -17,6 +17,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.Callable;
@@ -42,12 +43,20 @@ public interface LineFileParser {
                     path, charset, expectedLineCount);
             try (final BufferedReader reader = Files.newBufferedReader(path, charset)) {
                 final List<String[]> strings = new ArrayList<>(expectedLineCount);
-                for (String line; null != (line = reader.readLine()); ) {
-                    strings.add(parseLine(line));
+                int lineno = 1;
+                for (String line; null != (line = reader.readLine()); lineno++) {
+                    try {
+                        strings.add(parseLine(line));
+                    } catch (Exception e) {
+                        LOGGER.warn(path + ": Could not parse line #" + lineno, e);
+                    }
                 }
                 LOGGER.debug("Parsed {} successfully in {}", path,
                         Duration.between(start, LocalDateTime.now()));
                 return strings;
+            } catch (Exception e) {
+                LOGGER.error(path + ": Could not parse file", e);
+                return Collections.emptyList();
             }
         };
     }
@@ -56,6 +65,7 @@ public interface LineFileParser {
                                             final Path... paths) {
         Objects.requireNonNull(paths);
         Objects.requireNonNull(charset);
+        // TODO Inject ExecutorService
         final int parallelism = Runtime.getRuntime().availableProcessors() / 2;
         final ExecutorService executorService = Executors.newWorkStealingPool(parallelism);
         final List<Future<List<String[]>>> futures = new ArrayList<>();

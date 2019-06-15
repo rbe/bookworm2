@@ -22,14 +22,10 @@
           content="WBH - Westdeutsche Blindenhörbücherei Münster - Hörbücherei für Sehbehinderte und Blinde"/>
     <meta name="generator" content="WBH - Westfälische Blindenhörbücherei - Münster"/>
     <title>Westdeutsche Blindenhörbücherei Münster</title>
-    <link href="templates/oneweb/favicon.ico" rel="shortcut icon" type="image/x-icon"/>
     <link type="text/css" rel="stylesheet" href="templates/oneweb/css/position.css"/>
     <link type="text/css" rel="stylesheet" href="templates/oneweb/css/style.css"/>
     <link type="text/css" rel="stylesheet" href="templates/oneweb/css/bookworm.css"/>
-    <link type="text/css" rel="stylesheet" href="app/search.css"/>
-    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
-    <script type="text/javascript" src="js/wbh.js"></script>
-    <h:outputScript library="javax.faces" name="jsf.js" target="head"/>
+    <h:outputScript library="javax.faces" name="jsf.js" target="body"/>
 </h:head>
 <h:body>
     <f:view transient="true">
@@ -46,10 +42,10 @@
                     <div id="logoandfontsize">
                         <div class="logo">
                             <h2 class="unsichtbar">WBH Logo</h2>
-                            <a title="Link zur Startseite" href="/"><img width="150" height="47"
+                            <a title="Link zur Startseite" href="/"><img width="123" height="50"
                                                                          border="0"
                                                                          alt="Logo der Westdeutschen Blindenhörbücherei e.V. - Münster"
-                                                                         src="templates/wbh/images/logo_wbh.gif"/></a>
+                                                                         src="images/stories/logo_neu.png"/></a>
                         </div>
                         <a name="logout"></a>
                         <ui:fragment rendered="#{hoererSession.hoererIstBekannt}">
@@ -119,5 +115,7 @@
             </div>
         </div>
     </f:view>
+    <script type="text/javascript" src="js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="js/wbh.js"></script>
 </h:body>
 </html>

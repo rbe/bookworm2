@@ -145,7 +145,8 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
                 "",
                 "0",
                 "",
-                "", null, false);
+                "",
+                null, false);
     }
 
     public static Hoerbuch unbekannt(final AghNummer aghNummer) {
@@ -160,7 +161,43 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
                 "",
                 "0",
                 "",
-                "", aghNummer, true);
+                "",
+                aghNummer, true);
+    }
+
+    public static Hoerbuch unbekannt(final Titelnummer titelnummer, final AghNummer aghNummer,
+                                     final String autor, final String titel) {
+        return new Hoerbuch(Sachgebiet.NA,
+                null != titelnummer ? titelnummer : new Titelnummer("000000"),
+                null != autor ? autor : "",
+                null != titel ? titel : "",
+                "",
+                "",
+                "", "", "",
+                "", "", "0,00",
+                "", "",
+                "",
+                "0",
+                "",
+                "",
+                aghNummer, false);
+    }
+
+    public static Hoerbuch unbekannterDownload(final AghNummer aghNummer, final String titel) {
+        return new Hoerbuch(Sachgebiet.NA,
+                new Titelnummer("000000"),
+                "",
+                null != titel ? titel : "",
+                "",
+                "",
+                "", "", "",
+                "", "", "0,00",
+                "", "",
+                "",
+                "0",
+                "",
+                "",
+                aghNummer, false);
     }
 
     public boolean isUnbekannt() {

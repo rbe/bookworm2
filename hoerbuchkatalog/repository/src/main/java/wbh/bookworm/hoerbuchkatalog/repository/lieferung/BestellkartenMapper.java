@@ -16,12 +16,18 @@ import aoc.tools.datatransfer.CsvParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -29,6 +35,8 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Component
+@Lazy
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 final class BestellkartenMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellkartenMapper.class);
@@ -47,31 +55,47 @@ final class BestellkartenMapper {
 
     private Map<Hoerernummer, List<Bestellkarte>> bestellkarten;
 
-    void leseAs400Datei(final Charset csvCharset, int expectedLineCount,
-                        final Path bkstpCsv) {
-        LOGGER.info("Lese CSV-Datei {} mit Zeichensatz {} und erwarteter Anzahl Zeilen {}",
-                bkstpCsv, csvCharset, expectedLineCount);
-        LocalDateTime start = LocalDateTime.now();
-        bkstp.flatParseLines(csvCharset, expectedLineCount, bkstpCsv);
-        LOGGER.info("CSV-Datei {} gelesen (Anzahl: {}), es dauerte {} ms",
-                bkstpCsv, bkstp.size(),
-                Duration.between(start, LocalDateTime.now()).toMillis());
-        start = LocalDateTime.now();
-        bestellkarten = bkstp.getRows()
-                .parallelStream()
-                .map(this::parseAlleBestellkarten)
-                .collect(Collectors.toUnmodifiableMap(o -> o.get(0).getHoerernummer(),
-                        o -> o.subList(1, o.size())));
-        LOGGER.info("Bestellkarten erzeugt ({} BKSTP -> {} Hörer), es dauerte {} ms",
-                bkstp.size(), bestellkarten.size(),
-                Duration.between(start, LocalDateTime.now()).toMillis());
+    public BestellkartenMapper(final CdLieferungRepositoryConfig cdLieferungRepositoryConfig) {
+        leseAs400Datei(
+                StandardCharsets.ISO_8859_1, 9_000,
+                cdLieferungRepositoryConfig.getDirectory().resolve("bkstp.csv"));
     }
 
     private static Bestellkarte bestellkarte(final String hoerernummer,
-                                             final String titelnummer, final String letztesBestelldatum) {
+                                             final String titelnummer,
+                                             final String letztesBestelldatum) {
         return new Bestellkarte(new Hoerernummer(hoerernummer),
                 null != titelnummer ? new Titelnummer(titelnummer) : null,
                 Datenformat.localDateOf(hoerernummer, "Letztes Bestelldatum", letztesBestelldatum));
+    }
+
+    private void leseAs400Datei(final Charset csvCharset, int expectedLineCount,
+                                final Path bkstpCsv) {
+        if (Files.exists(bkstpCsv)) {
+            LOGGER.info("Lese CSV-Datei {} mit Zeichensatz {} und erwarteter Anzahl Zeilen {}",
+                    bkstpCsv, csvCharset, expectedLineCount);
+            LocalDateTime start = LocalDateTime.now();
+            bkstp.flatParseLines(csvCharset, expectedLineCount, bkstpCsv);
+            LOGGER.info("CSV-Datei {} gelesen (Anzahl: {}), es dauerte {} ms",
+                    bkstpCsv, bkstp.size(),
+                    Duration.between(start, LocalDateTime.now()).toMillis());
+            start = LocalDateTime.now();
+            bestellkarten = bkstp.getRows()
+                    .parallelStream()
+                    .map(this::parseAlleBestellkarten)
+                    .collect(Collectors.toUnmodifiableMap(o -> o.get(0).getHoerernummer(),
+                            o -> o.subList(1, o.size())));
+            LOGGER.info("Bestellkarten erzeugt ({} BKSTP -> {} Hörer), es dauerte {} ms",
+                    bkstp.size(), bestellkarten.size(),
+                    Duration.between(start, LocalDateTime.now()).toMillis());
+        } else {
+            LOGGER.warn("CSV-Dateien {} nicht gefunden/lesbar", bkstpCsv);
+            bestellkarten = Collections.emptyMap();
+        }
+    }
+
+    public boolean hatDatenEingelesen() {
+        return !bestellkarten.isEmpty();
     }
 
     private List<Bestellkarte> parseAlleBestellkarten(final String[] bkrxstpRow) {
@@ -99,7 +123,7 @@ final class BestellkartenMapper {
     }
 
     List<Bestellkarte> bestellkartenFuer(final Hoerernummer hoerernummer) {
-        return bestellkarten.get(hoerernummer);
+        return /* TODO NPE wenn keine Daten eingelesen */bestellkarten.getOrDefault(hoerernummer, Collections.emptyList());
     }
 
 }

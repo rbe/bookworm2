@@ -6,6 +6,10 @@
       xmlns:f="http://java.sun.com/jsf/core">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
+        <h:panelGroup rendered="#{hoererSession.hoererIstUnbekannt}">
+            Leider ist Ihre Hörernummer dem Hörbuchkatalog-System nicht bekannt.<br/>
+            Bitte melden Sie sich <a href="/cb-login.html">hier</a> an oder wenden Sie sich an die WBH.
+        </h:panelGroup>
         <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
                       layout="block" styleClass="leading">
             <h2 class="contentheading ">Mein Hörbucharchiv</h2>
@@ -91,10 +95,9 @@
                 </h:panelGroup>
             </h:form>
         </h:panelGroup>
-        <div class="noticetext">
-            <h3>Hinweise</h3>
-            Hier kann ein Hinweistext stehen..
-        </div>
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="noticetext">
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

@@ -8,6 +8,8 @@
 set -o nounset
 
 umask 0007
+TZ="Europe/Berlin"
+export TZ
 
 cd /opt/bookworm
 SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" \

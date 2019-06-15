@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import aoc.ddd.model.DomainValueObject;
 
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,6 +35,16 @@ public final class Suchergebnis extends DomainValueObject {
         this.gesamtAnzahlTreffer = gesamtAnzahlTreffer;
     }
 
+    public static Suchergebnis leeresSuchergebnis(final Suchparameter suchparameter) {
+        return new Suchergebnis(suchparameter, Collections.emptyList(), 0);
+    }
+
+    public static Suchergebnis leeresSuchergebnis(final String stichwort) {
+        final Suchparameter suchparameter =
+                new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        return new Suchergebnis(suchparameter, Collections.emptyList(), 0);
+    }
+
     public Suchparameter getSuchparameter() {
         return suchparameter;
     }
@@ -51,12 +62,12 @@ public final class Suchergebnis extends DomainValueObject {
     }
 
     public boolean vorherigeVorhanden(final Titelnummer titelnummer) {
-        return titelnummern.indexOf(titelnummer) > -1;
+        return titelnummern.indexOf(titelnummer) > 0;
     }
 
     public Titelnummer vorherige(final Titelnummer titelnummer) {
-        int curIdx = titelnummern.indexOf(titelnummer);
-        return titelnummern.get(curIdx - 1);
+        int prevIdx = titelnummern.indexOf(titelnummer) - 1;
+        return prevIdx > -1 ? titelnummern.get(prevIdx) : null;
     }
 
     public boolean naechsteVorhanden(final Titelnummer titelnummer) {
@@ -64,8 +75,8 @@ public final class Suchergebnis extends DomainValueObject {
     }
 
     public Titelnummer naechste(final Titelnummer titelnummer) {
-        int curIdx = titelnummern.indexOf(titelnummer);
-        return titelnummern.get(curIdx + 1);
+        int nextIdx = titelnummern.indexOf(titelnummer) + 1;
+        return nextIdx <= titelnummern.size() ? titelnummern.get(nextIdx) : null;
     }
 
     @Override

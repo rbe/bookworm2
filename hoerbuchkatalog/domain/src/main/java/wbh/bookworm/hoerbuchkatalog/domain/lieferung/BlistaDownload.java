@@ -108,7 +108,7 @@ public final class BlistaDownload extends DomainValueObject {
         this.gesperrt = gesperrt;
         this.bezugsfaehig &= /* TODO isUrl(String) */
                 gesperrt == 0 &&
-                null != downloadLink && !downloadLink.trim().isEmpty();
+                null != downloadLink && !downloadLink.isBlank();
     }
 
     public static BlistaDownload of(final Hoerernummer hoerernummer,

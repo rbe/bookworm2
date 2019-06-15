@@ -10,54 +10,47 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
-import aoc.tools.datatransfer.Executor;
+import aoc.ddd.repository.DomainRepositoryComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Configuration;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
-@DomainRespositoryComponent
+@Configuration
+@DomainRepositoryComponent
 public class HoererRepository {
 
-    private final HoererRepositoryConfig hoererRepositoryConfig;
+    private static final Logger LOGGER = LoggerFactory.getLogger(HoererRepository.class);
 
-    private final HoererMapper hoererMapper;
+    private final ApplicationContext applicationContext;
+
+    private AtomicReference<HoererMapper> aktuellerHoererMapper;
 
     @Autowired
-    public HoererRepository(final ExecutorService executorService,
-                            final HoererRepositoryConfig hoererRepositoryConfig,
-                            final HoererMapper hoererMapper) {
-        this.hoererRepositoryConfig = hoererRepositoryConfig;
-        this.hoererMapper = hoererMapper;
-        Executor.invokeAllAndGet(executorService,
-                Collections.singletonList(new HoererMapperCallable()));
+    public HoererRepository(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.aktuellerHoererMapper = new AtomicReference<>();
+        datenEinlesen();
     }
 
-    private class HoererMapperCallable implements Callable<Void> {
-
-        @Override
-        public Void call() throws Exception {
-            hoererMapper.leseAs400Dateien(
-                    StandardCharsets.ISO_8859_1, 9_000,
-                    hoererRepositoryConfig.getDirectory().resolve("hoerstp.csv"),
-                    hoererRepositoryConfig.getDirectory().resolve("hoekzstp.csv"),
-                    hoererRepositoryConfig.getDirectory().resolve("hoebstp.csv"));
-            return null;
-        }
-
+    synchronized void datenEinlesen() {
+        LOGGER.info("Lese Hörerdaten ein");
+        aktuellerHoererMapper.set(applicationContext.getBean(HoererMapper.class));
+        LOGGER.info("Hörerdaten eingelesen");
     }
 
-    public Hoerer hoerer(final Hoerernummer hoerernummer) {
-        return hoererMapper.hoerer(hoerernummer);
+    public Optional<Hoerer> hoerer(final Hoerernummer hoerernummer) {
+        return Optional.ofNullable(aktuellerHoererMapper.get().hoerer(hoerernummer));
     }
 
     public List<Belastung> belastungen(final Hoerernummer hoerernummer) {
-        return hoererMapper.belastungenFuer(hoerernummer);
+        return aktuellerHoererMapper.get().belastungenFuer(hoerernummer);
     }
 
 }

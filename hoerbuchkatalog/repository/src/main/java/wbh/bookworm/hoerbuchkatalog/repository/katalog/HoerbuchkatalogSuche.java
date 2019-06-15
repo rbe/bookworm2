@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,22 +70,32 @@ final class HoerbuchkatalogSuche {
     }
 
     Suchergebnis sucheNachStichwort(final String stichwort) {
+        Objects.requireNonNull(stichwort);
+        if (stichwort.isBlank()) {
+            return Suchergebnis.leeresSuchergebnis(stichwort);
+        }
         // TODO final String stichwort = suchparameter.wert(Feld.STICHWORT);
         LOGGER.trace("Suche nach Stichwort '{}'", stichwort);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
-                .add(new QueryParameters.Field(Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .add(new QueryParameters.Field(Suchparameter.Feld.TITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .add(new QueryParameters.Field(Suchparameter.Feld.UNTERTITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .add(new QueryParameters.Field(Suchparameter.Feld.ERLAEUTERUNG.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .add(new QueryParameters.Field(Suchparameter.Feld.SUCHWOERTER.name(), QueryParameters.Occur.SHOULD), stichwort);
-        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.TITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.UNTERTITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.ERLAEUTERUNG.name(), QueryParameters.Occur.SHOULD), stichwort)
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.SUCHWOERTER.name(), QueryParameters.Occur.SHOULD), stichwort);
+        final LuceneQuery.Result result = LuceneQuery.query(
+                this.luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         final List<Titelnummer> titelnummern = result.getDomainIds()
-                        .stream()
-                        .map(dddId -> new Titelnummer(dddId.getValue()))
-                        .collect(Collectors.toUnmodifiableList());
-        final Suchparameter suchparameter =
-                new Suchparameter().hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+                .stream()
+                .map(dddId -> new Titelnummer(dddId.getValue()))
+                .collect(Collectors.toUnmodifiableList());
+        final Suchparameter suchparameter = new Suchparameter().hinzufuegen(
+                Suchparameter.Feld.STICHWORT, stichwort);
         final Suchergebnis suchergebnis = new Suchergebnis(
                 suchparameter, titelnummern, result.getTotalMatchingCount());
         LOGGER.debug("Suche nach Stichwort '{}' ergab {}", stichwort, suchergebnis);
@@ -92,12 +103,29 @@ final class HoerbuchkatalogSuche {
     }
 
     Suchergebnis suchen(final Suchparameter suchparameter) {
+        Objects.requireNonNull(suchparameter);
+        if (!suchparameter.isWerteVorhanden()) {
+            return Suchergebnis.leeresSuchergebnis(suchparameter);
+        }
         LOGGER.info("Suche nach '{}'", suchparameter);
-        final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
-                .add(new QueryParameters.Field(Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.SHOULD), suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
-        suchparameter.getFelderMitWerten().keySet()
-                .forEach(k -> booleanQueryBuilder.add(new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST), suchparameter.wert(k)));
-        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex, booleanQueryBuilder, 1000,
+        final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder();
+        if (!suchparameter.wert(Suchparameter.Feld.SACHGEBIET).isBlank()) {
+            booleanQueryBuilder.addExactPhrase(new QueryParameters.Field(
+                    Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
+                    suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
+        }
+        final Suchparameter ohneSachgebiet = new Suchparameter(suchparameter);
+        ohneSachgebiet.entfernen(Suchparameter.Feld.SACHGEBIET);
+        ohneSachgebiet.getFelderMitWerten().keySet()
+                .forEach(k -> {
+                    if (!suchparameter.wert(k).isBlank()) {
+                        booleanQueryBuilder.addLowercaseWildcard(
+                                new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST),
+                                suchparameter.wert(k).trim());
+                    }
+                });
+        final LuceneQuery.Result result = LuceneQuery.query(
+                luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         final List<Titelnummer> titelnummern = result.getDomainIds()
                 .stream()

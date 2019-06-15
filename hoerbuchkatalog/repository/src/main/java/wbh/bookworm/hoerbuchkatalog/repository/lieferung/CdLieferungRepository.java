@@ -10,37 +10,43 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
-import aoc.tools.datatransfer.Executor;
+import aoc.ddd.repository.DomainRepositoryComponent;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
-import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.atomic.AtomicReference;
 
 // TODO Daten aus dem Mapper hier speichern
-@DomainRespositoryComponent
+// TODO Umbenennen: (Hoerbuch)ArchivRepository
+@DomainRepositoryComponent
 public class CdLieferungRepository {
 
-    private final CdLieferungRepositoryConfig cdLieferungRepositoryConfig;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CdLieferungRepository.class);
 
-    private final BestellkartenMapper bestellkartenMapper;
+    private final ApplicationContext applicationContext;
 
-    private final ErledigteBestellkartenMapper erledigteBestellkartenMapper;
+    private final AtomicReference<BestellkartenMapper> aktuellerBestellkartenMapper;
+
+    private final AtomicReference<ErledigteBestellkartenMapper> aktuellerErledigteBestellkartenMapper;
 
     @Autowired
-    public CdLieferungRepository(final ExecutorService executorService,
-                                 final CdLieferungRepositoryConfig cdLieferungRepositoryConfig,
-                                 final BestellkartenMapper bestellkartenMapper,
-                                 final ErledigteBestellkartenMapper erledigteBestellkartenMapper) {
-        this.cdLieferungRepositoryConfig = cdLieferungRepositoryConfig;
-        this.bestellkartenMapper = bestellkartenMapper;
-        this.erledigteBestellkartenMapper = erledigteBestellkartenMapper;
-        Executor.invokeAllAndGet(executorService, Arrays.asList(
-                new BestellkartenCallable(), new ErledigteBestellkartenCallable()));
+    public CdLieferungRepository(final ApplicationContext applicationContext) {
+        this.applicationContext = applicationContext;
+        this.aktuellerBestellkartenMapper = new AtomicReference<>();
+        this.aktuellerErledigteBestellkartenMapper = new AtomicReference<>();
+        datenEinlesen();
+    }
+
+    synchronized void datenEinlesen() {
+        LOGGER.info("Lese erledigte Bestellkarten und Bestellkarten ein");
+        aktuellerBestellkartenMapper.set(applicationContext.getBean(BestellkartenMapper.class));
+        aktuellerErledigteBestellkartenMapper.set(applicationContext.getBean(
+                ErledigteBestellkartenMapper.class));
+        LOGGER.info("Erledigte Bestellkarten und Bestellkarten eingelesen");
     }
 
     private class BestellkartenCallable implements Callable<Void> {
@@ -56,23 +62,15 @@ public class CdLieferungRepository {
     }
 
     public List<Bestellkarte> bestellkarten(final Hoerernummer hoerernummer) {
-        return bestellkartenMapper.bestellkartenFuer(hoerernummer);
-    }
-
-    private class ErledigteBestellkartenCallable implements Callable<Void> {
-
-        @Override
-        public Void call() throws Exception {
-            erledigteBestellkartenMapper.leseAs400Datei(
-                    StandardCharsets.ISO_8859_1, 2_900_000,
-                    cdLieferungRepositoryConfig.getDirectory().resolve("bkrxstp.csv"));
-            return null;
-        }
-
+        return aktuellerBestellkartenMapper.get().bestellkartenFuer(hoerernummer);
     }
 
     public List<ErledigteBestellkarte> erledigteBestellkarten(final Hoerernummer hoerernummer) {
-        return erledigteBestellkartenMapper.erledigteBestellkartenFuer(hoerernummer);
+        return aktuellerErledigteBestellkartenMapper.get().erledigteBestellkartenFuer(hoerernummer);
+    }
+
+    public boolean hatErledigteBestellkarten() {
+        return aktuellerErledigteBestellkartenMapper.get().hatDatenEingelesen();
     }
 
 }

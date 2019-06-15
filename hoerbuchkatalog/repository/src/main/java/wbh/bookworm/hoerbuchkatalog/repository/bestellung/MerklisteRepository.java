@@ -17,7 +17,7 @@ import aoc.ddd.repository.JsonDomainRepository;
 import java.nio.file.Path;
 import java.util.Optional;
 
-// TODO @DomainRespositoryComponent
+// TODO @DomainRepositoryComponent
 public class MerklisteRepository extends JsonDomainRepository<Merkliste, MerklisteId> {
 
     public MerklisteRepository(final Path storagePath) {

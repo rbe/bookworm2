@@ -29,19 +29,21 @@ public final class HoererService {
         this.hoererRepository = hoererRepository;
     }
 
-    public Optional<Hoerer> hoerer(final Hoerernummer hoerernummer) {
+    public Hoerer hoerer(final Hoerernummer hoerernummer) {
         /* TODO Security Context */if (hoerernummer.isUnbekannt()) {
-            return Optional.empty();// TODO Hoerer.UNBEKANNT;
+            return Hoerer.UNBEKANNT;
         } else {
-            final Hoerer hoerer = hoererRepository.hoerer(hoerernummer);
-            if (hoerer.isBekannt()) {
-                LOGGER.debug("Hörerdaten für Hörer {} gefunden", hoerernummer);
-                return Optional.of(hoerer);
-            } else {
-                LOGGER.warn("Keine Hörerdaten für Hörer {} gefunden", hoerernummer);
+            final Optional<Hoerer> hoerer = hoererRepository.hoerer(hoerernummer);
+            if (hoerer.isPresent()) {
+                if (hoerer.get().isBekannt()) {
+                    LOGGER.debug("Hörerdaten für Hörer {} gefunden", hoerernummer);
+                    return hoerer.get();
+                } else {
+                    LOGGER.warn("Keine Hörerdaten für Hörer {} gefunden", hoerernummer);
+                }
             }
         }
-        return Optional.empty();
+        return Hoerer.UNBEKANNT;
     }
 
 }

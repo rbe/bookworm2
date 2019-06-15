@@ -19,15 +19,23 @@ import java.sql.ResultSet;
 
 public final class MerklisteMigrator {
 
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/bookworm";
+    private static String jdbcUrl = "jdbc:mysql://localhost:3306/bookworm";
 
-    private static final String JDBC_USER = "root";
+    private static String jdbcUser;
 
-    private static final String JDBC_SECRET = "Ad0p1az";
+    private static String jdbcSecret;
 
     public static void main(String[] args) throws Exception {
-        final MerklisteRepository r = new MerklisteRepository(Path.of("target/migrated"));
-        final Connection connection = DriverManager.getConnection(JDBC_URL, JDBC_USER, JDBC_SECRET);
+        if (args.length != 4) {
+            System.out.printf("usage: %s <repository path> <JDBC url> <username> <password>%n",
+                    MerklisteMigrator.class.getSimpleName());
+            System.exit(1);
+        }
+        final MerklisteRepository r = new MerklisteRepository(Path.of(args[3]));
+        jdbcUrl = args[0];
+        jdbcUser = args[1];
+        jdbcSecret = args[2];
+        final Connection connection = DriverManager.getConnection(jdbcUrl, jdbcUser, jdbcSecret);
         final PreparedStatement titelnummernStatement = connection.prepareStatement(
                 "SELECT BOOKS_TITELNUMMER FROM Wishlist_Book b WHERE WISHLIST_ID = ?");
         final PreparedStatement wunschlistenStatement = connection.prepareStatement(

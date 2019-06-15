@@ -66,8 +66,7 @@ class SftpClient {
 
     private Properties getSessionConfig() {
         final Properties config = new Properties();
-        /* TODO Security */
-        config.put("StrictHostKeyChecking", "no");
+        /* TODO Security */config.put("StrictHostKeyChecking", "no");
         return config;
     }
 

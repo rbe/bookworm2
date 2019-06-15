@@ -10,6 +10,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
 import aoc.ddd.event.DomainAggregateWriteEvent;
 
+import java.util.Objects;
+
 /**
  * Event
  */
@@ -21,6 +23,7 @@ public class BestellungAufgegeben extends DomainAggregateWriteEvent<Bestellung, 
 
     public BestellungAufgegeben(final Hoerernummer hoerernummer, final Bestellung bestellung) {
         super(bestellung);
+        Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
     }
 

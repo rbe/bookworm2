@@ -2,6 +2,7 @@
 <configuration>
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <include resource="logback-properties.xml"/>
+    <jmxConfigurator/>
     <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
         <encoder>
             <pattern>
@@ -25,6 +26,9 @@
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure" level="INFO" additivity="false">
+        <appender-ref ref="STDOUT"/>
+    </logger>
+    <logger name="wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="INFO" additivity="false">

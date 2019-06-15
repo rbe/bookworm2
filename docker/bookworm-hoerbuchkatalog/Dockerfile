@@ -5,6 +5,12 @@ LABEL project="Bookworm"
 
 ENV buildNumber=LocalBuild
 
+ENV TZ Europe/Berlin
+RUN echo "Europe/Berlin" >/etc/timezone \
+    && rm /etc/localtime \
+    && ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata
+
 RUN groupadd -g 4801 bookworm \
     && useradd -u 4801 -g bookworm bookworm
 
@@ -23,6 +29,8 @@ RUN mkdir templates \
     && mkdir repository/Merkliste \
     && mkdir repository/Warenkorb \
     && mkdir wbh \
+    && mkdir wbh/aktualisierung \
+    && mkdir wbh/aktualisierung/eingangskorb \
     && mkdir wbh/hoerbuchkatalog \
     && mkdir wbh/nutzerdaten \
     && mkdir blista \
@@ -49,6 +57,8 @@ RUN chown -R bookworm:bookworm . \
     && find var/templates -type f -print0 | xargs -0 chmod 660 \
     && chmod 555 var/templates \
     && chown root:root var/wbh \
+    && chmod 750 var/wbh/aktualisierung \
+    && chmod 750 var/wbh/aktualisierung/eingangskorb \
     && chmod 750 var/wbh/hoerbuchkatalog \
     && chmod 750 var/wbh/nutzerdaten \
     && chown root:root var/repository \

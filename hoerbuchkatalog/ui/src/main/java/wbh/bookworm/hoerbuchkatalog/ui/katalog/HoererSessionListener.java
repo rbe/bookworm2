@@ -20,14 +20,14 @@ public class HoererSessionListener implements HttpSessionListener {
 
     @Override
     public void sessionCreated(final HttpSessionEvent httpSessionEvent) {
-        LOGGER.debug("HttpSession {} für Hörer {} erstellt",
+        LOGGER.info("HttpSession {} für Hörer {} erstellt",
                 httpSessionEvent.getSession().getId(),
                 httpSessionEvent.getSession().getAttribute(SessionKey.HOERERNUMMER));
     }
 
     @Override
     public void sessionDestroyed(final HttpSessionEvent httpSessionEvent) {
-        LOGGER.debug("HttpSession {} für Hörer {} beendet",
+        LOGGER.info("HttpSession {} für Hörer {} beendet",
                 httpSessionEvent.getSession().getId(),
                 httpSessionEvent.getSession().getAttribute(SessionKey.HOERERNUMMER));
     }

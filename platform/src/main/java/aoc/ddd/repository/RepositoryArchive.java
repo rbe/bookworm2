@@ -18,6 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -29,10 +30,12 @@ public final class RepositoryArchive {
     private final Path archiveDirectory;
 
     public RepositoryArchive(final Path archiveDirectory) {
+        Objects.requireNonNull(archiveDirectory);
         this.archiveDirectory = archiveDirectory;
         // TODO Funktioniert nicht mit Docker; sftp chroot/Dateisystemrechten createDirectoryOrFail();
     }
 
+    /*
     private void createDirectoryOrFail() {
         LOGGER.trace("Checking directory '{}", archiveDirectory);
         final boolean directoryExists = Files.exists(archiveDirectory) || archiveDirectory.toFile().exists();
@@ -46,6 +49,7 @@ public final class RepositoryArchive {
         }
         LOGGER.debug("Archive directory is '{}'", archiveDirectory.toAbsolutePath());
     }
+    */
 
     private String[] filenameAndExtension(final Path filename) {
         final String[] splitByDot = filename.getFileName().toString().split("[.]");
@@ -74,10 +78,12 @@ public final class RepositoryArchive {
     }
 
     public boolean exists(final Path name) {
+        Objects.requireNonNull(name);
         return Files.exists(archiveDirectory.resolve(name));
     }
 
     public Optional<Path> find(final Path name) throws RepositoryArchiveException {
+        Objects.requireNonNull(name);
         final String[] fext = filenameAndExtension(name);
         try (final Stream<Path> paths = Files.list(archiveDirectory)
                 .filter(p -> p.getFileName().toString().startsWith(fext[0])
@@ -96,11 +102,12 @@ public final class RepositoryArchive {
         }
     }
 
-    /** TODO Test */
+    /* TODO Test
     public static void main(String[] args) throws RepositoryArchiveException {
         final RepositoryArchive repositoryArchive = new RepositoryArchive(Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/assembly/var/hoerbuchkatalog"));
         System.out.printf("%s%n", repositoryArchive.find(Path.of("Gesamt.dat")));
         System.out.printf("%s%n", repositoryArchive.exists(Path.of("Gesamt.dat")));
     }
+    */
 
 }

@@ -17,6 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
+import javax.faces.application.FacesMessage;
+import javax.faces.component.UIComponent;
+import javax.faces.context.FacesContext;
+
 @Component
 @RequestScope
 public class Katalogsuche {
@@ -54,11 +58,11 @@ public class Katalogsuche {
         return Sachgebiet.values();
     }
 
-    public String getSachgebiet() {
+    public String getSpSachgebiet() {
         return hoererSession.wertDesSuchparameters(Suchparameter.Feld.SACHGEBIET);
     }
 
-    public void setSachgebiet(final String sachgebiet) {
+    public void setSpSachgebiet(final String sachgebiet) {
         hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
     }
 
@@ -108,15 +112,33 @@ public class Katalogsuche {
         }
     }
 
+    private UIComponent sachgebietUiComponent;
+    public void setSachgebiet(final UIComponent sachgebietUiComponent) {
+        this.sachgebietUiComponent = sachgebietUiComponent;
+    }
+    public UIComponent getSachgebiet() {return sachgebietUiComponent;}
+
     public String suchen() {
-        LOGGER.trace("Suche mit '{}' starten", hoererSession.getSuchparameter());
-        final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(
-                hoererSession.getHoerernummer(), hoererSession.getSuchparameter());
-        if (suchergebnis.getAnzahl() > 0) {
-            katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
-            return Navigation.NAV_SUCHERGEBNIS;
+        final Suchparameter.Feld[] suchfelder = hoererSession.getSuchparameter()
+                .getFeldnamenMitWerten();
+        final boolean sucheNurNachSachgebiet = suchfelder.length == 1
+                && suchfelder[0].luceneName().equals("sachgebiet");
+        if (sucheNurNachSachgebiet) {
+            final FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
+                    "Suche erweitern", "Bitte weitere Suchbegriffe neben dem Sachgebiet hinzufügen.");
+            final FacesContext facesContext = FacesContext.getCurrentInstance();
+            facesContext.addMessage(sachgebietUiComponent.getClientId(facesContext), message);
+            return null;
         } else {
-            return Navigation.NAV_KEINE_SUCHERGEBNISSE;
+            LOGGER.trace("Suche mit '{}' starten", hoererSession.getSuchparameter());
+            final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(
+                    hoererSession.getHoerernummer(), hoererSession.getSuchparameter());
+            if (suchergebnis.getAnzahl() > 0) {
+                katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
+                return Navigation.NAV_SUCHERGEBNIS;
+            } else {
+                return Navigation.NAV_KEINE_SUCHERGEBNISSE;
+            }
         }
     }
 

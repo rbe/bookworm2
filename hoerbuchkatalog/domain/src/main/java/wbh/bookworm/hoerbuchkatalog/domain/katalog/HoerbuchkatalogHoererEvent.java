@@ -8,6 +8,8 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
+import java.util.Objects;
+
 public abstract class HoerbuchkatalogHoererEvent extends HoerbuchkatalogEvent {
 
     private static final long serialVersionUID = -1L;
@@ -15,6 +17,7 @@ public abstract class HoerbuchkatalogHoererEvent extends HoerbuchkatalogEvent {
     private final Hoerernummer hoerernummer;
 
     public HoerbuchkatalogHoererEvent(final Hoerernummer hoerernummer) {
+        Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
     }
 

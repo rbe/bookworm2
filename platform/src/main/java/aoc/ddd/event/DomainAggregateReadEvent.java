@@ -9,6 +9,8 @@ package aoc.ddd.event;
 import aoc.ddd.model.DomainAggregate;
 import aoc.ddd.model.DomainId;
 
+import java.util.Objects;
+
 @SuppressWarnings({"squid:S00119"})
 public class DomainAggregateReadEvent
         <AGG extends DomainAggregate<AGG, ID>, ID extends DomainId<String>>
@@ -17,6 +19,7 @@ public class DomainAggregateReadEvent
     private final DomainAggregate<AGG, ID> domainAggregate;
 
     public DomainAggregateReadEvent(final DomainAggregate<AGG, ID> domainAggregate) {
+        Objects.requireNonNull(domainAggregate);
         this.domainAggregate = domainAggregate;
     }
 

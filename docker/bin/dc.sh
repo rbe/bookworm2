@@ -10,7 +10,7 @@ set -o nounset
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
 platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
 
-if [[ -z "${VERSION:-}" ]]
+if [[ ! -f .env && -z "${VERSION:-}" ]]
 then
     echo "Please set VERSION, e.g. export VERSION=LocalBuild"
     exit 1
@@ -23,15 +23,15 @@ function bookworm_docker() {
     pushd ${execdir}/.. >/dev/null
     docker-compose \
         -p wbhonline \
-        -f wbhcms/docker-compose.yml \
+        -f cms/docker-compose.yml \
         -f bookworm/docker-compose.yml \
-        -f wbhonline/docker-compose.yml \
+        -f rproxy/docker-compose.yml \
         $*
     popd >/dev/null
 }
 
 case "${mode}" in
-    build)
+    assembly)
         prjdir=$(pushd ${execdir}/../../ >/dev/null ; pwd ; popd >/dev/null)
         pushd ${prjdir} >/dev/null
         ./build.sh assembly
@@ -98,14 +98,30 @@ case "${mode}" in
     ;;
     start)
         bookworm_docker start admin
+        # Konfiguration
         bookworm_docker exec admin chmod 660 /opt/bookworm/conf/secrets.json
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/conf/secrets.json
+        # Daten - Hörbuchkatalog
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/hoerbuchkatalog
         bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/hoerbuchkatalog/
         bookworm_docker exec admin chmod -R 770 /opt/bookworm/var/wbh/hoerbuchkatalog
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Bestellung/*
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Merkliste/*
+        # Daten - Nutzerdaten
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/nutzerdaten
         bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/nutzerdaten/
         bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/nutzerdaten
+        # Aktualisierung der Daten
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung
+        bookworm_docker exec admin chown root:root /opt/bookworm/var/wbh/aktualisierung
+        bookworm_docker exec admin chmod 555 /opt/bookworm/var/wbh/aktualisierung
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
+        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
+        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
+        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
+        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
+        #
         bookworm_docker start
     ;;
     stop)
@@ -115,12 +131,12 @@ case "${mode}" in
         bookworm_docker ps
     ;;
     logs)
-        bookworm_docker logs $1
+        bookworm_docker logs $*
     ;;
     restart)
         if [[ $# -lt 1 ]]
         then
-            echo "usage: $0 restart <service...>"
+            echo "usage: $0 restart <container ...>"
             exit 1
         fi
         bookworm_docker restart $*
@@ -139,7 +155,7 @@ case "${mode}" in
     console)
         if [[ $# -lt 1 ]]
         then
-            echo "usage: $0 console <service>"
+            echo "usage: $0 console <container>"
             exit 1
         fi
         bookworm_docker exec $1 sh
@@ -155,7 +171,8 @@ case "${mode}" in
         $0 start
     ;;
     *)
-        echo "usage: $0 { init | clean | start | stop | restart | down | exec | health }"
+        echo "usage: $0 { assembly | init | clean | start | stop | restart | down | exec | console | health | recreate-all }"
+        echo "  assembly"
         echo "  init"
         echo "  copy-data"
         echo "  clean { containers | volumes | networks | images | all }"
@@ -164,7 +181,9 @@ case "${mode}" in
         echo "  restart"
         echo "  down"
         echo "  exec <container> <command>"
+        echo "  console <container>"
         echo "  health"
+        echo "  recreate-all"
         exit 1
     ;;
 esac

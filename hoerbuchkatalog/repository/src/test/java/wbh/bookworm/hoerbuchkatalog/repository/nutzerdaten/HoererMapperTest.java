@@ -20,6 +20,7 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
 
 @SpringBootTest(classes = {NutzerdatenAppConfig.class})
 @ExtendWith(SpringExtension.class)
@@ -27,10 +28,14 @@ class HoererMapperTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapperTest.class);
 
+    private final ExecutorService executorService;
+
     private final HoererMapper hoererMapper;
 
     @Autowired
-    HoererMapperTest(final HoererMapper hoererMapper) {
+    HoererMapperTest(final ExecutorService executorService,
+                     final HoererMapper hoererMapper) {
+        this.executorService = executorService;
         this.hoererMapper = hoererMapper;
     }
 
@@ -40,7 +45,8 @@ class HoererMapperTest {
         /* TODO Konfiguration */final Path hoerstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoerstp.csv");
         /* TODO Konfiguration */final Path hoebstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoebstp.csv");
         /* TODO Konfiguration */final Path hoekzstp = Path.of(string + "/src/test/var/wbh/nutzerdaten/hoekzstp.csv");
-        hoererMapper.leseAs400Dateien(StandardCharsets.ISO_8859_1, 9_000,
+        hoererMapper.leseAs400Dateien(executorService,
+                StandardCharsets.ISO_8859_1, 9_000,
                 hoerstp, hoekzstp, hoebstp);
     }
 

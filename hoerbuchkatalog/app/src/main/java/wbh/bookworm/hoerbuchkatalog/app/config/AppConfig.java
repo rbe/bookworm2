@@ -14,24 +14,21 @@ import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
+
+import aoc.fs.FilesystemWatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.annotation.EnableAsync;
-import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.thymeleaf.TemplateEngine;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 @Configuration
 @Import({
@@ -40,6 +37,8 @@ import java.util.concurrent.Executors;
         InfrastructureBlistaConfig.class
 })
 @ComponentScan(basePackageClasses = {
+        FilesystemWatcher.class,
+        RepositoryResolver.class,
         HoerbuchkatalogService.class,
         BestellungService.class,
         DownloadsLieferungService.class,
@@ -58,25 +57,30 @@ public class AppConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-    // TODO ConcurrentTaskExecutor?
+/*
     @Bean
-    @ConditionalOnMissingBean
-    public TaskExecutor taskExecutor() {
+    @Primary
+    //@ConditionalOnMissingBean
+    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
         final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setCorePoolSize(5);
-        taskExecutor.setMaxPoolSize(10);
         taskExecutor.setThreadNamePrefix("hoerbuchkatalogExecutor-");
+        taskExecutor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
+        taskExecutor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 10);
+        taskExecutor.setQueueCapacity(0);
         taskExecutor.initialize();
+        LOGGER.debug("Created {}", taskExecutor);
         return taskExecutor;
     }
 
     @Bean
-    @ConditionalOnMissingBean
+    @Primary
+    //@ConditionalOnMissingBean
     public ExecutorService executorService() {
         final ExecutorService executorService = Executors.newWorkStealingPool(
-                Runtime.getRuntime().availableProcessors() / 2);
+                Runtime.getRuntime().availableProcessors());
         LOGGER.debug("Created {}", executorService);
         return executorService;
     }
+*/
 
 }

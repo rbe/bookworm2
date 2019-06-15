@@ -9,16 +9,13 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <div class="leading">
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="leading">
             <div class="download-success">
                 <h3>Leider ist ein Problem aufgetreten!</h3>
                 <h:outputText styleClass="line15 baskettext" value="Ihre Bestellung wurde nicht übermittelt!"/>
             </div>
-        </div>
-        <div class="noticetext">
-            <h3>Platz für Hinweistext</h3>
-            Hier kann eine Erklärung stehen.....
-        </div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

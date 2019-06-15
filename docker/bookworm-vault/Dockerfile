@@ -3,6 +3,8 @@ FROM alpine:3.9
 ENV VAULT_VERSION 1.1.0
 ENV PATH "/opt/vault:$PATH"
 
+ENV TZ Europe/Berlin
+
 RUN apk --no-cache add --virtual .deps \
       libcap \
       bash \

@@ -12,7 +12,7 @@
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
         <h:form id="katalogsuchergebnisForm">
-            <div class="leading">
+            <h:panelGroup layout="block" styleClass="leading">
                 <h2 class="contentheading">Ihre Suchergebnisse</h2>
                 <hk:navigation/>
                 <h:panelGroup rendered="#{katalogsuchergebnis.suchparameterAlsText.length() > 0}"
@@ -30,18 +30,18 @@
                                           value="keine"/>
                         </span>
                         Treffer.
-                        <h:panelGroup rendered="#{katalogsuchergebnis.anzahl >= 1000}"
+                        <h:panelGroup rendered="#{katalogsuchergebnis.gesamtAnzahlTreffer > 1000}"
                                       layout="block">
-                            &nbsp;Die Anzeige wird auf <h:outputText value="#{katalogsuchergebnis.anzahl}"/> begrenzt.
+                            Die Anzeige wird auf 1000 begrenzt.
                         </h:panelGroup>
                     </p>
                 </h:panelGroup>
-                <h:dataTable id="suchergebnisTabelle"
+                <h:dataTable rendered="#{katalogsuchergebnis.anzahl > 0}"
+                             id="suchergebnisTabelle"
                              styleClass="tab result-table"
                              columnClasses="result-column1,result-column2,result-column3,result-column4,result-column5"
                              rowClasses="result-row1,result-row2"
                              cellpadding="0" cellspacing="0"
-                             rendered="#{katalogsuchergebnis.anzahl > 0}"
                              value="#{katalogsuchergebnis.aktuelleSeite}" var="belastung"
                              rows="#{katalogsuchergebnis.anzahlHoerbuecherProSeite}">
                     <h:column headerClass="result-column-header">
@@ -100,9 +100,10 @@
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
 
-                        <h:commandLink rendered="#{meineMerkliste.isMerklisteHinzufuegenAnzeigen(belastung.titelnummer)}"
-                                       styleClass="basket-order-link wishlist"
-                                       action="#{meineMerkliste.hinzufuegen(belastung.titelnummer)}" value="Merken">
+                        <h:commandLink
+                                rendered="#{meineMerkliste.isMerklisteHinzufuegenAnzeigen(belastung.titelnummer)}"
+                                styleClass="basket-order-link wishlist"
+                                action="#{meineMerkliste.hinzufuegen(belastung.titelnummer)}" value="Merken">
                             <f:ajax event="action" execute="@form" render="@form"/>
                         </h:commandLink>
                         <h:commandLink rendered="#{meineMerkliste.isMerklisteEntfernenAnzeigen(belastung.titelnummer)}"
@@ -126,12 +127,15 @@
                         </h:panelGroup>
                     </f:facet>
                 </h:dataTable>
-            </div>
+            </h:panelGroup>
         </h:form>
-        <div class="noticetext">
+        <h:panelGroup layout="block" styleClass="noticetext">
             <h3>Hinweise für bessere Suchergebnisse</h3>
-            Die Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>Eine Suche nach »test« findet also auch »späteste«.
-        </div>
+            <p>
+                Die Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>
+                Eine Suche nach »test« findet also auch »späteste«.
+            </p>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

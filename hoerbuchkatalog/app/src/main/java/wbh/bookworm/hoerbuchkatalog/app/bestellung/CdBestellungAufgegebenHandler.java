@@ -12,6 +12,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
 import aoc.ddd.event.DomainEventPublisher;
@@ -31,19 +32,19 @@ import java.util.stream.Collectors;
 @Component
 class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
 
-    private final Hoerbuchkatalog hoerbuchkatalog;
+    private final RepositoryResolver repositoryResolver;
 
     private final EmailTemplateBuilder emailTemplateBuilder;
 
     private final EmailService emailService;
 
     @Autowired
-    CdBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
+    CdBestellungAufgegebenHandler(final RepositoryResolver repositoryResolver,
                                   final EmailTemplateBuilder emailTemplateBuilder,
                                   final EmailService emailService) {
         super(BestellungAufgegeben.class);
         logger.trace("Initializing");
-        this.hoerbuchkatalog = hoerbuchkatalog;
+        this.repositoryResolver = repositoryResolver;
         this.emailTemplateBuilder = emailTemplateBuilder;
         this.emailService = emailService;
         DomainEventPublisher.global().subscribe(this);
@@ -55,6 +56,7 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
         final BestellungId bestellungId = domainEvent.getDomainId();
         logger.info("Bestellung {}: Hörer {} hat folgende CDs bestellt: {}",
                 bestellungId, domainEvent.getHoerernummer(), bestellung.getCdTitelnummern());
+        final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         final Set<Hoerbuch> hoerbucher = bestellung.getCdTitelnummern().stream().
                 map(hoerbuchkatalog::hole)
                 .collect(Collectors.toSet());
@@ -81,7 +83,7 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
                 domainEvent.getDomainId(), domainEvent.getHoerernummer());
         try {
             final Path archivDatei = Path.of("var/repository/Bestellung",
-                            domainEvent.getDomainId() + "-CDBestellung.html");
+                    domainEvent.getDomainId() + "-CDBestellung.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
             logger.info("E-Mail zu Bestellung {} an Hörer {} unter {} archiviert",

@@ -19,6 +19,7 @@ public class DomainAggregateWriteEvent
     private final DomainAggregate<AGG, ID> domainAggregate;
 
     public DomainAggregateWriteEvent(final DomainAggregate<AGG, ID> domainAggregate) {
+        Objects.requireNonNull(domainAggregate);
         this.domainAggregate = domainAggregate;
     }
 

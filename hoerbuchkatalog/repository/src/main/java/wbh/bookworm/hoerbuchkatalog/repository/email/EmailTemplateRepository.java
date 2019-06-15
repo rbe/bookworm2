@@ -9,12 +9,11 @@ package wbh.bookworm.hoerbuchkatalog.repository.email;
 import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateId;
 import wbh.bookworm.hoerbuchkatalog.domain.email.HtmlEmailTemplate;
 
-import aoc.ddd.repository.DomainRespositoryComponent;
 import aoc.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
 
-// TODO spring.main.allow-bean-definition-overriding=true @DomainRespositoryComponent
+// TODO spring.main.allow-bean-definition-overriding=true @DomainRepositoryComponent
 public class EmailTemplateRepository extends JsonDomainRepository<HtmlEmailTemplate, EmailTemplateId> {
 
     public EmailTemplateRepository(final Path storagePath) {

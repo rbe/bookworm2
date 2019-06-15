@@ -23,15 +23,21 @@ import aoc.tools.datatransfer.Executor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -42,11 +48,11 @@ import java.util.stream.IntStream;
 import static java.util.function.Predicate.not;
 
 @Component
+@Lazy
+@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 final class HoererMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapper.class);
-
-    private final ExecutorService executorService;
 
     private static final CsvFormat HOERSTP_CSVFORMAT = new CsvFormat();
 
@@ -244,30 +250,42 @@ final class HoererMapper {
     private Map<Hoerernummer, Hoerer> hoerer;
 
     @Autowired
-    public HoererMapper(final ExecutorService executorService) {
-        this.executorService = executorService;
+    public HoererMapper(final ExecutorService executorService,
+                        final HoererRepositoryConfig hoererRepositoryConfig) {
+        leseAs400Dateien(executorService,
+                StandardCharsets.ISO_8859_1, 9_000,
+                hoererRepositoryConfig.getDirectory().resolve("hoerstp.csv"),
+                hoererRepositoryConfig.getDirectory().resolve("hoekzstp.csv"),
+                hoererRepositoryConfig.getDirectory().resolve("hoebstp.csv"));
     }
 
-    void leseAs400Dateien(final Charset csvCharset, int expectedLineCount,
+    /* not private; see Test */
+    void leseAs400Dateien(final ExecutorService executorService,
+                          final Charset csvCharset, int expectedLineCount,
                           final Path hoerstpCsv, final Path hoekzstpCsv, final Path hoebstpCsv) {
-        LocalDateTime start = LocalDateTime.now();
-        Executor.invokeAllAndGet(executorService, Arrays.asList(
-                () -> hoerstp.flatParseLines(csvCharset, expectedLineCount, hoerstpCsv),
-                () -> hoekzstp.flatParseLines(csvCharset, expectedLineCount, hoekzstpCsv),
-                () -> hoebstp.flatParseLines(csvCharset, expectedLineCount, hoebstpCsv)
-        ));
-        LOGGER.info("Alle CSV-Dateien gelesen (Anzahl: {} HOERSTP/{} HOEKZ/{} HOEBSTP), es dauerte {} ms",
-                hoerstp.size(), hoekzstp.size(), hoebstp.size(),
-                Duration.between(start, LocalDateTime.now()).toMillis());
-        start = LocalDateTime.now();
-        hoerer = hoerstp.getRows()
-                .parallelStream()
-                .map(this::hoererAusAs400Dateien)
-                .filter(not(Objects::isNull))
-                .collect(Collectors.toUnmodifiableMap(Hoerer::getHoerernummer, o -> o));
-        LOGGER.info("Alle CSV-Dateien miteinander verknüpft ({} HOERSTP -> {} Hörer), es dauerte {} ms",
-                hoerstp.size(), hoerer.size(),
-                Duration.between(start, LocalDateTime.now()).toMillis());
+        if (Files.exists(hoerstpCsv) && Files.exists(hoekzstpCsv) && Files.exists(hoebstpCsv)) {
+            LocalDateTime start = LocalDateTime.now();
+            Executor.invokeAllAndGet(executorService, Arrays.asList(
+                    () -> hoerstp.flatParseLines(csvCharset, expectedLineCount, hoerstpCsv),
+                    () -> hoekzstp.flatParseLines(csvCharset, expectedLineCount, hoekzstpCsv),
+                    () -> hoebstp.flatParseLines(csvCharset, expectedLineCount, hoebstpCsv)
+            ));
+            LOGGER.info("Alle CSV-Dateien gelesen (Anzahl: {} HOERSTP/{} HOEKZ/{} HOEBSTP), es dauerte {} ms",
+                    hoerstp.size(), hoekzstp.size(), hoebstp.size(),
+                    Duration.between(start, LocalDateTime.now()).toMillis());
+            start = LocalDateTime.now();
+            hoerer = hoerstp.getRows()
+                    .parallelStream()
+                    .map(this::hoererAusAs400Dateien)
+                    .filter(not(Objects::isNull))
+                    .collect(Collectors.toUnmodifiableMap(Hoerer::getHoerernummer, o -> o));
+            LOGGER.info("Alle CSV-Dateien miteinander verknüpft ({} HOERSTP -> {} Hörer), es dauerte {} ms",
+                    hoerstp.size(), hoerer.size(),
+                    Duration.between(start, LocalDateTime.now()).toMillis());
+        } else {
+            LOGGER.warn("CSV-Dateien {}, {}, {} nicht gefunden/lesbar", hoerstpCsv, hoekzstpCsv, hoebstpCsv);
+            hoerer = Collections.emptyMap();
+        }
     }
 
     private Hoerer hoererAusAs400Dateien(final String[] hoerstpRow) {
@@ -320,6 +338,9 @@ final class HoererMapper {
     }
 
     private List<Belastung> belastungen(final String[] hoebstpRow) {
+        if (isEmpty(hoebstpRow)) {
+            return Collections.emptyList();
+        }
         final int stellenBoxnummer = 3;
         return IntStream.range(1, 27)
                 .mapToObj(i -> {
@@ -343,11 +364,20 @@ final class HoererMapper {
     }
 
     List<Belastung> belastungenFuer(final Hoerernummer hoerernummer) {
-        return belastungen(hoebstp.findRowByColumnValue("BUHNR", hoerernummer.getValue()));
+        final String[] buhnrs = hoebstp.findRowByColumnValue("BUHNR", hoerernummer.getValue());
+        return isNotEmpty(buhnrs) ? belastungen(buhnrs) : Collections.emptyList();
+    }
+
+    private boolean isEmpty(final String[] arr) {
+        return null == arr || arr.length == 0;
+    }
+
+    private boolean isNotEmpty(final String[] arr) {
+        return null != arr && arr.length > 0;
     }
 
     Hoerer hoerer(final Hoerernummer hoerernummer) {
-        return hoerer.get(hoerernummer);
+        return hoerer.getOrDefault(hoerernummer, Hoerer.UNBEKANNT);
     }
 
 }

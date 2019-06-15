@@ -16,6 +16,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.Auftragsquittung;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
 import aoc.ddd.event.DomainEventPublisher;
@@ -45,7 +46,7 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadBestellungAufgegebenHandler.class);
 
-    private final Hoerbuchkatalog hoerbuchkatalog;
+    private final RepositoryResolver repositoryResolver;
 
     private final DlsBestellung dlsBestellung;
 
@@ -54,13 +55,13 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
     private final EmailService emailService;
 
     @Autowired
-    DownloadBestellungAufgegebenHandler(final Hoerbuchkatalog hoerbuchkatalog,
+    DownloadBestellungAufgegebenHandler(final RepositoryResolver repositoryResolver,
                                         final DlsBestellung dlsBestellung,
                                         final EmailTemplateBuilder emailTemplateBuilder,
                                         final EmailService emailService) {
         super(BestellungAufgegeben.class);
         logger.trace("Initializing {}", this);
-        this.hoerbuchkatalog = hoerbuchkatalog;
+        this.repositoryResolver = repositoryResolver;
         this.dlsBestellung = dlsBestellung;
         this.emailTemplateBuilder = emailTemplateBuilder;
         this.emailService = emailService;
@@ -72,19 +73,25 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
         final Hoerernummer hoerernummer = domainEvent.getHoerernummer();
         final Bestellung bestellung = (Bestellung) domainEvent.getDomainAggregate();
         final Set<Titelnummer> downloadTitelnummern = bestellung.getDownloadTitelnummern();
+        final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         final AghNummer[] aghNummern = hoerbuchkatalog.titelnummerZuAghNummer(downloadTitelnummern);
         if (aghNummern.length > 0) {
             logger.info("Hörer {} hat folgende Downloads bestellt: {}/{}",
                     hoerernummer, downloadTitelnummern, aghNummern);
-            // TODO Auftragsquittungen auswerten und E-Mail anpassen (erfolglose Bestellungen)?
-            // TODO Alternativ Bestellung wiederholen
+            // TODO auftragsquittungen auswerten und E-Mail anpassen (erfolglose Bestellungen)? Alternativ Bestellung wiederholen
             final List<Auftragsquittung> auftragsquittungen = auftraegePruefen(domainEvent, aghNummern);
-            final Set<Hoerbuch> hoerbuecher = Arrays.stream(aghNummern)
-                    .map(hoerbuchkatalog::hole)
-                    .flatMap(Optional::stream)
-                    .collect(Collectors.toSet());
-            csvDateiErgaenzen(hoerernummer, hoerbuecher);
-            emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher, auftragsquittungen);
+            if (auftragsquittungen.stream().allMatch(Auftragsquittung::isUebermittlungOk)) {
+                final Set<Hoerbuch> hoerbuecher = Arrays.stream(aghNummern)
+                        .map(hoerbuchkatalog::hole)
+                        .flatMap(Optional::stream)
+                        .collect(Collectors.toSet());
+                // TODO CSV-Datei nur bei erfolgreicher Bestellung ergänzen
+                csvDateiErgaenzen(hoerernummer, hoerbuecher);
+                // TODO E-Mail nur bei erfolgreicher Bestellung versenden
+                emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher, auftragsquittungen);
+            } else {
+                LOGGER.error("{} konnte nicht aufgegeben werden", bestellung);
+            }
         } else {
             LOGGER.info("Hörer {} hat am {} keine Downloads bestellt",
                     hoerernummer, LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
@@ -132,7 +139,7 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
     private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
                                                       final Bestellung bestellung,
                                                       final Set<Hoerbuch> hoerbucher,
-                                                      /* TODO Auftragsquittungen in E-Mail berücksichtigen*/final List<Auftragsquittung> auftragsquittungen) {
+            /* TODO Auftragsquittungen in E-Mail berücksichtigen*/final List<Auftragsquittung> auftragsquittungen) {
         final String htmlEmail = emailTemplateBuilder.build(
                 "BestellbestaetigungDownload.html",
                 Map.of("bestellung", bestellung,

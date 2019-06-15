@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-  ~ All rights reserved. Use is subject to license terms.
-  -->
-
 <!DOCTYPE html [
         <!ENTITY nbsp "&#160;">
         <!ENTITY copy "&#169;">
@@ -29,12 +23,15 @@
                              type="submit"
                              value="Suchen" action="#{katalogsuche.sucheNachStichwort}"/>
         </div>
+        <h:message for="sachgebiet" showSummary="true" showDetail="false"/><br/>
+        <h:message for="sachgebiet" showSummary="false" showDetail="true"/>
         <div class="search-sachgebiet">
             <label class="suchlabel_sachgebiet">nach Sachgebiet</label>
             <!-- JAVASERVERFACES-1591 -->
             <h:selectOneMenu id="sachgebiet" name="sachgebietsuche"
+                             binding="#{katalogsuche.sachgebiet}"
                              styleClass="input_sachgebiet" type="text"
-                             value="#{katalogsuche.sachgebiet}">
+                             value="#{katalogsuche.spSachgebiet}">
                 <f:selectItem itemLabel="-- keine Auswahl --" itemValue=""/>
                 <f:selectItems value="#{katalogsuche.sachgebiete}" var="sachgebiet"
                                itemLabel="#{sachgebiet.label}" itemValue="#{sachgebiet.name}"/>
@@ -62,7 +59,7 @@
                          value="#{katalogsuche.sprecher}"/>
         </div>
         <div class="search-datum">
-            <label class="suchlabel_datum">nach Datum</label>
+            <label class="suchlabel_datum">nach Einstelldatum</label>
             <h:inputText name="datumsuche"
                          styleClass="input_datum"
                          type="text" size="40" maxlength="30" style="width:30"

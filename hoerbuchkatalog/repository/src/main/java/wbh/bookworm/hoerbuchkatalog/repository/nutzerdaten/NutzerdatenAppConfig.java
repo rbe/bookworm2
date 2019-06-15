@@ -27,9 +27,10 @@ public class NutzerdatenAppConfig {
     private static final Logger LOGGER = LoggerFactory.getLogger(NutzerdatenAppConfig.class);
 
     @Bean
-    @ConditionalOnMissingBean
+    @ConditionalOnMissingBean({ExecutorService.class})
     public ExecutorService executorService() {
-        final ExecutorService executorService = Executors.newWorkStealingPool();
+        final ExecutorService executorService = Executors.newWorkStealingPool(
+                Runtime.getRuntime().availableProcessors());
         LOGGER.debug("Created {}", executorService);
         return executorService;
     }

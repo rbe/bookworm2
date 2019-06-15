@@ -14,6 +14,7 @@ import java.util.Objects;
 
 /**
  * Value Object
+ * TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex
  */
 public final class Suchparameter extends DomainValueObject {
 
@@ -53,23 +54,46 @@ public final class Suchparameter extends DomainValueObject {
 
     private Map<Feld, String> felderMitWerten = new EnumMap<>(Feld.class);
 
+    public Suchparameter() {
+    }
+
+    public Suchparameter(Suchparameter suchparameter) {
+        this.felderMitWerten.putAll(suchparameter.felderMitWerten);
+    }
+
     public Suchparameter hinzufuegen(final Feld feld, final String value) {
         this.felderMitWerten.put(feld, value);
         return this;
     }
 
+    public Suchparameter entfernen(final Feld feld) {
+        this.felderMitWerten.remove(feld);
+        return this;
+    }
+
     public String wert(final Feld feld) {
-        return felderMitWerten.get(feld);
+        return felderMitWerten.getOrDefault(feld, "");
     }
 
     public Map<Feld, String> getFelderMitWerten() {
         return felderMitWerten;
     }
 
+    public Feld[] getFeldnamen() {
+        return felderMitWerten.keySet().toArray(Suchparameter.Feld[]::new);
+    }
+
+    public Feld[] getFeldnamenMitWerten() {
+        return felderMitWerten.entrySet().stream()
+                .filter(e->null!=e.getValue()&&!e.getValue().isBlank())
+                .map(Map.Entry::getKey)
+                .toArray(Feld[]::new);
+    }
+
     private StringBuilder appendIfSet(final StringBuilder builder, final String prefix, final String value) {
         Objects.requireNonNull(builder);
-        final boolean hasPrefix = null != prefix && !prefix.trim().isEmpty();
-        final boolean hasValue = null != value && !value.trim().isEmpty();
+        final boolean hasPrefix = null != prefix && !prefix.isBlank();
+        final boolean hasValue = null != value && !value.isBlank();
         if (hasValue) {
             if (builder.length() > 0) {
                 builder.append(", ");
@@ -86,6 +110,10 @@ public final class Suchparameter extends DomainValueObject {
         final StringBuilder builder = new StringBuilder();
         felderMitWerten.forEach((feld, wert) -> appendIfSet(builder, feld.label, wert));
         return builder.toString();
+    }
+
+    public boolean isWerteVorhanden() {
+        return !felderMitWerten.isEmpty();
     }
 
     public void leeren() {

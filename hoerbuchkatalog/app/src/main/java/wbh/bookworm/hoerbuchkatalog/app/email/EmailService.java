@@ -19,6 +19,9 @@ import org.springframework.stereotype.Component;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.UnsupportedEncodingException;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.Date;
 
 /* TODO In .infrastructure/aoc.platform verschieben */
 @Component
@@ -33,7 +36,7 @@ public final class EmailService {
         this.javaMailSender = javaMailSender;
     }
 
-    public void sendSimpleMessage(final Email email) {
+    void sendSimpleMessage(final Email email) {
         final SimpleMailMessage message = new SimpleMailMessage();
         message.setSubject(email.getSubject());
         message.setText(email.getContent());
@@ -48,17 +51,22 @@ public final class EmailService {
         try {
             final MimeMessageHelper helper = new MimeMessageHelper(
                     mimeMessage, true, "UTF-8");
-            helper.setFrom("wbh@wbh-online.de",
-                    "Westdeutsche Blindenhörbucherei e.V.");
+            /* TODO Konfiguration */helper.setFrom("wbh@wbh-online.de",
+                    "Westdeutsche Bibliothek der Hörmedien für blinde, seh- und lesebehinderte Menschen e.V.");
             helper.setTo(to);
             helper.setCc(cc);
             helper.setSubject(subject);
             helper.setText(text, true);
+            helper.setSentDate(datumZeitInZeitzoneBerlin());
             javaMailSender.send(mimeMessage);
             LOGGER.info("E-Mail an '{}', Cc '{}', Betreff '{}' gesendet", to, cc, subject);
         } catch (UnsupportedEncodingException | MessagingException e) {
             LOGGER.error("", e);
         }
+    }
+
+    private Date datumZeitInZeitzoneBerlin() {
+        return Date.from(ZonedDateTime.now(ZoneId.of("Europe/Berlin")).toInstant());
     }
 
 }

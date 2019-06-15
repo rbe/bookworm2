@@ -116,10 +116,12 @@
                 <ks:hoerbuchdetail-navigation titelnummer="#{hoerbuchdetail.titelnummer}"/>
             </div>
         </h:form>
-        <div class="noticetext">
+        <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
+                      layout="block" styleClass="noticetext">
             <h3>Hinweise für bessere Suchergebnisse</h3>
-            Die Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>Eine Suche nach »test« findet also auch »späteste«.
-        </div>
+            Die Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>
+            Eine Suche nach »test« findet also auch »späteste«.
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

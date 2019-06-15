@@ -44,8 +44,8 @@ public final class Hoerernummer extends DomainId<String> {
     @Override
     public boolean checkValue(final String value) {
         super.checkValue(value);
-        final boolean hasValue = !value.trim().isEmpty();
-        final boolean valueInConstraint = value.length() > 0 && value.length() < 7;
+        final boolean hasValue = null != value && !value.isBlank();
+        final boolean valueInConstraint = hasValue && value.length() > 0 && value.length() < 7;
         return hasValue && valueInConstraint;
     }
 

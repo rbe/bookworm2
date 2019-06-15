@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchkatalog.ui.nutzerdaten;
 
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
@@ -22,8 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.time.format.DateTimeFormatter;
-
+// TODO ELValueCache für Hoerer und CdLieferung benutzen
 @Component
 @RequestScope
 public class MeineDaten {
@@ -50,157 +48,109 @@ public class MeineDaten {
     }
 
     public Hoerername getHoerername() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getHoerername)
-                .orElse(Hoerername.UNBEKANNT);
+        return hoererService.hoerer(hoerernummer).getHoerername();
     }
 
     public Nachname getNachname() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getNachname)
-                .orElse(Nachname.UNBEKANNT);
+        return hoererService.hoerer(hoerernummer).getNachname();
     }
 
     public String getNachnamenszusatz() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getNachnamenszusatz)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getNachnamenszusatz();
     }
 
     public Vorname getVorname() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getVorname)
-                .orElse(Vorname.UNBEKANNT);
+        return hoererService.hoerer(hoerernummer).getVorname();
     }
 
     public String getGeburtsdatumAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getGeburtsdatumAufDeutsch)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getGeburtsdatumAufDeutsch();
     }
 
     public String getAdresszusatz() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getAdresszusatz)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getAdresszusatz();
     }
 
     public Integer getMengenindex() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getMengenindex)
-                .orElse(-1);
+        return hoererService.hoerer(hoerernummer).getMengenindex();
     }
 
     public String getStrasse() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getStrasse)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getStrasse();
     }
 
     public String getPlz() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getPlz)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getPlz();
     }
 
     public String getOrt() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getOrt)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getOrt();
     }
 
     public String getLand() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getLand)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getLand();
     }
 
     public HoererEmail getEmail() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getHoereremail)
-                .orElse(HoererEmail.UNBEKANNT);
+        return hoererService.hoerer(hoerernummer).getHoereremail();
     }
 
     public boolean hasSperrtermin() {
-        return hoererService.hoerer(hoerernummer)
-                .filter(h -> null != h.getSperrTerminVon() || null != h.getSperrTerminBis())
-                .isPresent();
+        return hoererService.hoerer(hoerernummer).hasSperrtermin();
     }
 
     public String getSperrTerminVonAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getSperrTerminVon().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getSperrterminVonAufDeutsch();
     }
 
     public String getSperrTerminBisAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getSperrTerminBis().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getSperrterminBisAufDeutsch();
     }
 
     public boolean hasUrlaub() {
-        return hoererService.hoerer(hoerernummer)
-                .filter(h -> null != h.getUrlaubVon() || null != h.getUrlaubBis())
-                .isPresent();
+        return hoererService.hoerer(hoerernummer).hasUrlaub();
     }
 
     public String getUrlaubVonAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getUrlaubVon().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubVonAufDeutsch();
     }
 
     public String getUrlaubBisAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getUrlaubBis().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubBisAufDeutsch();
     }
 
     public String getUrlaubName2() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubName2)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubName2();
     }
 
     public String getUrlaubAdresszusatz() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubAdresszusatz)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubAdresszusatz();
     }
 
     public String getUrlaubStrasse() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubStrasse)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubStrasse();
     }
 
     public String getUrlaubPlz() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubPlz)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubPlz();
     }
 
     public String getUrlaubOrt() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubOrt)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubOrt();
     }
 
     public String getUrlaubLand() {
-        return hoererService.hoerer(hoerernummer)
-                .map(Hoerer::getUrlaubLand)
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getUrlaubLand();
     }
 
     public String getRueckbuchungsdatumAufDeutsch() {
-        return hoererService.hoerer(hoerernummer)
-                .map(h -> h.getRueckbuchungsdatum().format(DateTimeFormatter.ofPattern("dd.MM.yyyy")))
-                .orElse("unbekannt");
+        return hoererService.hoerer(hoerernummer).getRueckbuchungsdatumAufDeutsch();
     }
 
-    public int getAnzahlAufBestellkarte() {
-        return cdLieferungService.bestellkarten(hoerernummer).size();
+    public String getAnzahlAufBestellkarte() {
+        return cdLieferungService.hatBestellkarten()
+                ? String.format("%d", cdLieferungService.bestellkarten(hoerernummer).size())
+                : "keine Daten vorhanden";
     }
 
 }

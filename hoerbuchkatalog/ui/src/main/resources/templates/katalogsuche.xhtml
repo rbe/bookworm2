@@ -11,19 +11,20 @@
       xmlns:ks="http://xmlns.jcp.org/jsf/composite/katalogsuche">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <h:form name="katalogsucheForm">
-            <div class="leading">
+        <h:form id="katalogsucheForm">
+            <h:panelGroup layout="block" styleClass="leading">
                 <h2 class="contentheading">Onlinekatalog Suche</h2>
                 <hk:navigation/>
                 <ks:suchformular/>
-            </div>
+            </h:panelGroup>
         </h:form>
-        <div class="noticetext">
+        <h:panelGroup layout="block" styleClass="noticetext">
             <h3>Hinweise für bessere Suchergebnisse</h3>
             <p>
-                Eine Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>Eine Suche nach »test« findet also auch »späteste«.
+                Eine Suche findet alle Einträge die Ihren Suchbegriff enthalten - auch als Wortbestandteil.<br/>
+                Eine Suche nach »test« findet also auch »späteste«.
             </p>
-        </div>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

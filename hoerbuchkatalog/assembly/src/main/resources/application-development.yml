@@ -1,5 +1,4 @@
 spring:
-  profiles: development
   banner:
     location: classpath:/banner/banner-starwars0.txt
   main:
@@ -44,15 +43,16 @@ server:
     context-path: /hoerbuchkatalog
     session:
       cookie:
-        name: Bookworm
-        comment: Hörbuchkatalog
+        name: Hoerbuchkatalog
+        comment: Hoerbuchkatalog
         domain: localhost
         path: /hoerbuchkatalog
         http-only: true
         secure: false
-        max-age: 28800
+        max-age: 8h
       tracking-modes: COOKIE
       persistent: false
+      timeout: 5m
   http2:
     enabled: false
 
