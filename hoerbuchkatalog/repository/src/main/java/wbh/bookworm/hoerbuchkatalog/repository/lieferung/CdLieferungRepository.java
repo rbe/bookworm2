@@ -49,16 +49,8 @@ public class CdLieferungRepository {
         LOGGER.info("Erledigte Bestellkarten und Bestellkarten eingelesen");
     }
 
-    private class BestellkartenCallable implements Callable<Void> {
-
-        @Override
-        public Void call() throws Exception {
-            bestellkartenMapper.leseAs400Datei(
-                    StandardCharsets.ISO_8859_1, 9_000,
-                    cdLieferungRepositoryConfig.getDirectory().resolve("bkstp.csv"));
-            return null;
-        }
-
+    public boolean hatBestellkarten() {
+        return aktuellerBestellkartenMapper.get().hatDatenEingelesen();
     }
 
     public List<Bestellkarte> bestellkarten(final Hoerernummer hoerernummer) {
