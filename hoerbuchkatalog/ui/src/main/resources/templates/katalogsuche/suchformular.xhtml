@@ -23,8 +23,10 @@
                              type="submit"
                              value="Suchen" action="#{katalogsuche.sucheNachStichwort}"/>
         </div>
-        <h:message for="sachgebiet" showSummary="true" showDetail="false"/><br/>
-        <h:message for="sachgebiet" showSummary="false" showDetail="true"/>
+        <h:message id="sachgebietInfoZusammenfassung" for="sachgebiet"
+                   showSummary="true" showDetail="false"/>
+        <h:message id="sachgebietInfoDetail" for="sachgebiet"
+                   showSummary="false" showDetail="true"/>
         <div class="search-sachgebiet">
             <label class="suchlabel_sachgebiet">nach Sachgebiet</label>
             <!-- JAVASERVERFACES-1591 -->

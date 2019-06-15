@@ -3,14 +3,15 @@
 #
 
 var/
-documentation/src/main/resources/architecture/
-documentation/src/main/resources/WBH/
-documentation/src/main/resources/blista/
 
 #
 # Hoerbuchkatalog
 #
 
+hoerbuchkatalog/assembly/src/main/resources/conf/secrets.json
+
+approxy/composer.phar
+approxy/src/main/php/approxy/composer.lock
 approxy/src/main/php/approxy/vendor/
 
 # static resources
@@ -29,7 +30,7 @@ out/
 
 # Maven
 .mvn/repository/
-target/
+**/target/
 pom.xml.versionsBackup
 maven.log
 
