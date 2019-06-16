@@ -8,11 +8,10 @@
 set -o nounset
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
 
 if [[ ! -f .env && -z "${VERSION:-}" ]]
 then
-    echo "Please set VERSION, e.g. export VERSION=LocalBuild"
+    echo "Please set VERSION, e.g. export VERSION=LocalBuild or use .env file"
     exit 1
 fi
 
