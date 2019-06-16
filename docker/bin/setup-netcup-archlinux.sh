@@ -86,12 +86,14 @@ sudo iptables -P FORWARD ACCEPT
 
 archlinux_netcup_nfs
 
+groupadd -g 4801 bookworm
+
 setup_user_w_sudo rbe
 ssh_setup_key rbe $(cat etc/authorized_keys rbe)
-sudo usermod -aG docker rbe
+sudo usermod -g bookworm -aG docker rbe
 
 setup_user_w_sudo cew
 ssh_setup_key cew $(cat etc/authorized_keys cew)
-sudo usermod -aG docker cew
+sudo usermod -g bookworm -aG docker cew
 
 exit 0
