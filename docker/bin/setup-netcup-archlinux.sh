@@ -56,9 +56,9 @@ mkfs.ext4 /dev/tank/docker
 lvcreate --name dockervolumes -L8G tank
 mkfs.ext4 /dev/tank/dockervolumes
 
-lvcreate --name joomla_images -L4G tank
+lvcreate --name wbhonline_joomla_images -L4G tank
 mkfs.ext4 /dev/tank/wbhonline_joomla_images
-lvcreate --name joomla_joomlatools_files -L4G tank
+lvcreate --name wbhonline_joomla_joomlatools_files -L4G tank
 mkfs.ext4 /dev/tank/wbhonline_joomla_joomlatools_files
 
 cat >>/etc/fstab <<EOF

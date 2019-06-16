@@ -19,14 +19,12 @@ mode=${1:-}
 shift
 
 function bookworm_docker() {
-    pushd ${execdir}/.. >/dev/null
     docker-compose \
-        -p wbhonline \
-        -f cms/docker-compose.yml \
-        -f bookworm/docker-compose.yml \
-        -f rproxy/docker-compose.yml \
+        -p ${execdir}/wbhonline \
+        -f ${execdir}/cms/docker-compose.yml \
+        -f ${execdir}/bookworm/docker-compose.yml \
+        -f ${execdir}/rproxy/docker-compose.yml \
         $*
-    popd >/dev/null
 }
 
 case "${mode}" in
