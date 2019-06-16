@@ -5,14 +5,25 @@
  */
 
 $(document).ready(function ($) {
+    function handleDisableButton(data) {
+        if (data.source.type !== "submit") {
+            return;
+        }
+        switch (data.status) {
+            case "begin":
+                data.source.disabled = true;
+                break;
+            case "complete":
+                data.source.disabled = false;
+                break;
+        }
+    }
+    jsf.ajax.addOnEvent(handleDisableButton);
     $("div.logout").click(function () {
         $.when(
             $.get("/hoerbuchkatalog/logout", function (data) {
                 console.log("Catalog logout was performed.");
             }),
-            // $.get("/nutzerbereich/logout", function (data) {
-            //     console.log("Customer logout was performed.");
-            // }),
             $.get("/index.php?option=com_comprofiler&task=logout", function (data) {
                 console.log("Joomla logout was performed.");
             })

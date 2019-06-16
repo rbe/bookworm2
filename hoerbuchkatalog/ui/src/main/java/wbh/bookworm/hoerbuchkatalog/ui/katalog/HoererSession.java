@@ -34,7 +34,7 @@ import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.event.DomainEventSubscriber;
 import aoc.jsf.ELFunctionCache;
 import aoc.jsf.ELValueCache;
-import aoc.jsf.TimedCacheDecorator;
+import aoc.jsf.TimeoutCacheDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -286,7 +286,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
     private final transient WarenkorbService warenkorbService;
 
-    private final BestellungService bestellungService;
+    private final transient BestellungService bestellungService;
 
     private BestellungSessionId bestellungSessionId;
 
@@ -346,15 +346,17 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
     private final transient DownloadsLieferungService downloadsLieferungService;
 
-    private transient TimedCacheDecorator<HoererBlistaDownloads> blistaDownloadsELCache;
+    private transient TimeoutCacheDecorator<HoererBlistaDownloads> blistaDownloadsELCache;
 
     LocalDateTime standVomDerDownloads() {
         return blistaDownloadsELCache.get().getStandVom();
     }
 
     boolean isBlistaAbrufHatFehler() {
+        final boolean zugriffVerweigert = false;//blistaDownloadsELCache.get().getFehlercode().equals("1");
         final boolean keineDownloadsIn365Tagen = blistaDownloadsELCache.get().getFehlercode().equals("202");
-        if (blistaDownloadsELCache.get().hatFehler() && !keineDownloadsIn365Tagen) {
+        if (!zugriffVerweigert && !keineDownloadsIn365Tagen
+                && blistaDownloadsELCache.get().hatFehler()) {
             blistaDownloadsELCache.invalidate();
         }
         return blistaDownloadsELCache.get().hatFehler();
@@ -420,7 +422,6 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
             LOGGER.trace("Setze Hörer {} in HttpSession {}", hoerernummer, session.getId());
             this.hoerernummer = hoerernummer;
             session.setAttribute(SessionKey.HOERERNUMMER, hoerernummer);
-            //hoerer = hoererService.hoerer(hoerernummer).orElse(Hoerer.unbekannt(hoerernummer));
             hoererELCache = new ELValueCache<>(Hoerer.UNBEKANNT, () ->
                     hoererService.hoerer(hoerernummer));
             DomainEventPublisher.global()
@@ -445,7 +446,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
             DomainEventPublisher.global()
                     .subscribe(new BestellungAufgegebenSubscriber());
             // Lieferung
-            blistaDownloadsELCache = new TimedCacheDecorator<>(new ELValueCache<>(
+            blistaDownloadsELCache = new TimeoutCacheDecorator<>(new ELValueCache<>(
                     null, () -> downloadsLieferungService.lieferungen(hoerernummer)),
                     TimeUnit.MINUTES.toMillis(5));
             LOGGER.info("Hörer {} erfolgreich angemeldet, HttpSession {}", hoerernummer, session.getId());

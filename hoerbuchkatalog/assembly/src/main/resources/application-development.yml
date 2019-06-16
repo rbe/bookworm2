@@ -52,7 +52,7 @@ server:
         max-age: 8h
       tracking-modes: COOKIE
       persistent: false
-      timeout: 5m
+      timeout: 10m
   http2:
     enabled: false
 

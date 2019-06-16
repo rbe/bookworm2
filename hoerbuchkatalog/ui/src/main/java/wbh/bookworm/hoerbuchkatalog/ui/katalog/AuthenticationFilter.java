@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.Filter;
@@ -19,6 +20,7 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
+import java.util.function.Consumer;
 
 @WebFilter(servletNames = "FacesServlet", urlPatterns = {"*.xhtml", "logout"})
 @Component
@@ -26,14 +28,12 @@ public class AuthenticationFilter implements Filter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-    /*
     private final Consumer<HttpServletRequest> hoerernummerHttpRequest;
 
     @Autowired
     public AuthenticationFilter(final Consumer<HttpServletRequest> hoerernummerHttpRequest) {
         this.hoerernummerHttpRequest = hoerernummerHttpRequest;
     }
-    */
 
     @Override
     public void doFilter(final ServletRequest req, final ServletResponse res,
@@ -42,7 +42,7 @@ public class AuthenticationFilter implements Filter {
         if (request.getRequestURI().endsWith("logout")) {
             logoutVerarbeiten(request);
         } else {
-            //hoerernummerHttpRequest.accept(request);
+            hoerernummerHttpRequest.accept(request);
         }
         chain.doFilter(req, res);
     }

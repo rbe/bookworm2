@@ -22,13 +22,13 @@ public final class ELFunctionCache<T, R> {
 
     private final Map<T, R> values;
 
-    private final Map<T, Boolean> invalidated;
+    private final Map<T, Boolean> invalidatedValues;
 
     public ELFunctionCache(final Function<T, R> valueFunction) {
         Objects.requireNonNull(valueFunction);
         this.valueFunction = valueFunction;
         this.values = new ConcurrentHashMap<>();
-        this.invalidated = new ConcurrentHashMap<>();
+        this.invalidatedValues = new ConcurrentHashMap<>();
     }
 
     public synchronized R update(final T parameter) {
@@ -38,14 +38,14 @@ public final class ELFunctionCache<T, R> {
         if (null != value) {
             values.put(parameter, value);
         }
-        invalidated.put(parameter, false);
+        invalidatedValues.put(parameter, false);
         LOGGER.trace("Value for {} is now '{}'", parameter, value);
         return value;
     }
 
     public synchronized R get(final T parameter) {
         Objects.requireNonNull(parameter);
-        final Boolean valueIsInvalidated = invalidated.get(parameter);
+        final Boolean valueIsInvalidated = invalidatedValues.get(parameter);
         final boolean updateCalledBefore = null != valueIsInvalidated;
         if (updateCalledBefore && !valueIsInvalidated) {
             final R value = values.get(parameter);
@@ -58,7 +58,7 @@ public final class ELFunctionCache<T, R> {
 
     public synchronized void invalidate(final T parameter) {
         LOGGER.trace("Invalidating value for parameter '{}'", parameter);
-        invalidated.remove(parameter);
+        invalidatedValues.remove(parameter);
         values.remove(parameter, null);
     }
 
@@ -66,7 +66,7 @@ public final class ELFunctionCache<T, R> {
         LOGGER.trace("Invalidating all cached values");
         values.keySet().forEach(k -> {
             values.remove(k);
-            invalidated.remove(k);
+            invalidatedValues.remove(k);
         });
     }
 

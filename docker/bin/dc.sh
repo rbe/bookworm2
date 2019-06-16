@@ -44,21 +44,6 @@ case "${mode}" in
         admin=wbhonline_admin_1
         pushd ${execdir}/../bkinit >/dev/null
         docker cp conf/secrets.json ${admin}:/opt/bookworm/conf
-        for d in hoerbuchkatalog/*.dat
-        do
-            echo "${d}"
-            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/hoerbuchkatalog
-        done
-        for d in hoerbuchkatalog/*.zip
-        do
-            echo "${d}"
-            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/hoerbuchkatalog
-        done
-        for d in nutzerdaten/*.csv
-        do
-            echo "${d}"
-            docker cp ${d} ${admin}:/opt/bookworm/var/wbh/nutzerdaten
-        done
         popd >/dev/null
     ;;
     clean)

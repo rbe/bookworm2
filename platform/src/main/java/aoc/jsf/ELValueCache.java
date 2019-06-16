@@ -18,9 +18,9 @@ public class ELValueCache<R> implements InvalidatableValue<R> {
 
     private final Supplier<R> valueSupplier;
 
-    private R value;
+    private volatile R value;
 
-    private boolean invalidated;
+    private volatile boolean invalidated;
 
     public ELValueCache(final R initialValue, final Supplier<R> valueSupplier) {
         this.value = initialValue;
@@ -30,7 +30,7 @@ public class ELValueCache<R> implements InvalidatableValue<R> {
     }
 
     @Override
-    public R update() {
+    public synchronized R update() {
         LOGGER.trace("Updating value through supplier {}", valueSupplier);
         value = valueSupplier.get();
         LOGGER.debug("Value updated to '{}'", value);
@@ -39,7 +39,7 @@ public class ELValueCache<R> implements InvalidatableValue<R> {
     }
 
     @Override
-    public R get() {
+    public synchronized R get() {
         if (!invalidated) {
             LOGGER.trace("Returning cached value: {}", value);
             return value;
@@ -49,7 +49,7 @@ public class ELValueCache<R> implements InvalidatableValue<R> {
     }
 
     @Override
-    public void invalidate() {
+    public synchronized void invalidate() {
         LOGGER.trace("Invalidating {} for {}", this, valueSupplier);
         invalidated = true;
         value = null;
