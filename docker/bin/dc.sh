@@ -21,7 +21,7 @@ shift
 
 function bookworm_docker() {
     docker-compose \
-        -p ${dockerdir}/wbhonline \
+        -p wbhonline \
         -f ${dockerdir}/cms/docker-compose.yml \
         -f ${dockerdir}/bookworm/docker-compose.yml \
         -f ${dockerdir}/rproxy/docker-compose.yml \
