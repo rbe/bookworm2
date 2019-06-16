@@ -8,6 +8,7 @@
 set -o nounset
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
+dockerdir=$(pushd ${execdir}/.. >/dev/null ; pwd ; popd >/dev/null)
 
 if [[ ! -f .env && -z "${VERSION:-}" ]]
 then
@@ -20,10 +21,10 @@ shift
 
 function bookworm_docker() {
     docker-compose \
-        -p ${execdir}/wbhonline \
-        -f ${execdir}/cms/docker-compose.yml \
-        -f ${execdir}/bookworm/docker-compose.yml \
-        -f ${execdir}/rproxy/docker-compose.yml \
+        -p ${dockerdir}/wbhonline \
+        -f ${dockerdir}/cms/docker-compose.yml \
+        -f ${dockerdir}/bookworm/docker-compose.yml \
+        -f ${dockerdir}/rproxy/docker-compose.yml \
         $*
 }
 
