@@ -38,48 +38,12 @@ case "${mode}" in
         popd >/dev/null
     ;;
     init)
-        # --parallel
         bookworm_docker build --compress --force-rm \
             && bookworm_docker up --no-start
         admin=wbhonline_admin_1
         pushd ${execdir}/../bkinit >/dev/null
         docker cp conf/secrets.json ${admin}:/opt/bookworm/conf
         popd >/dev/null
-    ;;
-    clean)
-        . ${platformlibdir}/docker.sh
-        mode=${1:-}
-        case "${mode}" in
-            containers)
-                docker_clean_containers bookworm
-                docker_clean_containers wbhonline
-            ;;
-            volumes)
-                docker_clean_volumes
-            ;;
-            networks)
-                docker_clean_networks
-            ;;
-            images)
-                docker_clean_images bookworm
-                docker_clean_images wbhonline
-            ;;
-            all)
-                $0 clean containers
-                ids=$(docker ps -aq)
-                if [[ -n "${ids}" ]]
-                then
-                    docker rm $(docker ps -aq)
-                fi
-                $0 clean volumes
-                $0 clean networks
-                $0 clean images
-            ;;
-            *)
-                echo "usage: $0 clean { containers | volumes | networks | images | all }"
-                exit 1
-            ;;
-        esac
     ;;
     start)
         bookworm_docker start admin
@@ -100,23 +64,14 @@ case "${mode}" in
         bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung
         bookworm_docker exec admin chown root:root /opt/bookworm/var/wbh/aktualisierung
         bookworm_docker exec admin chmod 555 /opt/bookworm/var/wbh/aktualisierung
-        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
-        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
-        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/hoerbuchkatalog
-        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
-        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
-        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/nutzerdaten
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/eingangskorb
+        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/eingangskorb
+        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         #
         bookworm_docker start
     ;;
     stop)
         bookworm_docker stop
-    ;;
-    ps)
-        bookworm_docker ps
-    ;;
-    logs)
-        bookworm_docker logs $*
     ;;
     restart)
         if [[ $# -lt 1 ]]
@@ -126,49 +81,14 @@ case "${mode}" in
         fi
         bookworm_docker restart $*
     ;;
-    down)
-        bookworm_docker down
+    ps)
+        bookworm_docker ps
     ;;
-    exec)
-        if [[ $# -lt 1 ]]
-        then
-            echo "usage: $0 exec <docker exec args>"
-            exit 1
-        fi
-        bookworm_docker exec $*
-    ;;
-    console)
-        if [[ $# -lt 1 ]]
-        then
-            echo "usage: $0 console <container>"
-            exit 1
-        fi
-        bookworm_docker exec $1 sh
-    ;;
-    health)
-        docker inspect --format='{{json .State.Health}}'
-    ;;
-    recreate-all)
-        $0 down
-        $0 clean all
-        $0 build
-        $0 init
-        $0 start
+    logs)
+        bookworm_docker logs $*
     ;;
     *)
-        echo "usage: $0 { assembly | init | clean | start | stop | restart | down | exec | console | health | recreate-all }"
-        echo "  assembly"
-        echo "  init"
-        echo "  copy-data"
-        echo "  clean { containers | volumes | networks | images | all }"
-        echo "  start"
-        echo "  stop"
-        echo "  restart"
-        echo "  down"
-        echo "  exec <container> <command>"
-        echo "  console <container>"
-        echo "  health"
-        echo "  recreate-all"
+        echo "usage: $0 { assembly | init | clean | start | stop | restart  | ps | logs }"
         exit 1
     ;;
 esac
