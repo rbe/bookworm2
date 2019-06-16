@@ -83,11 +83,11 @@ public class Katalogsuche {
     }
 
     public String getSprecher() {
-        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.SPRECHER);
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.SPRECHER1);
     }
 
     public void setSprecher(final String sprecher) {
-        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.SPRECHER, sprecher);
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.SPRECHER1, sprecher);
     }
 
     public String getEinstelldatum() {

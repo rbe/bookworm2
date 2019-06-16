@@ -31,6 +31,7 @@ public final class Suchparameter extends DomainValueObject {
         UNTERTITEL("Untertitel", "untertitel"),
         SPRECHER("Sprecher", "sprecher"),
         SPRECHER1("Sprecher1", "sprecher1"),
+        SPRECHER2("Sprecher2", "sprecher2"),
         EINSTELLDATUM("Einstelldatum", "einstelldatum");
 
         private final String label;
