@@ -22,6 +22,7 @@ import javax.annotation.PreDestroy;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -75,7 +76,8 @@ public class HoerbuchkatalogRepositoryAktualisierer {
         public void processSpecificationSatistied(final DirectoryState directoryState) {
             neededFiles.forEach(p -> {
                 try {
-                    Files.move(verzeichnisAktualisierung.resolve(p), directory.resolve(p.getFileName()));
+                    Files.move(verzeichnisAktualisierung.resolve(p), directory.resolve(p.getFileName()),
+                            StandardCopyOption.ATOMIC_MOVE, StandardCopyOption.REPLACE_EXISTING);
                 } catch (IOException e) {
                     LOGGER.error("Kann Datei " + p + " nicht nach " + directory
                             + " verschieben", e);
