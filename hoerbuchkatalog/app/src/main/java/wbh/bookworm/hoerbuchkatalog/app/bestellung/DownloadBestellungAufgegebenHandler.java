@@ -125,7 +125,7 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
                     /* RUEGDT */rueckgabedatum.format(YYYY_MM_DD), /* RUEGZT */rueckgabedatum.format(HH_MM_SS));
         }).collect(Collectors.toUnmodifiableList());
         // TODO Konfiguration
-        final Path path = Path.of("var/wbh/hoerbuchkatalog/webhoer-" + now.format(YYYY_MM_DD) + ".csv");
+        final Path path = Path.of("var/wbh/aktualisierung/ausgangskorb/webhoer-" + now.format(YYYY_MM_DD) + ".csv");
         try {
             // TODO Synchronize, per Queue?
             Files.write(path, strings, StandardCharsets.ISO_8859_1,

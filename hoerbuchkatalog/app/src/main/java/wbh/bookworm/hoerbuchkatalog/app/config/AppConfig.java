@@ -28,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.scheduling.annotation.EnableScheduling;
 import org.thymeleaf.TemplateEngine;
 
 @Configuration
@@ -47,6 +48,7 @@ import org.thymeleaf.TemplateEngine;
         TemplateEngine.class
 })
 @EnableAsync
+@EnableScheduling
 @EnableConfigurationProperties
 public class AppConfig {
 

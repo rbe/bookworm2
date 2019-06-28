@@ -72,14 +72,10 @@ public final class FilesystemWatcher implements Runnable {
         }
     }
 
-    private final Set<Path> ignoredFiles = Set.of(
-            Path.of(".DS_Store")
-    );
-
     private void processWatchKey(final WatchKey key) {
         for (WatchEvent<?> event : key.pollEvents()) {
             final Path eventPath = directory.resolve((Path) event.context());
-            if (!ignoredFiles.contains(eventPath.getFileName())) {
+            if (!DirectoryState.IS_IGNORED.test(eventPath)) {
                 LOGGER.debug("{} {}", event.kind(), eventPath);
                 WatchEvent.Kind<?> kind = event.kind();
                 if (ENTRY_CREATE.equals(kind) || ENTRY_MODIFY.equals(kind)) {
@@ -90,7 +86,8 @@ public final class FilesystemWatcher implements Runnable {
                 fireFilesystemChangeEvent(eventPath);
                 checkSpecifications();
             } else {
-                LOGGER.debug("Ignoring {} as its contained in our ignoredFiles ({}) ", eventPath, ignoredFiles);
+                LOGGER.debug("Ignoring {} as its contained in our ignoredFiles",
+                        eventPath);
             }
         }
     }
@@ -118,6 +115,13 @@ public final class FilesystemWatcher implements Runnable {
     public void register(final Specification<DirectoryState> specification,
                          final SpecificationSatisfiedListener specificationSatisfiedListener) {
         specificationListeners.put(specification,
+                Collections.singletonList(specificationSatisfiedListener));
+    }
+
+    public void registerFilesCompleteListener(final Set<Path> neededFiles,
+                                              final long timeout, final TimeUnit timeUnit,
+                                              final SpecificationSatisfiedListener specificationSatisfiedListener) {
+        specificationListeners.put(new FilesCompleteSpecification(neededFiles, timeout, timeUnit),
                 Collections.singletonList(specificationSatisfiedListener));
     }
 
@@ -161,7 +165,8 @@ public final class FilesystemWatcher implements Runnable {
                 watchKey = watchService.poll(1, TimeUnit.SECONDS);
                 if (null != watchKey) {
                     processWatchKey(watchKey/*, directory*/);
-                    /*boolean valid = */watchKey.reset();
+                    /*boolean valid = */
+                    watchKey.reset();
                 }
                 count++;
             } catch (InterruptedException e) {

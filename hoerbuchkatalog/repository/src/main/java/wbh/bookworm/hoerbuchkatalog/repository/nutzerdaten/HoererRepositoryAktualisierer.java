@@ -6,10 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
-import aoc.fs.DirectoryState;
-import aoc.fs.FilesCompleteSpecification;
+import aoc.fs.FilesUtils;
 import aoc.fs.FilesystemWatcher;
-import aoc.fs.SpecificationSatisfiedListener;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,10 +17,7 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PreDestroy;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -47,9 +42,11 @@ public class HoererRepositoryAktualisierer {
         final Path verzeichnisAktualisierung = hoererRepositoryConfig.getDirectory()
                 .resolve("../aktualisierung/eingangskorb");
         filesystemWatcher = applicationContext.getBean(FilesystemWatcher.class, verzeichnisAktualisierung);
-        filesystemWatcher.register(new FilesCompleteSpecification(neededFiles, 30, TimeUnit.SECONDS),
-                new DateienVerschiebenAktion(verzeichnisAktualisierung,
-                        hoererRepositoryConfig.getDirectory(), hoererRepository));
+        filesystemWatcher.registerFilesCompleteListener(neededFiles, 30, TimeUnit.SECONDS,
+                directoryState -> {
+                    FilesUtils.move(neededFiles, verzeichnisAktualisierung, hoererRepositoryConfig.getDirectory());
+                    hoererRepository.datenEinlesen();
+                });
         taskExecutor.execute(filesystemWatcher);
         LOGGER.info("Achte auf Dateien im Verzeichnis {}", verzeichnisAktualisierung);
     }
@@ -59,6 +56,7 @@ public class HoererRepositoryAktualisierer {
         filesystemWatcher.pleaseStop();
     }
 
+    /*
     private class DateienVerschiebenAktion implements SpecificationSatisfiedListener {
 
         private final Path verzeichnisAktualisierung;
@@ -90,5 +88,6 @@ public class HoererRepositoryAktualisierer {
         }
 
     }
+    */
 
 }

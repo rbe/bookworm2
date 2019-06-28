@@ -13,19 +13,26 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public final class DirectoryState {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DirectoryState.class);
 
-    private final Set<Path> ignoredFiles = new TreeSet<>(Arrays.asList(
-            Path.of(".DS_Store")
-    ));
+    private static final List<Pattern> IGNORED_FILES = Arrays.asList(
+            Pattern.compile("\\.DS_Store"),
+            Pattern.compile(".*\\.filepart"),
+            Pattern.compile(".*\\.t[e]mp")
+    );
+
+    static final Predicate<Path> IS_IGNORED = path ->
+            IGNORED_FILES.stream().anyMatch(p -> p.matcher(path.getFileName().toString()).matches());
 
     private final Path directory;
 
@@ -39,7 +46,7 @@ public final class DirectoryState {
 
     private void scanDirectory() {
         try (final Stream<Path> stream = Files.list(directory)
-                .filter(f -> !ignoredFiles.contains(f.getFileName()))) {
+                .filter(p -> !IS_IGNORED.test(p))) {
             stream.forEach(this::put);
         } catch (IOException e) {
             LOGGER.error("Could not scan directory for existing files", e);
@@ -50,8 +57,12 @@ public final class DirectoryState {
         return directory;
     }
 
-    public void addIgnoredFiles(Path... ignoredFilenames) {
-        ignoredFiles.addAll(Arrays.asList(ignoredFilenames));
+    public void addIgnoredFiles(String... ignoredFilenames) {
+        IGNORED_FILES.addAll(Arrays.asList(
+                Arrays.stream(ignoredFilenames)
+                        .map(Pattern::compile)
+                        .toArray(Pattern[]::new))
+        );
     }
 
     public FileState get(final Path path) {

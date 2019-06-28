@@ -52,19 +52,24 @@ case "${mode}" in
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/hoerbuchkatalog
         bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/hoerbuchkatalog/
         bookworm_docker exec admin chmod -R 770 /opt/bookworm/var/wbh/hoerbuchkatalog
-        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Bestellung/*
-        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Merkliste/*
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Bestellung
+        bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/repository/Merkliste
         # Daten - Nutzerdaten
         bookworm_docker exec admin chown -R bookworm:bookworm /opt/bookworm/var/wbh/nutzerdaten
         bookworm_docker exec admin chmod -R 660 /opt/bookworm/var/wbh/nutzerdaten/
         bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/nutzerdaten
         # Aktualisierung der Daten
-        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung
+        bookworm_docker exec admin mkdir -p /opt/bookworm/var/wbh/aktualisierung
         bookworm_docker exec admin chown root:root /opt/bookworm/var/wbh/aktualisierung
         bookworm_docker exec admin chmod 555 /opt/bookworm/var/wbh/aktualisierung
-        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/eingangskorb
+        # Aktualisierung der Daten - Eingangskorb
+        bookworm_docker exec admin mkdir -p /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/eingangskorb
+        # Aktualisierung der Daten - Ausgangskorb
+        bookworm_docker exec admin mkdir -p /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
+        bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
+        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
         #
         bookworm_docker start
     ;;

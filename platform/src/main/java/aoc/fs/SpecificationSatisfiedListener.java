@@ -6,6 +6,7 @@
 
 package aoc.fs;
 
+@FunctionalInterface
 public interface SpecificationSatisfiedListener {
 
     void processSpecificationSatistied(DirectoryState directoryState);
