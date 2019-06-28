@@ -63,13 +63,13 @@ case "${mode}" in
         bookworm_docker exec admin chown root:root /opt/bookworm/var/wbh/aktualisierung
         bookworm_docker exec admin chmod 555 /opt/bookworm/var/wbh/aktualisierung
         # Aktualisierung der Daten - Eingangskorb
-        bookworm_docker exec admin mkdir -p /opt/bookworm/var/wbh/aktualisierung/eingangskorb
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/eingangskorb
         # Aktualisierung der Daten - Ausgangskorb
-        bookworm_docker exec admin mkdir -p /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
+        bookworm_docker exec admin mkdir /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
         bookworm_docker exec admin chown bookworm:bookworm /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
-        bookworm_docker exec admin chmod 770 /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
+        bookworm_docker exec admin chmod 750 /opt/bookworm/var/wbh/aktualisierung/ausgangskorb
         #
         bookworm_docker start
     ;;
