@@ -27,7 +27,7 @@ public final class MerklisteMigrator {
 
     public static void main(String[] args) throws Exception {
         if (args.length != 4) {
-            System.out.printf("usage: %s <repository path> <JDBC url> <username> <password>%n",
+            System.out.printf("usage: %s <JDBC url> <username> <password> <repository path>%n",
                     MerklisteMigrator.class.getSimpleName());
             System.exit(1);
         }

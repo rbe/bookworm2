@@ -15,9 +15,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 @ExtendWith(SpringExtension.class)
 @ContextConfiguration(classes = SearchTestAppConfig.class/*, loader = AnnotationConfigContextLoader.class*/)
-//@FixMethodOrder(MethodSorters.JVM)
 class LuceneIndexTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LuceneIndexTest.class);
@@ -32,7 +33,7 @@ class LuceneIndexTest {
     @Test
     void shouldDeleteIndex() {
         final LuceneIndex luceneIndex = applicationContext.getBean(LuceneIndex.class, "test");
-        // TODO was boolean assertTrue(luceneIndex.deleteIndex());
+        assertEquals(luceneIndex, luceneIndex.deleteIndex());
     }
 
 /*
@@ -44,7 +45,7 @@ class LuceneIndexTest {
         final Suchergebnis sucheregebnis = luceneIndexFactory.sucheNachStichwort(suchparameter);
         LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(hoerbuch -> LOGGER.info("Suchergebnis: {}", hoerbuch));
-        Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
+        assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
     }
 
@@ -56,7 +57,7 @@ class LuceneIndexTest {
         final Suchergebnis sucheregebnis = luceneIndexFactory.sucheNachStichwort(suchparameter);
         LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(hoerbuch -> LOGGER.info("Suchergebnis: {}", hoerbuch));
-        Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
+        assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
     }
 */

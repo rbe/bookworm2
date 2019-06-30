@@ -58,6 +58,7 @@ public class Katalogsuchergebnis implements Serializable {
         this.hoerernummer = hoererSession.getHoerernummer();
         this.navigation = navigation;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
+        this.suchergebnis = Suchergebnis.leeresSuchergebnis();
         this.hoerbuchdetail = hoerbuchdetail;
     }
 
@@ -194,7 +195,7 @@ public class Katalogsuchergebnis implements Serializable {
 
     void leeren() {
         LOGGER.trace("{} wird geleert", this);
-        suchergebnis = null;
+        suchergebnis = Suchergebnis.leeresSuchergebnis();
         seitenanzahl = 0;
         aktuelleSeitennummer = 0;
         hoerbuchdetail.leeren();

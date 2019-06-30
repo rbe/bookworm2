@@ -116,6 +116,24 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
     private Suchparameter suchparameter;
 
+    //private String titelnummerAusRequest = "";
+    public String getTitelnummerAusRequest() {
+        return null != gemerktesHoerbuch
+                ? gemerktesHoerbuch.getTitelnummer().getValue()
+                : "";
+    }
+
+    public void setTitelnummerAusRequest(final String titelnummerAusRequest) {
+        try {
+            final Titelnummer titelnummer = new Titelnummer(titelnummerAusRequest);
+            LOGGER.debug("Setze Titelnummer aus HTTP Request: {}", titelnummer);
+            //this.titelnummerAusRequest = titelnummerAusRequest;
+            hoerbuchMerken(titelnummer);
+        } catch (IllegalArgumentException e) {
+            LOGGER.warn("Unsinnige Titelnummer aus HTTP Request: {}", titelnummerAusRequest);
+        }
+    }
+
     private Hoerbuch gemerktesHoerbuch;
 
     void hoerbuchMerken(final Titelnummer titelnummer) {
@@ -449,7 +467,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
             blistaDownloadsELCache = new TimeoutCacheDecorator<>(new ELValueCache<>(
                     null, () -> downloadsLieferungService.lieferungen(hoerernummer)),
                     TimeUnit.MINUTES.toMillis(5));
-            LOGGER.info("Hörer {} erfolgreich angemeldet, HttpSession {}", hoerernummer, session.getId());
+            LOGGER.info("Hörer {} erfolgreich in HttpSession {} gesetzt", hoerernummer, session.getId());
         } else {
             LOGGER.warn("Hörer {} bereits in HttpSession {} gesetzt", hoerernummer, session.getId());
         }

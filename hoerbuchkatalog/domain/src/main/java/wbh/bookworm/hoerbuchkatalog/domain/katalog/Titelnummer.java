@@ -31,4 +31,9 @@ public final class Titelnummer extends DomainId<String> {
         this(titelnummer.value);
     }
 
+    @Override
+    public boolean checkValue(final String value) {
+        return !value.isBlank() && value.trim().chars().anyMatch(i -> i >= 48 && i <= 57);
+    }
+
 }

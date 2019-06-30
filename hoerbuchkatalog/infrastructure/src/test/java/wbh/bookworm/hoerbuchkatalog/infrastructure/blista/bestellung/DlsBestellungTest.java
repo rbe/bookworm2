@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ class DlsBestellungTest {
     }
 
     @Test
+    @Disabled("Benutzername/Passwort in blista-dls.properties")
     void shouldPruefeBestellungUnsinnigerAghNummer() {
         final String aghNummer = "1-2345678-9-0";
         final Auftragsquittung bestellungMoeglich = dlsBestellung.pruefen(USER_ID, aghNummer);
@@ -38,6 +40,7 @@ class DlsBestellungTest {
     }
 
     @Test
+    @Disabled("Benutzername/Passwort in blista-dls.properties")
     void shouldPruefeBestellungKorrekterAghNummer() {
         final String aghNummer = "1-0000122-3-9";
         final Auftragsquittung bestellungMoeglich = dlsBestellung.pruefen(USER_ID, aghNummer);

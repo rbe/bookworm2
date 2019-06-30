@@ -60,6 +60,7 @@ class AuftragsuebermittlungTest {
     }
 
     @Test
+    @Disabled
     void shouldFindRejected() throws InterruptedException {
         final String aghNummer = "1-2345678-9-0";
         auftragsuebermittlung.uebergeben(USER_ID, aghNummer);

@@ -8,14 +8,15 @@ ENV buildNumber=LocalBuild
 ENV TZ Europe/Berlin
 
 RUN apk update \
-    && apk --no-cache \
-        add \
-            curl \
-            nginx-mod-http-headers-more \
-            certbot-nginx \
-            openssl \
+    && apk --no-cache add \
+        curl \
+        nginx-mod-http-headers-more \
+        certbot-nginx \
+        openssl \
     && rm /etc/nginx/conf.d/default.conf* \
     && adduser -u 82 -D -S -G www-data www-data
+
+COPY nginx-tls.sh .
 
 WORKDIR /etc/nginx
 COPY nginx.conf .

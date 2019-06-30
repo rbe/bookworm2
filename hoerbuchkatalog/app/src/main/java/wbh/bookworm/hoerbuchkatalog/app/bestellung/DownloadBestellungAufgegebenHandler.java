@@ -46,6 +46,8 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DownloadBestellungAufgegebenHandler.class);
 
+    private final Object MONITOR = new Object();
+
     private final RepositoryResolver repositoryResolver;
 
     private final DlsBestellung dlsBestellung;
@@ -126,13 +128,15 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
         }).collect(Collectors.toUnmodifiableList());
         // TODO Konfiguration
         final Path path = Path.of("var/wbh/aktualisierung/ausgangskorb/webhoer-" + now.format(YYYY_MM_DD) + ".csv");
-        try {
-            // TODO Synchronize, per Queue?
-            Files.write(path, strings, StandardCharsets.ISO_8859_1,
-                    StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            LOGGER.warn("{} kann nicht beschrieben werden: {}", path, strings);
-            LOGGER.error("" + path, e);
+        // TODO Synchronize, per Queue?
+        synchronized (MONITOR) {
+            try {
+                Files.write(path, strings, StandardCharsets.ISO_8859_1,
+                        StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
+            } catch (IOException e) {
+                LOGGER.warn("{} kann nicht beschrieben werden: {}", path, strings);
+                LOGGER.error("" + path, e);
+            }
         }
     }
 

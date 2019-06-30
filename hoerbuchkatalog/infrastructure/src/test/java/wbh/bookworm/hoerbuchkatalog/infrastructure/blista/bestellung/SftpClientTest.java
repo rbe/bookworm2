@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +25,7 @@ class SftpClientTest {
     private SftpClient sftpClient;
 
     @Test
+    @Disabled
     void shouldLogin() {
         sftpClient.with(delegate -> {
             assertEquals("/", delegate.pwd());

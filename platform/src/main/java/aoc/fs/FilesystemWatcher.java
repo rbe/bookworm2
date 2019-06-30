@@ -165,8 +165,7 @@ public final class FilesystemWatcher implements Runnable {
                 watchKey = watchService.poll(1, TimeUnit.SECONDS);
                 if (null != watchKey) {
                     processWatchKey(watchKey/*, directory*/);
-                    /*boolean valid = */
-                    watchKey.reset();
+                    /*boolean valid = */watchKey.reset();
                 }
                 count++;
             } catch (InterruptedException e) {

@@ -26,28 +26,29 @@ class FilesystemWatcherTest {
     private static final Logger LOGGER = LoggerFactory.getLogger(FilesystemWatcherTest.class);
 
     @Test
-    void shouldEvaluateSpecification() {
+    void shouldEvaluateFilesCompleteSpecification() {
         final Path directory = createDirectory();
         final FilesystemWatcher filesystemWatcher = new FilesystemWatcher(directory);
         final AtomicBoolean b = new AtomicBoolean(false);
-        final Path file = directory.resolve("Mytest.txt");
-        filesystemWatcher.register(new FilesCompleteSpecification(
-                        Collections.singleton(file), 5, TimeUnit.SECONDS),
-                p -> {
-                    LOGGER.info("Callback for {}", p);
+        final Path mytestTxt = directory.resolve("Mytest.txt");
+        filesystemWatcher.registerFilesCompleteListener(
+                Collections.singleton(mytestTxt.getFileName()), 5, TimeUnit.SECONDS,
+                path -> {
+                    LOGGER.info("Callback for {}", path);
                     b.set(true);
                 });
         final Thread thread = startThread(filesystemWatcher);
         try {
-            LOGGER.info("Creating {}", file);
-            Files.write(file, "Test".getBytes());
+            LOGGER.info("Creating {}", mytestTxt);
+            Files.write(mytestTxt, "Test".getBytes());
+            waitFor(15, TimeUnit.SECONDS);
+            assertTrue(b.get());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } finally {
+            stopFilesystemWatcher(filesystemWatcher, thread);
+            delete(mytestTxt);
         }
-        waitFor(15, TimeUnit.SECONDS);
-        assertTrue(b.get());
-        stopFilesystemWatcher(filesystemWatcher, thread);
-        delete(file);
     }
 
     @Test
@@ -57,10 +58,10 @@ class FilesystemWatcherTest {
         final AtomicBoolean b = new AtomicBoolean(false);
         final Path file = directory.resolve("Mytest.txt");
         delete(file);
-        filesystemWatcher.register(new FilesCompleteSpecification(
-                        Collections.singleton(file), 5, TimeUnit.SECONDS),
-                p -> {
-                    LOGGER.info("Callback for {}", p);
+        filesystemWatcher.registerFilesCompleteListener(
+                Collections.singleton(file.getFileName()), 5, TimeUnit.SECONDS,
+                path -> {
+                    LOGGER.info("Callback for {}", path);
                     b.set(true);
                 });
         final Thread thread = startThread(filesystemWatcher);
@@ -75,7 +76,7 @@ class FilesystemWatcherTest {
         final Path directory = createDirectory();
         final FilesystemWatcher filesystemWatcher = new FilesystemWatcher(directory);
         final AtomicBoolean b = new AtomicBoolean(false);
-        filesystemWatcher.register(p -> b.set(true));
+        filesystemWatcher.register(path -> b.set(true));
         final Thread thread = startThread(filesystemWatcher);
         final Path subject = writeTemporaryFile(directory);
         waitFor(15, TimeUnit.SECONDS);

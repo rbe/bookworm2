@@ -12,9 +12,6 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestSer
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-
-import java.nio.file.Path;
 
 @SpringBootApplication(scanBasePackageClasses = {
         DlsBestellung.class,
@@ -24,6 +21,7 @@ import java.nio.file.Path;
 @EnableConfigurationProperties
 public class BestellungTestAppConfig {
 
+/*
     @Bean
     public WarenkorbRepository warenkorbRepository() {
         return new WarenkorbRepository(Path.of("target/var"));
@@ -38,6 +36,7 @@ public class BestellungTestAppConfig {
     public BestellungRepository bestellungRepository() {
         return new BestellungRepository(Path.of("target/var"));
     }
+*/
 
 }
 

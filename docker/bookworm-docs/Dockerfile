@@ -4,7 +4,7 @@ LABEL vendor="Art of Coding UG"
 
 WORKDIR /opt/asciidocserver
 
-RUN apk --no-cache add --virtual .deps \
+RUN apk --no-cache add \
         git \
         nodejs npm \
         asciidoc asciidoctor \

@@ -108,20 +108,20 @@ public class DlsLieferung {
                 dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
                 url);
         if (LOGGER.isDebugEnabled()) {
-            archiviere(String.format("hoerer-%s-%s-%s.xml",
-                    hoerernummer,
-                    LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE),
-                    url.getPath().replaceAll("/", "_").substring(1)),
-                    antwort);
+            final String normalizedUrl = url.getPath().replaceAll("/", "_").substring(1);
+            archiviere(hoerernummer, normalizedUrl, antwort);
         }
         return antwort;
     }
 
     @Async
-    protected void archiviere(final String name, final byte[] daten) {
+    protected void archiviere(final String hoerernummer, final String name, final byte[] daten) {
         try {
-            Files.write(Path.of(/* TODO Konfigration */"var/blista/dls", name), daten,
-                    StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
+            final String now = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
+            final Path path = Path.of(/* TODO Konfigration */"var/blista/dls")
+                    .resolve(hoerernummer).resolve(now + "-" + name);
+            Files.createDirectories(path.getParent());
+            Files.write(path, daten, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {
             LOGGER.error("", e);
         }

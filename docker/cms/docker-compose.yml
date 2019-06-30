@@ -7,6 +7,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=joomla
     networks:
       cms-backend:
         ipv4_address: "172.16.47.6"
@@ -25,6 +26,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - JOOMLA_DB_HOST=joomla-db
+      - JOOMLA_DB_USER=joomla
       - JOOMLA_DB_PASSWORD=example
     networks:
       cms-backend:

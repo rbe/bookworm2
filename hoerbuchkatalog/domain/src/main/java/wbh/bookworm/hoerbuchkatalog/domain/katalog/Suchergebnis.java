@@ -45,6 +45,11 @@ public final class Suchergebnis extends DomainValueObject {
         return new Suchergebnis(suchparameter, Collections.emptyList(), 0);
     }
 
+    public static Suchergebnis leeresSuchergebnis() {
+        final Suchparameter suchparameter = new Suchparameter();
+        return new Suchergebnis(suchparameter, Collections.emptyList(), 0);
+    }
+
     public Suchparameter getSuchparameter() {
         return suchparameter;
     }
