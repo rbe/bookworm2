@@ -22,6 +22,7 @@ public final class Suchparameter extends DomainValueObject {
 
     public enum Feld {
 
+        TITELNUMMER("Titelnummer", "titelnummer"),
         STICHWORT("Stichwort", "stichwort"),
         SACHGEBIET("Sachgebiet", "sachgebiet"),
         AUTOR("Autor", "autor"),
@@ -72,8 +73,12 @@ public final class Suchparameter extends DomainValueObject {
         return this;
     }
 
+    public boolean wertVorhanden(final Feld feld) {
+        return !felderMitWerten.getOrDefault(feld, "").isBlank();
+    }
+
     public String wert(final Feld feld) {
-        return felderMitWerten.getOrDefault(feld, "");
+        return felderMitWerten.getOrDefault(feld, "").trim();
     }
 
     public Map<Feld, String> getFelderMitWerten() {

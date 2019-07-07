@@ -40,7 +40,7 @@ public class HoerbuchkatalogRepositoryAktualisierer {
         final Path verzeichnisAktualisierung = hoerbuchkatalogConfig.getDirectory()
                 .resolve("../aktualisierung/eingangskorb");
         filesystemWatcher = applicationContext.getBean(FilesystemWatcher.class, verzeichnisAktualisierung);
-        filesystemWatcher.registerFilesCompleteListener(neededFiles, 30, TimeUnit.SECONDS,
+        filesystemWatcher.registerFilesCompleteListener(neededFiles, 2, TimeUnit.MINUTES,
                 directoryState -> {
                     FilesUtils.move(neededFiles, verzeichnisAktualisierung, hoerbuchkatalogConfig.getDirectory());
                     hoerbuchkatalogRepository.datenEinlesen();

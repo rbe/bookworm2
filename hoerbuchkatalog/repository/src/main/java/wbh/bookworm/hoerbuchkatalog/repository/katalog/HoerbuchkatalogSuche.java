@@ -50,7 +50,10 @@ final class HoerbuchkatalogSuche {
             luceneIndex.deleteIndex()
                     .add(hoerbuecher,
                             "titelnummer",
-                            new String[]{Suchparameter.Feld.SACHGEBIET.luceneName()},
+                            new String[]{
+                                    Suchparameter.Feld.TITELNUMMER.luceneName(),
+                                    Suchparameter.Feld.SACHGEBIET.luceneName()
+                            },
                             new String[]{
                                     Suchparameter.Feld.AUTOR.luceneName(),
                                     Suchparameter.Feld.TITEL.luceneName(),
@@ -77,6 +80,8 @@ final class HoerbuchkatalogSuche {
         // TODO final String stichwort = suchparameter.wert(Feld.STICHWORT);
         LOGGER.trace("Suche nach Stichwort '{}'", stichwort);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
+                .addLowercaseWildcard(new QueryParameters.Field(
+                        Suchparameter.Feld.TITELNUMMER.name(), QueryParameters.Occur.SHOULD), stichwort)
                 .addLowercaseWildcard(new QueryParameters.Field(
                         Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
                 .addLowercaseWildcard(new QueryParameters.Field(
@@ -109,21 +114,19 @@ final class HoerbuchkatalogSuche {
         }
         LOGGER.info("Suche nach '{}'", suchparameter);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder();
-        if (!suchparameter.wert(Suchparameter.Feld.SACHGEBIET).isBlank()) {
+        if (suchparameter.wertVorhanden(Suchparameter.Feld.SACHGEBIET)) {
             booleanQueryBuilder.addExactPhrase(new QueryParameters.Field(
-                    Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
+                            Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
                     suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
         }
         final Suchparameter ohneSachgebiet = new Suchparameter(suchparameter);
         ohneSachgebiet.entfernen(Suchparameter.Feld.SACHGEBIET);
         ohneSachgebiet.getFelderMitWerten().keySet()
-                .forEach(k -> {
-                    if (!suchparameter.wert(k).isBlank()) {
-                        booleanQueryBuilder.addLowercaseWildcard(
-                                new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST),
-                                suchparameter.wert(k).trim());
-                    }
-                });
+                .stream()
+                .filter(k -> !suchparameter.wert(k).isBlank())
+                .forEach(k -> booleanQueryBuilder.addLowercaseWildcard(
+                        new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST),
+                        suchparameter.wert(k)));
         final LuceneQuery.Result result = LuceneQuery.query(
                 luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());

@@ -119,7 +119,7 @@ public class DlsLieferung {
         try {
             final String now = LocalDateTime.now().format(DateTimeFormatter.BASIC_ISO_DATE);
             final Path path = Path.of(/* TODO Konfigration */"var/blista/dls")
-                    .resolve(hoerernummer).resolve(now + "-" + name);
+                    .resolve(hoerernummer).resolve(now + "-" + name + ".xml");
             Files.createDirectories(path.getParent());
             Files.write(path, daten, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
         } catch (IOException e) {

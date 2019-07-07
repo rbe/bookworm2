@@ -12,17 +12,11 @@
       xmlns:wk="http://xmlns.jcp.org/jsf/composite/warenkorb">
 <ui:composition template="hoerbuchkatalog-ui.xhtml">
     <ui:define name="container">
-        <h:panelGroup rendered="#{hoererSession.hoererIstUnbekannt}">
-            Leider ist Ihre Hörernummer dem Hörbuchkatalog-System nicht bekannt.<br/>
-            Bitte melden Sie sich <a href="/cb-login.html">hier</a> an oder wenden Sie sich an die WBH.
-        </h:panelGroup>
-        <h:form id="bestellung">
-            <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
-                          layout="block" styleClass="leading">
-                <h2 class="contentheading">Bestellung Ihres Warenkorb - Onlinekatalog</h2>
+        <h:panelGroup layout="block" styleClass="leading">
+            <h2 class="contentheading">Bestellung Ihres Warenkorb - Onlinekatalog</h2>
+            <h:form id="bestellung1">
                 <hk:navigation/>
-                <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
-                              class="download-header" layout="block">
+                <h:panelGroup class="download-header" layout="block">
                     <h3>Auswahltitel für den Download</h3>
                     <wk:download-warenkorb-tabelle warenkorb="#{meinWarenkorb.downloadWarenkorb}"
                                                    readonly="false"/>
@@ -32,12 +26,13 @@
                     <wk:cd-warenkorb-tabelle warenkorb="#{meinWarenkorb.cdWarenkorb}"
                                              readonly="false"/>
                 </h:panelGroup>
+            </h:form>
+            <h:form id="bestellung2">
                 <h:panelGrid rendered="#{meineBestellung.anzahlImWarenkorb > 0}"
                              columns="2"
                              styleClass="basket-member"
                              columnClasses="basket-order-column1,basket-order-column2"
                              rowClasses="basket-order-row1,basket-order-row2">
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="name"/>
@@ -52,7 +47,6 @@
                                  validatorMessage="Bitte geben Sie mehr als 3 Zeichen ein">
                         <f:validateLength minimum="4"/>
                     </h:inputText>
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="hoerernummer"/>
@@ -70,7 +64,6 @@
                                  styleClass="input_hoerernummer">
                         <f:validateLength minimum="3"/>
                     </h:inputText>
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="email"/>
@@ -85,7 +78,6 @@
                                  styleClass="input_hoereremail">
                         <f:validateLength minimum="6"/>
                     </h:inputText>
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="bemerkung"/>
@@ -100,7 +92,6 @@
                                      rows="5" cols="35">
                         <f:validateLength minimum="6"/>
                     </h:inputTextarea>
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="bestellkarteMischen"/>
@@ -112,7 +103,6 @@
                                              required="false"
                                              styleClass="input_bestellkarteMischen">
                     </h:selectBooleanCheckbox>
-
                     <h:panelGroup>
                         <div class="basketerror">
                             <h:message for="alteBestellkarteLoeschen"/>
@@ -134,14 +124,13 @@
                     </h:commandButton>
                     <h:outputLabel id="orderSubmitMessage" value="#{meineBestellung.bestellungStatusNachricht}"/>
                 </h:panelGrid>
-            </h:panelGroup>
-            <h:panelGroup rendered="#{hoererSession.hoererIstBekannt}"
-                          layout="block" styleClass="noticetext">
-                <h3>Hinweise zum Warenkorb</h3>
-                <p>Im Warenkorb erhalten Sie eine Übersicht Ihrer Bestellungen, unterteilt in "Downloads" und "Bestellungen per CD". Geben Sie für eine Bestellung Ihre Daten und Ihre Hörernummer in die entsprechenden Felder ein und klicken Sie auf Bestellen.</p>
-                <p>Mit Ihrer Bestellung wird eine Hörbuchdatei inkl. Wasserzeichen generiert. Informationen zum Bearbeitungsstatus und einen Link für den Download erhalten Sie unter "Downloads".</p>
-            </h:panelGroup>
-        </h:form>
+            </h:form>
+        </h:panelGroup>
+        <h:panelGroup layout="block" styleClass="noticetext">
+            <h3>Hinweise zum Warenkorb</h3>
+            <p>Im Warenkorb erhalten Sie eine Übersicht Ihrer Bestellungen, unterteilt in "Downloads" und "Bestellungen per CD". Geben Sie für eine Bestellung Ihre Daten und Ihre Hörernummer in die entsprechenden Felder ein und klicken Sie auf Bestellen.</p>
+            <p>Mit Ihrer Bestellung wird eine Hörbuchdatei inkl. Wasserzeichen generiert. Informationen zum Bearbeitungsstatus und einen Link für den Download erhalten Sie unter "Downloads".</p>
+        </h:panelGroup>
     </ui:define>
 </ui:composition>
 </html>

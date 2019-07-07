@@ -77,7 +77,7 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch {} aus dem Warenkorb {} entfernt", titelnummer, this);
+        LOGGER.info("Hörbuch {} aus der Merkliste {} entfernt", titelnummer, this);
         DomainEventPublisher.global()
                 .publishAsync(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, this, titelnummer));
     }

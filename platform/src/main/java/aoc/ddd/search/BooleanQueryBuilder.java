@@ -37,12 +37,29 @@ public class BooleanQueryBuilder {
         return this;
     }
 
+    /*
+    public BooleanQueryBuilder addRange(final QueryParameters.Field field,
+                                        LocalDate from) {
+        final boolean hasValue = null != value && !value.isBlank();
+        if (hasValue) {
+            final String fieldName = field.getName().toLowerCase();
+            final String searchTerm = value
+                    .replaceAll("[^A-Za-z0-9?!]", "")
+                    .replace("?", "\\?")
+                    .replace("!", "\\!");
+            final PhraseQuery query = new PhraseQuery(fieldName, searchTerm);
+            builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
+        }
+        return this;
+    }
+    */
+
     public BooleanQueryBuilder addLowercaseWildcard(final QueryParameters.Field field,
                                                     final /* TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex */String value) {
         final boolean hasValue = null != value && !value.isBlank();
         if (hasValue) {
             final String fieldName = field.getName().toLowerCase();
-            final String[] split = value.split("[ ]");
+            final String[] split = value.split("[ ,-/]");
             Arrays.stream(split).forEach(v -> {
                 final String s = v.toLowerCase()
                         .replaceAll("[^A-Za-z0-9?!]", "")

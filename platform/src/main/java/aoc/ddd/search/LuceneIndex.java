@@ -110,7 +110,7 @@ public class LuceneIndex {
         Arrays.stream(dateFields)
                 .forEach(f -> {
                     final String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-                    document.add(new StringField(f.toLowerCase(), date, Field.Store.NO));
+                    document.add(new StringField(f, date, Field.Store.NO));
                 });
         Arrays.stream(sortFields)
                 .forEach(f -> document.add(new SortedDocValuesField(f.toLowerCase(),

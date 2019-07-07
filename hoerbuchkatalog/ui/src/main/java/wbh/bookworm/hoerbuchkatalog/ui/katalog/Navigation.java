@@ -59,7 +59,7 @@ public class Navigation implements Serializable {
     }
 
     public String zurSuche() {
-        return NAV_SUCHE + FRT;
+        return NAV_SUCHE;
     }
 
     public boolean isLinkZumSuchergebnisAnzeigen() {

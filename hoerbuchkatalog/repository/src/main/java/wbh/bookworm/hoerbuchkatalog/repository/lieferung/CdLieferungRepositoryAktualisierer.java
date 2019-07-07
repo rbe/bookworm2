@@ -41,7 +41,7 @@ public class CdLieferungRepositoryAktualisierer {
         final Path verzeichnisAktualisierung = cdLieferungRepositoryConfig.getDirectory()
                 .resolve("../aktualisierung/eingangskorb");
         filesystemWatcher = applicationContext.getBean(FilesystemWatcher.class, verzeichnisAktualisierung);
-        filesystemWatcher.registerFilesCompleteListener(neededFiles, 30, TimeUnit.SECONDS,
+        filesystemWatcher.registerFilesCompleteListener(neededFiles, 2, TimeUnit.MINUTES,
                 directoryState -> {
                     FilesUtils.move(neededFiles, verzeichnisAktualisierung, cdLieferungRepositoryConfig.getDirectory());
                     cdLieferungRepository.datenEinlesen();
