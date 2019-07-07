@@ -1,0 +1,27 @@
+== Docker
+
+.Dienste und Netzwerke
+[cols="a,a,a,a,a,a"options="header"]
+|===
+| Dienst
+| Netzwerk
+| Test IP
+| Test Port (Mapping)
+| Prod IP
+| Prod Port (Mapping)
+
+| rproxy            | bookworm-public     | assigned        | 37.120.184.54:8080:80      | assigned      | 37.120.184.54:80:80
+|                   |                     |                 | 37.120.184.54:8443:443     | assigned      | 37.120.184.54:443:443
+|                   | cms-backend         | 172.16.47.2     |                            | 172.20.47.2   |
+|                   | bookworm-backend    | 172.16.48.2     |                            | 172.20.48.2   |
+|                   | bookworm-secure     | 172.16.49.2     |                            | 172.20.49.2   |
+| joomla-db         | cms-backend         | 172.16.47.6     | :3306                      | 172.20.47.6   | :3306
+| joomla            | cms-backend         | 172.16.47.5     | :9000                      | 172.20.47.5   | :9000
+| assets            | cms-backend         | 172.16.47.7     | 37.120.184.54:2203:22      | 172.20.47.7   | 37.120.184.54:3203:22
+| vault             | bookworm-secure     | 172.16.49.3     | :8200                      | 172.20.49.3   | :8200
+| hoerbuchkatalog   | bookworm-backend    | 172.16.48.4     | :9080                      | 172.20.48.4   | :9080
+|                   | bookworm-secure     | 172.16.49.4     |                            | 172.20.49.4   |
+|                   | bookworm-outside    | assigned        |                            | assigned      |
+| datatransfer      | bookworm-public     | assigned        | 37.120.184.54:2201:22      | assigned      | 37.120.184.54:3201:22
+| admin             | bookworm-public     | assigned        | 37.120.184.54:2202:22      | assigned      | 37.120.184.54:3202:22
+|===

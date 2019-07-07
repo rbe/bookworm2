@@ -56,23 +56,14 @@ mkfs.ext4 /dev/tank/docker
 lvcreate --name dockervolumes -L8G tank
 mkfs.ext4 /dev/tank/dockervolumes
 
-lvcreate --name wbhonline_joomla_images -L4G tank
-mkfs.ext4 /dev/tank/wbhonline_joomla_images
-lvcreate --name wbhonline_joomla_joomlatools_files -L4G tank
-mkfs.ext4 /dev/tank/wbhonline_joomla_joomlatools_files
-
 cat >>/etc/fstab <<EOF
 /dev/tank/docker         /var/lib/docker          ext4  rw,noatime  0  2
 /dev/tank/dockervolumes  /var/lib/docker/volumes  ext4  rw,noatime  0  2
-/dev/tank/wbhonline_joomla_images             /var/lib/docker/volumes/wbhonline_joomla_images             ext4  rw,noatime  0  2
-/dev/tank/wbhonline_joomla_joomlatools_files  /var/lib/docker/volumes/wbhonline_joomla_joomlatools_files  ext4  rw,noatime  0  2
 EOF
 mkdir /var/lib/docker
 chmod 711 /var/lib/docker
 mkdir /var/lib/docker/volumes
 chmod 711 /var/lib/docker/volumes
-mkdir /var/lib/docker/volumes/wbhonline_joomla_images
-mkdir /var/lib/docker/volumes/wbhonline_joomla_joomlatools_files
 mount -a
 
 sed -i'' \

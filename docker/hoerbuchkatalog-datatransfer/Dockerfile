@@ -26,23 +26,22 @@ RUN apk update \
     && addgroup -g 82 -S www-data \
     && adduser -u 82 -D -S -G www-data www-data
 
-ADD docker/cms-assets/.version /
+ADD docker/hoerbuchkatalog-datatransfer/.version /
 
-COPY docker/cms-assets/keys/*_authorized_keys /etc/ssh/keys/
-COPY docker/cms-assets/sshd_config_2 .
+COPY docker/hoerbuchkatalog-datatransfer/keys/*_authorized_keys /etc/ssh/keys/
+COPY docker/hoerbuchkatalog-datatransfer/sshd_config_2 .
 COPY docker/bin/setup-ssh-users.sh .
 
 RUN chmod 700 setup-ssh-users.sh \
-    && ./setup-ssh-users.sh rbe cew mysql wbh \
-    && rm setup-ssh-users.sh \
-    && passwd -u www-data \
-    && cat sshd_config_2 >>sshd_config \
-    && rm sshd_config_2 \
-    && chmod 444 /etc/ssh/keys/*_authorized_keys
+        && ./setup-ssh-users.sh rbe cew wbh \
+        && rm setup-ssh-users.sh \
+        && cat sshd_config_2 >>sshd_config \
+        && rm sshd_config_2 \
+        && chmod 444 /etc/ssh/keys/*_authorized_keys
 
-WORKDIR /var/www/html
+WORKDIR /etc/ssh
 
-VOLUME ["/etc/ssh", "/etc/ssh/keys", "/var/www/html"]
+VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

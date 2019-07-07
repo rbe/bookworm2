@@ -3,30 +3,32 @@ LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 
-ENV buildNumber=LocalBuild
+ARG ENV_NAME
 
 ENV TZ Europe/Berlin
 
 RUN apk update \
     && apk --no-cache add \
+        tzdata \
         curl \
         nginx-mod-http-headers-more \
-        certbot-nginx \
         openssl \
+        certbot-nginx \
+    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" >/etc/timezone \
+    && apk del tzdata \
     && rm /etc/nginx/conf.d/default.conf* \
     && adduser -u 82 -D -S -G www-data www-data
 
-COPY nginx-tls.sh .
+ADD docker/rproxy/.version /
 
-WORKDIR /etc/nginx
-COPY nginx.conf .
-COPY nginx.wbhonline.conf conf.d/wbhonline.conf
-
-WORKDIR /usr/share/nginx/html
-COPY index.html .
+COPY docker/rproxy/${ENV_NAME}/nginx.conf /etc/nginx
+COPY docker/rproxy/${ENV_NAME}/wbhonline.conf /etc/nginx/conf.d/wbhonline.conf
+COPY docker/rproxy/${ENV_NAME}/index.html /usr/share/nginx/html
+COPY docker/rproxy-certbot/nginx-tls.sh /
+RUN chmod a+rx /nginx-tls.sh \
+    && /nginx-tls.sh self-signed
 
 VOLUME ["/etc/letsencrypt", "/etc/nginx", "/usr/share/nginx/html"]
-
-HEALTHCHECK CMD curl --fail http://localhost:80 || exit 1
 
 CMD ["nginx"]

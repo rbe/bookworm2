@@ -8,18 +8,15 @@ services:
       - TZ=Europe/Berlin
       - MYSQL_ROOT_PASSWORD=example
       - MYSQL_DATABASE=joomla
+      - MYSQL_USER=joomla
+      - MYSQL_PASSWORD=joomla
     networks:
       cms-backend:
-        ipv4_address: "172.16.47.6"
+        ipv4_address: "${CMS_BACKEND_NET}.${JOOMLADB_IP}"
     expose:
-      - "3306"
-    healthcheck:
-      test: ["CMD", "mysql", "-h", "localhost", "-P", "3306", "-u", "root", "-e", "SELECT 1", "cache"]
-      interval: 1s
-      timeout: 3s
-      retries: 10
+      - "${JOOMLADB_PORT}"
   joomla:
-    image: joomla:3.9.5-php7.3-fpm-alpine
+    image: joomla:3.9.8-php7.1-fpm-alpine
     depends_on:
       - joomla-db
     restart: "no"
@@ -27,41 +24,35 @@ services:
       - TZ=Europe/Berlin
       - JOOMLA_DB_HOST=joomla-db
       - JOOMLA_DB_USER=joomla
-      - JOOMLA_DB_PASSWORD=example
+      - JOOMLA_DB_PASSWORD=joomla
+    volumes:
+      - ./${ENV_NAME}/php.ini:/usr/local/etc/php/php.ini
+#      - ./${ENV_NAME}/www.conf:/usr/local/etc/php-fpm.d/www.conf
+      - joomla_html:/var/www/html
     networks:
       cms-backend:
-        ipv4_address: "172.16.47.5"
+        ipv4_address: "${CMS_BACKEND_NET}.${JOOMLA_IP}"
       bookworm-backend:
-        ipv4_address: "172.16.48.5"
+        ipv4_address: "${HOERBUCHKATALOG_BACKEND_NET}.${JOOMLA_IP}"
       cms-outside:
     expose:
-      - "9000"
-    volumes:
-      - joomla_html:/var/www/html
-      - joomla_images:/var/www/html/images
-      - joomla_joomlatools_files:/var/www/html/joomlatools-files
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9000"]
-      interval: 5m0s
-      timeout: 1s
-      retries: 3
-      start_period: 60s
+      - "${JOOMLA_PORT}"
   assets:
     build:
       context: ../../
-      dockerfile: ../cms-assets/Dockerfile
+      dockerfile: docker/cms-assets/Dockerfile
     image: wbhcms/assets:${VERSION}
     restart: "no"
     environment:
       - TZ=Europe/Berlin
-    ports:
-      - "2203:22"
     volumes:
       - assets_etc_ssh:/etc/ssh:ro
       - joomla_html:/var/www/html:rw
+    ports:
+      - "${ASSETS_PUBLIC_PORT}:22"
     networks:
       cms-backend:
-        ipv4_address: "172.16.47.7"
+        ipv4_address: "${CMS_BACKEND_NET}.${ASSETS_IP}"
       cms-public:
 
 networks:
@@ -73,7 +64,7 @@ networks:
     ipam:
       driver: default
       config:
-        - subnet: "172.16.47.0/24"
+        - subnet: "${CMS_BACKEND_NET}.0/24"
   cms-outside:
     name: cms-outside
     driver: bridge
@@ -86,11 +77,7 @@ networks:
     internal: false
 
 volumes:
-  joomla_html:
-    driver: local
-  joomla_images:
-    driver: local
-  joomla_joomlatools_files:
-    driver: local
   assets_etc_ssh:
+    driver: local
+  joomla_html:
     driver: local
