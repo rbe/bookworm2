@@ -12,6 +12,7 @@ TZ="Europe/Berlin"
 export TZ
 
 cd /opt/bookworm
+rm -rf var/wbh/hoerbuchkatalog/lucene/*
 SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" \
     java \
         -Xms2g -Xmx2g \

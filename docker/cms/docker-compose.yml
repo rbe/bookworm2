@@ -41,7 +41,7 @@ services:
     build:
       context: ../../
       dockerfile: docker/cms-assets/Dockerfile
-    image: wbhcms/assets:${VERSION}
+    image: wbhonline/cms-assets:${VERSION}
     restart: "no"
     environment:
       - TZ=Europe/Berlin
