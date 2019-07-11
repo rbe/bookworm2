@@ -57,8 +57,8 @@ public final class FilesCompleteSpecification implements Specification<Directory
             return Instant.now().minusMillis(timeUnit.toMillis(timeout))
                     .isAfter(Files.getLastModifiedTime(path).toInstant());
         } catch (IOException e) {
-            if (LOGGER.isErrorEnabled()) {
-                LOGGER.error("Cannot get lastModifiedTime for {}: {}", path, e);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Cannot get lastModifiedTime for {}: {}", path, e);
             }
             return false;
         }

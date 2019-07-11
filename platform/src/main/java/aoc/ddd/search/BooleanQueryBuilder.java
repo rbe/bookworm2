@@ -10,9 +10,14 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.WildcardQuery;
+import org.apache.lucene.util.BytesRef;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class BooleanQueryBuilder {
 
@@ -28,7 +33,7 @@ public class BooleanQueryBuilder {
         if (hasValue) {
             final String fieldName = field.getName().toLowerCase();
             final String searchTerm = value
-                    .replaceAll("[^A-Za-z0-9?!]", "")
+                    .replaceAll("[^A-Za-zäöüß0-9?!]", "")
                     .replace("?", "\\?")
                     .replace("!", "\\!");
             final PhraseQuery query = new PhraseQuery(fieldName, searchTerm);
@@ -37,22 +42,17 @@ public class BooleanQueryBuilder {
         return this;
     }
 
-    /*
-    public BooleanQueryBuilder addRange(final QueryParameters.Field field,
-                                        LocalDate from) {
-        final boolean hasValue = null != value && !value.isBlank();
-        if (hasValue) {
-            final String fieldName = field.getName().toLowerCase();
-            final String searchTerm = value
-                    .replaceAll("[^A-Za-z0-9?!]", "")
-                    .replace("?", "\\?")
-                    .replace("!", "\\!");
-            final PhraseQuery query = new PhraseQuery(fieldName, searchTerm);
-            builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
-        }
+    public BooleanQueryBuilder addRange(final QueryParameters.Field field, LocalDate from, LocalDate to) {
+        Objects.requireNonNull(field);
+        Objects.requireNonNull(from);
+        final DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyyMMdd");
+        final String fieldName = field.getName().toLowerCase();
+        final TermRangeQuery query = new TermRangeQuery(fieldName,
+                new BytesRef(from.format(dtf).getBytes()), null,
+                true, true);
+        builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
         return this;
     }
-    */
 
     public BooleanQueryBuilder addLowercaseWildcard(final QueryParameters.Field field,
                                                     final /* TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex */String value) {
@@ -62,7 +62,7 @@ public class BooleanQueryBuilder {
             final String[] split = value.split("[ ,-/]");
             Arrays.stream(split).forEach(v -> {
                 final String s = v.toLowerCase()
-                        .replaceAll("[^A-Za-z0-9?!]", "")
+                        .replaceAll("[^A-Za-zäöüß0-9?!]", "")
                         .replace("?", "\\?")
                         .replace("!", "\\!");
                 final String wildcardSearchTerm = String.format("*%s*", s);

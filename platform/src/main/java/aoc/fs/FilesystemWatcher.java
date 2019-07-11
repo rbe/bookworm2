@@ -84,7 +84,7 @@ public final class FilesystemWatcher implements Runnable {
                     directoryState.remove(eventPath);
                 }
                 fireFilesystemChangeEvent(eventPath);
-                checkSpecifications();
+                checkAndFireSpecifications();
             } else {
                 LOGGER.debug("Ignoring {} as its contained in our ignoredFiles",
                         eventPath);
@@ -125,20 +125,18 @@ public final class FilesystemWatcher implements Runnable {
                 Collections.singletonList(specificationSatisfiedListener));
     }
 
-    private void checkSpecifications() {
+    private void checkAndFireSpecifications() {
         synchronized (directoryState) {
             specificationListeners.forEach((spec, fel) -> {
                 if (spec.isSatisfied(directoryState)) {
                     fel.forEach(l -> {
-                        LOGGER.trace("Firing SpecificationSatisfied callback to {}",
-                                fel);
+                        LOGGER.trace("Firing SpecificationSatisfied callback to {}", fel);
                         try {
                             l.processSpecificationSatistied(directoryState);
                         } catch (Exception e) {
                             LOGGER.error("SpecifiactionSatisfied callback failed", e);
                         }
                     });
-                    directoryState.forgetFiles();
                 }
             });
         }
@@ -147,6 +145,7 @@ public final class FilesystemWatcher implements Runnable {
     private volatile boolean stopRequested;
 
     public void pleaseStop() {
+        LOGGER.debug("Stop requested!");
         this.stopRequested = true;
     }
 
@@ -174,10 +173,11 @@ public final class FilesystemWatcher implements Runnable {
             }
             // Check specifications every 5 * poll(timeout, TimeUnit), see above
             if (count == 5) {
-                checkSpecifications();
+                checkAndFireSpecifications();
                 count = 0;
             }
         }
+        LOGGER.debug("Closing WatchService");
         try {
             watchService.close();
         } catch (IOException e) {

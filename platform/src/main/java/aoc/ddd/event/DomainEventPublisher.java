@@ -117,7 +117,7 @@ public final class DomainEventPublisher {
                 LOGGER.debug("{} published {} to {} as it's interested in DomainEventS",
                         this, domainEvent, subscriber);
             } else {
-                LOGGER.warn("No subscribers which are interested in {} found", domainEvent);
+                LOGGER.trace("Subscriber {} not interested in {}", subscriber, domainEvent);
             }
         }
     }

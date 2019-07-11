@@ -11,6 +11,7 @@ import aoc.ddd.tools.DddHelper;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.document.DateTools;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.SortedDocValuesField;
@@ -29,8 +30,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.nio.file.Path;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
@@ -63,7 +64,8 @@ public class LuceneIndex {
         return config;
     }
 
-    /* TODO */public boolean hasIndex() {
+    /* TODO */
+    public boolean hasIndex() {
         return false;
     }
 
@@ -107,10 +109,17 @@ public class LuceneIndex {
                 .forEach(f -> document.add(new TextField(f.toLowerCase(),
                         DddHelper.valueAsString(domainEntity, f),
                         Field.Store.NO)));
+        final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Arrays.stream(dateFields)
                 .forEach(f -> {
-                    final String date = LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
-                    document.add(new StringField(f, date, Field.Store.NO));
+                    final String dateAsString = DddHelper.valueAsString(domainEntity, f);
+                    try {
+                        final String date = DateTools.dateToString(sdf.parse(dateAsString),
+                                DateTools.Resolution.DAY);
+                        document.add(new StringField(f, date, Field.Store.NO));
+                    } catch (ParseException e) {
+                        // ignore
+                    }
                 });
         Arrays.stream(sortFields)
                 .forEach(f -> document.add(new SortedDocValuesField(f.toLowerCase(),

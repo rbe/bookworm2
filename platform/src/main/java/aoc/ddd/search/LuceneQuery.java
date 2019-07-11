@@ -8,8 +8,12 @@ package aoc.ddd.search;
 
 import aoc.ddd.model.DomainId;
 
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.SortField;
 import org.apache.lucene.search.TopDocs;
@@ -82,6 +86,38 @@ public final class LuceneQuery {
             LOGGER.error("Cannot execute query", e);
             return Result.EMPTY_RESULT;
         }
+    }
+
+    @SuppressWarnings({"squid:S1452"})
+    public static Result query(final LuceneIndex luceneIndex,
+                               final String query,
+                               final int maxResults,
+                               final String... sortFields) {
+        Objects.requireNonNull(luceneIndex);
+        Objects.requireNonNull(luceneIndex.getIndexReader());
+        final long startNanos = System.nanoTime();
+        final IndexSearcher searcher = new IndexSearcher(luceneIndex.getIndexReader());
+        try {
+            final SortField[] sortFieldStream = Arrays.stream(sortFields)
+                    .map(f -> new SortField(f.toLowerCase(), SortField.Type.STRING_VAL))
+                    .toArray(SortField[]::new);
+            final Sort sort = new Sort(sortFieldStream);
+            final QueryParser queryParser = new QueryParser("titel", new StandardAnalyzer());
+            final Query q = queryParser.parse(query);
+            final int count = searcher.count(q);
+            final TopDocs topDocs = searcher.search(q, maxResults, sort);
+            final long nanos = System.nanoTime() - startNanos;
+            LOGGER.debug("Query took {} ns (= {} ms = {} s)",
+                    decimalFormat.format(nanos),
+                    decimalFormat.format(nanos / 1_000_000),
+                    decimalFormat.format(nanos / 1_000_000 / 1_000));
+            return new Result(topDocsToDomainIds(searcher, topDocs), count);
+        } catch (ParseException e) {
+            LOGGER.error("", e);
+        } catch (IOException e) {
+            LOGGER.error("Cannot execute query", e);
+        }
+        return Result.EMPTY_RESULT;
     }
 
     private static List<DomainId<?>> topDocsToDomainIds(final IndexSearcher searcher,

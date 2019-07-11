@@ -21,7 +21,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
+import java.text.Normalizer;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -33,6 +39,56 @@ final class HoerbuchkatalogSuche {
     private final LuceneIndex luceneIndex;
 
     private final int anzahlSuchergebnisse;
+
+    private static final class StichwortLuceneAbfrage {
+
+        private static <T> List<List<T>> computeCombinations2(List<List<T>> lists) {
+            List<List<T>> combinations = Arrays.asList(Arrays.asList());
+            for (List<T> list : lists) {
+                List<List<T>> extraColumnCombinations = new ArrayList<>();
+                for (List<T> combination : combinations) {
+                    for (T element : list) {
+                        List<T> newCombination = new ArrayList<>(combination);
+                        newCombination.add(element);
+                        extraColumnCombinations.add(newCombination);
+                    }
+                }
+                combinations = extraColumnCombinations;
+            }
+            return combinations;
+        }
+
+        public static String makeQuery(String[] stichwoerter) {
+            final List<List<String>> product = computeCombinations2(Arrays.asList(
+                    List.of(Suchparameter.Feld.TITELNUMMER.luceneName(),
+                            Suchparameter.Feld.AUTOR.luceneName(),
+                            Suchparameter.Feld.TITEL.luceneName(),
+                            Suchparameter.Feld.UNTERTITEL.luceneName(),
+                            Suchparameter.Feld.ERLAEUTERUNG.luceneName(),
+                            Suchparameter.Feld.SUCHWOERTER.luceneName()
+                    ),
+                    Arrays.asList(stichwoerter)));
+            final Map<String, List<String>> felderMitStichwoertern = product.stream()
+                    .map(elt -> String.format("%s:%s*", elt.get(0), elt.get(1).toLowerCase()))
+                    .collect(Collectors.groupingBy(elt -> elt.substring(0, elt.indexOf(':'))));
+            return felderMitStichwoertern.values()
+                    .stream()
+                    .map(v -> {
+                        final StringBuilder sb = new StringBuilder("(");
+                        for (int i = 0; i < v.size(); i++) {
+                            final String elt = v.get(i);
+                            sb.append(elt);
+                            if (i < v.size() - 1) {
+                                sb.append(" AND ");
+                            }
+                        }
+                        sb.append(")");
+                        return sb.toString();
+                    })
+                    .collect(Collectors.joining(" OR "));
+        }
+
+    }
 
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
                          final DomainId<String> hoerbuchkatalogDomainId,
@@ -78,27 +134,22 @@ final class HoerbuchkatalogSuche {
             return Suchergebnis.leeresSuchergebnis(stichwort);
         }
         // TODO final String stichwort = suchparameter.wert(Feld.STICHWORT);
+        // Lucene reserved characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+        final String normalizedStichwort = Normalizer.normalize(stichwort, Normalizer.Form.NFD)
+                .replaceAll("[^A-Za-zäöüß0-9 ,-]", "");
         LOGGER.trace("Suche nach Stichwort '{}'", stichwort);
-        final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder()
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.TITELNUMMER.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.AUTOR.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.TITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.UNTERTITEL.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.ERLAEUTERUNG.name(), QueryParameters.Occur.SHOULD), stichwort)
-                .addLowercaseWildcard(new QueryParameters.Field(
-                        Suchparameter.Feld.SUCHWOERTER.name(), QueryParameters.Occur.SHOULD), stichwort);
-        final LuceneQuery.Result result = LuceneQuery.query(
-                this.luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
+        final String[] stichwoerter = Arrays.stream(stichwort.split("[\\s,-]"))
+                .filter(elt -> !elt.isBlank())
+                .toArray(String[]::new);
+        final String query = StichwortLuceneAbfrage.makeQuery(stichwoerter);
+        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex,
+                query, anzahlSuchergebnisse,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         final List<Titelnummer> titelnummern = result.getDomainIds()
                 .stream()
                 .map(dddId -> new Titelnummer(dddId.getValue()))
                 .collect(Collectors.toUnmodifiableList());
+        LOGGER.debug("Lucene Query {} ergab {} Treffer", query, titelnummern.size());
         final Suchparameter suchparameter = new Suchparameter().hinzufuegen(
                 Suchparameter.Feld.STICHWORT, stichwort);
         final Suchergebnis suchergebnis = new Suchergebnis(
@@ -119,9 +170,15 @@ final class HoerbuchkatalogSuche {
                             Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
                     suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
         }
-        final Suchparameter ohneSachgebiet = new Suchparameter(suchparameter);
-        ohneSachgebiet.entfernen(Suchparameter.Feld.SACHGEBIET);
-        ohneSachgebiet.getFelderMitWerten().keySet()
+        if (suchparameter.wertVorhanden(Suchparameter.Feld.EINSTELLDATUM)) {
+            final LocalDate from = LocalDate.parse(suchparameter.wert(Suchparameter.Feld.EINSTELLDATUM), DateTimeFormatter.ISO_DATE);
+            booleanQueryBuilder.addRange(new QueryParameters.Field(
+                            Suchparameter.Feld.EINSTELLDATUM.name(), QueryParameters.Occur.MUST),
+                    from, null);
+        }
+        final Suchparameter ohneSachgebietUndEinstelldatum = new Suchparameter(suchparameter);
+        ohneSachgebietUndEinstelldatum.entfernen(Suchparameter.Feld.SACHGEBIET).entfernen(Suchparameter.Feld.EINSTELLDATUM);
+        ohneSachgebietUndEinstelldatum.getFelderMitWerten().keySet()
                 .stream()
                 .filter(k -> !suchparameter.wert(k).isBlank())
                 .forEach(k -> booleanQueryBuilder.addLowercaseWildcard(

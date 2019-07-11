@@ -70,7 +70,7 @@ public final class HoererBlistaDownloads extends DomainValueObject {
 
     public List<BlistaDownload> bezuegsfaehige() {
         return blistaDownload.stream()
-                .filter(BlistaDownload::isBezugsfaehig)
+                //.filter(BlistaDownload::isBezugsfaehig)
                 .collect(Collectors.toList());
     }
 

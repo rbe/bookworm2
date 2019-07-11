@@ -87,8 +87,8 @@ public final class BlistaDownload extends DomainValueObject {
             case 0:
                 /*if (dlsDescription.contains("doppelt bestellt")) {
                     bezugsfaehig = true;
-                }*/
-                break;
+                }
+                break;*/
             case 1:
             case 2:
             case 4:
@@ -107,8 +107,9 @@ public final class BlistaDownload extends DomainValueObject {
         this.downloadLink = downloadLink;
         this.gesperrt = gesperrt;
         this.bezugsfaehig &= /* TODO isUrl(String) */
-                gesperrt == 0 &&
-                null != downloadLink && !downloadLink.isBlank();
+                gesperrt == 0
+                        && null != downloadLink
+                        && !downloadLink.isBlank();
     }
 
     public static BlistaDownload of(final Hoerernummer hoerernummer,

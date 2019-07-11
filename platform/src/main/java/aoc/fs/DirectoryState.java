@@ -86,6 +86,7 @@ public final class DirectoryState {
     }
 
     public void forgetFiles() {
+        LOGGER.debug("Forgetting all watched file states ({})", fileStates);
         fileStates.clear();
     }
 

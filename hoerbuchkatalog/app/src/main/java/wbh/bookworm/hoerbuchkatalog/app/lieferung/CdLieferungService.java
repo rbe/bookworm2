@@ -36,6 +36,11 @@ public final class CdLieferungService {
         this.repositoryResolver = repositoryResolver;
     }
 
+    public boolean hatBelastungen(final Hoerernummer hoerernummer) {
+        final HoererRepository hoererRepository = repositoryResolver.hoererRepository();
+        return !hoererRepository.belastungen(hoerernummer).isEmpty();
+    }
+
     public List<Belastung> belastungen(final Hoerernummer hoerernummer) {
         /* TODO Security Context */if (hoerernummer.isUnbekannt()) {
             return Collections.emptyList();
@@ -62,10 +67,11 @@ public final class CdLieferungService {
         } else {
             final CdLieferungRepository cdLieferungRepository = repositoryResolver.cdLieferungRepository();
             final List<Bestellkarte> bestellkarten = cdLieferungRepository.bestellkarten(hoerernummer);
-            bestellkarten.sort(Comparator.nullsFirst(
-                    Comparator.comparing(/*TODO ::getTitelnummer, Comparable<Titelnummer>*/Bestellkarte::toString,
+            /*bestellkarten.sort(Comparator.nullsFirst(
+                    // TODO ::getTitelnummer, Comparable<Titelnummer>
+                    Comparator.comparing(Bestellkarte::toString,
                             Comparator.nullsFirst(Comparator.naturalOrder())))
-                    .reversed());
+                    .reversed());*/
             LOGGER.info("{} Bestellkarten für Hörer {} gefunden und sortiert",
                     bestellkarten.size(), hoerernummer);
             return bestellkarten;

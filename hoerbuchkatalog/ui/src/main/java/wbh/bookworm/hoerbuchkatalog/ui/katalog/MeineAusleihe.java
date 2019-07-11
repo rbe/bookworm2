@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
@@ -31,7 +30,7 @@ public class MeineAusleihe {
 
     private final Hoerernummer hoerernummer;
 
-    private final CdLieferungService cdLieferungService;
+    //private final CdLieferungService cdLieferungService;
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
@@ -39,18 +38,20 @@ public class MeineAusleihe {
 
     @Autowired
     public MeineAusleihe(final HoererSession hoererSession,
-                         final CdLieferungService cdLieferungService,
+                         //final CdLieferungService cdLieferungService,
                          final HoerbuchkatalogService hoerbuchkatalogService) {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
         this.hoerernummer = hoererSession.getHoerernummer();
-        this.cdLieferungService = cdLieferungService;
+        //this.cdLieferungService = cdLieferungService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.belastungen(hoerernummer));
+        //this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.belastungen(hoerernummer));
+        this.stichwortsuche = new Stichwortsuche<>(hoererSession.alleBelastungen());
     }
 
     public boolean belastungenVorhanden() {
-        return !cdLieferungService.belastungen(hoerernummer).isEmpty();
+        //return !cdLieferungService.belastungen(hoerernummer).isEmpty();
+        return !hoererSession.alleBelastungen().isEmpty();
     }
 
     public String autor(final Titelnummer titelnummer) {
@@ -87,7 +88,8 @@ public class MeineAusleihe {
     public boolean belastungenAnzeigen() {
         return stichwortsuche.isStichwortEingegeben()
                 ? stichwortsuche.isStichwortHatTreffer()
-                : !cdLieferungService.belastungen(hoerernummer).isEmpty();
+                //: !cdLieferungService.belastungen(hoerernummer).isEmpty();
+                : !hoererSession.alleBelastungen().isEmpty();
     }
 
     public List<Belastung> getGefilterteBelastungen() {
@@ -95,7 +97,8 @@ public class MeineAusleihe {
                 stichwortsuche.isStichwortHatTreffer(), stichwortsuche.getGefiltert().size());
         return stichwortsuche.isStichwortHatTreffer()
                 ? stichwortsuche.getGefiltert()
-                : cdLieferungService.belastungen(hoerernummer);
+                //: cdLieferungService.belastungen(hoerernummer);
+                : hoererSession.alleBelastungen();
     }
 
     public void stichwortVergessen() {

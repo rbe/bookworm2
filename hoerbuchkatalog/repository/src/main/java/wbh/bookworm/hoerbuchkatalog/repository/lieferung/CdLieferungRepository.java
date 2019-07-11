@@ -8,8 +8,10 @@ package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 
+import aoc.ddd.event.DomainEventPublisher;
 import aoc.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
@@ -46,6 +48,7 @@ public class CdLieferungRepository {
         aktuellerBestellkartenMapper.set(applicationContext.getBean(BestellkartenMapper.class));
         aktuellerErledigteBestellkartenMapper.set(applicationContext.getBean(
                 ErledigteBestellkartenMapper.class));
+        DomainEventPublisher.global().publishAsync(new CdLieferungAktualisiert());
         LOGGER.info("Erledigte Bestellkarten und Bestellkarten eingelesen");
     }
 
@@ -57,12 +60,12 @@ public class CdLieferungRepository {
         return aktuellerBestellkartenMapper.get().bestellkartenFuer(hoerernummer);
     }
 
-    public List<ErledigteBestellkarte> erledigteBestellkarten(final Hoerernummer hoerernummer) {
-        return aktuellerErledigteBestellkartenMapper.get().erledigteBestellkartenFuer(hoerernummer);
-    }
-
     public boolean hatErledigteBestellkarten() {
         return aktuellerErledigteBestellkartenMapper.get().hatDatenEingelesen();
+    }
+
+    public List<ErledigteBestellkarte> erledigteBestellkarten(final Hoerernummer hoerernummer) {
+        return aktuellerErledigteBestellkartenMapper.get().erledigteBestellkartenFuer(hoerernummer);
     }
 
 }

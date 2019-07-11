@@ -98,16 +98,22 @@ final class BestellkartenMapper {
         return !bestellkarten.isEmpty();
     }
 
-    private List<Bestellkarte> parseAlleBestellkarten(final String[] bkrxstpRow) {
+    private List<Bestellkarte> parseAlleBestellkarten(final String[] bkstpRow) {
         final List<Bestellkarte> alleBestellkarten = IntStream.range(1, 400 + 1)
                 .mapToObj(i -> {
-                    final String bkp = bkstp.getValue(bkrxstpRow, "BKP" + i);
-                    if (!"0".equals(bkp)) {
-                        return bestellkarte(
-                                bkstp.getValue(bkrxstpRow, "BKHNR"),
-                                bkp,
-                                bkstp.getValue(bkrxstpRow, "BKPDAT"));
-                    } else {
+                    final String bkp = bkstp.getValue(bkstpRow, "BKP" + i);
+                    try {
+                        final int bpkZahl = Integer.parseInt(bkp);
+                        if (bpkZahl > 0 && bpkZahl < 888888) {
+                            return bestellkarte(
+                                    bkstp.getValue(bkstpRow, "BKHNR"),
+                                    bkp,
+                                    bkstp.getValue(bkstpRow, "BKPDAT"));
+                        } else {
+                            return null;
+                        }
+                    } catch (NumberFormatException e) {
+                        LOGGER.warn("Kann BKSTP-Feld BKP{} nicht parsen: {}", i, bkp);
                         return null;
                     }
                 })
@@ -116,14 +122,16 @@ final class BestellkartenMapper {
         // TODO Jede Bestellkarte enthält...
         // Erste Bestellkarte enthält letztes Bestelldatum
         alleBestellkarten.add(0, bestellkarte(
-                bkstp.getValue(bkrxstpRow, "BKHNR"),
+                bkstp.getValue(bkstpRow, "BKHNR"),
                 null,
-                bkstp.getValue(bkrxstpRow, "BKPDAT")));
+                bkstp.getValue(bkstpRow, "BKPDAT")));
         return alleBestellkarten;
     }
 
     List<Bestellkarte> bestellkartenFuer(final Hoerernummer hoerernummer) {
-        return /* TODO NPE wenn keine Daten eingelesen */bestellkarten.getOrDefault(hoerernummer, Collections.emptyList());
+        return null != bestellkarten
+                ? bestellkarten.getOrDefault(hoerernummer, Collections.emptyList())
+                : Collections.emptyList();
     }
 
 }

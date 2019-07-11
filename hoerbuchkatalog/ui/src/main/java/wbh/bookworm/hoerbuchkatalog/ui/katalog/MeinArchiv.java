@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
@@ -37,7 +36,7 @@ public class MeinArchiv {
 
     private final Hoerernummer hoerernummer;
 
-    private final CdLieferungService cdLieferungService;
+    //private final CdLieferungService cdLieferungService;
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
@@ -47,18 +46,20 @@ public class MeinArchiv {
 
     @Autowired
     public MeinArchiv(final HoererSession hoererSession,
-                      final CdLieferungService cdLieferungService,
+                      //final CdLieferungService cdLieferungService,
                       final HoerbuchkatalogService hoerbuchkatalogService) {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
         this.hoerernummer = hoererSession.getHoerernummer();
-        this.cdLieferungService = cdLieferungService;
+        //this.cdLieferungService = cdLieferungService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.erledigteBestellkarten(hoerernummer));
+        //this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.erledigteBestellkarten(hoerernummer));
+        this.stichwortsuche = new Stichwortsuche<>(hoererSession.alleErledigtenBestellkarten());
     }
 
     public boolean erledigteBestellkartenVorhanden() {
-        return !cdLieferungService.erledigteBestellkarten(hoerernummer).isEmpty();
+        //return !cdLieferungService.erledigteBestellkarten(hoerernummer).isEmpty();
+        return !hoererSession.alleErledigtenBestellkarten().isEmpty();
     }
 
     public String autor(final Titelnummer titelnummer) {
@@ -133,7 +134,8 @@ public class MeinArchiv {
     public boolean erledigteBestellkartenAnzeigen() {
         return stichwortsuche.isStichwortEingegeben()
                 ? stichwortsuche.isStichwortHatTreffer()
-                : !cdLieferungService.erledigteBestellkarten(hoerernummer).isEmpty();
+                //: !cdLieferungService.erledigteBestellkarten(hoerernummer).isEmpty();
+                : !hoererSession.alleErledigtenBestellkarten().isEmpty();
     }
 
     public List<ErledigteBestellkarte> getGefilterteErledigteBestellkarten() {
@@ -141,7 +143,8 @@ public class MeinArchiv {
                 stichwortsuche.isStichwortHatTreffer(), stichwortsuche.getGefiltert().size());
         return stichwortsuche.isStichwortHatTreffer()
                 ? stichwortsuche.getGefiltert()
-                : /* TODO Sortieren */cdLieferungService.erledigteBestellkarten(hoerernummer);
+                //: /* TODO Sortieren */cdLieferungService.erledigteBestellkarten(hoerernummer);
+                : hoererSession.alleErledigtenBestellkarten();
     }
 
     public void sucheVergessen() {

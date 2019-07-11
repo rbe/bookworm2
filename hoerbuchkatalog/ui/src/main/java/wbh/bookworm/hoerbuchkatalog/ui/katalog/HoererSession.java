@@ -12,6 +12,7 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
@@ -27,7 +28,11 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
 import aoc.ddd.event.DomainEventPublisher;
@@ -70,6 +75,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
                          final BestellungService bestellungService,
                          final WarenkorbService warenkorbService,
                          final MerklisteService merklisteService,
+                         final CdLieferungService cdLieferungService,
                          final DownloadsLieferungService downloadsLieferungService) {
         LOGGER.trace("Initialisiere für HttpSession {}", session.getId());
         this.session = session;
@@ -77,6 +83,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.merklisteService = merklisteService;
         this.warenkorbService = warenkorbService;
+        this.cdLieferungService = cdLieferungService;
         this.downloadsLieferungService = downloadsLieferungService;
         final String hnr = request.getParameter(SessionKey.HOERERNUMMER);
         final Hoerernummer hoerernummer = null != hnr && !hnr.isBlank()
@@ -104,7 +111,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
         @Override
         public void handleEvent(final HoerbuchkatalogAktualisiert domainEvent) {
-            logger.trace("Verarbeite {}", domainEvent);
+            logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
             hoerbuchValueCache.invalidateAll();
         }
 
@@ -359,7 +366,48 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
     }
 
     //
-    // Lieferung
+    // Lieferung - CDs
+    //
+
+    private class CdLieferungAktualisiertSubscriber
+            extends DomainEventSubscriber<CdLieferungAktualisiert> {
+
+        CdLieferungAktualisiertSubscriber() {
+            super(CdLieferungAktualisiert.class);
+        }
+
+        @Override
+        public void handleEvent(final CdLieferungAktualisiert domainEvent) {
+            logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
+            erledigteBestellkartenELCache.invalidate();
+            bestellkartenELCache.invalidate();
+            belastungenELCache.invalidate();
+        }
+
+    }
+
+    private final transient CdLieferungService cdLieferungService;
+
+    private transient ELValueCache<List<Bestellkarte>> bestellkartenELCache;
+
+    private transient ELValueCache<List<ErledigteBestellkarte>> erledigteBestellkartenELCache;
+
+    private transient ELValueCache<List<Belastung>> belastungenELCache;
+
+    List<Bestellkarte> alleBestellkarten() {
+        return bestellkartenELCache.get();
+    }
+
+    List<ErledigteBestellkarte> alleErledigtenBestellkarten() {
+        return erledigteBestellkartenELCache.get();
+    }
+
+    List<Belastung> alleBelastungen() {
+        return belastungenELCache.get();
+    }
+
+    //
+    // Lieferung - Downloads
     //
 
     private final transient DownloadsLieferungService downloadsLieferungService;
@@ -416,7 +464,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
         @Override
         public void handleEvent(final HoererdatenAktualisiert domainEvent) {
             if (domainEvent.getHoerernummer().equals(hoerernummer)) {
-                logger.trace("Verarbeite {}", domainEvent);
+                logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
                 hoererELCache.invalidate();
             } else {
                 logger.warn("Hörer {} hat {} für Hörer {} erhalten",
@@ -463,7 +511,16 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
             // Bestellung
             DomainEventPublisher.global()
                     .subscribe(new BestellungAufgegebenSubscriber());
-            // Lieferung
+            // Lieferung - CDs
+            erledigteBestellkartenELCache = new ELValueCache<>(null, () ->
+                    cdLieferungService.erledigteBestellkarten(hoerernummer));
+            bestellkartenELCache = new ELValueCache<>(null, () ->
+                    cdLieferungService.bestellkarten(hoerernummer));
+            belastungenELCache = new ELValueCache<>(null, () ->
+                    cdLieferungService.belastungen(hoerernummer));
+            DomainEventPublisher.global()
+                    .subscribe(new CdLieferungAktualisiertSubscriber());
+            // Lieferung - Download
             blistaDownloadsELCache = new TimeoutCacheDecorator<>(new ELValueCache<>(
                     null, () -> downloadsLieferungService.lieferungen(hoerernummer)),
                     TimeUnit.MINUTES.toMillis(5));

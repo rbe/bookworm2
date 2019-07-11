@@ -25,7 +25,7 @@ public final class Stichwortsuche<T> {
 
     private List<T> gefiltert;
 
-    public Stichwortsuche(final List<T> liste) {
+    Stichwortsuche(final List<T> liste) {
         this.liste = liste;
         gefiltert = Collections.emptyList();
     }
@@ -41,7 +41,7 @@ public final class Stichwortsuche<T> {
         }
     }
 
-    public boolean isStichwortEingegeben() {
+    boolean isStichwortEingegeben() {
         return null != stichwort && !stichwort.isBlank();
     }
 
@@ -57,15 +57,15 @@ public final class Stichwortsuche<T> {
         LOGGER.trace("gefiltert={}", gefiltert);
     }
 
-    public boolean isStichwortHatTreffer() {
+    boolean isStichwortHatTreffer() {
         return isStichwortEingegeben() && !gefiltert.isEmpty();
     }
 
-    public List<T> getGefiltert() {
+    List<T> getGefiltert() {
         return gefiltert;
     }
 
-    public void stichwortVergessen() {
+    void stichwortVergessen() {
         stichwort = null;
         gefiltert = Collections.emptyList();
     }

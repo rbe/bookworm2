@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
@@ -33,7 +32,7 @@ public class MeineBestellkarte {
 
     private final Hoerernummer hoerernummer;
 
-    private final CdLieferungService cdLieferungService;
+    //private final CdLieferungService cdLieferungService;
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
@@ -41,25 +40,28 @@ public class MeineBestellkarte {
 
     @Autowired
     public MeineBestellkarte(final HoererSession hoererSession,
-                             final CdLieferungService cdLieferungService,
+                             //final CdLieferungService cdLieferungService,
                              final HoerbuchkatalogService hoerbuchkatalogService) {
         LOGGER.trace("Initialisiere für {}", hoererSession);
         this.hoererSession = hoererSession;
         this.hoerernummer = hoererSession.getHoerernummer();
-        this.cdLieferungService = cdLieferungService;
+        //this.cdLieferungService = cdLieferungService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.bestellkarten(hoerernummer));
+        //this.stichwortsuche = new Stichwortsuche<>(cdLieferungService.bestellkarten(hoerernummer));
+        this.stichwortsuche = new Stichwortsuche<>(hoererSession.alleBestellkarten());
     }
 
     public String getLetztesBestelldatumAufDeutsch() {
-        final List<Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(hoerernummer);
+        //final List<Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(hoerernummer);
+        final List<Bestellkarte> bestellkarten = hoererSession.alleBestellkarten();
         return !bestellkarten.isEmpty()
                 ? bestellkarten.get(0).getLetztesBestelldatumAufDeutsch()
                 : LocalDate.now().format(DateTimeFormatter.ofPattern("dd.MM.yyyy"));
     }
 
     public boolean bestellkartenVorhanden() {
-        return !cdLieferungService.bestellkarten(hoerernummer).isEmpty();
+        //return !cdLieferungService.bestellkarten(hoerernummer).isEmpty();
+        return !hoererSession.alleBestellkarten().isEmpty();
     }
 
     public String sachgebiet(final Titelnummer titelnummer) {
@@ -105,7 +107,8 @@ public class MeineBestellkarte {
     public boolean bestellkartenAnzeigen() {
         return stichwortsuche.isStichwortEingegeben()
                 ? stichwortsuche.isStichwortHatTreffer()
-                : !cdLieferungService.erledigteBestellkarten(hoerernummer).isEmpty();
+                //: !cdLieferungService.bestellkarten(hoerernummer).isEmpty();
+                : !hoererSession.alleBestellkarten().isEmpty();
     }
 
     public List<Bestellkarte> getGefilterteBestellkarten() {
@@ -113,7 +116,8 @@ public class MeineBestellkarte {
                 stichwortsuche.isStichwortHatTreffer(), stichwortsuche.getGefiltert().size());
         return stichwortsuche.isStichwortHatTreffer()
                 ? stichwortsuche.getGefiltert()
-                : cdLieferungService.bestellkarten(hoerernummer);
+                //: cdLieferungService.bestellkarten(hoerernummer);
+                : hoererSession.alleBestellkarten();
     }
 
     public void sucheVergessen() {
