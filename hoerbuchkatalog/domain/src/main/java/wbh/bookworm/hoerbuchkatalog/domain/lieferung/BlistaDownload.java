@@ -80,7 +80,8 @@ public final class BlistaDownload extends DomainValueObject {
         if (LocalDateTime.now().isAfter(rueckgabedatum)) {
             this.statusText = String.format("%d: Ausleihzeitraum abgelaufen", ausleihstatus);
         } else {
-            this.statusText = String.format("%d: %s", ausleihstatus, dlsDescription);
+            this.statusText = String.format("%d: %s", ausleihstatus
+                    , dlsDescription);
         }
         bezugsfaehig = false;
         switch (ausleihstatus) {

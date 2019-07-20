@@ -93,7 +93,7 @@ public class DlsLieferung {
                     return Optional.empty();
                 }
             } else {
-                LOGGER.warn("");
+                LOGGER.warn("Antwort von blista DLS hat Länge 0");
                 return Optional.empty();
             }
         } catch (IOException e) {

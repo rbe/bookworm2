@@ -23,6 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -42,6 +43,46 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         final DlsLieferung dlsLieferung) {
         this.repositoryResolver = repositoryResolver;
         this.dlsLieferung = dlsLieferung;
+    }
+
+    public long anzahlLieferungenHeute(final Hoerernummer hoerernummer) {
+        long anzahl = 0;
+        final Optional<DlsWerke> maybeDlsWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
+        if (maybeDlsWerke.isPresent()) {
+            final DlsWerke dlsWerke = maybeDlsWerke.get();
+            if (!dlsWerke.hatFehler()) {
+                anzahl = dlsWerke.books
+                        .stream()
+                        .map(b -> toBlistaDownload(hoerernummer, b))
+                        .filter(Objects::nonNull)
+                        .filter(b -> b.getBestelldatum().getDayOfYear() ==
+                                LocalDateTime.now().getDayOfYear())
+                        .count();
+                LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
+                        hoerernummer, LocalDateTime.now().getMonth(), anzahl);
+            }
+        }
+        return anzahl;
+    }
+
+    public long anzahlLieferungenInDiesemMonat(final Hoerernummer hoerernummer) {
+        long anzahl = 0;
+        final Optional<DlsWerke> maybeDlsWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
+        if (maybeDlsWerke.isPresent()) {
+            final DlsWerke dlsWerke = maybeDlsWerke.get();
+            if (!dlsWerke.hatFehler()) {
+                anzahl = dlsWerke.books
+                        .stream()
+                        .map(b -> toBlistaDownload(hoerernummer, b))
+                        .filter(Objects::nonNull)
+                        .filter(b -> b.getBestelldatum().getMonth().equals(
+                                LocalDateTime.now().getMonth()))
+                        .count();
+                LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
+                        hoerernummer, LocalDateTime.now().getMonth(), anzahl);
+            }
+        }
+        return anzahl;
     }
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
@@ -76,6 +117,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
         }
     }
 
+    // TODO Optional
     private BlistaDownload toBlistaDownload(final Hoerernummer hoerernummer,
                                             final DlsWerke.Book book) {
         final AghNummer aghNummer = new AghNummer(book.Aghnummer);

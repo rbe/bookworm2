@@ -123,29 +123,39 @@ public abstract class JsonDomainRepository
         Objects.requireNonNull(prefix);
         logger.trace("Generating next id for aggregate {}", aggClass);
         final Path idSequencePath = aggregateStoragePath.resolve(idSequenceFilename);
+        ID id;
         try {
-            idSequenceLock.tryLock(1, TimeUnit.SECONDS);
-            //synchronized (aggClass) {
-            final DomainIdSequence domainIdSequence;
-            if (!Files.exists(idSequencePath)) {
-                // TODO Strategy domainIdSequence = new DomainIdSequence(0);
-                domainIdSequence = initializeDomainIdCountingExistingAggregates(idSequencePath);
+            if (idSequenceLock.tryLock()
+                    || idSequenceLock.tryLock(5, TimeUnit.SECONDS)) {
+                final DomainIdSequence domainIdSequence;
+                if (!Files.exists(idSequencePath)) {
+                    // TODO Strategy domainIdSequence = new DomainIdSequence(0);
+                    domainIdSequence = initializeDomainIdCountingExistingAggregates(idSequencePath);
+                } else {
+                    domainIdSequence = loadExistingIdSequence(idSequencePath);
+                }
+                id = incrementAndStoreIdSequence(prefix, idSequencePath, domainIdSequence);
             } else {
-                domainIdSequence = loadExistingIdSequence(idSequencePath);
+                throw new DomainRepositoryException("Could not lock " + idSequenceLock
+                        + " while trying to get next ID for prefix=" + prefix
+                        + " idSequencePath=" + idSequencePath);
             }
-            return incrementAndStoreIdSequence(prefix, idSequencePath, domainIdSequence);
         } catch (InterruptedException e) {
-            idSequenceLock.unlock();
             Thread.currentThread().interrupt();
             throw new DomainRepositoryException(e);
+        } finally {
+            if (idSequenceLock.isLocked()) {
+                idSequenceLock.unlock();
+            }
         }
+        return id;
     }
 
     private ID incrementAndStoreIdSequence(final String prefix, final Path idSequencePath,
                                            final DomainIdSequence domainIdSequence) {
         try {
-            final Constructor<ID> declaredConstructor =
-                    idClass.getDeclaredConstructor(String.class);
+            final Constructor<ID> declaredConstructor = idClass.
+                    getDeclaredConstructor(String.class);
             declaredConstructor.setAccessible(true);
             final String trim = prefix.trim();
             final String prefixAndId = trim.length() > 1
@@ -158,10 +168,8 @@ public abstract class JsonDomainRepository
             return id;
         } catch (InstantiationException | IllegalAccessException
                 | InvocationTargetException | NoSuchMethodException e) {
-            idSequenceLock.unlock();
             throw new DomainRepositoryException(e);
         } catch (IOException e) {
-            idSequenceLock.unlock();
             throw new DomainRepositoryException("Could not store next id", e);
         }
     }
@@ -174,7 +182,6 @@ public abstract class JsonDomainRepository
             domainIdSequence = objectMapper.readValue(
                     idSequencePath.toFile(), DomainIdSequence.class);
         } catch (IOException e) {
-            idSequenceLock.unlock();
             throw new DomainRepositoryException("Could not initialize idSequence file " +
                     idSequencePath, e);
         }
@@ -186,22 +193,22 @@ public abstract class JsonDomainRepository
         logger.trace("Initializing IdSequence at '{}' with count of existing aggregates",
                 idSequencePath);
         try {
-            idSequenceLock.tryLock(1, TimeUnit.SECONDS);
+//            idSequenceLock.tryLock(1, TimeUnit.SECONDS);
             Files.createFile(idSequencePath);
             final DomainIdSequence domainIdSequence = new DomainIdSequence(countAll());
             objectMapper.writeValue(idSequencePath.toFile(), domainIdSequence);
-            idSequenceLock.unlock();
+//            idSequenceLock.unlock();
             logger.debug("Initialized IdSequence at '{}' counting existing aggregates, {}",
                     idSequencePath, domainIdSequence);
             return domainIdSequence;
         } catch (IOException e) {
-            idSequenceLock.unlock();
+//            idSequenceLock.unlock();
             throw new DomainRepositoryException("Could not initialize IdSequence at " +
                     idSequencePath, e);
-        } catch (InterruptedException e) {
+        } /*catch (InterruptedException e) {
             idSequenceLock.unlock();
             throw new DomainRepositoryException(e);
-        }
+        }*/
     }
 
     @Override

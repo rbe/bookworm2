@@ -47,4 +47,8 @@ public final class DownloadsLieferungService {
         }
     }
 
+    public long anzahlLieferungenInDiesemMonat(final Hoerernummer hoerernummer) {
+        return downloadsRepository.anzahlLieferungenInDiesemMonat(hoerernummer);
+    }
+
 }
