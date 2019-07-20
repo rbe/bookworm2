@@ -21,70 +21,79 @@ platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd 
 . ${platformlibdir}/ssh.sh
 . ${platformlibdir}/docker.sh
 
-function archlinux_netcup_nfs() {
-    cat >>/etc/fstab <<EOF
-46.38.248.210:/voln80726a1  /mnt/backup  nfs  rw,rsize=1048576,wsize=1048576  0  0
-EOF
-}
+#
+# Linux Packages
+#
 
 archlinux_update
-
 pacman --noconfirm -S linux-lts
 grub-mkconfig -o /boot/grub/grub.cfg
-
 pacman --noconfirm -S haveged
 systemctl enable haveged
-
 pacman --noconfirm -S nfs-utils
 systemctl enable rpcbind
 systemctl start rpcbind
-
 archlinux_install gnupg
 archlinux_install git
 archlinux_install expect
 
+#
+# Storage
+#
+
 sfdisk /dev/sda <<EOF
 3,,L
 EOF
-
+# Volume Group "tank"
 pvcreate /dev/sda3
 vgcreate tank /dev/sda3
-
+# Docker (/var/lib/docker)
 lvcreate --name docker -L4G tank
 mkfs.ext4 /dev/tank/docker
-
-lvcreate --name dockervolumes -L8G tank
+# Docker Volumes (/var/lib/docker/volumes)
+lvcreate --name dockervolumes -L16G tank
 mkfs.ext4 /dev/tank/dockervolumes
-
+# Docker Backup (/var/lib/docker/backup)
+lvcreate --name dockerbackup -L16G tank
+mkfs.ext4 /dev/tank/dockerbackup
+# fstab
 cat >>/etc/fstab <<EOF
 /dev/tank/docker         /var/lib/docker          ext4  rw,noatime  0  2
 /dev/tank/dockervolumes  /var/lib/docker/volumes  ext4  rw,noatime  0  2
+/dev/tank/dockerbackup   /var/lib/docker/backup   ext4  rw,noatime  0  2
 EOF
 mkdir /var/lib/docker
 chmod 711 /var/lib/docker
 mkdir /var/lib/docker/volumes
 chmod 711 /var/lib/docker/volumes
+mkdir /var/lib/docker/backup
+chmod 750 /var/lib/docker/backup
 mount -a
+# Install Docker
+archlinux_install_docker
+# Docker outgoing connections
+sudo sysctl net.ipv4.conf.all.forwarding=1
+sudo iptables -P FORWARD ACCEPT
+# Docker Logfiles
+cat >/etc/logrotate.d/docker <<EOF
+/var/lib/docker/containers/*/*.log {
+        rotate 30
+        daily
+        compress
+        missingok
+        delaycompress
+        copytruncate
+}
+EOF
 
+#
+# Linux
+#
+
+# Linux Kernel
 sed -i'' \
     -e "s#^HOOKS=.*#HOOKS=(base udev block autodetect modconf lvm2 filesystems keyboard fsck)#" \
     /etc/mkinitcpio.conf
 mkinitcpio -p linux
-
-archlinux_install_docker
-sudo sysctl net.ipv4.conf.all.forwarding=1
-sudo iptables -P FORWARD ACCEPT
-
-archlinux_netcup_nfs
-
-groupadd -g 4801 bookworm
-
-setup_user_w_sudo rbe
-ssh_setup_key rbe $(cat etc/authorized_keys rbe)
-sudo usermod -g bookworm -aG docker rbe
-
-setup_user_w_sudo cew
-ssh_setup_key cew $(cat etc/authorized_keys cew)
-sudo usermod -g bookworm -aG docker cew
 
 exit 0

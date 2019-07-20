@@ -1,7 +1,22 @@
 version: '3.7'
 
 services:
-  joomla-db:
+#  cms-backup:
+#    image: databack/mysql-backup
+#      restart: always
+#      volumes:
+#        - /local/file/path:/db
+#        - /path/to/pre-backup/scripts:/scripts.d/pre-backup
+#        - /path/to/post-backup/scripts:/scripts.d/post-backup
+#      environment:
+#        - TZ=Europe/Berlin
+#        - DB_DUMP_TARGET=/db
+#        - DB_USER=user123
+#        - DB_PASS=pass123
+#        - DB_DUMP_FREQ=60
+#        - DB_DUMP_BEGIN=2330
+#        - DB_SERVER=cms-joomladb
+  cms-joomladb:
     image: mysql:5.6
     restart: "no"
     environment:
@@ -15,7 +30,12 @@ services:
         ipv4_address: "${CMS_BACKEND_NET}.${JOOMLADB_IP}"
     expose:
       - "${JOOMLADB_PORT}"
-  joomla:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
+  cms-joomla:
     image: joomla:3.9.8-php7.1-fpm-alpine
     depends_on:
       - joomla-db
@@ -37,7 +57,12 @@ services:
       cms-outside:
     expose:
       - "${JOOMLA_PORT}"
-  assets:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
+  cms-assets:
     build:
       context: ../../
       dockerfile: docker/cms-assets/Dockerfile
@@ -54,6 +79,11 @@ services:
       cms-backend:
         ipv4_address: "${CMS_BACKEND_NET}.${ASSETS_IP}"
       cms-public:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
 
 networks:
   cms-backend:

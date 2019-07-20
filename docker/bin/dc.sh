@@ -102,6 +102,7 @@ case "${mode}" in
         bookworm_docker up -d
     ;;
     start)
+        # TODO In .env verschieben? Dann ist dc.sh allgemein einsetzbar
         bookworm_docker up --no-start
         bookworm_docker start admin
         bookworm_docker exec admin /opt/bookworm/bin/mkdirs.sh
@@ -168,6 +169,53 @@ case "${mode}" in
     ;;
     clear-logs)
         find /var/lib/docker/containers/ -type f -name "*.log" -delete
+    ;;
+    archive-all-logs)
+        for container in $(docker ps -aq)
+        do
+            logfile=$(docker inspect ${container} --format='{{.LogPath}}')
+            container_name=$(docker inspect ${container} --format='{{.Name}}' | sed -Ee 's#/(.*)#\1#')
+            logfile_name=${container_name}-$(date +%Y%m%d_%H%M%S).log
+            echo "Archiving logfile of ${container_name} to ${logfile_name}"
+            mkdir -p ${HOME}/backup
+            sudo cat ${logfile} | gzip -9 >${HOME}/backup/${logfile_name}.gz
+            sudo truncate -s 0 ${logfile}
+        done
+    ;;
+    backup)
+        if [[ $# -lt 1 ]]
+        then
+            echo "usage: $0 backup <container>"
+            exit 1
+        fi
+        container=$1
+        backup_container=${container}_backup
+        docker commit --pause=false ${container} ${backup_container}
+        docker save -o ${backup_container}.tar ${backup_container}
+        gzip -9 ${backup_container}.tar
+        # TODO Backup its volumes
+        #docker inspect ${container} --format '{{.Mounts}}'
+    ;;
+    backup-mysql)
+        if [[ $# -lt 2 ]]
+        then
+            echo "usage: $0 backup-mysql <container> <database>"
+            exit 1
+        fi
+        container=$1 ; shift
+        database=$1
+        # TODO https://hub.docker.com/r/deitch/mysql-backup/
+        #docker run -d --restart=always \
+        #    -e DB_DUMP_FREQ=60 \
+        #    -e DB_DUMP_BEGIN=2330 \
+        #    -e DB_DUMP_TARGET=/db \
+        #    -e DB_SERVER=$1 \
+        #    -v ${DOCKER_BACKUP_DIR}:/db \
+        #    databack/mysql-backup
+        # Setup /root/.my.cnf, section [client] in container before
+        docker exec ${container} \
+            /usr/bin/mysqldump ${container} \
+            | gzip -9 >${DOCKER_BACKUP_DIR}/mysql-${database}-$(date +%Y%m%d_%H%M%S).sql.gz
     ;;
     health)
         docker inspect --format='{{json .State.Health}}'

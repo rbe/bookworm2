@@ -18,7 +18,7 @@ services:
 #        ipv4_address: "${HOERBUCHKATALOG_SECURE_NET}.${VAULT_IP}"
 #    expose:
 #      - ${VAULT_HOERBUCHKATALOG_SECURE_PORT}
-  hoerbuchkatalog:
+  hk-app:
     build:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-app/Dockerfile
@@ -42,7 +42,12 @@ services:
       bookworm-outside:
     expose:
       - ${HOERBUCHKATALOG_PORT}
-  datatransfer:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
+  hk-datatransfer:
     build:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-datatransfer/Dockerfile
@@ -55,7 +60,12 @@ services:
       - "${DATATRANSFER_PUBLIC_PORT}:22"
     networks:
       - bookworm-public
-  admin:
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
+  hk-admin:
     build:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-admin/Dockerfile
@@ -72,6 +82,11 @@ services:
       - "${ADMIN_PUBLIC_PORT}:22"
     networks:
       - bookworm-public
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "64m"
+        max-file: "7"
 
 volumes:
   hk_admin_etc_ssh:
