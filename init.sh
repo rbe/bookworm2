@@ -9,6 +9,12 @@ PROJECT=~/project/wbh.bookworm
 REPO=artofcoding/bookworm2.git
 BRANCH=develop
 
+#
+# DO NOT MODIFY LINES BELOW
+#
+
+set -o nounset
+
 git clone -b ${BRANCH} git@bitbucket.org:${REPO} ${PROJECT}
 cd ${PROJECT}
 ./mvnw clean

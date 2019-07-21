@@ -1,5 +1,7 @@
 #!/bin/bash
 
+$(dirname $0)/joomla-sync.sh
+
 DOCKER_BACKUP_DIR="/var/lib/docker/backup"
 CONTAINER_BACKUP_DIR="${DOCKER_BACKUP_DIR}/joomla"
 

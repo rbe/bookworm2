@@ -2,6 +2,7 @@
 # WBH Bookworm
 #
 
+backup/
 var/
 
 #
@@ -30,7 +31,7 @@ out/
 
 # Maven
 .mvn/repository/
-**/target/
+target/
 pom.xml.versionsBackup
 maven.log
 
@@ -39,5 +40,4 @@ maven.log
 .idea/
 
 # Docker
-docker/bkinit/
 .env

@@ -28,7 +28,8 @@ RUN apk update \
 
 ADD docker/cms-assets/.version /
 
-COPY docker/cms-assets/keys/*_authorized_keys /etc/ssh/keys/
+COPY docker/sshkeys/mysql_authorized_keys /etc/ssh/keys/
+COPY docker/sshkeys/www-data_authorized_keys /etc/ssh/keys/
 COPY docker/cms-assets/sshd_config_2 .
 COPY docker/bin/setup-ssh-users.sh .
 

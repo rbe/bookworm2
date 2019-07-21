@@ -28,7 +28,9 @@ RUN apk update \
 
 ADD docker/hoerbuchkatalog-datatransfer/.version /
 
-COPY docker/hoerbuchkatalog-datatransfer/keys/*_authorized_keys /etc/ssh/keys/
+COPY docker/sshkeys/rbe_authorized_keys /etc/ssh/keys/
+COPY docker/sshkeys/cew_authorized_keys /etc/ssh/keys/
+COPY docker/sshkeys/wbh_authorized_keys /etc/ssh/keys/
 COPY docker/hoerbuchkatalog-datatransfer/sshd_config_2 .
 COPY docker/bin/setup-ssh-users.sh .
 

@@ -38,7 +38,7 @@ services:
   cms-joomla:
     image: joomla:3.9.8-php7.1-fpm-alpine
     depends_on:
-      - joomla-db
+      - cms-joomladb
     restart: "no"
     environment:
       - TZ=Europe/Berlin

@@ -99,7 +99,7 @@ case "${mode}" in
             --compress
     ;;
     up)
-        bookworm_docker up -d
+        bookworm_docker up -d $*
     ;;
     start)
         # TODO In .env verschieben? Dann ist dc.sh allgemein einsetzbar
@@ -123,7 +123,7 @@ case "${mode}" in
         bookworm_docker start
     ;;
     stop)
-        bookworm_docker stop
+        bookworm_docker stop $*
     ;;
     restart)
         if [[ $# -lt 1 ]]
@@ -134,13 +134,21 @@ case "${mode}" in
         bookworm_docker restart $*
     ;;
     down)
-        bookworm_docker down
+        bookworm_docker down $*
     ;;
     ps)
         bookworm_docker ps
     ;;
     logs)
         bookworm_docker logs $*
+    ;;
+    volumes)
+        if [[ $# -lt 1 ]]
+        then
+            echo "usage: $0 volumes <container>"
+            exit 1
+        fi
+        docker inspect $1 -f '{{json .Mounts}}' | jq
     ;;
     exec)
         if [[ $# -lt 1 ]]
