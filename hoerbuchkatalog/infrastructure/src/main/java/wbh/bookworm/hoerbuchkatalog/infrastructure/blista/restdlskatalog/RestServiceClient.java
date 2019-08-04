@@ -10,17 +10,18 @@ import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.net.ssl.HttpsURLConnection;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.net.ConnectException;
-import java.net.SocketTimeoutException;
+import java.net.URISyntaxException;
 import java.net.URL;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Objects;
 
 public final class RestServiceClient {
@@ -74,27 +75,33 @@ public final class RestServiceClient {
         }
     }
 
-    /* TODO Java 11 HttpClient */
     public static byte[] download(final char[] username, final char[] password,
-                                  final URL url) throws IOException {
-        final HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
-        connection.setConnectTimeout(RestServiceHttpConfig.CONNECT_TIMEOUT);
-        connection.setReadTimeout(RestServiceHttpConfig.READ_TIMEOUT);
-        connection.setInstanceFollowRedirects(true);
-        connection.addRequestProperty("bibliothek", String.valueOf(username));
-        connection.addRequestProperty("bibkennwort", String.valueOf(password));
-        connection.addRequestProperty("Accept", "text/xml;charset=UTF-8");
-        final ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+                                  final URL url) {
         try {
-            connection.getInputStream().transferTo(bytes);
-        } catch (SocketTimeoutException | ConnectException e) {
-            LOGGER.error("Konnte keine Verbindung zu " + url + " aufbauen", e);
-        } catch (IOException e) {
-            LOGGER.error("Konnte keine Daten von " + url + " abrufen", e);
-        } finally {
-            connection.disconnect();
+            final HttpRequest httpRequest = HttpRequest.newBuilder()
+                    .GET()
+                    .version(HttpClient.Version.HTTP_1_1)
+                    .uri(url.toURI())
+                    .timeout(Duration.ofMillis(RestServiceHttpConfig.READ_TIMEOUT))
+                    .header("bibliothek", String.valueOf(username))
+                    .header("bibkennwort", String.valueOf(password))
+                    .header("Accept", "text/xml;charset=UTF-8")
+                    .build();
+            return HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofMillis(RestServiceHttpConfig.CONNECT_TIMEOUT))
+                    .followRedirects(HttpClient.Redirect.NORMAL)
+                    .build()
+                    .send(httpRequest, HttpResponse.BodyHandlers.ofByteArray())
+                    .body();
+        } catch (URISyntaxException e) {
+            LOGGER.error("URL {} falsch: {}", url, e);
+        } catch(IOException e){
+            LOGGER.error("", e);
+        } catch (InterruptedException e) {
+            LOGGER.error("Unterbrochen, während URL {}: {}", url, e);
+            Thread.currentThread().interrupt();
         }
-        return bytes.toByteArray();
+        return new byte[0];
     }
 
 }

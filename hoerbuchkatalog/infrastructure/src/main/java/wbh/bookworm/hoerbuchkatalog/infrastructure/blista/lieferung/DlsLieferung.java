@@ -20,6 +20,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -45,28 +46,34 @@ public class DlsLieferung {
     }
 
     public Optional<DlsWerke> alleWerkeLaden(final String hoerernummer) {
+        final String werkeUrl = String.format("%s/%s", dlsRestConfig.getWerkeurl(),
+                hoerernummer);
         try {
-            final URL url = new URL(String.format("%s/%s", dlsRestConfig.getWerkeurl(),
-                    hoerernummer));
+            final URL url = new URL(werkeUrl);
             final byte[] antwort = abfrageSendenUndAntwortArchivieren(hoerernummer, url);
             if (antwort.length > 0) {
-                final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
-                if (dlsAntwort instanceof DlsWerke) {
-                    return Optional.of((DlsWerke) dlsAntwort);
-                } else if (dlsAntwort instanceof DlsFehlermeldung) {
-                    final DlsWerke dlsWerke = new DlsWerke();
-                    dlsWerke.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
-                    return Optional.of(dlsWerke);
-                } else {
-                    LOGGER.error("Antwort des blista DLS kein bekannter Antworttyp: {}", dlsAntwort);
-                    return Optional.empty();
-                }
+                return antwortAuswerten(antwort);
             } else {
-                LOGGER.warn("Antwort des blista DLS hat falsche Länge: {}", antwort.length);
+                LOGGER.warn("Bei blista ausgeliehene Werke für Hörer {} können nicht abgerufen werden:" +
+                        " Antwort des blista DLS hat falsche Länge {}", hoerernummer, antwort.length);
                 return Optional.empty();
             }
-        } catch (IOException e) {
-            LOGGER.error("", e);
+        } catch (MalformedURLException e) {
+            LOGGER.error("URL {} falsch", werkeUrl);
+            return Optional.empty();
+        }
+    }
+
+    private Optional<DlsWerke> antwortAuswerten(final byte[] antwort) {
+        final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(antwort);
+        if (dlsAntwort instanceof DlsWerke) {
+            return Optional.of((DlsWerke) dlsAntwort);
+        } else if (dlsAntwort instanceof DlsFehlermeldung) {
+            final DlsWerke dlsWerke = new DlsWerke();
+            dlsWerke.dlsFehlermeldung = (DlsFehlermeldung) dlsAntwort;
+            return Optional.of(dlsWerke);
+        } else {
+            LOGGER.error("Antwort des blista DLS kein bekannter Antworttyp: {}", dlsAntwort);
             return Optional.empty();
         }
     }
@@ -102,8 +109,7 @@ public class DlsLieferung {
         }
     }
 
-    private byte[] abfrageSendenUndAntwortArchivieren(final String hoerernummer,
-                                                      final URL url) throws IOException {
+    private byte[] abfrageSendenUndAntwortArchivieren(final String hoerernummer, final URL url) {
         final byte[] antwort = RestServiceClient.download(
                 dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
                 url);

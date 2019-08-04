@@ -21,6 +21,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -47,24 +48,33 @@ public class DlsBestellung {
      * Prüfen, ob eine Bestellung Erfolg haben kann
      */
     Auftragsquittung pruefen(final String userId, final String aghNummer) {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        final HttpRequest request = HttpRequest.newBuilder()
+                .GET()
+                .version(HttpClient.Version.HTTP_1_1)
                 .uri(URI.create(String.format("%s/%s/%s",
                         dlsRestConfig.getCheckurl(), userId, aghNummer)))
                 .header("bibliothek", String.valueOf(dlsRestConfig.getBibliothek()))
                 .header("bibkennwort", String.valueOf(dlsRestConfig.getBibkennwort()))
+                .timeout(Duration.ofSeconds(5))
                 .build();
-        final byte[] result = client.sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
-                .thenApply(HttpResponse::body)
-                .join();
-        final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(result);
-        if (dlsAntwort instanceof DlsResponse) {
-            final DlsResponse dlsResponse = (DlsResponse) dlsAntwort;
-            return new Auftragsquittung(aghNummer,
-                    !dlsResponse.hatFehler() && dlsResponse.isSuccess());
-        } else {
-            throw new IllegalStateException();
-        }
+        return HttpClient.newBuilder()
+                .connectTimeout(Duration.ofSeconds(3))
+                .followRedirects(HttpClient.Redirect.NORMAL)
+                .build()
+                .sendAsync(request, HttpResponse.BodyHandlers.ofByteArray())
+                .thenApply(response -> {
+                    final DlsAntwort dlsAntwort = RestServiceClient.werteAntwortAus(response.body());
+                    if (dlsAntwort instanceof DlsResponse) {
+                        final DlsResponse dlsResponse = (DlsResponse) dlsAntwort;
+                        return new Auftragsquittung(aghNummer,
+                                !dlsResponse.hatFehler() && dlsResponse.isSuccess());
+                    } else {
+                        LOGGER.warn("Unbekannte Antwort bei Prüfung für Hörer {} und AGH Nummer {} erhalten",
+                                userId, aghNummer);
+                        return new Auftragsquittung(aghNummer, false);
+                    }
+                })
+                .getNow(new Auftragsquittung(aghNummer, false));
     }
 
     public List<Auftragsquittung> pruefenUndBestellen(final String userId,

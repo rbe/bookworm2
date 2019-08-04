@@ -26,7 +26,6 @@ import java.util.Arrays;
  * blista.dls.rest.checkurl=https://rest-dls-katalog.blista.de:443/v1/check
  * blista.dls.rest.bibliothek=
  * blista.dls.rest.bibkennwort=
- *
  * blista.dls.rest.directory=./var/blista/dls
  * </pre>
  */
