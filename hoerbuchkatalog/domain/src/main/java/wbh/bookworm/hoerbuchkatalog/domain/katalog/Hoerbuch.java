@@ -229,7 +229,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getAutor() {
-        return isNotBlank(autor) ? autor : "Autor leider unbekannt";
+        return isNotBlank(autor) ? autor : "";
     }
 
     public void setAutor(String autor) {
