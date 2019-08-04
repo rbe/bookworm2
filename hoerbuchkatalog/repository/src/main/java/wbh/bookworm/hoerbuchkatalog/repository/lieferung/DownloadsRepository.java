@@ -24,7 +24,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -58,8 +61,8 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .filter(b -> b.getBestelldatum().getDayOfYear() ==
                                 LocalDateTime.now().getDayOfYear())
                         .count();
-                LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
-                        hoerernummer, LocalDateTime.now().getMonth(), anzahl);
+                LOGGER.info("Hörer {} hat am {} bereits {} Download(s) beauftragt",
+                        hoerernummer, LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.GERMANY)), anzahl);
             }
         }
         return anzahl;
@@ -117,7 +120,6 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
         }
     }
 
-    // TODO Optional
     private BlistaDownload toBlistaDownload(final Hoerernummer hoerernummer,
                                             final DlsWerke.Book book) {
         final AghNummer aghNummer = new AghNummer(book.Aghnummer);

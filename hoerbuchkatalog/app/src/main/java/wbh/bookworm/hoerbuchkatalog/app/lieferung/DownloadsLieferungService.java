@@ -51,4 +51,16 @@ public final class DownloadsLieferungService {
         return downloadsRepository.anzahlLieferungenInDiesemMonat(hoerernummer);
     }
 
+    public boolean isMaxDownloadsProMonatErreicht(final Hoerernummer hoerernummer) {
+        return anzahlLieferungenInDiesemMonat(hoerernummer) >= 10;
+    }
+
+    public long anzahlLieferungenHeute(final Hoerernummer hoerernummer) {
+        return downloadsRepository.anzahlLieferungenHeute(hoerernummer);
+    }
+
+    public boolean isMaxDownloadsProTagErreicht(final Hoerernummer hoerernummer) {
+        return anzahlLieferungenHeute(hoerernummer) >= 5;
+    }
+
 }

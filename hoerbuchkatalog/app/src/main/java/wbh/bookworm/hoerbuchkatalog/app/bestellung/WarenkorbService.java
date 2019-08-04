@@ -12,8 +12,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,19 +26,23 @@ public class WarenkorbService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WarenkorbService.class);
 
+    private static final String DOWNLOAD = "Download";
+
+    public static final String CD = "CD";
+
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
     private final WarenkorbRepository warenkorbRepository;
 
-    private final BestellungRepository bestellungRepository;
+    private final DownloadsRepository downloadsRepository;
 
     @Autowired
     public WarenkorbService(final HoerbuchkatalogService hoerbuchkatalogService,
                             final WarenkorbRepository warenkorbRepository,
-                            final BestellungRepository bestellungRepository) {
+                            final DownloadsRepository downloadsRepository) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.warenkorbRepository = warenkorbRepository;
-        this.bestellungRepository = bestellungRepository;
+        this.downloadsRepository = downloadsRepository;
     }
 
     //
@@ -47,7 +51,7 @@ public class WarenkorbService {
 
     public CdWarenkorb cdWarenkorbKopie(final BestellungSessionId bestellungSessionId,
                                         final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         return new CdWarenkorb(cdWarenkorb(hoerernummer, warenkorbId));
     }
 
@@ -62,7 +66,7 @@ public class WarenkorbService {
     public void inDenCdWarenkorb(final BestellungSessionId bestellungSessionId,
                                  final Hoerernummer hoerernummer,
                                  final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, warenkorbId);
             cdWarenkorb.hinzufuegen(titelnummer);
@@ -75,13 +79,13 @@ public class WarenkorbService {
     public boolean imCdWarenkorbEnthalten(final BestellungSessionId bestellungSessionId,
                                           final Hoerernummer hoerernummer,
                                           final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         return cdWarenkorb(hoerernummer, warenkorbId).enthalten(titelnummer);
     }
 
     public int anzahlHoerbuecherAlsCd(final BestellungSessionId bestellungSessionId,
                                       final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         return cdWarenkorb(hoerernummer, warenkorbId).getAnzahl();
     }
 
@@ -91,7 +95,7 @@ public class WarenkorbService {
     public void ausDemCdWarenkorbEntfernen(final BestellungSessionId bestellungSessionId,
                                            final Hoerernummer hoerernummer,
                                            final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, warenkorbId);
             cdWarenkorb.entfernen(titelnummer);
@@ -103,7 +107,7 @@ public class WarenkorbService {
 
     public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
                                     final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "CD");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         warenkorbRepository.delete(warenkorbId);
     }
 
@@ -113,7 +117,7 @@ public class WarenkorbService {
 
     public DownloadWarenkorb downloadWarenkorbKopie(final BestellungSessionId bestellungSessionId,
                                                     final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         return new DownloadWarenkorb(downloadWarenkorb(hoerernummer, warenkorbId));
     }
 
@@ -128,7 +132,7 @@ public class WarenkorbService {
     public void inDenDownloadWarenkorb(final BestellungSessionId bestellungSessionId,
                                        final Hoerernummer hoerernummer,
                                        final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId);
             downloadWarenkorb.hinzufuegen(titelnummer);
@@ -141,7 +145,7 @@ public class WarenkorbService {
     public boolean imDownloadWarenkorbEnthalten(final BestellungSessionId bestellungSessionId,
                                                 final Hoerernummer hoerernummer,
                                                 final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         return downloadWarenkorb(hoerernummer, warenkorbId).enthalten(titelnummer);
     }
 
@@ -151,7 +155,7 @@ public class WarenkorbService {
     public void ausDemDownloadWarenkorbEntfernen(final BestellungSessionId bestellungSessionId,
                                                  final Hoerernummer hoerernummer,
                                                  final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId);
             downloadWarenkorb.entfernen(titelnummer);
@@ -163,31 +167,29 @@ public class WarenkorbService {
 
     public int anzahlHoerbuecherAlsDownload(final BestellungSessionId bestellungSessionId,
                                             final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         return downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
     }
 
-    /* TODO Im DownloadsService; Anzahl Bestellungen pro Tag aus blista Abruf ermitteln */
     public boolean isMaxDownloadsProTagErreicht(final BestellungSessionId bestellungSessionId,
                                                 final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
-        final long vonHeute = bestellungRepository.countAlleDownloadsVonHeute(hoerernummer);
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
+        final long vonHeute = downloadsRepository.anzahlLieferungenHeute(hoerernummer);
         final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
         return (vonHeute + imWarenkorb) >= /* TODO Konfigurieren */5;
     }
 
-    /* TODO Im DownloadsService; Anzahl Bestellungen pro Tag aus blista Abruf ermitteln */
     public boolean isMaxDownloadsProMonatErreicht(final BestellungSessionId bestellungSessionId,
                                                   final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
-        final long inDiesemMonat = bestellungRepository.countAlleDownloadsInDiesemMonat(hoerernummer);
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
+        final long inDiesemMonat = downloadsRepository.anzahlLieferungenInDiesemMonat(hoerernummer);
         final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
         return (inDiesemMonat + imWarenkorb) >= /* TODO Konfigurieren */10;
     }
 
     public void downloadWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
                                           final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, hoerernummer, "Download");
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         warenkorbRepository.delete(warenkorbId);
     }
 
@@ -195,19 +197,12 @@ public class WarenkorbService {
     // Warenkorb
     //
 
-    public int anzahlHoerbuecher(final BestellungSessionId bestellungSessionId,
-                                 final Hoerernummer hoerernummer) {
-        return anzahlHoerbuecherAlsCd(bestellungSessionId, hoerernummer)
-                + anzahlHoerbuecherAlsDownload(bestellungSessionId, hoerernummer);
-    }
-
     /**
      * Hoerernummer aus {@link BestellungSessionId} erzeugen.
      * Bei unbekannten Hörern wird die SessionId angehangen,
      * bei bekannten die Hörernummer verwendet.
      */
     private static WarenkorbId warenkorbIdFrom(final BestellungSessionId bestellungSessionId,
-                                               final Hoerernummer hoerernummer,
                                                final String diskriminator) {
         return new WarenkorbId(String.format("%s-%s", bestellungSessionId, diskriminator));
     }
