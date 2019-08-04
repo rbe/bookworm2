@@ -10,6 +10,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
 import aoc.ddd.event.DomainAggregateWriteEvent;
 
+import java.util.Objects;
+
 public class WarenkorbGeleert extends DomainAggregateWriteEvent<Warenkorb, WarenkorbId> {
 
     private final Hoerernummer hoerernummer;
@@ -21,6 +23,20 @@ public class WarenkorbGeleert extends DomainAggregateWriteEvent<Warenkorb, Waren
 
     public Hoerernummer getHoerernummer() {
         return hoerernummer;
+    }
+
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final WarenkorbGeleert that = (WarenkorbGeleert) o;
+        return Objects.equals(hoerernummer, that.hoerernummer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), hoerernummer);
     }
 
 }
