@@ -11,7 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import aoc.tools.datatransfer.ColumnPositionLineFileParser;
+import aoc.datatransfer.ColumnPositionLineFileParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

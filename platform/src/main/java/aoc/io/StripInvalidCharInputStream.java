@@ -16,11 +16,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 
-class StripInvalidCharInputStream extends FilterInputStream {
+public class StripInvalidCharInputStream extends FilterInputStream {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StripInvalidCharInputStream.class);
 
-    StripInvalidCharInputStream(InputStream in) {
+    public StripInvalidCharInputStream(InputStream in) {
         super(in);
     }
 
@@ -60,6 +60,7 @@ class StripInvalidCharInputStream extends FilterInputStream {
         }
     }
 
+    // TODO Test
     public static void main(String[] args) throws Exception {
         final InputStream in = Files.newInputStream(
                 Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/infrastructure/src/main/java/wbh/bookworm/hoerbuchkatalog/infrastructure/blista/restdlskatalog/xml-defekt-ampersand.xml"),

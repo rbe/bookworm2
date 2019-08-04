@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package aoc.tools.datatransfer;
+package aoc.datatransfer;
 
 public final class CsvFieldNotFoundException extends RuntimeException {
 

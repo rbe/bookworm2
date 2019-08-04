@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package aoc.tools.datatransfer;
+package aoc.datatransfer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

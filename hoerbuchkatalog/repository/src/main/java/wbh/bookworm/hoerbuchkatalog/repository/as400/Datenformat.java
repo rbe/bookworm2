@@ -24,7 +24,7 @@ public final class Datenformat {
     public static LocalDate localDateOf(final String hoerernummer,
                                         final String datum, final String str) {
         try {
-            return aoc.tools.datatransfer.ParseHelper.parseDate(str);
+            return aoc.datatransfer.ParseHelper.parseDate(str);
         } catch (DateTimeParseException e) {
             try {
                 final LocalDate yyyyddMM = LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyddMM"));

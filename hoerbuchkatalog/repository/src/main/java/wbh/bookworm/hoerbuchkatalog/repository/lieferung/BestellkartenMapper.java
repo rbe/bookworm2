@@ -11,8 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.repository.as400.Datenformat;
 
-import aoc.tools.datatransfer.CsvFormat;
-import aoc.tools.datatransfer.CsvParser;
+import aoc.datatransfer.CsvFormat;
+import aoc.datatransfer.CsvParser;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
