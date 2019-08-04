@@ -16,6 +16,7 @@ import aoc.ddd.search.BooleanQueryBuilder;
 import aoc.ddd.search.LuceneIndex;
 import aoc.ddd.search.LuceneQuery;
 import aoc.ddd.search.QueryParameters;
+import aoc.strings.StringNormalizer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,9 +28,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.Set;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 final class HoerbuchkatalogSuche {
@@ -171,10 +175,14 @@ final class HoerbuchkatalogSuche {
                     suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
         }
         if (suchparameter.wertVorhanden(Suchparameter.Feld.EINSTELLDATUM)) {
-            final LocalDate from = LocalDate.parse(suchparameter.wert(Suchparameter.Feld.EINSTELLDATUM), DateTimeFormatter.ISO_DATE);
-            booleanQueryBuilder.addRange(new QueryParameters.Field(
-                            Suchparameter.Feld.EINSTELLDATUM.name(), QueryParameters.Occur.MUST),
-                    from, null);
+            final String wert = suchparameter.wert(Suchparameter.Feld.EINSTELLDATUM);
+            parseDeutschesDatum(wert)
+                    .or(() -> parseMonatJahr(wert))
+                    .or(Optional::empty)
+                    .ifPresent(localDate ->
+                            booleanQueryBuilder.addRange(new QueryParameters.Field(
+                                            Suchparameter.Feld.EINSTELLDATUM.name(), QueryParameters.Occur.MUST),
+                                    localDate, null));
         }
         final Suchparameter ohneSachgebietUndEinstelldatum = new Suchparameter(suchparameter);
         ohneSachgebietUndEinstelldatum.entfernen(Suchparameter.Feld.SACHGEBIET).entfernen(Suchparameter.Feld.EINSTELLDATUM);
@@ -192,6 +200,35 @@ final class HoerbuchkatalogSuche {
                 .map(dddId -> new Titelnummer(dddId.getValue()))
                 .collect(Collectors.toList());
         return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
+    }
+
+    private static final Pattern DEUTSCHES_DATUM_PATTERN = Pattern.compile("\\d{2}.\\d{2}.\\d{4}");
+    private static Optional<LocalDate> parseDeutschesDatum(final String wert) {
+        if (DEUTSCHES_DATUM_PATTERN.matcher(wert).matches()) {
+            try {
+                return Optional.of(LocalDate.parse(wert,
+                        DateTimeFormatter.ofPattern("dd.MM.yyyy", Locale.GERMANY)));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return Optional.empty();
+    }
+
+    private static final Pattern MONAT_JAHR_PATTERN = Pattern.compile("\\w{3,} \\d{4}");
+    private static Optional<LocalDate> parseMonatJahr(final String wert) {
+        String s = StringNormalizer.normalize(wert);
+        if (MONAT_JAHR_PATTERN.matcher(s).matches()) {
+            try {
+                final String[] split = wert.split("[ ]");
+                final String format = String.format("1 %1$.3s %2$s", split[0], split[1]);
+                return Optional.of(LocalDate.parse(format,
+                        DateTimeFormatter.ofPattern("d LLL yyyy", Locale.GERMANY)));
+            } catch (Exception e) {
+                // ignore
+            }
+        }
+        return Optional.empty();
     }
 
 }
