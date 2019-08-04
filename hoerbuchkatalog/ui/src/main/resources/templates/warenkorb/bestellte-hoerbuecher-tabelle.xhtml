@@ -1,10 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!--
-  ~ Copyright (C) 2011-2018 art of coding UG, https://www.art-of-coding.eu
-  ~ Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
-  ~ All rights reserved. Use is subject to license terms.
-  -->
-
 <!DOCTYPE html [
         <!ENTITY nbsp "&#160;">
         <!ENTITY copy "&#169;">
@@ -14,16 +8,14 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
+<!--@elvariable id="meinWarenkorb" type="wbh.bookworm.hoerbuchkatalog.ui.katalog.MeinWarenkorb"-->
 <ui:component>
-
     <cc:interface>
         <cc:attribute name="warenkorb" required="true"
                       type="wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb"/>
         <cc:attribute name="basketType" required="false"
                       type="java.lang.String"/>
     </cc:interface>
-
     <cc:implementation>
         <h:panelGroup styleClass="#{cc.attrs.basketType}" layout="block">
             <p class="line15 baskettext">
@@ -62,7 +54,5 @@
             </h:dataTable>
         </h:panelGroup>
     </cc:implementation>
-
 </ui:component>
-
 </html>

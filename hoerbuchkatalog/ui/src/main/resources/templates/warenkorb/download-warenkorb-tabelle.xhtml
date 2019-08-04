@@ -8,16 +8,14 @@
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core">
-
+<!--@elvariable id="meinWarenkorb" type="wbh.bookworm.hoerbuchkatalog.ui.katalog.MeinWarenkorb"-->
 <ui:component>
-
     <cc:interface>
         <cc:attribute name="warenkorb" required="true"
                       type="wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb"/>
         <cc:attribute name="readonly" required="false"
                       type="java.lang.Boolean" default="false"/>
     </cc:interface>
-
     <cc:implementation>
         <h:panelGroup styleClass="#{cc.attrs.warenkorb.getClass().getName()}" layout="block">
             <p class="line15 baskettext">
@@ -77,7 +75,6 @@
             </h:dataTable>
         </h:panelGroup>
     </cc:implementation>
-
 </ui:component>
 
 </html>
