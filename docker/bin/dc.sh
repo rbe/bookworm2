@@ -69,7 +69,7 @@ function bookworm_docker() {
         -f ${dockerdir}/cms/docker-compose.yml \
         -f ${dockerdir}/hoerbuchkatalog/docker-compose.yml \
         -f ${dockerdir}/rproxy/docker-compose.yml \
-        $*
+        "$@"
 }
 
 #echo "Reverse Proxy HTTP Port=${RPROXY_PUBLIC_HTTP_PORT}"
@@ -84,13 +84,13 @@ shift
 case "${mode}" in
     assembly)
         prjdir=$(pushd ${execdir}/../../ >/dev/null ; pwd ; popd >/dev/null)
-        pushd ${prjdir} >/dev/null
+        pushd "${prjdir}" >/dev/null || exit
         ./build.sh assembly
-        popd >/dev/null
+        popd >/dev/null || exit
     ;;
     build-images)
         docker build \
-            -t wbhonline/sshd-alpine:$(cat ${dockerdir}/sshd-alpine/.version) \
+            -t wbhonline/sshd-alpine:$(cat "${dockerdir}/sshd-alpine/.version") \
             ${dockerdir}/sshd-alpine
         ask_continue
         #--force-rm --no-cache
@@ -99,7 +99,7 @@ case "${mode}" in
             --compress
     ;;
     up)
-        bookworm_docker up -d $*
+        bookworm_docker up -d "$@"
     ;;
     start)
         # TODO In .env verschieben? Dann ist dc.sh allgemein einsetzbar
@@ -123,7 +123,7 @@ case "${mode}" in
         bookworm_docker start
     ;;
     stop)
-        bookworm_docker stop $*
+        bookworm_docker stop "$@"
     ;;
     restart)
         if [[ $# -lt 1 ]]
@@ -131,16 +131,16 @@ case "${mode}" in
             echo "usage: $0 restart <service ...>"
             exit 1
         fi
-        bookworm_docker restart $*
+        bookworm_docker restart "$@"
     ;;
     down)
-        bookworm_docker down $*
+        bookworm_docker down "$@"
     ;;
     ps)
         bookworm_docker ps
     ;;
     logs)
-        bookworm_docker logs $*
+        bookworm_docker logs "$@"
     ;;
     volumes)
         if [[ $# -lt 1 ]]
@@ -148,7 +148,7 @@ case "${mode}" in
             echo "usage: $0 volumes <container>"
             exit 1
         fi
-        docker inspect $1 -f '{{json .Mounts}}' | jq
+        docker inspect "$1" -f '{{json .Mounts}}' | jq
     ;;
     exec)
         if [[ $# -lt 1 ]]
@@ -156,7 +156,7 @@ case "${mode}" in
             echo "usage: $0 exec <docker exec args>"
             exit 1
         fi
-        bookworm_docker exec $*
+        bookworm_docker exec "$@"
     ;;
     console)
         if [[ $# -lt 1 ]]
@@ -164,7 +164,7 @@ case "${mode}" in
             echo "usage: $0 console <container>"
             exit 1
         fi
-        bookworm_docker exec $1 sh
+        bookworm_docker exec "$1" sh
     ;;
     console-broken)
         if [[ $# -lt 1 ]]
@@ -173,7 +173,7 @@ case "${mode}" in
             exit 1
         fi
         container_status=$(docker ps -a --filter name=$1 --format '{{.Status}}')
-        docker commit $1 $1_broken && docker run -it $1_broken sh
+        docker commit "$1" "$1_broken" && docker run -it "$1_broken" sh
     ;;
     clear-logs)
         find /var/lib/docker/containers/ -type f -name "*.log" -delete
@@ -229,6 +229,6 @@ case "${mode}" in
         docker inspect --format='{{json .State.Health}}'
     ;;
     compose)
-        bookworm_docker $*
+        bookworm_docker "$@"
     ;;
 esac

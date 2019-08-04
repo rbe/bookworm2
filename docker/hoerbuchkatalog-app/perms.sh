@@ -7,7 +7,7 @@
 
 set -o nounset
 
-cd /opt/bookworm
+pushd /opt/bookworm >/dev/null || exit 1
 
 # Generell
 chown -R bookworm:bookworm .
@@ -21,11 +21,15 @@ chmod 550 app
 chmod 660 app/*
 
 # Konfiguration
-chmod 660 *.yml
+chmod 660 -- *.yml
 chmod 440 conf/*
 chmod 660 conf/secrets.json
 chmod 660 conf/hoerbuchkatalog.properties
 chmod 660 conf/blista-dls.properties
+
+# Templates
+chmod 660 var/templates/*
+chmod 660 var/templates/*/*
 
 # Daten - Hörbuchkatalog
 chmod 750 var/wbh/hoerbuchkatalog
@@ -49,5 +53,7 @@ chmod 555 var/repository
 # var
 chown root:root var/*
 chmod 555 var/*
+
+popd >/dev/null || exit 1
 
 exit 0

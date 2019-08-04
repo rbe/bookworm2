@@ -1,6 +1,7 @@
 #!/bin/bash
 
-$(dirname $0)/joomla-sync.sh
+joomla_sync=$(dirname "$0")/joomla-sync.sh
+[[ -f ${joomla_sync} ]] && ${joomla_sync}
 
 DOCKER_BACKUP_DIR="/var/lib/docker/backup"
 CONTAINER_BACKUP_DIR="${DOCKER_BACKUP_DIR}/joomla"
