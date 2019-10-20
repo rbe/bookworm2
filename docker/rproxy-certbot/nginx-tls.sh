@@ -13,23 +13,29 @@ domain_cert_path="${letsencrypt_path}/${DOMAIN}"
 mkdir -p ${domain_cert_path} >/dev/null
 
 case "$1" in
-    self-signed)
+    self-signed-test)
+        openssl req -x509 -nodes -newkey rsa:1024 -days 365 \
+            -keyout ${domain_cert_path}/privkey.pem \
+            -out ${domain_cert_path}/fullchain.pem \
+            -subj "/CN=${DOMAIN},test.${DOMAIN}"
+    ;;
+    create-test)
+        certbot certonly -n --nginx --agree-tos -m ${MAIL} -d ${DOMAIN},test.${DOMAIN}
+    ;;
+    self-signed-prod)
         openssl req -x509 -nodes -newkey rsa:1024 -days 365 \
             -keyout ${domain_cert_path}/privkey.pem \
             -out ${domain_cert_path}/fullchain.pem \
             -subj "/CN=${DOMAIN},www.${DOMAIN}"
     ;;
-    create-test)
-        certbot -n --nginx --agree-tos -m ${MAIL} -d test.${DOMAIN}
-    ;;
     create-prod)
-        certbot -n --nginx --agree-tos -m ${MAIL} -d ${DOMAIN},www.${DOMAIN}
+        certbot certonly -n --nginx --agree-tos -m ${MAIL} -d ${DOMAIN},www.${DOMAIN}
     ;;
     renew)
-        certbot -n --nginx renew
+        certbot certonly -n --nginx renew
     ;;
     *)
-        echo "usage: $0 { localhost | create-test | create-prod | renew }"
+        echo "usage: $0 { self-signed-test | create-test | self-signed-prod | create-prod | renew }"
         exit 1
     ;;
 esac

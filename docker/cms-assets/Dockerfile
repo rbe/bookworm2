@@ -1,9 +1,10 @@
-FROM alpine:3.9
+FROM alpine:3.10
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 
 ENV TZ Europe/Berlin
+ENV LANG en_US.UTF-8
 
 RUN apk update \
     && apk --no-cache add \
@@ -11,8 +12,7 @@ RUN apk update \
         coreutils \
         openssh \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo "${TZ}" >/etc/timezone \
-    && apk del tzdata \
+    && echo "${TZ}" >/etc/timezone
     && sed -i'' -E \
         -e 's/^#(HostKey)/\1/' \
         -e 's/^#(PasswordAuthentication)/\1/' \

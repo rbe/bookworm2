@@ -10,6 +10,7 @@ NETCUP_VOLUME=/voln80726a1
 BACKUP_DIR=/mnt/backup
 
 set -o nounset
+set -o errexit
 
 if [[ $(id -un) != root ]]
 then

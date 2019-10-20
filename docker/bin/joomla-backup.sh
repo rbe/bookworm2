@@ -1,5 +1,8 @@
 #!/bin/bash
 
+set -o nounset
+set -o errexit
+
 joomla_sync=$(dirname "$0")/joomla-sync.sh
 [[ -f ${joomla_sync} ]] && ${joomla_sync}
 

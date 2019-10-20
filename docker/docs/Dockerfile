@@ -1,6 +1,9 @@
-FROM alpine:3.9
+FROM alpine:3.10
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
+
+ENV TZ Europe/Berlin
+ENV LANG en_US.UTF-8
 
 WORKDIR /opt/asciidocserver
 

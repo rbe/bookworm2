@@ -6,6 +6,7 @@
 #
 
 set -o nounset
+set -o errexit
 
 if [[ $(id -un) != root ]]
 then
@@ -13,20 +14,19 @@ then
     exit 1
 fi
 
-execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-etcdir=$(pushd ${execdir}/../etc >/dev/null ; pwd ; popd >/dev/null)
-platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
-. ${platformlibdir}/linux.sh
-. ${platformlibdir}/ssh.sh
+execdir=$(pushd "$(dirname $0)" >/dev/null || exit 1; pwd ; popd >/dev/null || exit 1)
+platformlibdir=$(pushd "${execdir}"/../../platform/src/main/bash >/dev/null || exit 1; pwd ; popd >/dev/null || exit 1)
+. "${platformlibdir}/linux.sh"
+. "${platformlibdir}/ssh.sh"
 
 groupadd -g 4801 bookworm
 
 setup_user_w_sudo rbe
-ssh_setup_key rbe $(cat etc/authorized_keys rbe)
+ssh_setup_key rbe "$(cat etc/authorized_keys rbe)"
 sudo usermod -g bookworm -aG docker rbe
 
 setup_user_w_sudo cew
-ssh_setup_key cew $(cat etc/authorized_keys cew)
+ssh_setup_key cew "$(cat etc/authorized_keys cew)"
 sudo usermod -g bookworm -aG docker cew
 
 exit 0

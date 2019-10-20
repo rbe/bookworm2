@@ -31,14 +31,9 @@
         <maven-site-plugin.version>3.7.1</maven-site-plugin.version>
         <maven-dependency-plugin.version>3.1.1</maven-dependency-plugin.version>
         <versions-maven-plugin.version>2.5</versions-maven-plugin.version>
-        <!-- Docker -->
-        <!--jib-maven-plugin.version>0.9.7</jib-maven-plugin.version-->
         <!-- Java -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
-        <!-- Hazelcast
-        <hazelcast.version>3.11</hazelcast.version>
-        -->
         <!-- Jackson -->
         <jackson.version>2.9.6</jackson.version>
         <!-- Spring -->
@@ -348,9 +343,14 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler-plugin.version}</version>
                 <configuration>
+                    <verbose>true</verbose>
+                    <debug>true</debug>
                     <source>${maven.compiler.source}</source>
                     <target>${maven.compiler.target}</target>
-                    <compilerArgument>-Xlint:unchecked</compilerArgument>
+                    <compilerArgs>
+                        <arg>-Xlint:deprecation</arg>
+                        <arg>-Xlint:unchecked</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>
@@ -360,7 +360,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-project-info-reports-plugin</artifactId>
-                <version>LATEST</version>
+                <version>3.0.0</version>
             </plugin>
         </plugins>
     </reporting>

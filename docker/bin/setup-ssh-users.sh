@@ -5,17 +5,18 @@
 # All rights reserved. Use is subject to license terms.
 #
 
+set -o nounset
+set -o errexit
+
 alpinelinux_setup_user() {
     local name=$1
-    shift
-    local groups=$*
-    getent passwd ${name}
+    getent passwd "${name}"
     if [[ -n "${name}" ]]
     then
         echo "Adding user ${name}"
-        adduser -DHh /tmp -s /bin/false -G bookworm ${name}
+        adduser -DHh /tmp -s /bin/false -G bookworm "${name}"
     fi
-    passwd -u ${name}
+    passwd -u "${name}"
 }
 
 adduser -u 4801 bookworm
@@ -27,9 +28,9 @@ then
     exit 1
 fi
 
-for user in $*
+for user in "$@"
 do
-    alpinelinux_setup_user ${user}
+    alpinelinux_setup_user "${user}"
 done
 
 exit 0

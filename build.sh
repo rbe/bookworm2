@@ -13,11 +13,12 @@ BRANCH=develop
 #
 
 set -o nounset
+set -o errexit
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-platformlibdir=$(pushd ${execdir}/platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
-. ${platformlibdir}/git.sh
-. ${platformlibdir}/maven.sh
+platformlibdir=$(pushd "${execdir}/platform/src/main/bash" >/dev/null ; pwd ; popd >/dev/null)
+. "${platformlibdir}/git.sh"
+. "${platformlibdir}/maven.sh"
 
 mode=${1:-}
 echo "Building ${mode}"

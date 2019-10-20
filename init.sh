@@ -14,6 +14,7 @@ BRANCH=develop
 #
 
 set -o nounset
+set -o errexit
 
 git clone -b ${BRANCH} git@bitbucket.org:${REPO} ${PROJECT}
 cd ${PROJECT}

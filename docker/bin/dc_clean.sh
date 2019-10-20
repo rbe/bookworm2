@@ -6,6 +6,7 @@
 #
 
 set -o nounset
+set -o errexit
 
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
 platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)

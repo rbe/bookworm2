@@ -14,7 +14,7 @@ function exit_if {
     then
         ret=$1
         shift
-        echo $*
+        echo "$@"
         exit ${ret}
     fi
 }

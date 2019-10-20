@@ -35,6 +35,8 @@ services:
       dockerfile: docker/rproxy-certbot/Dockerfile
     image: wbhonline/rproxy-certbot:${VERSION}
     restart: "no"
+    depends_on:
+      - rproxy
     environment:
       - TZ=Europe/Berlin
     volumes:

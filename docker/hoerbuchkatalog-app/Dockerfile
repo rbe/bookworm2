@@ -4,6 +4,8 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 
 ENV TZ Europe/Berlin
+ENV LANG en_US.UTF-8
+
 RUN echo "Europe/Berlin" >/etc/timezone \
     && rm /etc/localtime \
     && ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime \

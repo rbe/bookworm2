@@ -5,11 +5,14 @@
 # All rights reserved. Use is subject to license terms.
 #
 
-if [[ $(basename $0) == dcenv.sh ]]
+set -o nounset
+set -o errexit
+
+if [[ $(basename $0) == dc.sh ]]
 then
     echo "Please do not call this script directly."
     echo "Use a link:"
-    echo "  ln -s dc.sh <envname>.sh and create <envname>.env"
+    echo "  ln -s dc.sh <envname>.sh and create etc/<envname>.env"
     exit 1
 fi
 
@@ -23,12 +26,9 @@ then
     exit 1
 fi
 
-set -o nounset
-
 execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-etcdir=$(pushd ${execdir}/../etc >/dev/null ; pwd ; popd >/dev/null)
-dockerdir=$(pushd ${execdir}/.. >/dev/null ; pwd ; popd >/dev/null)
-platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
+etcdir=$(pushd "${execdir}/../etc" >/dev/null ; pwd ; popd >/dev/null)
+dockerdir=$(pushd "${execdir}/.." >/dev/null ; pwd ; popd >/dev/null)
 
 ENV_NAME=$(expr `basename $0` : '\(.*\).sh')
 echo "Environment: ${ENV_NAME}"
@@ -54,15 +54,6 @@ export HOERBUCHKATALOG_PORT
 export DATATRANSFER_PUBLIC_PORT
 export ADMIN_PUBLIC_PORT
 
-function ask_continue() {
-    read -N 1 -t 5 -p "Continue? [auto in 5 secs=Y/n] " yn
-    echo
-    if [[ "${yn}" == "n" && ${yn} == "N" ]]
-    then
-        exit 1
-    fi
-}
-
 function bookworm_docker() {
     docker-compose \
         -p ${ENV_NAME} \
@@ -71,13 +62,6 @@ function bookworm_docker() {
         -f ${dockerdir}/rproxy/docker-compose.yml \
         "$@"
 }
-
-#echo "Reverse Proxy HTTP Port=${RPROXY_PUBLIC_HTTP_PORT}"
-#echo "Reverse Proxy HTTPS Port=${RPROXY_PUBLIC_HTTPS_PORT}"
-#echo "CMS Assets SSH=${ASSETS_PUBLIC_PORT}"
-#echo "Hörbuchkatalog WBH Datatransfer SSH=${DATATRANSFER_PUBLIC_PORT}"
-#echo "Hörbuchkatalog Admin SSH=${ADMIN_PUBLIC_PORT}"
-#echo
 
 mode=${1:-}
 shift
@@ -89,13 +73,11 @@ case "${mode}" in
         popd >/dev/null || exit
     ;;
     build-images)
-        docker build \
-            -t wbhonline/sshd-alpine:$(cat "${dockerdir}/sshd-alpine/.version") \
-            ${dockerdir}/sshd-alpine
-        ask_continue
-        #--force-rm --no-cache
+        #docker build \
+        #    -t wbhonline/sshd-alpine:$(cat "${dockerdir}/sshd-alpine/.version") \
+        #    ${dockerdir}/sshd-alpine
         bookworm_docker build \
-            --build-arg ENV_NAME=${ENV_NAME} \
+            --build-arg ENV_NAME="${ENV_NAME}" \
             --compress
     ;;
     up)
@@ -109,7 +91,7 @@ case "${mode}" in
         bookworm_docker exec admin /opt/bookworm/bin/perms.sh
         if [[ -f conf/secrets.json ]]
         then
-            docker cp conf/secrets.json ${ENV_NAME}_admin_1:/opt/bookworm/conf
+            docker cp conf/secrets.json "${ENV_NAME}"_admin_1:/opt/bookworm/conf
         fi
         bookworm_docker start joomla-db
         sleep 10
@@ -118,7 +100,7 @@ case "${mode}" in
         phpfpm_pool_conf=${dockerdir}/cms/www-${ENV_NAME}.conf
         if [[ -f ${phpfpm_pool_conf} ]]
         then
-            docker cp ${phpfpm_pool_conf} ${ENV_NAME}_joomla_1:/usr/local/etc/php-fpm.d/www.conf
+            docker cp "${phpfpm_pool_conf}" "${ENV_NAME}"_joomla_1:/usr/local/etc/php-fpm.d/www.conf
         fi
         bookworm_docker start
     ;;
@@ -172,7 +154,7 @@ case "${mode}" in
             echo "usage: $0 console-broken <container>"
             exit 1
         fi
-        container_status=$(docker ps -a --filter name=$1 --format '{{.Status}}')
+        # TODO container_status=$(docker ps -a --filter name=$1 --format '{{.Status}}')
         docker commit "$1" "$1_broken" && docker run -it "$1_broken" sh
     ;;
     clear-logs)
@@ -189,6 +171,14 @@ case "${mode}" in
             sudo cat ${logfile} | gzip -9 >${HOME}/backup/${logfile_name}.gz
             sudo truncate -s 0 ${logfile}
         done
+    ;;
+    show-log)
+        if [[ $# -lt 1 ]]
+        then
+            echo "usage: $0 show-log <container>"
+            exit 1
+        fi
+        logfile=$(docker inspect ${container} --format='{{.LogPath}}')
     ;;
     backup)
         if [[ $# -lt 1 ]]
@@ -230,5 +220,9 @@ case "${mode}" in
     ;;
     compose)
         bookworm_docker "$@"
+    ;;
+    *)
+        echo "usage: $0 ..."
+        exit 1
     ;;
 esac

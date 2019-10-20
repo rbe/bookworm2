@@ -6,6 +6,7 @@
 #
 
 set -o nounset
+set -o errexit
 
 if [[ $(id -un) != root ]]
 then
@@ -13,29 +14,37 @@ then
     exit 1
 fi
 
-execdir=$(pushd `dirname $0` >/dev/null ; pwd ; popd >/dev/null)
-etcdir=$(pushd ${execdir}/../etc >/dev/null ; pwd ; popd >/dev/null)
-platformlibdir=$(pushd ${execdir}/../../platform/src/main/bash >/dev/null ; pwd ; popd >/dev/null)
-. ${platformlibdir}/archlinux.sh
-. ${platformlibdir}/linux.sh
-. ${platformlibdir}/ssh.sh
-. ${platformlibdir}/docker.sh
+execdir=$(pushd `dirname $0` >/dev/null || exit ; pwd ; popd >/dev/null || exit)
+platformlibdir=$(pushd "${execdir}/../../platform/src/main/bash" >/dev/null || exit ; pwd ; popd >/dev/null || exit)
+# shellcheck source=../../platform/src/main/bash/archlinux.sh
+. "${platformlibdir}/archlinux.sh"
+# shellcheck source=../../platform/src/main/bash/linux.sh
+. "${platformlibdir}/linux.sh"
+# shellcheck source=../../platform/src/main/bash/ssh.sh
+. "${platformlibdir}/ssh.sh"
+# shellcheck source=../../platform/src/main/bash/docker.sh
+. "${platformlibdir}/docker.sh"
 
 #
 # Linux Packages
 #
 
 archlinux_update
-pacman --noconfirm -S linux-lts
+archlinux_install linux-lts
 grub-mkconfig -o /boot/grub/grub.cfg
-pacman --noconfirm -S haveged
+archlinux_install haveged
 systemctl enable haveged
-pacman --noconfirm -S nfs-utils
-systemctl enable rpcbind
-systemctl start rpcbind
 archlinux_install gnupg
 archlinux_install git
 archlinux_install expect
+
+#
+# NFS
+#
+
+archlinux_install nfs-utils
+systemctl enable rpcbind
+systemctl start rpcbind
 
 #
 # Storage
@@ -47,6 +56,7 @@ EOF
 # Volume Group "tank"
 pvcreate /dev/sda3
 vgcreate tank /dev/sda3
+
 # Docker (/var/lib/docker)
 lvcreate --name docker -L4G tank
 mkfs.ext4 /dev/tank/docker
@@ -69,13 +79,19 @@ chmod 711 /var/lib/docker/volumes
 mkdir /var/lib/docker/backup
 chmod 750 /var/lib/docker/backup
 mount -a
+
+#
+# Docker
+#
+
 # Install Docker
 archlinux_install_docker
 # Docker outgoing connections
 sudo sysctl net.ipv4.conf.all.forwarding=1
 sudo iptables -P FORWARD ACCEPT
 # Docker Logfiles
-cat >/etc/logrotate.d/docker <<EOF
+logrotate_docker=/etc/logrotate.d/docker
+cat >${logrotate_docker} <<EOF
 /var/lib/docker/containers/*/*.log {
         rotate 30
         daily
