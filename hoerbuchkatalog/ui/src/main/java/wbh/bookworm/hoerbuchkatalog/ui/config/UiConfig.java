@@ -28,7 +28,7 @@ import org.springframework.context.annotation.Configuration;
         MeineDaten.class
 })
 @ServletComponentScan(basePackageClasses = {
-        NoCacheFilter.class,
+        CachingFilter.class,
         AuthenticationFilter.class
 })
 public class UiConfig {

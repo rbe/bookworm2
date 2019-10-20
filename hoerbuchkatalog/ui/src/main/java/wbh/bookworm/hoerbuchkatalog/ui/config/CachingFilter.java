@@ -19,11 +19,12 @@ import javax.servlet.annotation.WebFilter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.time.ZonedDateTime;
 
 @WebFilter(servletNames = "FacesServlet")
-public class NoCacheFilter implements Filter {
+public class CachingFilter implements Filter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NoCacheFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(CachingFilter.class);
 
     @Override
     public void init(final FilterConfig filterConfig) {
@@ -34,12 +35,27 @@ public class NoCacheFilter implements Filter {
                          final FilterChain chain) throws IOException, ServletException {
         final HttpServletRequest request = (HttpServletRequest) req;
         final HttpServletResponse response = (HttpServletResponse) res;
+        final String uri = request.getRequestURI();
+        if (uri.endsWith(".xhtml")) {
+            cache1Minute(request, response);
+        }
+        chain.doFilter(req, res);
+    }
+
+    private void cache1Minute(final HttpServletRequest request, final HttpServletResponse response) {
+        LOGGER.trace("Setting HTTP header Cache-Control, Pragma, Expires to 1 Minute in request '{}'",
+                request.getRequestURI());
+        response.setHeader("Cache-Control", "private, no-cache, no-store, max-age=60, must-revalidate"); // HTTP 1.1.
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", ZonedDateTime.now().plusSeconds(60).toEpochSecond()); // Proxies
+    }
+
+    private void noCache(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Setting HTTP header Cache-Control, Pragma, Expires to no-cache in request '{}'",
                 request.getRequestURI());
-        response.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
-        response.setHeader("Pragma", "no-cache"); // HTTP 1.0.
-        response.setDateHeader("Expires", 0); // Proxies.
-        chain.doFilter(req, res);
+        response.setHeader("Cache-Control", "private, no-cache, no-store, max-age=0, must-revalidate"); // HTTP 1.1.
+        response.setHeader("Pragma", "no-cache"); // HTTP 1.0
+        response.setDateHeader("Expires", 0); // Proxies
     }
 
     @Override
