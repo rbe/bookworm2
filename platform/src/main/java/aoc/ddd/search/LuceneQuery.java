@@ -12,6 +12,7 @@ import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.Sort;
@@ -61,10 +62,10 @@ public final class LuceneQuery {
 
     @SuppressWarnings({"squid:S1452"})
     public static Result query(final LuceneIndex luceneIndex,
-                               final BooleanQueryBuilder queryBuilder,
+                               final BooleanQuery booleanQuery,
                                final int maxResults,
                                final String... sortFields) {
-        Objects.requireNonNull(queryBuilder);
+        Objects.requireNonNull(booleanQuery);
         Objects.requireNonNull(luceneIndex);
         Objects.requireNonNull(luceneIndex.getIndexReader());
         final long startNanos = System.nanoTime();
@@ -74,8 +75,8 @@ public final class LuceneQuery {
                     .map(f -> new SortField(f.toLowerCase(), SortField.Type.STRING_VAL))
                     .toArray(SortField[]::new);
             final Sort sort = new Sort(sortFieldStream);
-            final int count = searcher.count(queryBuilder.build());
-            final TopDocs topDocs = searcher.search(queryBuilder.build(), maxResults, sort);
+            final int count = searcher.count(booleanQuery);
+            final TopDocs topDocs = searcher.search(booleanQuery, maxResults, sort);
             final long nanos = System.nanoTime() - startNanos;
             LOGGER.debug("Query took {} ns (= {} ms = {} s)",
                     decimalFormat.format(nanos),

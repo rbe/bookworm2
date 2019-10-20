@@ -58,6 +58,10 @@ public final class Suchergebnis extends DomainValueObject {
         return anzahl;
     }
 
+    public boolean hatErgebnisse() {
+        return anzahl > 0;
+    }
+
     public int getGesamtAnzahlTreffer() {
         return gesamtAnzahlTreffer;
     }

@@ -106,10 +106,6 @@ public final class Hoerbuchkatalog extends DomainAggregate<Hoerbuchkatalog, Hoer
                 .toArray(AghNummer[]::new);
     }
 
-    public Suchergebnis sucheNachStichwort(final String stichwort) {
-        return hoerbuchkatalogSuche.sucheNachStichwort(stichwort);
-    }
-
     public Suchergebnis suchen(final Suchparameter suchparameter) {
         return hoerbuchkatalogSuche.suchen(suchparameter);
     }

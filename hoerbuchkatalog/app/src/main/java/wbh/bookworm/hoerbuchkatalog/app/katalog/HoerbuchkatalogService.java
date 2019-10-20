@@ -34,15 +34,6 @@ public final class HoerbuchkatalogService {
         this.repositoryResolver = repositoryResolver;
     }
 
-    public Suchergebnis sucheNachStichwort(final Hoerernummer hoerernummer, final String stichwort) {
-        final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
-        LOGGER.trace("Hörer {} Stichwort {} in {}", hoerernummer, stichwort, hoerbuchkatalog);
-        final Suchergebnis suchergebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
-        LOGGER.info("Hörer {}: Suche nach Stichwort '{}' ergab {} Treffer",
-                hoerernummer, stichwort, suchergebnis.getAnzahl());
-        return suchergebnis;
-    }
-
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         LOGGER.trace("Hörer {} Suchparameter {} in {}", hoerernummer, suchparameter, hoerbuchkatalog);

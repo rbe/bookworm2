@@ -17,9 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.faces.application.FacesMessage;
 import javax.faces.component.UIComponent;
-import javax.faces.context.FacesContext;
 
 @Component
 @RequestScope
@@ -33,8 +31,6 @@ public class Katalogsuche {
 
     private final Katalogsuchergebnis katalogsuchergebnis;
 
-    private String stichwort;
-
     @Autowired
     public Katalogsuche(final HoererSession hoererSession,
                         final HoerbuchkatalogService hoerbuchkatalogService,
@@ -45,13 +41,11 @@ public class Katalogsuche {
     }
 
     public String getStichwort() {
-        //return hoererSession.wertDesSuchparameters(Suchparameter.Feld.STICHWORT);
-        return stichwort;
+        return hoererSession.wertDesSuchparameters(Suchparameter.Feld.STICHWORT);
     }
 
     public void setStichwort(final String stichwort) {
-        //hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
-        this.stichwort = stichwort;
+        hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
     }
 
     public Sachgebiet[] getSachgebiete() {
@@ -98,20 +92,6 @@ public class Katalogsuche {
         hoererSession.suchparameterHinzufuegen(Suchparameter.Feld.EINSTELLDATUM, einstelldatum);
     }
 
-    public String sucheNachStichwort() {
-        LOGGER.trace("Suche nach Stichwort '{}' starten", stichwort);
-        final Suchergebnis suchergebnis = hoerbuchkatalogService.sucheNachStichwort(
-                hoererSession.getHoerernummer(), stichwort);
-        if (suchergebnis.getAnzahl() > 0) {
-            LOGGER.debug("Zeige {} Suchergebnisse an", suchergebnis.getAnzahl());
-            katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
-            return Navigation.NAV_SUCHERGEBNIS;
-        } else {
-            LOGGER.debug("Zeige Seite für keine Suchergebnisse an");
-            return Navigation.NAV_KEINE_SUCHERGEBNISSE;
-        }
-    }
-
     private UIComponent sachgebietUiComponent;
     public void setSachgebiet(final UIComponent sachgebietUiComponent) {
         this.sachgebietUiComponent = sachgebietUiComponent;
@@ -119,26 +99,14 @@ public class Katalogsuche {
     public UIComponent getSachgebiet() {return sachgebietUiComponent;}
 
     public String suchen() {
-        final Suchparameter.Feld[] suchfelder = hoererSession.getSuchparameter()
-                .getFeldnamenMitWerten();
-        final boolean sucheNurNachSachgebiet = suchfelder.length == 1
-                && suchfelder[0].luceneName().equals("sachgebiet");
-        if (sucheNurNachSachgebiet) {
-            final FacesMessage message = new FacesMessage(FacesMessage.SEVERITY_INFO,
-                    "Suche erweitern", "Bitte weitere Suchbegriffe neben dem Sachgebiet hinzufügen.");
-            final FacesContext facesContext = FacesContext.getCurrentInstance();
-            facesContext.addMessage(sachgebietUiComponent.getClientId(facesContext), message);
-            return null;
+        LOGGER.trace("Suche mit '{}' starten", hoererSession.getSuchparameter());
+        final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(
+                hoererSession.getHoerernummer(), hoererSession.getSuchparameter());
+        if (suchergebnis.hatErgebnisse()) {
+            katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
+            return Navigation.NAV_SUCHERGEBNIS;
         } else {
-            LOGGER.trace("Suche mit '{}' starten", hoererSession.getSuchparameter());
-            final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(
-                    hoererSession.getHoerernummer(), hoererSession.getSuchparameter());
-            if (suchergebnis.getAnzahl() > 0) {
-                katalogsuchergebnis.neuesSuchergebnis(suchergebnis);
-                return Navigation.NAV_SUCHERGEBNIS;
-            } else {
-                return Navigation.NAV_KEINE_SUCHERGEBNISSE;
-            }
+            return Navigation.NAV_KEINE_SUCHERGEBNISSE;
         }
     }
 

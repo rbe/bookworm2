@@ -18,24 +18,28 @@ import aoc.ddd.search.LuceneQuery;
 import aoc.ddd.search.QueryParameters;
 import aoc.strings.StringNormalizer;
 
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 
-import java.text.Normalizer;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+/**
+ * Lucene reserved characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
+ */
 final class HoerbuchkatalogSuche {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogSuche.class);
@@ -43,56 +47,6 @@ final class HoerbuchkatalogSuche {
     private final LuceneIndex luceneIndex;
 
     private final int anzahlSuchergebnisse;
-
-    private static final class StichwortLuceneAbfrage {
-
-        private static <T> List<List<T>> computeCombinations2(List<List<T>> lists) {
-            List<List<T>> combinations = Arrays.asList(Arrays.asList());
-            for (List<T> list : lists) {
-                List<List<T>> extraColumnCombinations = new ArrayList<>();
-                for (List<T> combination : combinations) {
-                    for (T element : list) {
-                        List<T> newCombination = new ArrayList<>(combination);
-                        newCombination.add(element);
-                        extraColumnCombinations.add(newCombination);
-                    }
-                }
-                combinations = extraColumnCombinations;
-            }
-            return combinations;
-        }
-
-        public static String makeQuery(String[] stichwoerter) {
-            final List<List<String>> product = computeCombinations2(Arrays.asList(
-                    List.of(Suchparameter.Feld.TITELNUMMER.luceneName(),
-                            Suchparameter.Feld.AUTOR.luceneName(),
-                            Suchparameter.Feld.TITEL.luceneName(),
-                            Suchparameter.Feld.UNTERTITEL.luceneName(),
-                            Suchparameter.Feld.ERLAEUTERUNG.luceneName(),
-                            Suchparameter.Feld.SUCHWOERTER.luceneName()
-                    ),
-                    Arrays.asList(stichwoerter)));
-            final Map<String, List<String>> felderMitStichwoertern = product.stream()
-                    .map(elt -> String.format("%s:%s*", elt.get(0), elt.get(1).toLowerCase()))
-                    .collect(Collectors.groupingBy(elt -> elt.substring(0, elt.indexOf(':'))));
-            return felderMitStichwoertern.values()
-                    .stream()
-                    .map(v -> {
-                        final StringBuilder sb = new StringBuilder("(");
-                        for (int i = 0; i < v.size(); i++) {
-                            final String elt = v.get(i);
-                            sb.append(elt);
-                            if (i < v.size() - 1) {
-                                sb.append(" AND ");
-                            }
-                        }
-                        sb.append(")");
-                        return sb.toString();
-                    })
-                    .collect(Collectors.joining(" OR "));
-        }
-
-    }
 
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
                          final DomainId<String> hoerbuchkatalogDomainId,
@@ -132,34 +86,11 @@ final class HoerbuchkatalogSuche {
         }
     }
 
-    Suchergebnis sucheNachStichwort(final String stichwort) {
-        Objects.requireNonNull(stichwort);
-        if (stichwort.isBlank()) {
-            return Suchergebnis.leeresSuchergebnis(stichwort);
-        }
-        // TODO final String stichwort = suchparameter.wert(Feld.STICHWORT);
-        // Lucene reserved characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
-        final String normalizedStichwort = Normalizer.normalize(stichwort, Normalizer.Form.NFD)
-                .replaceAll("[^A-Za-zäöüß0-9 ,-]", "");
-        LOGGER.trace("Suche nach Stichwort '{}'", stichwort);
-        final String[] stichwoerter = Arrays.stream(stichwort.split("[\\s,-]"))
-                .filter(elt -> !elt.isBlank())
-                .toArray(String[]::new);
-        final String query = StichwortLuceneAbfrage.makeQuery(stichwoerter);
-        final LuceneQuery.Result result = LuceneQuery.query(this.luceneIndex,
-                query, anzahlSuchergebnisse,
-                Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
-        final List<Titelnummer> titelnummern = result.getDomainIds()
+    private List<Titelnummer> titelnummern(final LuceneQuery.Result result) {
+        return result.getDomainIds()
                 .stream()
                 .map(dddId -> new Titelnummer(dddId.getValue()))
                 .collect(Collectors.toUnmodifiableList());
-        LOGGER.debug("Lucene Query {} ergab {} Treffer", query, titelnummern.size());
-        final Suchparameter suchparameter = new Suchparameter().hinzufuegen(
-                Suchparameter.Feld.STICHWORT, stichwort);
-        final Suchergebnis suchergebnis = new Suchergebnis(
-                suchparameter, titelnummern, result.getTotalMatchingCount());
-        LOGGER.debug("Suche nach Stichwort '{}' ergab {}", stichwort, suchergebnis);
-        return suchergebnis;
     }
 
     Suchergebnis suchen(final Suchparameter suchparameter) {
@@ -169,11 +100,46 @@ final class HoerbuchkatalogSuche {
         }
         LOGGER.info("Suche nach '{}'", suchparameter);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder();
-        if (suchparameter.wertVorhanden(Suchparameter.Feld.SACHGEBIET)) {
-            booleanQueryBuilder.addExactPhrase(new QueryParameters.Field(
-                            Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
-                    suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
+        sachgebiet(booleanQueryBuilder, suchparameter);
+        einstelldatum(booleanQueryBuilder, suchparameter);
+        final Suchparameter ohneSachgebietUndEinstelldatum = new Suchparameter(suchparameter);
+        ohneSachgebietUndEinstelldatum
+                .entfernen(Suchparameter.Feld.STICHWORT)
+                .entfernen(Suchparameter.Feld.SACHGEBIET)
+                .entfernen(Suchparameter.Feld.EINSTELLDATUM);
+        lowercaseWildcard(booleanQueryBuilder, ohneSachgebietUndEinstelldatum);
+        stichwort(booleanQueryBuilder, suchparameter);
+        final LuceneQuery.Result result = LuceneQuery.query(luceneIndex,
+                booleanQueryBuilder.build(), anzahlSuchergebnisse,
+                Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
+        final List<Titelnummer> titelnummern = titelnummern(result);
+        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
+    }
+
+    private void stichwort(final BooleanQueryBuilder booleanQueryBuilder, final Suchparameter suchparameter) {
+        if (suchparameter.wertVorhanden(Suchparameter.Feld.STICHWORT)) {
+            final String stichwort = suchparameter.wert(Suchparameter.Feld.STICHWORT);
+            final BooleanQuery.Builder stichwortQuery = new BooleanQuery.Builder();
+            stichwortQuery.setMinimumNumberShouldMatch(1);
+            stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), stichwort)),
+                    BooleanClause.Occur.SHOULD);
+            final String stichwortWildcard = "*" + stichwort.toLowerCase() + "*";
+            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
+                    BooleanClause.Occur.SHOULD);
+            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.TITEL.luceneName(), stichwortWildcard)),
+                    BooleanClause.Occur.SHOULD);
+            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.UNTERTITEL.luceneName(), stichwortWildcard)),
+                    BooleanClause.Occur.SHOULD);
+            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.ERLAEUTERUNG.luceneName(), stichwortWildcard)),
+                    BooleanClause.Occur.SHOULD);
+            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SUCHWOERTER.luceneName(), stichwortWildcard)),
+                    BooleanClause.Occur.SHOULD);
+            booleanQueryBuilder.add(stichwortQuery.build(), BooleanClause.Occur.MUST);
         }
+    }
+
+    private static void einstelldatum(final BooleanQueryBuilder booleanQueryBuilder,
+                                      final Suchparameter suchparameter) {
         if (suchparameter.wertVorhanden(Suchparameter.Feld.EINSTELLDATUM)) {
             final String wert = suchparameter.wert(Suchparameter.Feld.EINSTELLDATUM);
             parseDeutschesDatum(wert)
@@ -184,22 +150,25 @@ final class HoerbuchkatalogSuche {
                                             Suchparameter.Feld.EINSTELLDATUM.name(), QueryParameters.Occur.MUST),
                                     localDate, null));
         }
-        final Suchparameter ohneSachgebietUndEinstelldatum = new Suchparameter(suchparameter);
-        ohneSachgebietUndEinstelldatum.entfernen(Suchparameter.Feld.SACHGEBIET).entfernen(Suchparameter.Feld.EINSTELLDATUM);
-        ohneSachgebietUndEinstelldatum.getFelderMitWerten().keySet()
+    }
+
+    private static void sachgebiet(final BooleanQueryBuilder booleanQueryBuilder,
+                                   final Suchparameter suchparameter) {
+        if (suchparameter.wertVorhanden(Suchparameter.Feld.SACHGEBIET)) {
+            booleanQueryBuilder.addExactPhrase(new QueryParameters.Field(
+                            Suchparameter.Feld.SACHGEBIET.name(), QueryParameters.Occur.MUST),
+                    suchparameter.wert(Suchparameter.Feld.SACHGEBIET));
+        }
+    }
+
+    private static void lowercaseWildcard(final BooleanQueryBuilder booleanQueryBuilder,
+                                          final Suchparameter suchparameter) {
+        suchparameter.getFelderMitWerten().keySet()
                 .stream()
                 .filter(k -> !suchparameter.wert(k).isBlank())
                 .forEach(k -> booleanQueryBuilder.addLowercaseWildcard(
                         new QueryParameters.Field(k.name(), QueryParameters.Occur.MUST),
                         suchparameter.wert(k)));
-        final LuceneQuery.Result result = LuceneQuery.query(
-                luceneIndex, booleanQueryBuilder, anzahlSuchergebnisse,
-                Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
-        final List<Titelnummer> titelnummern = result.getDomainIds()
-                .stream()
-                .map(dddId -> new Titelnummer(dddId.getValue()))
-                .collect(Collectors.toList());
-        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
     }
 
     private static final Pattern DEUTSCHES_DATUM_PATTERN = Pattern.compile("\\d{2}.\\d{2}.\\d{4}");

@@ -32,6 +32,7 @@ class HoerbuchkatalogSucheTest {
         this.hoerbuchkatalog = hoerbuchkatalog;
     }
 
+    /*
     @Test
     void shouldFindeHoerbuecherMitStichwortKapital() {
         final Suchparameter suchparameter = new Suchparameter();
@@ -57,6 +58,7 @@ class HoerbuchkatalogSucheTest {
         Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + stichwort + "' im Hörbuchkatalog gefunden");
     }
+    */
 
     @Test
     void shouldFindeHoerbuecherMitMehrerenEingaben() {

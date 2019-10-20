@@ -10,6 +10,8 @@ import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.PhraseQuery;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.TermQuery;
 import org.apache.lucene.search.TermRangeQuery;
 import org.apache.lucene.search.WildcardQuery;
 import org.apache.lucene.util.BytesRef;
@@ -21,10 +23,31 @@ import java.util.Objects;
 
 public class BooleanQueryBuilder {
 
+    private static final String NOT_ALLOWED_CHARACTERS = "[^A-Za-zäÄöÖüÜß0-9?!]";
+
     private final BooleanQuery.Builder builder;
+
+    private boolean clauses;
 
     public BooleanQueryBuilder() {
         builder = new BooleanQuery.Builder();
+    }
+
+    public BooleanQueryBuilder addTerm(final QueryParameters.Field field,
+                                       final /* TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex */String value) {
+        final boolean hasValue = null != value && !value.isBlank();
+        if (hasValue) {
+            final String fieldName = field.getName().toLowerCase();
+            final String searchTerm = value
+                    .replaceAll(NOT_ALLOWED_CHARACTERS, "")
+                    .replace("?", "\\?")
+                    .replace("!", "\\!");
+            final Term term = new Term(fieldName, searchTerm);
+            final TermQuery query = new TermQuery(term);
+            builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
+            clauses = true;
+        }
+        return this;
     }
 
     public BooleanQueryBuilder addExactPhrase(final QueryParameters.Field field,
@@ -33,11 +56,32 @@ public class BooleanQueryBuilder {
         if (hasValue) {
             final String fieldName = field.getName().toLowerCase();
             final String searchTerm = value
-                    .replaceAll("[^A-Za-zäöüß0-9?!]", "")
+                    .replaceAll(NOT_ALLOWED_CHARACTERS, "")
                     .replace("?", "\\?")
                     .replace("!", "\\!");
             final PhraseQuery query = new PhraseQuery(fieldName, searchTerm);
             builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
+            clauses = true;
+        }
+        return this;
+    }
+
+    public BooleanQueryBuilder addLowercaseWildcard(final QueryParameters.Field field,
+                                                    final /* TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex */String value) {
+        final boolean hasValue = null != value && !value.isBlank();
+        if (hasValue) {
+            final String fieldName = field.getName().toLowerCase();
+            final String[] split = value.split("[ ,-/]");
+            Arrays.stream(split).forEach(v -> {
+                final String s = v.toLowerCase()
+                        .replaceAll(NOT_ALLOWED_CHARACTERS, "")
+                        .replace("?", "\\?")
+                        .replace("!", "\\!");
+                final String wildcardSearchTerm = String.format("*%s*", s);
+                final WildcardQuery query = new WildcardQuery(new Term(fieldName, wildcardSearchTerm));
+                builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
+            });
+            clauses = true;
         }
         return this;
     }
@@ -51,30 +95,25 @@ public class BooleanQueryBuilder {
                 new BytesRef(from.format(dtf).getBytes()), null,
                 true, true);
         builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
+        clauses = true;
         return this;
     }
 
-    public BooleanQueryBuilder addLowercaseWildcard(final QueryParameters.Field field,
-                                                    final /* TODO Suchparameter anpassen oder SearchTerm o.ä. einführen, siehe regex */String value) {
-        final boolean hasValue = null != value && !value.isBlank();
-        if (hasValue) {
-            final String fieldName = field.getName().toLowerCase();
-            final String[] split = value.split("[ ,-/]");
-            Arrays.stream(split).forEach(v -> {
-                final String s = v.toLowerCase()
-                        .replaceAll("[^A-Za-zäöüß0-9?!]", "")
-                        .replace("?", "\\?")
-                        .replace("!", "\\!");
-                final String wildcardSearchTerm = String.format("*%s*", s);
-                final WildcardQuery query = new WildcardQuery(new Term(fieldName, wildcardSearchTerm));
-                builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
-            });
-        }
-        return this;
+    public boolean hasClauses() {
+        return clauses;
     }
 
-    BooleanQuery build() {
+    public void add(final Query query, final BooleanClause.Occur occur) {
+        builder.add(query, occur);
+    }
+
+    public BooleanQuery build() {
         return builder.build();
+    }
+
+    @Override
+    public String toString() {
+        return build().toString();
     }
 
 }
