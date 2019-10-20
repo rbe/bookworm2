@@ -9,8 +9,7 @@ package aoc.ddd.model;
 import java.io.Serializable;
 
 @SuppressWarnings({"squid:S00119"})
-public class
-DomainValueObject implements Serializable {
+public class DomainValueObject implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
