@@ -38,7 +38,7 @@ public final class BlistaDownload extends DomainValueObject {
 
     private final String spieldauer;
 
-    private int ausleihstatus;
+    private final int ausleihstatus;
 
     private boolean bezugsfaehig;
 
@@ -62,7 +62,7 @@ public final class BlistaDownload extends DomainValueObject {
                           final LocalDateTime bestelldatum, final LocalDateTime rueckgabedatum,
                           final String dlsDescription,
                           final int downloadCount, final int maxDownload,
-                          final String downloadLink, int gesperrt) {
+                          final String downloadLink, final int gesperrt) {
         Objects.requireNonNull(hoerernummer);
         this.hoerernummer = hoerernummer;
         Objects.requireNonNull(aghNummer);
@@ -78,9 +78,9 @@ public final class BlistaDownload extends DomainValueObject {
         Objects.requireNonNull(dlsDescription);
         this.ausleihstatus = ausleihstatus;
         if (LocalDateTime.now().isAfter(rueckgabedatum)) {
-            this.statusText = String.format("%d: Ausleihzeitraum abgelaufen", ausleihstatus);
+            statusText = String.format("%d: Ausleihzeitraum abgelaufen", ausleihstatus);
         } else {
-            this.statusText = String.format("%d: %s", ausleihstatus
+            statusText = String.format("%d: %s", ausleihstatus
                     , dlsDescription);
         }
         bezugsfaehig = false;
@@ -107,19 +107,18 @@ public final class BlistaDownload extends DomainValueObject {
         this.maxDownload = maxDownload;
         this.downloadLink = downloadLink;
         this.gesperrt = gesperrt;
-        this.bezugsfaehig &= /* TODO isUrl(String) */
+        bezugsfaehig &= /* TODO isUrl(String) */
                 gesperrt == 0
-                        && null != downloadLink
-                        && !downloadLink.isBlank();
+                        && null != downloadLink && !downloadLink.isBlank();
     }
 
     public static BlistaDownload of(final Hoerernummer hoerernummer,
                                     final Hoerbuch hoerbuch,
-                                    int ausleihstatus,
+                                    final int ausleihstatus,
                                     final LocalDateTime bestelldatum, final LocalDateTime rueckgabedatum,
                                     final String dlsDescription,
-                                    int downloadCount, int maxDownload,
-                                    final String downloadLink, int gesperrt) {
+                                    final int downloadCount, final int maxDownload,
+                                    final String downloadLink, final int gesperrt) {
         return new BlistaDownload(hoerernummer, hoerbuch.getAghNummer(),
                 hoerbuch.getTitelnummer(), hoerbuch.getTitel(),
                 hoerbuch.getAutor(), hoerbuch.getSpieldauer(),
@@ -174,6 +173,10 @@ public final class BlistaDownload extends DomainValueObject {
 
     public LocalDateTime getRueckgabedatum() {
         return rueckgabedatum;
+    }
+
+    public int getAusleihstatus() {
+        return ausleihstatus;
     }
 
     public int getDownloadCount() {

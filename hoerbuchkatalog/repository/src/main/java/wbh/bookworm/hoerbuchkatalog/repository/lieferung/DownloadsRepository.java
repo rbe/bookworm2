@@ -49,7 +49,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
     }
 
     public long anzahlLieferungenHeute(final Hoerernummer hoerernummer) {
-        long anzahl = 0;
+        long anzahl = 0L;
         final Optional<DlsWerke> maybeDlsWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
         if (maybeDlsWerke.isPresent()) {
             final DlsWerke dlsWerke = maybeDlsWerke.get();
@@ -58,18 +58,20 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .stream()
                         .map(b -> toBlistaDownload(hoerernummer, b))
                         .filter(Objects::nonNull)
-                        .filter(b -> b.getBestelldatum().getDayOfYear() ==
-                                LocalDateTime.now().getDayOfYear())
+                        .filter(b -> b.getAusleihstatus() > 0
+                                && b.getBestelldatum().getDayOfYear() == LocalDateTime.now().getDayOfYear())
                         .count();
                 LOGGER.info("Hörer {} hat am {} bereits {} Download(s) beauftragt",
-                        hoerernummer, LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.GERMANY)), anzahl);
+                        hoerernummer,
+                        LocalDateTime.now().format(DateTimeFormatter.ofLocalizedDate(FormatStyle.SHORT).withLocale(Locale.GERMANY)),
+                        anzahl);
             }
         }
         return anzahl;
     }
 
     public long anzahlLieferungenInDiesemMonat(final Hoerernummer hoerernummer) {
-        long anzahl = 0;
+        long anzahl = 0L;
         final Optional<DlsWerke> maybeDlsWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
         if (maybeDlsWerke.isPresent()) {
             final DlsWerke dlsWerke = maybeDlsWerke.get();
@@ -78,8 +80,8 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .stream()
                         .map(b -> toBlistaDownload(hoerernummer, b))
                         .filter(Objects::nonNull)
-                        .filter(b -> b.getBestelldatum().getMonth().equals(
-                                LocalDateTime.now().getMonth()))
+                        .filter(b -> b.getAusleihstatus() > 0
+                                && b.getBestelldatum().getMonth().equals(LocalDateTime.now().getMonth()))
                         .count();
                 LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
                         hoerernummer, LocalDateTime.now().getMonth(), anzahl);
@@ -90,7 +92,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
 
     public HoererBlistaDownloads lieferungen(final Hoerernummer hoerernummer) {
         LOGGER.trace("Hole blista Werke für Hörer {}", hoerernummer);
-        long startWerke = System.nanoTime();
+        final long startWerke = System.nanoTime();
         final Optional<DlsWerke> maybeAlleWerke = dlsLieferung.alleWerkeLaden(hoerernummer.getValue());
         if (maybeAlleWerke.isPresent()) {
             final DlsWerke alleWerke = maybeAlleWerke.get();
