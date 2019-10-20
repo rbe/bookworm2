@@ -1,9 +1,9 @@
 ----
-curl -H "bibliothek: wbh06" -H 'bibkennwort: ' https://rest-dls-katalog.blista.de/v1/titusTest
+curl -H "bibliothek: wbh06" -H 'bibkennwort: ' https://rest-dls-katalog.blista.de/v1/werke/titusTest
 ----
 
 ----
-curl -H "bibliothek: wbh06" -H 'bibkennwort: ' https://rest-dls-katalog.blista.de/v1/titusTest/1-0000122-3-9
+curl -H "bibliothek: wbh06" -H 'bibkennwort: ' https://rest-dls-katalog.blista.de/v1/werke/titusTest/1-0000122-3-9
 ----
 
 ----

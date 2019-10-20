@@ -1,5 +1,29 @@
 == Docker
 
+.Netzwerke
+[cols="a,a,a"options="header"]
+|===
+| Bezeichnung
+| IP-Adressbereich
+| Beschreibung
+
+| bookworm-public
+|
+|
+
+| bookworm-outside
+|
+|
+
+| bookworm-backend
+|
+|
+
+| bookworm-secure
+|
+|
+|===
+
 .Dienste und Netzwerke
 [cols="a,a,a,a,a,a"options="header"]
 |===
