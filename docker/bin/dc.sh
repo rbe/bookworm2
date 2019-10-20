@@ -5,6 +5,10 @@
 # All rights reserved. Use is subject to license terms.
 #
 
+#
+# DO NOT MODIFY LINES BELOW
+#
+
 set -o nounset
 set -o errexit
 

@@ -11,7 +11,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - rproxy_etc_nginx:/etc/nginx:rw
-      - rproxy_certs:/etc/letsencrypt:ro
+      - rproxy_etc_letsencrypt:/etc/letsencrypt:ro
       - joomla_html:/var/www/html:ro
     networks:
       cms-backend:
@@ -41,7 +41,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - rproxy_etc_nginx:/etc/nginx:rw
-      - rproxy_certs:/etc/letsencrypt:rw
+      - rproxy_etc_letsencrypt:/etc/letsencrypt:rw
     logging:
       driver: "json-file"
       options:
@@ -51,7 +51,7 @@ services:
 volumes:
   rproxy_etc_nginx:
     driver: local
-  rproxy_certs:
+  rproxy_etc_letsencrypt:
     driver: local
 
 networks:
