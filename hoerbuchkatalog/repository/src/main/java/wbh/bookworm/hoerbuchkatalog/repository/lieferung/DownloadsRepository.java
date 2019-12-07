@@ -81,7 +81,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .map(b -> toBlistaDownload(hoerernummer, b))
                         .filter(Objects::nonNull)
                         .filter(b -> b.getAusleihstatus() > 0
-                                && b.getBestelldatum().getMonth().equals(LocalDateTime.now().getMonth()))
+                                && b.getRueckgabedatum().getMonth().equals(LocalDateTime.now().getMonth()))
                         .count();
                 LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
                         hoerernummer, LocalDateTime.now().getMonth(), anzahl);
