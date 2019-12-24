@@ -2,20 +2,11 @@
 # WBH Bookworm
 #
 
-backup/
 var/
-
-#
-# Hoerbuchkatalog
-#
-
-hoerbuchkatalog/assembly/src/main/resources/conf/secrets.json
-
+secrets*.json
 approxy/composer.phar
 approxy/src/main/php/approxy/composer.lock
 approxy/src/main/php/approxy/vendor/
-
-# static resources
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts/
@@ -25,19 +16,31 @@ hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
 hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
 
-# Compiler
-*.class
-out/
-
-# Maven
-.mvn/repository/
-target/
-pom.xml.versionsBackup
-maven.log
-
-# IntelliJ
-*.iml
-.idea/
-
 # Docker
 .env
+
+# Java
+*.class
+
+# Maven
+target/
+pom.xml.versionsBackup
+.mvn/repository/
+!.mvn/wrapper/maven-wrapper.jar
+!.mvn/wrapper/maven-wrapper.properties
+.mvn/wrapper/
+!**/src/main/**
+!**/src/test/**
+
+# IntelliJ IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# VS Code
+.vscode/
+
+# macOS
+.DS_Store
