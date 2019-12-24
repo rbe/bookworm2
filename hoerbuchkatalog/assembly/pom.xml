@@ -51,34 +51,29 @@
             <optional>true</optional>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>bookworm.assembly</id>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.springframework.boot</groupId>
-                        <artifactId>spring-boot-maven-plugin</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
                         <configuration>
-                            <jvmArguments>-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005</jvmArguments>
+                            <layout>ZIP</layout>
+                            <excludeDevtools>true</excludeDevtools>
+                            <finalName>${project.artifactId}</finalName>
                         </configuration>
-                        <executions>
-                            <execution>
-                                <phase>package</phase>
-                                <goals>
-                                    <goal>repackage</goal>
-                                </goals>
-                                <configuration>
-                                    <layout>ZIP</layout>
-                                    <excludeDevtools>true</excludeDevtools>
-                                    <finalName>${project.artifactId}</finalName>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-                <finalName>${project.artifactId}</finalName>
-            </build>
-        </profile>
-    </profiles>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+        <finalName>${project.artifactId}</finalName>
+    </build>
 </project>
