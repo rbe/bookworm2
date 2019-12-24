@@ -23,11 +23,9 @@ import java.util.Objects;
 
 public class BooleanQueryBuilder {
 
-    private static final String NOT_ALLOWED_CHARACTERS = "[^A-Za-zäÄöÖüÜß0-9?!]";
+    private static final String NOT_ALLOWED_CHARACTERS = "^[\\\\u0000-\\\\u007F]*$";
 
     private final BooleanQuery.Builder builder;
-
-    private boolean clauses;
 
     public BooleanQueryBuilder() {
         builder = new BooleanQuery.Builder();
@@ -45,7 +43,6 @@ public class BooleanQueryBuilder {
             final Term term = new Term(fieldName, searchTerm);
             final TermQuery query = new TermQuery(term);
             builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
-            clauses = true;
         }
         return this;
     }
@@ -61,7 +58,6 @@ public class BooleanQueryBuilder {
                     .replace("!", "\\!");
             final PhraseQuery query = new PhraseQuery(fieldName, searchTerm);
             builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
-            clauses = true;
         }
         return this;
     }
@@ -81,7 +77,6 @@ public class BooleanQueryBuilder {
                 final WildcardQuery query = new WildcardQuery(new Term(fieldName, wildcardSearchTerm));
                 builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
             });
-            clauses = true;
         }
         return this;
     }
@@ -95,12 +90,7 @@ public class BooleanQueryBuilder {
                 new BytesRef(from.format(dtf).getBytes()), null,
                 true, true);
         builder.add(query, BooleanClause.Occur.valueOf(field.getOccur().name()));
-        clauses = true;
         return this;
-    }
-
-    public boolean hasClauses() {
-        return clauses;
     }
 
     public void add(final Query query, final BooleanClause.Occur occur) {

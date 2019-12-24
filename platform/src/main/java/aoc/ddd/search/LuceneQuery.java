@@ -127,9 +127,10 @@ public final class LuceneQuery {
                 .map(scoreDoc -> {
                     try {
                         final Document doc = searcher.doc(scoreDoc.doc);
+                        final String domainId = doc.get(DOMAIN_ID);
                         LOGGER.trace("Document#{} DomainId#{} im Index gefunden",
-                                scoreDoc.doc, doc.get(DOMAIN_ID));
-                        return new DomainId<>(doc.get(DOMAIN_ID));
+                                scoreDoc.doc, domainId);
+                        return new DomainId<>(domainId);
                     } catch (IOException e) {
                         LOGGER.error("", e);
                         /* TODO Function may return null, but it's not allowed here */

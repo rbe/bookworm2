@@ -8,6 +8,7 @@ package aoc.ddd.search;
 
 import aoc.ddd.model.DomainEntity;
 import aoc.ddd.tools.DddHelper;
+import aoc.strings.StringNormalizer;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -94,21 +95,27 @@ public class LuceneIndex {
                                                           final String[] stringFields,
                                                           final String[] textFields,
                                                           final String[] dateFields,
-                                                          final String[] sortFields) {
+                                                          final String[] sortFields,
+                                                          final boolean normalize) {
         Objects.requireNonNull(domainEntity);
         LOGGER.trace("Füge {} zum Suchindex hinzu", domainEntity);
         final Document document = new Document();
-        document.add(new StringField(DOMAIN_ID,
-                DddHelper.valueAsString(domainEntity, domainIdField),
-                Field.Store.YES));
+        final String domainId = DddHelper.valueAsString(domainEntity, domainIdField);
+        document.add(new StringField(DOMAIN_ID, domainId, Field.Store.YES));
         Arrays.stream(stringFields)
-                .forEach(f -> document.add(new StringField(f.toLowerCase(),
-                        DddHelper.valueAsString(domainEntity, f),
-                        Field.Store.NO)));
+                .forEach(f -> {
+                    final String value = DddHelper.valueAsString(domainEntity, f);
+                    document.add(new StringField(f.toLowerCase(),
+                            normalize ? StringNormalizer.normalize(value) : value,
+                            Field.Store.NO));
+                });
         Arrays.stream(textFields)
-                .forEach(f -> document.add(new TextField(f.toLowerCase(),
-                        DddHelper.valueAsString(domainEntity, f),
-                        Field.Store.NO)));
+                .forEach(f -> {
+                    final String value = DddHelper.valueAsString(domainEntity, f);
+                    document.add(new TextField(f.toLowerCase(),
+                            normalize ? StringNormalizer.normalize(value) : value,
+                            Field.Store.NO));
+                });
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
         Arrays.stream(dateFields)
                 .forEach(f -> {
@@ -145,7 +152,7 @@ public class LuceneIndex {
         } else {
             LOGGER.debug("Füge {} Dokumente zum Suchindex hinzu", domainEnties.size());
             for (final T domainEntity : domainEnties) {
-                add(domainEntity, domainIdField, stringFields, textFields, dateFields, sortFields);
+                add(domainEntity, domainIdField, stringFields, textFields, dateFields, sortFields, true);
             }
         }
         return this;
