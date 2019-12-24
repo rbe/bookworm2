@@ -39,6 +39,7 @@ echo "Environment: ${ENV_NAME}"
 . ${etcdir}/${ENV_NAME}.env
 
 export ENV_NAME
+export ENV_TYPE
 export VERSION
 export CMS_BACKEND_NET
 export HOERBUCHKATALOG_BACKEND_NET
@@ -82,6 +83,7 @@ case "${mode}" in
         #    ${dockerdir}/sshd-alpine
         bookworm_docker build \
             --build-arg ENV_NAME="${ENV_NAME}" \
+            --build-arg ENV_TYPE="${ENV_TYPE}" \
             --compress
     ;;
     up)

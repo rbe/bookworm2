@@ -13,7 +13,7 @@ RUN echo "Europe/Berlin" >/etc/timezone \
     && groupadd -g 4801 bookworm \
     && useradd -u 4801 -g bookworm bookworm
 
-ADD docker/hoerbuchkatalog-app/.version /
+ADD .version /
 
 WORKDIR /opt/bookworm
 COPY docker/hoerbuchkatalog-app/*.sh bin/

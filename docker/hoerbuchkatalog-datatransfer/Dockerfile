@@ -26,7 +26,7 @@ RUN apk update \
     && addgroup -g 82 -S www-data \
     && adduser -u 82 -D -S -G www-data www-data
 
-ADD docker/hoerbuchkatalog-datatransfer/.version /
+ADD .version /
 
 COPY docker/sshkeys/rbe_authorized_keys /etc/ssh/keys/
 COPY docker/sshkeys/cew_authorized_keys /etc/ssh/keys/

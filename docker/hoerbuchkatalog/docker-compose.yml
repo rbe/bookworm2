@@ -23,7 +23,7 @@ services:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-app/Dockerfile
     image: wbhonline/hoerbuchkatalog:${VERSION}
-    restart: "no"
+    restart: "always"
 #    depends_on:
 #      - vault
     environment:
@@ -52,7 +52,7 @@ services:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-datatransfer/Dockerfile
     image: wbhonline/datatransfer:${VERSION}
-    restart: "no"
+    restart: "always"
     volumes:
       - hk_datatransfer_etc_ssh:/etc/ssh:ro
       - hk_wbh:/opt/bookworm/var/wbh:rw
@@ -70,7 +70,7 @@ services:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-admin/Dockerfile
     image: wbhonline/admin:${VERSION}
-    restart: "no"
+    restart: "always"
     volumes:
       - hk_admin_etc_ssh:/etc/ssh:ro
       - hk_app:/opt/bookworm:rw

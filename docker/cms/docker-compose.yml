@@ -18,7 +18,7 @@ services:
 #        - DB_SERVER=cms-joomladb
   cms-joomladb:
     image: mysql:5.6
-    restart: "no"
+    restart: "always"
     environment:
       - TZ=Europe/Berlin
       - MYSQL_ROOT_PASSWORD=example
@@ -39,7 +39,7 @@ services:
     image: joomla:3.9.8-php7.1-fpm-alpine
     depends_on:
       - cms-joomladb
-    restart: "no"
+    restart: "always"
     environment:
       - TZ=Europe/Berlin
       - JOOMLA_DB_HOST=joomla-db
@@ -67,7 +67,7 @@ services:
       context: ../../
       dockerfile: docker/cms-assets/Dockerfile
     image: wbhonline/cms-assets:${VERSION}
-    restart: "no"
+    restart: "always"
     environment:
       - TZ=Europe/Berlin
     volumes:

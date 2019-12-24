@@ -40,6 +40,8 @@ RUN apk --no-cache add \
     && chown -R vault:vault /opt/vault \
     && chown -R vault:vault /var/vault
 
+ADD .version /
+
 USER vault:vault
 
 WORKDIR /opt/vault

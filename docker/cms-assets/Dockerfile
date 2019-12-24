@@ -26,7 +26,7 @@ RUN apk update \
     && addgroup -g 82 -S www-data \
     && adduser -u 82 -D -S -G www-data www-data
 
-ADD docker/cms-assets/.version /
+ADD .version /
 
 COPY docker/sshkeys/mysql_authorized_keys /etc/ssh/keys/
 COPY docker/sshkeys/www-data_authorized_keys /etc/ssh/keys/

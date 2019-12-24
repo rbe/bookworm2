@@ -12,13 +12,12 @@ RUN apk update \
         openssl \
         certbot-nginx \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo "${TZ}" >/etc/timezone
+    && echo "${TZ}" >/etc/timezone \
+    && echo "0 0 * * WED,SUN /nginx-tls.sh renew" | crontab -
 
-ADD docker/rproxy-certbot/.version /
+ADD .version /
 
 COPY docker/rproxy-certbot/nginx-tls.sh /
-COPY docker/rproxy-certbot/certbot-renew.sh /etc/periodic/monthly/certbot-renew
-RUN chmod 500 /nginx-tls.sh \
-    && chmod 500 /etc/periodic/monthly/certbot-renew
+RUN chmod 500 /nginx-tls.sh
 
 CMD ["crond", "-f", "-L", "/dev/stdout"]
