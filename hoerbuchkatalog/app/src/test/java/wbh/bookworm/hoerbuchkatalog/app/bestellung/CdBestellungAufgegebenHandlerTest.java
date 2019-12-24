@@ -44,7 +44,7 @@ class CdBestellungAufgegebenHandlerTest {
 
     @RegisterExtension
     static GreenMailExtension greenMail = new GreenMailExtension(
-            new ServerSetup(3025, "127.0.0.1", "smtp")
+            new ServerSetup(8025, "127.0.0.1", "smtp")
                     .setVerbose(true));
 
     @Autowired

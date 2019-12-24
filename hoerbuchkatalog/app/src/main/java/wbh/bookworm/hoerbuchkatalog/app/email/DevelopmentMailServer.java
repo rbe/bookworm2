@@ -25,7 +25,7 @@ public final class DevelopmentMailServer {
     @PostConstruct
     private void postConstruct() {
         final ServerSetup serverSetup = new ServerSetup(
-                3025, "127.0.0.1", "smtp")
+                8025, "127.0.0.1", "smtp")
                 .setVerbose(true);
         LOGGER.debug("Starte GreenMail server {}", serverSetup);
         final GreenMail greenMail = new GreenMail(serverSetup);
