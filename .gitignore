@@ -1,21 +1,3 @@
-#
-# WBH Bookworm
-#
-
-var/
-secrets*.json
-approxy/composer.phar
-approxy/src/main/php/approxy/composer.lock
-approxy/src/main/php/approxy/vendor/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/images/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/img/
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
-hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
-
 # Docker
 .env
 
@@ -44,3 +26,23 @@ out/
 
 # macOS
 .DS_Store
+
+#
+# WBH Bookworm
+#
+
+var/
+secrets*.json
+
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/images/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/img/
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
+hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
+
+approxy/composer.phar
+approxy/src/main/php/approxy/composer.lock
+approxy/src/main/php/approxy/vendor/
