@@ -19,10 +19,18 @@
     </servers>
     <mirrors>
         <mirror>
+            <id>mirror-central</id>
+            <name>mirror-central</name>
+            <url>http://localhost:8999/nexus/repository/maven-public/</url>
+            <mirrorOf>central</mirrorOf>
+        </mirror>
+        <!--
+        <mirror>
             <id>mirror-all</id>
             <name>mirror-all</name>
             <url>http://localhost:8999/nexus/repository/maven-public/</url>
             <mirrorOf>*</mirrorOf>
         </mirror>
+        -->
     </mirrors>
 </settings>
