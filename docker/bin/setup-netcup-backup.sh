@@ -18,6 +18,14 @@ then
     exit 1
 fi
 
+#
+# NFS
+#
+
+archlinux_install nfs-utils
+systemctl enable rpcbind
+systemctl start rpcbind
+
 cat >>/etc/fstab <<EOF
 ${NETCUP_HOST}:${NETCUP_VOLUME}  ${BACKUP_DIR}  nfs  rw,rsize=1048576,wsize=1048576  0  0
 EOF

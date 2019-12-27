@@ -39,14 +39,6 @@ archlinux_install git
 archlinux_install expect
 
 #
-# NFS
-#
-
-archlinux_install nfs-utils
-systemctl enable rpcbind
-systemctl start rpcbind
-
-#
 # Storage
 #
 
