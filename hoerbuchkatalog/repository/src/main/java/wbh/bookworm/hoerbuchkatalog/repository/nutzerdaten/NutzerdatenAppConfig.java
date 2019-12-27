@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;
@@ -18,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 @SpringBootApplication(scanBasePackageClasses = {
+        FilesystemWatcher.class,
         HoererRepository.class
 })
 @SpringBootConfiguration

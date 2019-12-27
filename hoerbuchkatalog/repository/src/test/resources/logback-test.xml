@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configuration>
+<configuration debug="true">
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
     <include resource="logback-properties.xml"/>
     <evaluator name="STACKTRACE_EVAL">
@@ -26,40 +26,22 @@
      <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-        <logger name="aoc.ddd.event" level="DEBUG" additivity="false">
+        <logger name="aoc.mikrokosmos.ddd.event" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.repository" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.repository" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.search" level="DEBUG" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="aoc.jsf" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.search" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="com.hazelcast" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="org.omnifaces" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="org.joinfaces" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="javax.enterprise.resource.webcontainer.jsf" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="org.apache.jasper" level="INFO" additivity="false">
-        <appender-ref ref="STDOUT"/>
-    </logger>
-    <logger name="org.eclipse.jetty" level="INFO" additivity="false">
+    <logger name="org.springframework.scheduling" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="org.springframework" level="INFO" additivity="false">

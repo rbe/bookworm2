@@ -11,6 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -26,6 +28,7 @@ import java.util.concurrent.Executors;
 @Configuration
 @Import({DlsLieferungAppConfig.class})
 @ComponentScan(basePackageClasses = {
+        FilesystemWatcher.class,
         RepositoryResolver.class,
         DownloadsRepository.class,
         CdLieferungRepository.class,

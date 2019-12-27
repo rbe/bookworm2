@@ -40,28 +40,28 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.fs" level="TRACE" additivity="false">
+    <logger name="aoc.mikrokosmos.fs" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.event" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.event" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.repository" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.repository" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.search" level="DEBUG" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.search" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.jsf" level="TRACE" additivity="false">
+    <logger name="aoc.mikrokosmos.jsf" level="TRACE" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.jsf.ELValueCache" level="INFO" additivity="false">
+    <logger name="aoc.mikrokosmos.jsf.ELValueCache" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.jsf.ELValueCacheGroup" level="INFO" additivity="false">
+    <logger name="aoc.mikrokosmos.jsf.ELValueCacheGroup" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="DEBUG" additivity="false">

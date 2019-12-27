@@ -34,19 +34,19 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.domain" level="INFO" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc" level="ERROR" additivity="false">
+    <logger name="aoc.mikrokosmos" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.event" level="ERROR" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.event" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.repository" level="ERROR" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.repository" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.ddd.search" level="ERROR" additivity="false">
+    <logger name="aoc.mikrokosmos.ddd.search" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="aoc.jsf" level="ERROR" additivity="false">
+    <logger name="aoc.mikrokosmos.jsf" level="ERROR" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="eu.artofcoding" level="ERROR" additivity="false">
