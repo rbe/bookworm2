@@ -34,7 +34,6 @@ public class HoerbuchkatalogRepositoryAktualisierer {
 
     @Autowired
     public HoerbuchkatalogRepositoryAktualisierer(final ApplicationContext applicationContext,
-                                                  final TaskExecutor taskExecutor,
                                                   final HoerbuchkatalogConfig hoerbuchkatalogConfig,
                                                   final HoerbuchkatalogRepository hoerbuchkatalogRepository) {
         final Path verzeichnisAktualisierung = hoerbuchkatalogConfig.getDirectory()

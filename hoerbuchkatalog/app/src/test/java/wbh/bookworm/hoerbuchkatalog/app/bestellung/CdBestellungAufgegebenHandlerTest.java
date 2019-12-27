@@ -42,10 +42,17 @@ class CdBestellungAufgegebenHandlerTest {
 
     private final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler;
 
+    private static ServerSetup serverSetup;
+
     @RegisterExtension
-    static GreenMailExtension greenMail = new GreenMailExtension(
-            new ServerSetup(8025, "127.0.0.1", "smtp")
-                    .setVerbose(true));
+    static GreenMailExtension greenMail;
+
+    static {
+        serverSetup = new ServerSetup(8025, "127.0.0.1", "smtp")
+                .setVerbose(true);
+        greenMail = new GreenMailExtension(
+                serverSetup);
+    }
 
     @Autowired
     CdBestellungAufgegebenHandlerTest(final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler) {

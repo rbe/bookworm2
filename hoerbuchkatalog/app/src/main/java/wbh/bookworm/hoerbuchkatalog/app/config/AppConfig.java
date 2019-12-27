@@ -59,30 +59,4 @@ public class AppConfig {
         return new PropertySourcesPlaceholderConfigurer();
     }
 
-/*
-    @Bean
-    @Primary
-    //@ConditionalOnMissingBean
-    public ThreadPoolTaskExecutor threadPoolTaskExecutor() {
-        final ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
-        taskExecutor.setThreadNamePrefix("hoerbuchkatalogExecutor-");
-        taskExecutor.setCorePoolSize(Runtime.getRuntime().availableProcessors());
-        taskExecutor.setMaxPoolSize(Runtime.getRuntime().availableProcessors() * 10);
-        taskExecutor.setQueueCapacity(0);
-        taskExecutor.initialize();
-        LOGGER.debug("Created {}", taskExecutor);
-        return taskExecutor;
-    }
-
-    @Bean
-    @Primary
-    //@ConditionalOnMissingBean
-    public ExecutorService executorService() {
-        final ExecutorService executorService = Executors.newWorkStealingPool(
-                Runtime.getRuntime().availableProcessors());
-        LOGGER.debug("Created {}", executorService);
-        return executorService;
-    }
-*/
-
 }

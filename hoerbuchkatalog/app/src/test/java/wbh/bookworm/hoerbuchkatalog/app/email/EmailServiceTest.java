@@ -44,10 +44,16 @@ class EmailServiceTest {
 
     private final EmailRepository emailRepository;
 
+    private static ServerSetup serverSetup;
+
     @RegisterExtension
-    static GreenMailExtension greenMail = new GreenMailExtension(
-            new ServerSetup(8025, "127.0.0.1", "smtp")
-                    .setVerbose(true));
+    static GreenMailExtension greenMail;
+
+    static {
+        serverSetup = new ServerSetup(8025, "127.0.0.1", "smtp")
+                .setVerbose(true);
+        greenMail = new GreenMailExtension(serverSetup);
+    }
 
     @Autowired
     EmailServiceTest(final EmailService emailService, final EmailRepository emailRepository) {
@@ -69,15 +75,15 @@ class EmailServiceTest {
     @Test
     @DisplayName("Text-E-Mail versenden")
     void shouldSendTextEmail() {
-        GreenMailUtil.sendTextEmailTest("wbh@example.com",
+        GreenMailUtil.sendTextEmail("wbh@example.com",
                 "kunde@example.com", "Some subject",
-                "some body");
+                "some body", serverSetup);
         final MimeMessage[] receivedMessages = greenMail.getReceivedMessages();
         final MimeMessage receivedMessage = receivedMessages[0];
         assertEquals("some body", GreenMailUtil.getBody(receivedMessage));
     }
 
-    @Test()
+    @Test
     @DisplayName("HTML-E-Email senden")
     void shouldSendMimeMessage() throws MessagingException, IOException {
         final Email email = emailRepository.erstellen(

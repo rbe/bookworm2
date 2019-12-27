@@ -9,11 +9,19 @@ package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
 
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
+
+import java.nio.file.Path;
 
 @SpringBootApplication(scanBasePackageClasses = {
+        FilesystemWatcher.class,
+        WarenkorbRepository.class,
         DlsBestellung.class,
         RestServiceClient.class
 })
@@ -21,22 +29,21 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 @EnableConfigurationProperties
 public class BestellungTestAppConfig {
 
-/*
+    /* TODO Eigene Repositories für den Test
     @Bean
     public WarenkorbRepository warenkorbRepository() {
-        return new WarenkorbRepository(Path.of("target/var"));
+        return new WarenkorbRepository(Path.of("var"));
     }
 
     @Bean
     public MerklisteRepository merklisteRepository() {
-        return new MerklisteRepository(Path.of("target/var"));
+        return new MerklisteRepository(Path.of("var"));
     }
 
     @Bean
     public BestellungRepository bestellungRepository() {
-        return new BestellungRepository(Path.of("target/var"));
+        return new BestellungRepository(Path.of("var"));
     }
-*/
+    */
 
 }
-

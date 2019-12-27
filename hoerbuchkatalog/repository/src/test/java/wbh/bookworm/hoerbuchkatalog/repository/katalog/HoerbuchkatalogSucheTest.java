@@ -10,6 +10,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -32,13 +33,12 @@ class HoerbuchkatalogSucheTest {
         this.hoerbuchkatalog = hoerbuchkatalog;
     }
 
-    /*
     @Test
     void shouldFindeHoerbuecherMitStichwortKapital() {
         final Suchparameter suchparameter = new Suchparameter();
         final String stichwort = "Kapital";
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
-        final Suchergebnis sucheregebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
+        final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
         LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
@@ -51,19 +51,19 @@ class HoerbuchkatalogSucheTest {
         final Suchparameter suchparameter = new Suchparameter();
         final String stichwort = "Adler";
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
-        final Suchergebnis sucheregebnis = hoerbuchkatalog.sucheNachStichwort(stichwort);
+        final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
         LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
         Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + stichwort + "' im Hörbuchkatalog gefunden");
     }
-    */
 
     @Test
+    @Disabled
     void shouldFindeHoerbuecherMitMehrerenEingaben() {
         final Suchparameter suchparameter = new Suchparameter();
-        final String wert = "Alfred Hitchcock";
+        final String wert = "Alfred Hitchcock".toLowerCase();
         suchparameter.hinzufuegen(Suchparameter.Feld.AUTOR, wert);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
         LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
