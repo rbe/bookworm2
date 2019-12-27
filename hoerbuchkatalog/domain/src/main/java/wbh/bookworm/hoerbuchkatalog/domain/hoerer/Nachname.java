@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import aoc.ddd.model.DomainSingleValueObject;
+import aoc.mikrokosmos.ddd.model.DomainSingleValueObject;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

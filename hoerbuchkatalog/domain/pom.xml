@@ -11,10 +11,10 @@
     <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
     <packaging>jar</packaging>
     <dependencies>
-        <!-- aoc -->
+        <!-- Mikrokosmos -->
         <dependency>
-            <groupId>aoc.platform</groupId>
-            <artifactId>aoc.platform</artifactId>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.ddd</artifactId>
         </dependency>
         <!-- Validation -->
         <dependency>

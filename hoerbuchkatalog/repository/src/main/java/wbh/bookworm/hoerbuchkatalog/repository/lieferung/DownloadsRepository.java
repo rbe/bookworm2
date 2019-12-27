@@ -17,7 +17,7 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerk
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
-import aoc.ddd.repository.DomainRepositoryComponent;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

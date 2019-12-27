@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.ddd.model.DomainId;
+import aoc.mikrokosmos.ddd.model.DomainId;
 
 public class HoerbuchkatalogId extends DomainId<String> {
 

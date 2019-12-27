@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.ddd.event.DomainEvent;
+import aoc.mikrokosmos.ddd.event.DomainEvent;
 
 public abstract class HoerbuchkatalogEvent extends DomainEvent {
 

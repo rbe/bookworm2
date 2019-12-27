@@ -15,8 +15,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
-import aoc.ddd.event.DomainEventPublisher;
-import aoc.ddd.event.DomainEventSubscriber;
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;

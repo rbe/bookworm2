@@ -15,7 +15,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
 
-import aoc.ddd.repository.QueryPredicate;
+import aoc.mikrokosmos.ddd.repository.QueryPredicate;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

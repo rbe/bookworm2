@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.email;
 
-import aoc.ddd.model.DomainId;
+import aoc.mikrokosmos.ddd.model.DomainId;
 
 public final class EmailTemplateId extends DomainId<String> {
 

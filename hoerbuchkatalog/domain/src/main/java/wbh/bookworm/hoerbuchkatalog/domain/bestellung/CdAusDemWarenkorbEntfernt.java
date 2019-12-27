@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import aoc.ddd.event.DomainAggregateWriteEvent;
+import aoc.mikrokosmos.ddd.event.DomainAggregateWriteEvent;
 
 public final class CdAusDemWarenkorbEntfernt extends DomainAggregateWriteEvent<Warenkorb, WarenkorbId> {
 

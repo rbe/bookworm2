@@ -8,9 +8,9 @@ package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
 
-import aoc.ddd.repository.RepositoryArchive;
-import aoc.ddd.repository.RepositoryArchiveException;
-import aoc.ddd.spring.Singleton;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchive;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchiveException;
+import aoc.mikrokosmos.ddd.spring.Singleton;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

@@ -6,8 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import aoc.fs.FilesUtils;
-import aoc.fs.FilesystemWatcher;
+import aoc.mikrokosmos.io.fs.FilesUtils;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

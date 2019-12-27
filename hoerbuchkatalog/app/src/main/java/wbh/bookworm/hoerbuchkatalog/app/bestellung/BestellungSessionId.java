@@ -6,8 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import aoc.ddd.model.DomainSingleValueObject;
-import aoc.strings.RandomStringGenerator;
+import aoc.mikrokosmos.ddd.model.DomainSingleValueObject;
+import aoc.mikrokosmos.lang.strings.RandomStringGenerator;
 
 public final class BestellungSessionId extends DomainSingleValueObject<String, String> {
 

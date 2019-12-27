@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import aoc.ddd.model.DomainAggregate;
+import aoc.mikrokosmos.ddd.model.DomainAggregate;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 

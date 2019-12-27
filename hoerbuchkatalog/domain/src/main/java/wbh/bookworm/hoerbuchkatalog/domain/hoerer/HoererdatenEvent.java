@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import aoc.ddd.event.DomainEvent;
+import aoc.mikrokosmos.ddd.event.DomainEvent;
 
 import java.util.Objects;
 

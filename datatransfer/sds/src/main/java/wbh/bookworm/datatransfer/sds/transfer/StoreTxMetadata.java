@@ -6,8 +6,8 @@
 
 package wbh.bookworm.datatransfer.sds.transfer;
 
-import aoc.crypto.pgp.ArmoredKey;
-import aoc.transaction.TxId;
+import aoc.mikrokosmos.crypto.pgp.ArmoredKey;
+import aoc.mikrokosmos.incubation.transaction.TxId;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

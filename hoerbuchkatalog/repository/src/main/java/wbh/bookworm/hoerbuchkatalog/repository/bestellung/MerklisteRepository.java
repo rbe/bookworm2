@@ -12,7 +12,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
-import aoc.ddd.repository.JsonDomainRepository;
+import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
 import java.util.Optional;

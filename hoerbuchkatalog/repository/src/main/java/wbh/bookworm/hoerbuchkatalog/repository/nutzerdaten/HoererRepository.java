@@ -10,7 +10,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
 
-import aoc.ddd.repository.DomainRepositoryComponent;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

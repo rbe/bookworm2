@@ -6,9 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import aoc.ddd.repository.RepositoryArchive;
-import aoc.ddd.repository.RepositoryArchiveException;
-import aoc.ddd.spring.Singleton;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchive;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchiveException;
+import aoc.mikrokosmos.ddd.spring.Singleton;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

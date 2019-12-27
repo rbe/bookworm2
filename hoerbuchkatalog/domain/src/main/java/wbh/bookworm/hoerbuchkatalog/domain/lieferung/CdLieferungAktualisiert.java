@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
-import aoc.ddd.event.DomainEvent;
+import aoc.mikrokosmos.ddd.event.DomainEvent;
 
 public final class CdLieferungAktualisiert extends DomainEvent {
 

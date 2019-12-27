@@ -50,12 +50,6 @@
                 <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
                 <version>${project.version}</version>
             </dependency>
-            <!-- aoc -->
-            <dependency>
-                <groupId>aoc.platform</groupId>
-                <artifactId>aoc.platform</artifactId>
-                <version>${project.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -80,7 +74,7 @@
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
-            <version>${junit-jupiter.version}</version>
+            <version>5.5.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

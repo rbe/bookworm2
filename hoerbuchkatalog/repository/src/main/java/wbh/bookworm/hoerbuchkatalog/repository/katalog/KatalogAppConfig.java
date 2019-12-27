@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 
-import aoc.ddd.search.LuceneIndex;
+import aoc.mikrokosmos.ddd.search.LuceneIndex;
 
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.ComponentScan;

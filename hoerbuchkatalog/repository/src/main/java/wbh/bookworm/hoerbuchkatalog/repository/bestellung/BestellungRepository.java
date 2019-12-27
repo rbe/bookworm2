@@ -14,8 +14,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import aoc.ddd.repository.JsonDomainRepository;
-import aoc.ddd.repository.QueryPredicate;
+import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
+import aoc.mikrokosmos.ddd.repository.QueryPredicate;
 
 import java.nio.file.Path;
 import java.util.Collection;

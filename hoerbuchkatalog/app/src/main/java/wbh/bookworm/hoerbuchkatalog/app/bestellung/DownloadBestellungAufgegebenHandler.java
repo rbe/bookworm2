@@ -19,8 +19,8 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellu
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
-import aoc.ddd.event.DomainEventPublisher;
-import aoc.ddd.event.DomainEventSubscriber;
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

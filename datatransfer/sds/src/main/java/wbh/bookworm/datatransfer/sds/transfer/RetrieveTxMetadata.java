@@ -6,7 +6,7 @@
 
 package wbh.bookworm.datatransfer.sds.transfer;
 
-import aoc.transaction.TxId;
+import aoc.mikrokosmos.incubation.transaction.TxId;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

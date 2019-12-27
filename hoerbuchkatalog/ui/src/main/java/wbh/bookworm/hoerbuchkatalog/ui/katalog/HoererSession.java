@@ -35,11 +35,11 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 
-import aoc.ddd.event.DomainEventPublisher;
-import aoc.ddd.event.DomainEventSubscriber;
-import aoc.jsf.ELFunctionCache;
-import aoc.jsf.ELValueCache;
-import aoc.jsf.TimeoutCacheDecorator;
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
+import aoc.mikrokosmos.jsf.ELFunctionCache;
+import aoc.mikrokosmos.jsf.ELValueCache;
+import aoc.mikrokosmos.jsf.TimeoutCacheDecorator;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

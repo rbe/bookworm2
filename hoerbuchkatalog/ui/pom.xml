@@ -50,10 +50,14 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
         </dependency>
-        <!-- aoc -->
+        <!-- Mikrokosmos -->
         <dependency>
-            <groupId>aoc.platform</groupId>
-            <artifactId>aoc.platform</artifactId>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.ddd</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.jsf</artifactId>
         </dependency>
         <!-- JoinFaces / JavaServer Faces -->
         <dependency>

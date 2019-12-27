@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung;
 
-import aoc.strings.RandomStringGenerator;
+import aoc.mikrokosmos.lang.strings.RandomStringGenerator;
 
 import com.jcraft.jsch.ChannelSftp;
 import org.slf4j.Logger;

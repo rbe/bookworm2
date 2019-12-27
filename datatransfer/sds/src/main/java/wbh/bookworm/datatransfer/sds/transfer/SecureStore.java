@@ -6,11 +6,11 @@
 
 package wbh.bookworm.datatransfer.sds.transfer;
 
-import aoc.crypto.pgp.ArmoredKeyPair;
-import aoc.crypto.pgp.OpenPgp;
-import aoc.transaction.Base64DataContainer;
-import aoc.transaction.TxId;
-import aoc.transaction.TxResult;
+import aoc.mikrokosmos.crypto.pgp.ArmoredKeyPair;
+import aoc.mikrokosmos.crypto.pgp.OpenPgp;
+import aoc.mikrokosmos.incubation.transaction.Base64DataContainer;
+import aoc.mikrokosmos.incubation.transaction.TxId;
+import aoc.mikrokosmos.incubation.transaction.TxResult;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

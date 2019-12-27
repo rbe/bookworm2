@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 
-import aoc.ddd.event.DomainEvent;
+import aoc.mikrokosmos.ddd.event.DomainEvent;
 
 public abstract class BestellungEvent extends DomainEvent {
 

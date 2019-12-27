@@ -6,7 +6,7 @@
 
 package wbh.bookworm.datatransfer.sds.transfer;
 
-import aoc.transaction.Base64DataContainer;
+import aoc.mikrokosmos.incubation.transaction.Base64DataContainer;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,10 +22,8 @@ public class SecureRetrieve {
         return null;
     }
 
-    @PostMapping(value = "/get",
-            consumes = MediaType.APPLICATION_JSON_VALUE,
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE,
             produces = MediaType.APPLICATION_JSON_VALUE)
-    @RequestMapping("get")
     public Base64DataContainer get(@RequestBody RetrieveTxMetadata retrieveTxMetadata) {
         return null;
     }

@@ -11,8 +11,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 
-import aoc.ddd.event.DomainEventPublisher;
-import aoc.ddd.repository.DomainRepositoryComponent;
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

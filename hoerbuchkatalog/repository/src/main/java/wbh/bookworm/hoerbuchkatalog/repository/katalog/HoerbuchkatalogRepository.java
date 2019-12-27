@@ -11,9 +11,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
 
-import aoc.ddd.event.DomainEventPublisher;
-import aoc.ddd.model.DomainId;
-import aoc.ddd.repository.DomainRepositoryComponent;
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.model.DomainId;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

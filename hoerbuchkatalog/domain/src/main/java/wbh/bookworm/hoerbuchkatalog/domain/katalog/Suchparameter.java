@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.ddd.model.DomainValueObject;
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 import java.util.EnumMap;
 import java.util.Map;

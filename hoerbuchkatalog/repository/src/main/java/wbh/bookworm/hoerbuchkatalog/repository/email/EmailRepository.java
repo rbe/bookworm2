@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.repository.email;
 import wbh.bookworm.hoerbuchkatalog.domain.email.Email;
 import wbh.bookworm.hoerbuchkatalog.domain.email.EmailId;
 
-import aoc.ddd.repository.JsonDomainRepository;
+import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
 
 import java.nio.file.Path;
 

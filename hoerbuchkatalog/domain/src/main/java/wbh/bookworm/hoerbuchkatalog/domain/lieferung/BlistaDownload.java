@@ -11,7 +11,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import aoc.ddd.model.DomainValueObject;
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

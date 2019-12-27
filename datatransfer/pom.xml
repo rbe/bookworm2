@@ -9,9 +9,9 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.datatransfer</artifactId>
+    <name>wbh-online.de Datatransfer</name>
     <packaging>pom</packaging>
     <modules>
-        <module>pgp</module>
         <module>sds</module>
         <module>ui</module>
     </modules>

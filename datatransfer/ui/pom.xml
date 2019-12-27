@@ -9,33 +9,43 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.datatransfer.ui</artifactId>
+    <name>wbh-online.de Datatransfer UI</name>
     <packaging>jar</packaging>
+    <properties>
+        <javafx.version>11.0.2</javafx.version>
+    </properties>
     <dependencies>
+        <!-- aoc Mikrokosmos -->
         <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.datatransfer.pgp</artifactId>
-            <version>LocalBuild</version>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.crypto</artifactId>
         </dependency>
         <!-- Java FX -->
         <dependency>
             <groupId>org.openjfx</groupId>
+            <artifactId>javafx</artifactId>
+            <version>${javafx.version}</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.openjfx</groupId>
             <artifactId>javafx-graphics</artifactId>
-            <version>12.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-controls</artifactId>
-            <version>12.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-fxml</artifactId>
-            <version>12.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
         <dependency>
             <groupId>org.openjfx</groupId>
             <artifactId>javafx-base</artifactId>
-            <version>12.0.1</version>
+            <version>${javafx.version}</version>
         </dependency>
     </dependencies>
     <build>

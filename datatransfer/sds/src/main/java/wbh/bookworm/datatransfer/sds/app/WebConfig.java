@@ -4,9 +4,9 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.datatransfer.sds.transfer;
+package wbh.bookworm.datatransfer.sds.app;
 
-import aoc.transaction.StringToTxIdConverter;
+import aoc.mikrokosmos.incubation.transaction.StringToTxIdConverter;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;

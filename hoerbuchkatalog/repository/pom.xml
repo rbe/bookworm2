@@ -20,17 +20,15 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
         </dependency>
-        <!-- aoc -->
+        <!-- Mikrokosmos -->
         <dependency>
-            <groupId>aoc.platform</groupId>
-            <artifactId>aoc.platform</artifactId>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.ddd</artifactId>
         </dependency>
-        <!-- Apache POI -->
-        <!--<dependency>
-            <groupId>org.apache.poi</groupId>
-            <artifactId>poi</artifactId>
-            <version>4.0.1</version>
-        </dependency>-->
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.io</artifactId>
+        </dependency>
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.dataformat</groupId>

@@ -11,12 +11,12 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 
-import aoc.ddd.model.DomainId;
-import aoc.ddd.search.BooleanQueryBuilder;
-import aoc.ddd.search.LuceneIndex;
-import aoc.ddd.search.LuceneQuery;
-import aoc.ddd.search.QueryParameters;
-import aoc.strings.StringNormalizer;
+import aoc.mikrokosmos.ddd.model.DomainId;
+import aoc.mikrokosmos.ddd.search.BooleanQueryBuilder;
+import aoc.mikrokosmos.ddd.search.LuceneIndex;
+import aoc.mikrokosmos.ddd.search.LuceneQuery;
+import aoc.mikrokosmos.ddd.search.QueryParameters;
+import aoc.mikrokosmos.lang.strings.StringNormalizer;
 
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.BooleanClause;
@@ -116,25 +116,32 @@ final class HoerbuchkatalogSuche {
         return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
     }
 
-    private void stichwort(final BooleanQueryBuilder booleanQueryBuilder, final Suchparameter suchparameter) {
+    private void stichwort(final BooleanQueryBuilder booleanQueryBuilder,
+                           final Suchparameter suchparameter) {
         if (suchparameter.wertVorhanden(Suchparameter.Feld.STICHWORT)) {
             final String stichwort = suchparameter.wert(Suchparameter.Feld.STICHWORT);
-            final BooleanQuery.Builder stichwortQuery = new BooleanQuery.Builder();
-            stichwortQuery.setMinimumNumberShouldMatch(1);
-            stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), stichwort)),
-                    BooleanClause.Occur.SHOULD);
-            final String stichwortWildcard = "*" + stichwort.toLowerCase() + "*";
-            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
-                    BooleanClause.Occur.SHOULD);
-            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.TITEL.luceneName(), stichwortWildcard)),
-                    BooleanClause.Occur.SHOULD);
-            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.UNTERTITEL.luceneName(), stichwortWildcard)),
-                    BooleanClause.Occur.SHOULD);
-            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.ERLAEUTERUNG.luceneName(), stichwortWildcard)),
-                    BooleanClause.Occur.SHOULD);
-            stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SUCHWOERTER.luceneName(), stichwortWildcard)),
-                    BooleanClause.Occur.SHOULD);
-            booleanQueryBuilder.add(stichwortQuery.build(), BooleanClause.Occur.MUST);
+            final BooleanQuery.Builder stichwoerterQuery = new BooleanQuery.Builder();
+            final String[] split = stichwort.split("\\s+");
+            stichwoerterQuery.setMinimumNumberShouldMatch(split.length);
+            for (String s : split) {
+                final BooleanQuery.Builder stichwortQuery = new BooleanQuery.Builder();
+                stichwortQuery.setMinimumNumberShouldMatch(1);
+                stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), s)),
+                        BooleanClause.Occur.SHOULD);
+                final String stichwortWildcard = String.format("*%s*", s.toLowerCase());
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.TITEL.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.UNTERTITEL.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.ERLAEUTERUNG.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SUCHWOERTER.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwoerterQuery.add(stichwortQuery.build(), BooleanClause.Occur.SHOULD);
+            }
+            booleanQueryBuilder.add(stichwoerterQuery.build(), BooleanClause.Occur.SHOULD);
         }
     }
 

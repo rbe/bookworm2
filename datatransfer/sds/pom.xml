@@ -9,16 +9,17 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.datatransfer.sds</artifactId>
+    <name>wbh-online.de Datatransfer Secure Data Server</name>
     <packaging>jar</packaging>
     <dependencies>
+        <!-- aoc Mikrokosmos -->
         <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.datatransfer.pgp</artifactId>
-            <version>LocalBuild</version>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.crypto</artifactId>
         </dependency>
         <dependency>
-            <groupId>aoc.platform</groupId>
-            <artifactId>aoc.platform</artifactId>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.incubation</artifactId>
         </dependency>
         <!-- Spring Boot -->
         <dependency>
@@ -41,11 +42,6 @@
             <artifactId>spring-boot-starter-jetty</artifactId>
             <version>${spring-boot.version}</version>
         </dependency>
-        <!--dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-jdbc</artifactId>
-            <version>${spring-boot.version}</version>
-        </dependency-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter</artifactId>

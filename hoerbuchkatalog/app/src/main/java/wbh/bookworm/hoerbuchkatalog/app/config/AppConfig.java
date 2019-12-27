@@ -17,7 +17,7 @@ import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
 
-import aoc.fs.FilesystemWatcher;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
