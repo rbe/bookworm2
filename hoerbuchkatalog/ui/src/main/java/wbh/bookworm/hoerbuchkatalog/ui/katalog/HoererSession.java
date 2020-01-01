@@ -64,6 +64,8 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
     private static final transient Logger LOGGER = LoggerFactory.getLogger(HoererSession.class);
 
+    private static final String EVENT_SUBSCRIBER_HOERERNUMMER = "Hörer {}: Verarbeite {}";
+
     private final transient HttpSession session;
 
     @SuppressWarnings({"squid:S00107"})
@@ -85,13 +87,13 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
         this.warenkorbService = warenkorbService;
         this.cdLieferungService = cdLieferungService;
         this.downloadsLieferungService = downloadsLieferungService;
-        final String hnr = request.getParameter(SessionKey.HOERERNUMMER);
-        final Hoerernummer hoerernummer = null != hnr && !hnr.isBlank()
-                ? new Hoerernummer(hnr)
+        final String requestHnr = request.getParameter(SessionKey.HOERERNUMMER);
+        final Hoerernummer hnr = null != requestHnr && !requestHnr.isBlank()
+                ? new Hoerernummer(requestHnr)
                 : Hoerernummer.UNBEKANNT;
-        hoererSetzen(hoerernummer);
+        hoererSetzen(hnr);
         this.bestellungService = bestellungService;
-        this.bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        this.bestellungSessionId = bestellungService.bestellungSessionId(hnr);
         this.suchparameter = new Suchparameter();
         DomainEventPublisher.global()
                 .subscribe(new HoerbuchkatalogAktualisiertSubscriber());
@@ -111,7 +113,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
         @Override
         public void handleEvent(final HoerbuchkatalogAktualisiert domainEvent) {
-            logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
+            logger.trace(EVENT_SUBSCRIBER_HOERERNUMMER, hoerernummer, domainEvent);
             hoerbuchValueCache.invalidateAll();
         }
 
@@ -378,7 +380,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
 
         @Override
         public void handleEvent(final CdLieferungAktualisiert domainEvent) {
-            logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
+            logger.trace(EVENT_SUBSCRIBER_HOERERNUMMER, hoerernummer, domainEvent);
             erledigteBestellkartenELCache.invalidate();
             bestellkartenELCache.invalidate();
             belastungenELCache.invalidate();
@@ -419,8 +421,9 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
     }
 
     boolean isBlistaAbrufHatFehler() {
-        final boolean zugriffVerweigert = false;//blistaDownloadsELCache.get().getFehlercode().equals("1");
-        final boolean keineDownloadsIn365Tagen = blistaDownloadsELCache.get().getFehlercode().equals("202");
+        final String fehlercode = blistaDownloadsELCache.get().getFehlercode();
+        final boolean zugriffVerweigert = fehlercode.equals("1");
+        final boolean keineDownloadsIn365Tagen = fehlercode.equals("202");
         if (!zugriffVerweigert && !keineDownloadsIn365Tagen
                 && blistaDownloadsELCache.get().hatFehler()) {
             blistaDownloadsELCache.invalidate();
@@ -464,7 +467,7 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
         @Override
         public void handleEvent(final HoererdatenAktualisiert domainEvent) {
             if (domainEvent.getHoerernummer().equals(hoerernummer)) {
-                logger.trace("Hörer {}: Verarbeite {}", hoerernummer, domainEvent);
+                logger.trace(EVENT_SUBSCRIBER_HOERERNUMMER, hoerernummer, domainEvent);
                 hoererELCache.invalidate();
             } else {
                 logger.warn("Hörer {} hat {} für Hörer {} erhalten",
@@ -565,9 +568,9 @@ public class HoererSession implements Serializable, HttpSessionBindingListener {
     @Override
     public void valueUnbound(final HttpSessionBindingEvent event) {
         // TODO bestellungService.sessionBeenden(bestellungSessionId);
-        warenkorbService.cdWarenkorbLoeschen(bestellungSessionId, hoerernummer);
+        warenkorbService.cdWarenkorbLoeschen(bestellungSessionId);
         if (hoerernummer.isBekannt()) {
-            warenkorbService.downloadWarenkorbLoeschen(bestellungSessionId, hoerernummer);
+            warenkorbService.downloadWarenkorbLoeschen(bestellungSessionId);
         }
         LOGGER.debug("HoererSession aus HttpSession {} für Hörer {}, BestellungSessionId {} entfernt",
                 event.getSession().getId(), hoerernummer, bestellungSessionId);

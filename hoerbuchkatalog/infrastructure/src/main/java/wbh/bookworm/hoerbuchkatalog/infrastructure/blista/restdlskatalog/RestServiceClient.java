@@ -55,7 +55,7 @@ public final class RestServiceClient {
 
     /*package-private für Test*/static byte[] blistaReparieren(final byte[] antwort) {
         final String xml = new String(antwort, 0, antwort.length, StandardCharsets.UTF_8);
-        return xml.replaceAll(" & ", " &amp; ")
+        return xml.replace(" & ", " &amp; ")
                 .getBytes(StandardCharsets.UTF_8);
     }
 

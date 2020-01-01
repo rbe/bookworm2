@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.time.LocalDateTime;
 
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck"})
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "java:S116", "java:S1104"})
 public class DlsBook extends DlsAntwort {
 
     @SuppressWarnings({"squid:S00116"})

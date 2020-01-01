@@ -30,7 +30,7 @@ public final class Suchergebnis extends DomainValueObject {
                         final List<Titelnummer> titelnummern,
                         final int gesamtAnzahlTreffer) {
         this.suchparameter = suchparameter;
-        this.titelnummern = titelnummern;
+        this.titelnummern = Collections.unmodifiableList(titelnummern);
         anzahl = titelnummern.size();
         this.gesamtAnzahlTreffer = gesamtAnzahlTreffer;
     }
@@ -70,6 +70,7 @@ public final class Suchergebnis extends DomainValueObject {
         return titelnummern;
     }
 
+    @SuppressWarnings({"squid:S2692", "java:S2692"})
     public boolean vorherigeVorhanden(final Titelnummer titelnummer) {
         return titelnummern.indexOf(titelnummer) > 0;
     }

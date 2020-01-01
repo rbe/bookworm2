@@ -27,6 +27,8 @@ public final class HoerbuchkatalogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogService.class);
 
+    private static final String HOERER_TITELNUMMER = "Hörer {} Titelnummer {}";
+
     private final RepositoryResolver repositoryResolver;
 
     @Autowired
@@ -44,25 +46,25 @@ public final class HoerbuchkatalogService {
     }
 
     public boolean hoerbuchVorhanden(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
+        LOGGER.trace(HOERER_TITELNUMMER, hoerernummer, titelnummer);
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         return hoerbuchkatalog.enthaelt(titelnummer);
     }
 
     public boolean hoerbuchDownloadbar(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
+        LOGGER.trace(HOERER_TITELNUMMER, hoerernummer, titelnummer);
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         return hoerbuchkatalog.hoerbuchDownloadbar(titelnummer);
     }
 
     public Hoerbuch hole(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, titelnummer);
+        LOGGER.trace(HOERER_TITELNUMMER, hoerernummer, titelnummer);
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         return hoerbuchkatalog.hole(titelnummer);
     }
 
     public List<Hoerbuch> hole(final Hoerernummer hoerernummer, final Titelnummer... titelnummern) {
-        LOGGER.trace("Hörer {} Titelnummer {}", hoerernummer, Arrays.asList(titelnummern));
+        LOGGER.trace(HOERER_TITELNUMMER, hoerernummer, Arrays.asList(titelnummern));
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         return hoerbuchkatalog.hole(titelnummern);
     }

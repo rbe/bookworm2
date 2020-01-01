@@ -114,7 +114,7 @@ public class DlsLieferung {
                 dlsRestConfig.getBibliothek(), dlsRestConfig.getBibkennwort(),
                 url);
         if (LOGGER.isDebugEnabled()) {
-            final String normalizedUrl = url.getPath().replaceAll("/", "_").substring(1);
+            final String normalizedUrl = url.getPath().replace("/", "_").substring(1);
             archiviere(hoerernummer, normalizedUrl, antwort);
         }
         return antwort;

@@ -22,8 +22,6 @@ import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -44,9 +42,7 @@ import java.util.stream.Collectors;
 @Component
 class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadBestellungAufgegebenHandler.class);
-
-    private final Object MONITOR = new Object();
+    private final Object monitor = new Object();
 
     private final RepositoryResolver repositoryResolver;
 
@@ -90,12 +86,12 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
                 // TODO CSV-Datei nur bei erfolgreicher Bestellung ergänzen
                 csvDateiErgaenzen(hoerernummer, hoerbuecher);
                 // TODO E-Mail nur bei erfolgreicher Bestellung versenden
-                emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher, auftragsquittungen);
+                emailErzeugenArchivierenUndVersenden(domainEvent, bestellung, hoerbuecher/*, auftragsquittungen*/);
             } else {
-                LOGGER.error("{} konnte nicht aufgegeben werden", bestellung);
+                logger.error("{} konnte nicht aufgegeben werden", bestellung);
             }
-        } else {
-            LOGGER.info("Hörer {} hat am {} keine Downloads bestellt",
+        } else if (logger.isInfoEnabled()) {
+            logger.info("Hörer {} hat am {} keine Downloads bestellt",
                     hoerernummer, LocalDateTime.now().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME));
         }
     }
@@ -112,11 +108,11 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
 
     private static final DateTimeFormatter HH_MM_SS = DateTimeFormatter.ofPattern("HHmmss");
 
-    @SuppressWarnings({"squid:S3457"})
+    @SuppressWarnings({"squid:S3457", "java:S3457"})
     private void csvDateiErgaenzen(final Hoerernummer hoerernummer, final Set<Hoerbuch> hoerbuecher) {
         final LocalDateTime now = LocalDateTime.now();
         final List<String> strings = hoerbuecher.stream().map(hoerbuch -> {
-            final LocalDateTime rueckgabedatum = now.plusMonths(1);
+            final LocalDateTime rueckgabedatum = now.plusMonths(1L);
             return String.format("%5s %6s %13s %11s %8s %6s %1s %8s %6s %8s %6s\r\n",
                     /* HOENR */hoerernummer,
                     /* TITNR */hoerbuch.getTitelnummer(), /* TIAGNR */hoerbuch.getAghNummer(),
@@ -127,23 +123,23 @@ class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<Bestellu
                     /* RUEGDT */rueckgabedatum.format(YYYY_MM_DD), /* RUEGZT */rueckgabedatum.format(HH_MM_SS));
         }).collect(Collectors.toUnmodifiableList());
         // TODO Konfiguration
-        final Path path = Path.of("var/wbh/aktualisierung/ausgangskorb/webhoer-" + now.format(YYYY_MM_DD) + ".csv");
+        final Path path = Path.of(String.format("var/wbh/aktualisierung/ausgangskorb/webhoer-%s.csv", now.format(YYYY_MM_DD)));
         // TODO Synchronize, per Queue?
-        synchronized (MONITOR) {
+        synchronized (monitor) {
             try {
                 Files.write(path, strings, StandardCharsets.ISO_8859_1,
                         StandardOpenOption.CREATE, StandardOpenOption.WRITE, StandardOpenOption.APPEND);
             } catch (IOException e) {
-                LOGGER.warn("{} kann nicht beschrieben werden: {}", path, strings);
-                LOGGER.error("" + path, e);
+                logger.warn("{} kann nicht beschrieben werden: {}", path, strings);
+                logger.error("{}", path, e);
             }
         }
     }
 
     private void emailErzeugenArchivierenUndVersenden(final BestellungAufgegeben domainEvent,
                                                       final Bestellung bestellung,
-                                                      final Set<Hoerbuch> hoerbucher,
-            /* TODO Auftragsquittungen in E-Mail berücksichtigen*/final List<Auftragsquittung> auftragsquittungen) {
+                                                      final Set<Hoerbuch> hoerbucher/*,
+            TODO Auftragsquittungen in E-Mail berücksichtigen final List<Auftragsquittung> auftragsquittungen*/) {
         final String htmlEmail = emailTemplateBuilder.build(
                 "BestellbestaetigungDownload.html",
                 Map.of("bestellung", bestellung,

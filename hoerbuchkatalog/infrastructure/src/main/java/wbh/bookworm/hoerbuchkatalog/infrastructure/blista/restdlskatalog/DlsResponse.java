@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck"})
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "java:S1104"})
 public class DlsResponse extends DlsAntwort {
 
     public static class Response {
@@ -29,12 +29,13 @@ public class DlsResponse extends DlsAntwort {
 
     public Response response;
 
+    @Override
     public boolean hatFehler() {
         return null != response.fehlerliste && !response.fehlerliste.isEmpty();
     }
 
     public boolean isSuccess() {
-        return response.success.equals("0") ? false : true;
+        return !"0".equals(response.success);
     }
 
 }

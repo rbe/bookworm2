@@ -28,6 +28,7 @@ public class CachingFilter implements Filter {
 
     @Override
     public void init(final FilterConfig filterConfig) {
+        // do nothing
     }
 
     @Override
@@ -50,6 +51,7 @@ public class CachingFilter implements Filter {
         response.setDateHeader("Expires", ZonedDateTime.now().plusSeconds(60).toEpochSecond()); // Proxies
     }
 
+    @SuppressWarnings("squid:UnusedPrivateMethod")
     private void noCache(final HttpServletRequest request, final HttpServletResponse response) {
         LOGGER.trace("Setting HTTP header Cache-Control, Pragma, Expires to no-cache in request '{}'",
                 request.getRequestURI());
@@ -60,6 +62,7 @@ public class CachingFilter implements Filter {
 
     @Override
     public void destroy() {
+        // do nothing
     }
 
 }

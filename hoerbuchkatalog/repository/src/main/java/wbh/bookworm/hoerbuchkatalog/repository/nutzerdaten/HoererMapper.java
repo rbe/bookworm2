@@ -50,6 +50,7 @@ import static java.util.function.Predicate.not;
 @Component
 @Lazy
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@SuppressWarnings({"squid:S1192", "java:S1192"})
 final class HoererMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapper.class);

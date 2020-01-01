@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck"})
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "java:S1104"})
 public class DlsFehlermeldung extends DlsAntwort {
 
     @JsonDeserialize(using = TrimmingStringDeserializer.class)

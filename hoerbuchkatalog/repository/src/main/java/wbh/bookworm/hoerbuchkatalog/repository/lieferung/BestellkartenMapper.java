@@ -37,6 +37,7 @@ import java.util.stream.IntStream;
 @Component
 @Lazy
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
+@SuppressWarnings({"squid:S1192", "java:S1192"})
 final class BestellkartenMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellkartenMapper.class);

@@ -31,4 +31,18 @@ public class BestellungAufgegeben extends DomainAggregateWriteEvent<Bestellung, 
         return hoerernummer;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final BestellungAufgegeben that = (BestellungAufgegeben) o;
+        return hoerernummer.equals(that.hoerernummer);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), hoerernummer);
+    }
+
 }

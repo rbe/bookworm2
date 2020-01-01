@@ -118,7 +118,7 @@ class SftpClient {
             }
         }
 
-        @SuppressWarnings({"squid:S1149"})
+        @SuppressWarnings({"squid:S1149", "java:S1149"})
         public Vector ls(final String path) {
             try {
                 return channelSftp.ls(path);

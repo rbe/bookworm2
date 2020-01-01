@@ -21,8 +21,6 @@ import java.util.Set;
 @Service
 public class MerklisteService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MerklisteService.class);
-
     private final MerklisteRepository merklisteRepository;
 
     @Autowired

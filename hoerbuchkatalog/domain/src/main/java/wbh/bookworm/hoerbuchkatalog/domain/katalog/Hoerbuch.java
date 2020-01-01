@@ -25,6 +25,10 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
 
+    public static final String TITELNUMMER_UNBEKANNT = "000000";
+
+    public static final String TITEL_UNBEKANNT = "Titel unbekannt";
+
     private Titelnummer titelnummer; // 6 0 (nummerisch)
 
     private Sachgebiet sachgebiet;
@@ -137,7 +141,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         return new Hoerbuch(Sachgebiet.NA,
                 titelnummer,
                 "",
-                "Titel unbekannt", "",
+                TITEL_UNBEKANNT, "",
                 "",
                 "", "", "",
                 "", "", "0,00",
@@ -151,9 +155,9 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     public static Hoerbuch unbekannt(final AghNummer aghNummer) {
         return new Hoerbuch(Sachgebiet.NA,
-                new Titelnummer("000000"),
+                new Titelnummer(TITELNUMMER_UNBEKANNT),
                 "",
-                "Titel unbekannt", "",
+                TITEL_UNBEKANNT, "",
                 "",
                 "", "", "",
                 "", "", "0,00",
@@ -168,7 +172,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     public static Hoerbuch unbekannt(final Titelnummer titelnummer, final AghNummer aghNummer,
                                      final String autor, final String titel) {
         return new Hoerbuch(Sachgebiet.NA,
-                null != titelnummer ? titelnummer : new Titelnummer("000000"),
+                null != titelnummer ? titelnummer : new Titelnummer(TITELNUMMER_UNBEKANNT),
                 null != autor ? autor : "",
                 null != titel ? titel : "",
                 "",
@@ -185,7 +189,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
     public static Hoerbuch unbekannterDownload(final AghNummer aghNummer, final String titel) {
         return new Hoerbuch(Sachgebiet.NA,
-                new Titelnummer("000000"),
+                new Titelnummer(TITELNUMMER_UNBEKANNT),
                 "",
                 null != titel ? titel : "",
                 "",
@@ -201,7 +205,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public boolean isUnbekannt() {
-        return titel.equals("Titel unbekannt");
+        return titel.equals(TITEL_UNBEKANNT);
     }
 
     public Sachgebiet getSachgebiet() {
@@ -287,21 +291,21 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
     }
 
     public String getSpieldauer() {
-        String _spieldauer = "0,00";
+        String abgeleiteteSpieldauer = "0,00";
         final boolean spieldauerParsbar = isNotBlank(spieldauer)
                 && (spieldauer.contains(",") || spieldauer.contains("."));
         if (spieldauerParsbar) {
-            String[] parts = spieldauer.split("[.,]");
+            final String[] parts = spieldauer.split("[.,]");
             if ("00".equals(parts[1])) {
-                _spieldauer = String.format("%s Stunden", parts[0]);
+                abgeleiteteSpieldauer = String.format("%s Stunden", parts[0]);
             } else {
-                _spieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
+                abgeleiteteSpieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
             }
         }
         if ("0,00".equalsIgnoreCase(spieldauer)) {
             LOGGER.warn("Spieldauer ({}) von Hörbuch {} unbekannt", spieldauer, titelnummer);
         }
-        return _spieldauer;
+        return abgeleiteteSpieldauer;
     }
 
     public String getProdOrt() {

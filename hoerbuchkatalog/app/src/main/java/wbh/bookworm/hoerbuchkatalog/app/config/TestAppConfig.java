@@ -38,6 +38,7 @@ import org.thymeleaf.TemplateEngine;
         EmailService.class,
         TemplateEngine.class
 })
+@SuppressWarnings("java:S1118")
 public class TestAppConfig {
 
     @Bean

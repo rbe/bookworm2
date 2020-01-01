@@ -12,7 +12,4 @@ public final class CdLieferungAktualisiert extends DomainEvent {
 
     private static final long serialVersionUID = -1L;
 
-    public CdLieferungAktualisiert() {
-    }
-
 }

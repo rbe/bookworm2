@@ -11,7 +11,7 @@ import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
 
 import java.util.List;
 
-@SuppressWarnings({"squid:ClassVariableVisibilityCheck"})
+@SuppressWarnings({"squid:ClassVariableVisibilityCheck", "java:S1104"})
 public class DlsWerke extends DlsAntwort {
 
     @SuppressWarnings({"squid:S00116"})

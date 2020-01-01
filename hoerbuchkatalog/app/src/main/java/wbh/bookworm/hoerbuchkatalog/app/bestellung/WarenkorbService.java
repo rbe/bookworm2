@@ -105,8 +105,7 @@ public class WarenkorbService {
         }
     }
 
-    public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
-                                    final Hoerernummer hoerernummer) {
+    public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         warenkorbRepository.delete(warenkorbId);
     }
@@ -187,8 +186,7 @@ public class WarenkorbService {
         return (inDiesemMonat + imWarenkorb) >= /* TODO Konfigurieren */10;
     }
 
-    public void downloadWarenkorbLoeschen(final BestellungSessionId bestellungSessionId,
-                                          final Hoerernummer hoerernummer) {
+    public void downloadWarenkorbLoeschen(final BestellungSessionId bestellungSessionId) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
         warenkorbRepository.delete(warenkorbId);
     }

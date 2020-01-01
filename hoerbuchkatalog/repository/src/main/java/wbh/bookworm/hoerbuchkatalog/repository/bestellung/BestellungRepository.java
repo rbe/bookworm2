@@ -26,6 +26,8 @@ import java.util.stream.Collectors;
 // @Bean in BestellungAppConfig
 public class BestellungRepository extends JsonDomainRepository<Bestellung, BestellungId> {
 
+    private static final String HOERERNUMMER = "hoerernummer";
+
     public BestellungRepository(final Path storagePath) {
         super(Bestellung.class, BestellungId.class, storagePath);
         saveOnEvent(logger, BestellungAufgegeben.class);
@@ -49,7 +51,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
 
     // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleMitDownloads(final Hoerernummer hoerernummer) {
-        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of(HOERERNUMMER, hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::hatDownloadTitelnummern)
@@ -66,7 +68,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
 
     // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleVonHeuteMitDownloads(final Hoerernummer hoerernummer) {
-        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of(HOERERNUMMER, hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::heuteAbgeschickt)
@@ -85,7 +87,7 @@ public class BestellungRepository extends JsonDomainRepository<Bestellung, Beste
 
     // TODO Überlegen: Kann auch aus der blista Abfrage interpretiert werden!
     private Set<Bestellung> alleInDiesemMonatMitDownloads(final Hoerernummer hoerernummer) {
-        return find(QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+        return find(QueryPredicate.Equals.of(HOERERNUMMER, hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .stream()
                 .filter(Bestellung::inAktuellemMonatAbgeschickt)

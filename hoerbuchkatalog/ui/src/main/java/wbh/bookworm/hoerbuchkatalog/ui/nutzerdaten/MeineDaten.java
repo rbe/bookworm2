@@ -26,8 +26,6 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestScope
 public class MeineDaten {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MeineDaten.class);
-
     private final Hoerernummer hoerernummer;
 
     private final HoererService hoererService;

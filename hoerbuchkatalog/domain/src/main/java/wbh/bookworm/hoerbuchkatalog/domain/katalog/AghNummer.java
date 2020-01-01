@@ -37,4 +37,14 @@ public final class AghNummer extends DomainSingleValueObject<AghNummer, String> 
         return pattern1.matcher(value).matches();
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
+
 }

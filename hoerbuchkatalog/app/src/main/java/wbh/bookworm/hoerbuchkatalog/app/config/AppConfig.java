@@ -15,12 +15,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
 
 import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -50,9 +47,8 @@ import org.thymeleaf.TemplateEngine;
 @EnableAsync
 @EnableScheduling
 @EnableConfigurationProperties
+@SuppressWarnings("java:S1118")
 public class AppConfig {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(LieferungAppConfig.class);
 
     @Bean
     static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {

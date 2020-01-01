@@ -21,8 +21,6 @@ import java.util.Map;
 @Component
 public final class EmailTemplateBuilder {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(EmailTemplateBuilder.class);
-
     private final EmailTemplateRepository emailTemplateRepository;
 
     private final TemplateEngine templateEngine;
@@ -40,7 +38,7 @@ public final class EmailTemplateBuilder {
         return templateEngine.process("mailTemplate", context);
     }
 
-    /* TODO
+    /* TODO EmailTemplateRepository nutzen
     public String build(final EmailTemplateId emailTemplateId, final Map<String, Object> contextVariables) {
         final HtmlEmailTemplate htmlEmailTemplate = emailTemplateRepository
                 .load(emailTemplateId)
