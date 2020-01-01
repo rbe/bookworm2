@@ -1,31 +1,12 @@
 version: '3.7'
 
 services:
-#  vault:
-#    build:
-#      context: ../../
-#      dockerfile: docker/bookworm-vault/Dockerfile
-#    image: wbhonline/vault:${VERSION}
-#    volumes:
-#      - vault:/opt/vault:rw
-#    #environment:
-#    #  - VAULT_ADDR=http://${HOERBUCHKATALOG_SECURE_NET}.${VAULT_IP}:${VAULT_PORT}
-#    command: server -config=/opt/vault/config/vault-config.json
-#    cap_add:
-#      - IPC_LOCK
-#    networks:
-#      bookworm-secure:
-#        ipv4_address: "${HOERBUCHKATALOG_SECURE_NET}.${VAULT_IP}"
-#    expose:
-#      - ${VAULT_HOERBUCHKATALOG_SECURE_PORT}
   hk-app:
     build:
       context: ../../
       dockerfile: docker/hoerbuchkatalog-app/Dockerfile
     image: wbhonline/hoerbuchkatalog:${VERSION}
     restart: "always"
-#    depends_on:
-#      - vault
     environment:
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
@@ -37,16 +18,9 @@ services:
     networks:
       bookworm-backend:
         ipv4_address: "${HOERBUCHKATALOG_BACKEND_NET}.${HOERBUCHKATALOG_IP}"
-#      bookworm-secure:
-#        ipv4_address: "${HOERBUCHKATALOG_SECURE_NET}.${HOERBUCHKATALOG_IP}"
       bookworm-outside:
     expose:
       - ${HOERBUCHKATALOG_PORT}
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "64m"
-        max-file: "7"
   hk-datatransfer:
     build:
       context: ../../
@@ -60,11 +34,6 @@ services:
       - "${DATATRANSFER_PUBLIC_PORT}:22"
     networks:
       - bookworm-public
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "64m"
-        max-file: "7"
   hk-admin:
     build:
       context: ../../
@@ -82,19 +51,12 @@ services:
       - "${ADMIN_PUBLIC_PORT}:22"
     networks:
       - bookworm-public
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "64m"
-        max-file: "7"
 
 volumes:
   hk_admin_etc_ssh:
     driver: local
   hk_datatransfer_etc_ssh:
     driver: local
-#  vault:
-#    driver: local
   hk_app:
     driver: local
   hk_templates:
@@ -116,15 +78,6 @@ networks:
       driver: default
       config:
         - subnet: "${HOERBUCHKATALOG_BACKEND_NET}.0/24"
-#  bookworm-secure:
-#    name: bookworm-secure
-#    driver: bridge
-#    external: false
-#    internal: true
-#    ipam:
-#      driver: default
-#      config:
-#        - subnet: "${HOERBUCHKATALOG_SECURE_NET}.0/24"
   bookworm-outside:
     name: bookworm-outside
     driver: bridge

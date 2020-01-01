@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  mailrelay:
+    image: mikrokosmos/mailhog:latest
+    restart: "no"
+    networks:
+      - development-backend
+  app:
+    hostname: app-test
+    restart: "no"
+    networks:
+      development-backend:
+        aliases:
+          - app-test
+      outside:
+        aliases:
+          - app-test
+
+networks:
+  development-backend:
+    name: development-backend
+    driver: bridge
+    external: false
+    internal: true
