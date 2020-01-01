@@ -22,7 +22,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Maven -->
-        <maven.require.version>3.5</maven.require.version>
+        <maven.require.version>3.6</maven.require.version>
+        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
         <!-- Java -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -36,7 +37,10 @@
         <!-- Test -->
         <skipTests>true</skipTests>
         <maven.test.skip>true</maven.test.skip>
-        <!-- git -->
+        <!-- Repository -->
+        <repository.url>http://localhost:8999/nexus/repository</repository.url>
+        <buildScmBranch>unknown</buildScmBranch>
+        <versionName>${project.version} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})</versionName>
         <git.dirty>-devel</git.dirty>
     </properties>
     <modules>
@@ -262,6 +266,12 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-test-autoconfigure</artifactId>
                 <version>${spring-boot.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.jupiter</groupId>
+                <artifactId>junit-jupiter-api</artifactId>
+                <version>5.5.2</version>
                 <scope>test</scope>
             </dependency>
             <dependency>
@@ -496,9 +506,10 @@
                             </gitDescribe>
                         </configuration>
                     </execution>
+                    <!--
                     <execution>
                         <id>validate-git-non-dirty</id>
-                        <phase>install</phase>
+                        <phase>deploy</phase>
                         <goals>
                             <goal>validateRevision</goal>
                         </goals>
@@ -512,6 +523,7 @@
                             </validationProperties>
                         </configuration>
                     </execution>
+                    -->
                 </executions>
             </plugin>
         </plugins>
@@ -525,6 +537,17 @@
         </plugins>
     </reporting>
     <profiles>
+        <profile>
+            <id>bookworm.versionNameBuildNumber</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <versionName>${project.version} build #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})</versionName>
+            </properties>
+        </profile>
         <profile>
             <id>bookworm.documentation</id>
             <modules>
@@ -655,8 +678,13 @@
                 <!--<sonar.java.libraries>target/unpack/**/*.jar</sonar.java.libraries>-->
                 <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
                 <!--<sonar.java.test.libraries></sonar.java.test.libraries>-->
-                <sonar.junit.reportPaths>target/surefire-reports</sonar.junit.reportPaths>
-                <sonar.coverage.jacoco.xmlReportPaths>target/coverage-reports</sonar.coverage.jacoco.xmlReportPaths>
+                <sonar.junit.reportPaths>
+                    target/surefire-reports
+                </sonar.junit.reportPaths>
+                <sonar.coverage.jacoco.xmlReportPaths>
+                    target/coverage-reports/jacoco-ut.exec,
+                    target/site/jacoco-ut/jacoco.xml
+                </sonar.coverage.jacoco.xmlReportPaths>
             </properties>
             <build>
                 <plugins>

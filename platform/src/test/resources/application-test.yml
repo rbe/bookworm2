@@ -1,7 +1,0 @@
-spring:
-  profiles: test
-  main:
-    banner-mode: "off"
-
-logging:
-  config: classpath:logback-test.xml
