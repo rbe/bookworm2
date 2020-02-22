@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 1.0//EN" "SMIL10.dtd">
+<smil>
+	<head>
+		<meta name="dc:format" content="Daisy 2.02"/>
+		<meta name="ncc:timeInThisSmil" content="00:00:15.907"/>
+		<meta name="ncc:totalElapsedTime" content="01:39:33.157"/>
+		<layout>
+			<region id="txt-view"/>
+		</layout>
+		<meta name="ncc:generator" content="Publisher 3.51 Build 260 # 044FSI350238674"/>
+        <meta name="title" content="Ende des Buches"/>
+        <meta name="dc:title" content="Halt die Wolken fest"/>
+        <meta name="dc:identifier" content="de-medibus-"/>
+    </head>
+	<body>
+		<seq dur="15.907s">
+			<par endsync="last" id="rtrx_001b">
+				<text src="ncc.html#rtrx_001a" id="rtrx_001a"/>
+				<seq>
+					<audio src="16_Ende_des_Buches.mp3" clip-begin="npt=0.000s" clip-end="npt=15.907s" id="audio_0001"/>
+				</seq>
+			</par>
+		</seq>
+	</body>
+</smil>

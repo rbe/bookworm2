@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 1.0//EN" "SMIL10.dtd">
+<smil>
+	<head>
+		<meta name="dc:format" content="Daisy 2.02"/>
+		<meta name="ncc:timeInThisSmil" content="00:00:43.912"/>
+		<meta name="ncc:totalElapsedTime" content="00:00:12.096"/>
+		<layout>
+			<region id="txt-view"/>
+		</layout>
+		<meta name="ncc:generator" content="Publisher 3.51 Build 260 # 044FSI350238674"/>
+        <meta name="title" content="Zu diesem DAISY-Buch"/>
+        <meta name="dc:title" content="Halt die Wolken fest"/>
+        <meta name="dc:identifier" content="de-medibus-"/>
+    </head>
+	<body>
+		<seq dur="43.912s">
+			<par endsync="last" id="jaks_0001">
+				<text src="ncc.html#rtrx_0006" id="rtrx_0006"/>
+				<seq>
+					<audio src="02_Zu_diesem_DAISY-Buch.mp3" clip-begin="npt=0.000s" clip-end="npt=12.186s" id="audio_0001"/>
+					<audio src="02_Zu_diesem_DAISY-Buch.mp3" clip-begin="npt=12.186s" clip-end="npt=31.869s" id="audio_0002"/>
+					<audio src="02_Zu_diesem_DAISY-Buch.mp3" clip-begin="npt=31.869s" clip-end="npt=43.912s" id="audio_0003"/>
+				</seq>
+			</par>
+		</seq>
+	</body>
+</smil>

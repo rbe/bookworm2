@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 1.0//EN" "SMIL10.dtd">
+<smil>
+	<head>
+		<meta name="dc:format" content="Daisy 2.02"/>
+		<meta name="ncc:timeInThisSmil" content="00:01:16.521"/>
+		<meta name="ncc:totalElapsedTime" content="00:01:40.853"/>
+		<layout>
+			<region id="txt-view"/>
+		</layout>
+		<meta name="ncc:generator" content="Publisher 3.51 Build 260 # 044FSI350238674"/>
+        <meta name="title" content="Klappentexte"/>
+        <meta name="dc:title" content="Halt die Wolken fest"/>
+        <meta name="dc:identifier" content="de-medibus-"/>
+    </head>
+	<body>
+		<seq dur="76.521s">
+			<par endsync="last" id="ptlm_0001">
+				<text src="ncc.html#rtrx_0018" id="rtrx_0018"/>
+				<seq>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=0.000s" clip-end="npt=3.993s" id="audio_0001"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=3.993s" clip-end="npt=19.799s" id="audio_0002"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=19.799s" clip-end="npt=41.080s" id="audio_0003"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=41.080s" clip-end="npt=45.262s" id="audio_0004"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=45.262s" clip-end="npt=47.548s" id="audio_0005"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=47.548s" clip-end="npt=56.388s" id="audio_0006"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=56.388s" clip-end="npt=69.507s" id="audio_0007"/>
+					<audio src="04_Klappentexte.mp3" clip-begin="npt=69.507s" clip-end="npt=76.521s" id="audio_0008"/>
+				</seq>
+			</par>
+		</seq>
+	</body>
+</smil>

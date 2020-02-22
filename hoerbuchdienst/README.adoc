@@ -1,0 +1,71 @@
+
+== Ressourcen
+
+=== Web Audio Player
+
+.HTML5 Audio
+* https://developer.mozilla.org/de/docs/Web/HTML/Using_HTML5_audio_and_video[MDN: Using HTML5 audio and video]
+* https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery[MDN: Audio and Video Delivery]
+* https://developer.mozilla.org/en-US/docs/Web/Guide/Audio_and_video_delivery/Cross-browser_audio_basics[MDN: Audio and Video Delivery, Cross-browser audio basics]
+* https://developer.mozilla.org/en-US/docs/Web/HTML/Element/audio[MDN: The Embed Audio element]
+* https://developer.mozilla.org/en-US/docs/Web/API/HTMLMediaElement[MDN: HTMLMediaElement]
+* https://developer.mozilla.org/de/docs/Web/API/AudioContext[MDN: AudioContext]
+* https://www.w3.org/TR/webaudio/[W3C: Web Audio API (latest published)]
+* https://webaudio.github.io/web-audio-api/[W3C: Web Audio API (draft)]
+* https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API[MDN: Web Audio API]
+* https://www.chromium.org/audio-video[Chromium: Audio/Video]
+* https://wiki.selfhtml.org/wiki/HTML/Multimedia_und_Grafiken/audio[selfhtml: HTML/Multimedia und Grafiken/audio]
+* https://dev.opera.com/articles/more-accessible-html5-video-player/[A More Accessible HTML5 <video> Player]
+* https://github.com/mediaelement/mediaelement[GitHub: mediaelementjs.com]
+
+.Accessibility
+* https://www.w3.org/TR/html-aria/[W3C: ARIA in HTML]
+* https://developer.mozilla.org/en-US/docs/Tools/Accessibility_inspector[MDN: Accessibility Inspector]
+* https://developer.mozilla.org/en-US/docs/Learn/Accessibility/Multimedia[MDN: Accessible multimedia]
+* https://gingertech.net/2011/05/01/html5-multi-track-audio-or-video/[HTML5 multi-track audio or video]
+* https://www.hellbusch.de/html5-und-wai-aria-oder-die-suppe-nicht-versalzen/[Jan Hellbusch: Die Suppe nicht versalzen, Stand der Barrierefreiheit in HTML5 und WAI-ARIA]
+
+.Web Storage
+* https://developer.mozilla.org/de/docs/Web/API/Web_Storage_API[MDN: Web Storage API]
+
+.CSS
+* http://danielstern.ca/range.css/#/[range.css: CSS Style Generator for Range Inputs]
+* https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors[MDN: CSS Selectors]
+
+.JavaScript
+* https://developer.mozilla.org/en-US/docs/Web/API/URL[MDN: URL]
+* https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_JS[MDN: Object-oriented JavaScript for beginners]
+* https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes[MDN: Classes]
+* https://www.digitalocean.com/community/tutorials/understanding-classes-in-javascript[DigitalOcean: Understanding Classes in JavaScript]
+* https://www.freecodecamp.org/news/an-intro-to-object-oriented-programming-in-javascript-objects-prototypes-and-classes-5d135e7361b1/[freecodecamp: An intro to object-oriented programming in JavaScript: objects, prototypes, and classes]
+* https://tc39.es[TC39: Specifying JavaScript]
+
+=== Encryption
+
+* https://nullbeans.com/how-to-encrypt-decrypt-files-byte-arrays-in-java-using-aes-gcm/
+* https://en.wikipedia.org/wiki/Galois/Counter_Mode
+* https://proandroiddev.com/security-best-practices-symmetric-encryption-with-aes-in-java-7616beaaade9
+
+=== DAISY
+
+.DAISY
+* https://online.sbs.ch/iguana/www.main.cls?surl=Hilfe-Lesen
+* https://www.daisy.org/z3986/specifications/daisy_202.html[DAISY Specification 2.02]
+* https://daisy.github.io/pipeline/[DAISY Pipeline 2]
+* https://en.wikipedia.org/wiki/List_of_Digital_Accessible_Information_System_software
+* https://daisy.org/activities/software/
+
+.DAISY Player
+* https://www.dzblesen.de/index.php?site_id=7.10[dzblesen Max Player]
+* http://www.daisyplayer.ch/daisywp.html[DAISY Web Player]
+* https://daisy.org/info-help/document-archive/archived-projects/amis/download-and-installation/[AMIS (archived)]
+
+.SMIL
+* https://www.w3.org/TR/1998/REC-smil-19980615/[W3C: SMIL 1.0]
+* https://de.wikipedia.org/wiki/Synchronized_Multimedia_Integration_Language[Wikipedia de: Synchronized Multimedia Integration Language]
+* https://en.wikipedia.org/wiki/Synchronized_Multimedia_Integration_Language[Wikipedia en: Synchronized Multimedia Integration Language]
+* https://en.wikibooks.org/wiki/XML_-_Managing_Data_Exchange/SMIL[Wikibooks: XML - Managing Data Exchange/SMIL]
+
+=== Barrierefreiheit
+
+* https://www.barrierefrei-kommunizieren.de/datenbank/

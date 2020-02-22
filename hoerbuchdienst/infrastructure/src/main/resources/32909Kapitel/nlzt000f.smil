@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE smil PUBLIC "-//W3C//DTD SMIL 1.0//EN" "SMIL10.dtd">
+<smil>
+	<head>
+		<meta name="dc:format" content="Daisy 2.02"/>
+		<meta name="ncc:timeInThisSmil" content="00:06:52.137"/>
+		<meta name="ncc:totalElapsedTime" content="01:13:56.880"/>
+		<layout>
+			<region id="txt-view"/>
+		</layout>
+		<meta name="ncc:generator" content="Publisher 3.51 Build 260 # 044FSI350238674"/>
+        <meta name="title" content="9 - Die Chance des Lebens"/>
+        <meta name="dc:title" content="Halt die Wolken fest"/>
+        <meta name="dc:identifier" content="de-medibus-"/>
+    </head>
+	<body>
+		<seq dur="412.137s">
+			<par endsync="last" id="xqyb_0001">
+				<text src="ncc.html#rtrx_0022" id="rtrx_0022"/>
+				<seq>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=0.000s" clip-end="npt=17.466s" id="audio_0001"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=17.466s" clip-end="npt=23.344s" id="audio_0002"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=23.344s" clip-end="npt=33.062s" id="audio_0003"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=33.062s" clip-end="npt=41.342s" id="audio_0004"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=41.342s" clip-end="npt=46.886s" id="audio_0005"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=46.886s" clip-end="npt=62.964s" id="audio_0006"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=62.964s" clip-end="npt=67.589s" id="audio_0007"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=67.589s" clip-end="npt=79.923s" id="audio_0008"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=79.923s" clip-end="npt=87.730s" id="audio_0009"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=87.730s" clip-end="npt=90.834s" id="audio_0010"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=90.834s" clip-end="npt=99.833s" id="audio_0011"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=99.833s" clip-end="npt=105.658s" id="audio_0012"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=105.658s" clip-end="npt=122.155s" id="audio_0013"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=122.155s" clip-end="npt=130.135s" id="audio_0014"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=130.135s" clip-end="npt=138.782s" id="audio_0015"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=138.782s" clip-end="npt=153.241s" id="audio_0016"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=153.241s" clip-end="npt=161.732s" id="audio_0017"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=161.732s" clip-end="npt=169.242s" id="audio_0018"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=169.242s" clip-end="npt=181.781s" id="audio_0019"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=181.781s" clip-end="npt=195.469s" id="audio_0020"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=195.469s" clip-end="npt=204.991s" id="audio_0021"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=204.991s" clip-end="npt=216.093s" id="audio_0022"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=216.093s" clip-end="npt=236.612s" id="audio_0023"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=236.612s" clip-end="npt=248.105s" id="audio_0024"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=248.105s" clip-end="npt=255.789s" id="audio_0025"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=255.789s" clip-end="npt=269.529s" id="audio_0026"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=269.529s" clip-end="npt=277.627s" id="audio_0027"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=277.627s" clip-end="npt=282.832s" id="audio_0028"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=282.832s" clip-end="npt=288.122s" id="audio_0029"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=288.122s" clip-end="npt=299.994s" id="audio_0030"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=299.994s" clip-end="npt=312.350s" id="audio_0031"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=312.350s" clip-end="npt=313.199s" id="audio_0032"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=313.199s" clip-end="npt=335.125s" id="audio_0033"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=335.125s" clip-end="npt=342.773s" id="audio_0034"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=342.773s" clip-end="npt=351.058s" id="audio_0035"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=351.058s" clip-end="npt=363.561s" id="audio_0036"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=363.561s" clip-end="npt=371.959s" id="audio_0037"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=371.959s" clip-end="npt=372.808s" id="audio_0038"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=372.808s" clip-end="npt=398.386s" id="audio_0039"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=398.386s" clip-end="npt=405.441s" id="audio_0040"/>
+					<audio src="13_9_-_Die_Chance_des_Lebens.mp3" clip-begin="npt=405.441s" clip-end="npt=412.137s" id="audio_0041"/>
+				</seq>
+			</par>
+		</seq>
+	</body>
+</smil>

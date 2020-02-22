@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<jaxb:bindings xmlns:jaxb="http://java.sun.com/xml/ns/jaxb" if-exists="true" version="2.1">
+      
+    <!--
+
+Diese Datei wurde mit der JavaTM Architecture for XML Binding(JAXB) Reference Implementation, v2.3.0 generiert 
+Siehe <a href="https://javaee.github.io/jaxb-v2/">https://javaee.github.io/jaxb-v2/</a> 
+Änderungen an dieser Datei gehen bei einer Neukompilierung des Quellschemas verloren. 
+Generiert: 2020.02.07 um 03:22:14 PM CET 
+
+  -->
+      
+    <jaxb:bindings if-exists="true" scd="x-schema::">
+            
+        <jaxb:schemaBindings map="false">
+                  
+            <jaxb:package name="org.w3c.smil10"/>
+                
+        </jaxb:schemaBindings>
+            
+        <jaxb:bindings if-exists="true" scd="smil">
+                  
+            <jaxb:class ref="org.w3c.smil10.Smil"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="head">
+                  
+            <jaxb:class ref="org.w3c.smil10.Head"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="~head-element">
+                  
+            <jaxb:class ref="org.w3c.smil10.HeadElement"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="meta">
+                  
+            <jaxb:class ref="org.w3c.smil10.Meta"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="body">
+                  
+            <jaxb:class ref="org.w3c.smil10.Body"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="region">
+                  
+            <jaxb:class ref="org.w3c.smil10.Region"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="root-layout">
+                  
+            <jaxb:class ref="org.w3c.smil10.RootLayout"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="~mo-content">
+                  
+            <jaxb:class ref="org.w3c.smil10.MoContent"/>
+                
+        </jaxb:bindings>
+            
+        <jaxb:bindings if-exists="true" scd="~any">
+                  
+            <jaxb:class ref="org.w3c.smil10.Any"/>
+                
+        </jaxb:bindings>
+          
+    </jaxb:bindings>
+    
+</jaxb:bindings>
