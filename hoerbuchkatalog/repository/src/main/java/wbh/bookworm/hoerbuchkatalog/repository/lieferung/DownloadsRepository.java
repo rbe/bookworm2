@@ -58,7 +58,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .stream()
                         .map(b -> toBlistaDownload(hoerernummer, b))
                         .filter(Objects::nonNull)
-                        .filter(b -> b.getAusleihstatus() > 0
+                        .filter(b -> b.getAusleihstatus() > 0 && b.getAusleihstatus() < 4
                                 && b.getBestelldatum().getDayOfYear() == LocalDateTime.now().getDayOfYear())
                         .count();
                 LOGGER.info("Hörer {} hat am {} bereits {} Download(s) beauftragt",
@@ -80,7 +80,7 @@ public class DownloadsRepository /* TODO implements DomainRepository<> */ {
                         .stream()
                         .map(b -> toBlistaDownload(hoerernummer, b))
                         .filter(Objects::nonNull)
-                        .filter(b -> b.getAusleihstatus() > 0
+                        .filter(b -> b.getAusleihstatus() > 0 && b.getAusleihstatus() < 4
                                 && b.getRueckgabedatum().getMonth().equals(LocalDateTime.now().getMonth()))
                         .count();
                 LOGGER.info("Hörer {} hat im Monat {} {} Downloads beauftragt",
