@@ -1,0 +1,42 @@
+version: '3'
+
+# https://www.elastic.co/guide/en/elasticsearch/reference/current/docker.html
+
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
+    #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - data01:/usr/share/elasticsearch/data
+    #networks:
+    #  - elastic
+    ports:
+      - 9200:9200
+      - 9300:9300
+  elastichq:
+    image: elastichq/elasticsearch-hq:release-v3.5.12
+    #networks:
+    #  - elastic
+    ports:
+      - 5000:5000
+
+volumes:
+  data01:
+    driver: local
+
+networks:
+  elastic:
+    driver: bridge
+    internal: false
+    external: false

@@ -5,15 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.adapter</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.domain</artifactId>
-    <name>wbh-online.de Hörbuchdienst Domain</name>
+    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required</artifactId>
+    <name>wbh-online.de Hörbuchdienst Adapter Required</name>
     <packaging>pom</packaging>
     <modules>
-        <module>ports</module>
-        <module>impl</module>
-        <module>required</module>
+        <module>daisyaudiobook</module>
+        <module>objectstorage</module>
     </modules>
 </project>

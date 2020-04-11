@@ -1,0 +1,139 @@
+.audiobookChooser {
+    border: 1px red dashed;
+    font-family: "Source Code Pro", monospace;
+    width: 80%;
+}
+.audiobookChooser * {
+    margin: 5px;
+}
+
+.two-column-container {
+    overflow: hidden;
+}
+
+.playlistContainer {
+    margin-top: 20px;
+    border: 1px red dashed;
+    font-family: "Source Code Pro", monospace;
+    width: 40%;
+    float: left;
+}
+.playlistContainer * {
+    margin: 5px;
+}
+.playlistContainer .playlist {
+    border: 1px red dashed;
+}
+.playlistContainer .playlist .currently-playing {
+    background: dimgrey;
+    color: white;
+}
+
+.audioplayer {
+    margin-top: 20px;
+    border: 1px red dashed;
+    font-family: "Source Code Pro", monospace;
+    width: 40%;
+    float: left;
+}
+.audioplayer * {
+    margin: 5px;
+}
+.audioplayer > :hover {
+    background: lightgrey;
+}
+.audioplayer .loading {
+    display: none;
+}
+.audioplayer .panel {
+}
+
+.audioplayer .audiobookInfoContainer {
+    border: 1px red solid;
+}
+.audioplayer .audiobookInfoContainer .titel {
+    border: 1px red dashed;
+}
+.audioplayer .audiobookInfoContainer .titelnummer {
+    border: 1px red dashed;
+}
+.audioplayer .audiobookInfoContainer .author {
+    border: 1px red dashed;
+}
+.audioplayer .audiobookInfoContainer .narrator {
+    border: 1px red dashed;
+}
+
+.audioplayer .progressContainer {
+    border: 1px red solid;
+}
+.audioplayer .progressContainer .title {
+    border: 1px red dashed;
+}
+.audioplayer .progressContainer .timeContainer {
+    border: 1px red dashed;
+}
+.audioplayer .progressContainer .timeContainer .time {
+}
+.audioplayer .progressContainer .sliderContainer {
+    border: 1px red dashed;
+}
+.audioplayer .progressContainer .sliderContainer .slider {
+    width: 98%;
+}
+.audioplayer .progressContainer .secondsButtons {
+    border: 1px red dashed;
+}
+.audioplayer .progressContainer .secondsButtons button {
+    border: 1px black solid;
+    padding: 10px;
+    height: 40px; width: 80px;
+    background: white;
+}
+.audioplayer .progressContainer .secondsButtons button:hover {
+    background: black;
+    color: white;
+}
+.audioplayer .progressContainer .progressbar {
+    border: 1px red dashed;
+    height: 10px;
+    width: 0;
+    max-width: 98%;
+    background-color: black;
+}
+
+.audioplayer .controlsContainer {
+    border: 1px red solid;
+}
+.audioplayer .controlsContainer .trackButtons {
+    border: 1px red dashed;
+}
+.audioplayer .controlsContainer .trackButtons button {
+    border: 1px black solid;
+    padding: 10px;
+    height: 40px; width: 80px;
+    background: white;
+}
+.audioplayer .controlsContainer .trackButtons button:hover {
+    background: black;
+    color: white;
+}
+.audioplayer .controlsContainer .volumeSliderContainer {
+    border: 1px red dashed;
+}
+.audioplayer .controlsContainer .volumeSliderContainer .volumeSlider {
+    width: 98%;
+}
+.audioplayer .controlsContainer .volumeButtons {
+    border: 1px red dashed;
+}
+.audioplayer .controlsContainer .volumeButtons button {
+    border: 1px black solid;
+    padding: 10px;
+    height: 40px; width: 80px;
+    background: white;
+}
+.audioplayer .controlsContainer .volumeButtons button:hover {
+    background: black;
+    color: white;
+}

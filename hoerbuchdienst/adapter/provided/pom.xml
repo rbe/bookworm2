@@ -5,15 +5,15 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.adapter</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.domain</artifactId>
-    <name>wbh-online.de Hörbuchdienst Domain</name>
+    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided</artifactId>
+    <name>wbh-online.de Hörbuchdienst Adapter Provided</name>
     <packaging>pom</packaging>
     <modules>
-        <module>ports</module>
-        <module>impl</module>
-        <module>required</module>
+        <module>api</module>
+        <module>helloworld</module>
+        <module>stream</module>
     </modules>
 </project>

@@ -1,0 +1,38 @@
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "my_custom_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "html_strip"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "german_stop"
+          ]
+        }
+      },
+      "filter": {
+        "german_stop": {
+          "type": "stop",
+          "stopwords": "_german_"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic_templates": [{"strings_as_keywords": {"match": "string", "mapping": {"type": "keyword"}}}],
+    "numeric_detection": true,
+    "dynamic_date_formats": ["dd.MM.yyyy"],
+    "_source": {
+      "enabled": true,
+      "includes": ["titelnummer"],
+      "excludes": []
+    }
+  }
+}

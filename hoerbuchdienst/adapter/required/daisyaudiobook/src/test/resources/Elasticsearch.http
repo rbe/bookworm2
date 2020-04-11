@@ -1,0 +1,102 @@
+GET http://localhost:9200/
+
+###
+
+DELETE http://localhost:9200/hoerbuecher
+
+###
+
+PUT http://localhost:9200/hoerbuecher?include_type_name=false
+Content-Type: application/json
+
+{
+  "settings": {
+    "number_of_shards": 1,
+    "number_of_replicas": 1,
+    "analysis": {
+      "analyzer": {
+        "my_custom_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "char_filter": [
+            "html_strip"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding",
+            "german_stop"
+          ]
+        }
+      },
+      "filter": {
+        "german_stop": {
+          "type": "stop",
+          "ignore_case": true,
+          "stopwords": "_german_"
+        }
+      }
+    }
+  },
+  "mappings": {
+    "dynamic_templates": [{"strings_as_keywords": {"match": "text", "mapping": {"type": "keyword", "analyzer": "my_custom_analyzer"}}}],
+    "numeric_detection": true,
+    "dynamic_date_formats": ["dd.MM.yyyy"],
+    "_source": {
+      "enabled": true,
+      "includes": ["titelnummer"],
+      "excludes": []
+    }
+  }
+}
+
+###
+
+POST http://localhost:9200/hoerbuecher/_analyze
+Content-Type: application/json
+
+{
+  "analyzer": "my_custom_analyzer",
+  "text": "Die Stunde unserer Mütter"
+}
+
+###
+
+GET http://localhost:8080/search/index
+
+###
+
+GET http://localhost:9200/hoerbuecher/_search
+
+###
+
+POST http://localhost:9200/hoerbuecher/_search
+Content-Type: application/json
+
+{
+  "_source": ["titelnummer", "isbn"],
+  "query": {
+    "term": {"title": "drei"}
+  }
+}
+
+###
+
+GET http://localhost:9200/hoerbuecher/_search?q=*
+
+###
+
+GET http://localhost:9200/hoerbuecher/_search?q=title:dr*
+
+###
+
+GET http://localhost:9200/hoerbuecher/_search?q=title:dr*&_source_includes=titelnummer,isbn
+
+###
+
+GET http://localhost:8080/search/die
+
+###
+
+GET http://localhost:8080/search/i
+
+###

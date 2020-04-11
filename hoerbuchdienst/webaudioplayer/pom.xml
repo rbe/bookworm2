@@ -8,12 +8,7 @@
         <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.domain</artifactId>
-    <name>wbh-online.de Hörbuchdienst Domain</name>
-    <packaging>pom</packaging>
-    <modules>
-        <module>ports</module>
-        <module>impl</module>
-        <module>required</module>
-    </modules>
+    <artifactId>wbh.bookworm.hoerbuchdienst.webaudioplayer</artifactId>
+    <name>wbh-online.de Hörbuchdienst Web Audio Player</name>
+    <packaging>jar</packaging>
 </project>

@@ -1,0 +1,34 @@
+micronaut:
+  application:
+    name: hoerbuchdienst
+  server:
+    host: localhost
+    port: 8080
+  router:
+    static-resources:
+      default:
+        enabled: true
+        mapping: "/**"
+        paths: "classpath:static"
+  views:
+    csp:
+      enabled: true
+  caches:
+    audiobook:
+      maximumSize: 20
+  jcache:
+    enabled: true
+
+elasticsearch:
+  httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
+
+hoerbuchdienst:
+  repository:
+    uri: Buecher-WBH
+
+logger:
+  levels:
+    ROOT: INFO
+    wbh: DEBUG
+    io.micronaut: INFO
+

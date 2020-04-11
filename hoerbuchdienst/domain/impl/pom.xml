@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>wbh.bookworm</groupId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.domain</artifactId>
+        <version>LocalBuild</version>
+    </parent>
+    <artifactId>wbh.bookworm.hoerbuchdienst.domain.impl</artifactId>
+    <name>wbh-online.de Hörbuchdienst Domain Impl</name>
+    <packaging>jar</packaging>
+    <dependencies>
+        <!-- Hörbuchdienst -->
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
+            <version>LocalBuild</version>
+        </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.domain.required</artifactId>
+            <version>LocalBuild</version>
+        </dependency>
+    </dependencies>
+</project>

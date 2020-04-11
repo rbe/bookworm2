@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="utf-8"/>
+    <link href="audioplayer.css" rel="stylesheet" type="text/css"/>
+    <title>DAISY Web Audioplayer</title>
+</head>
+<body>
+<div class="audiobookChooser">
+    <label for="titelnummer">Titelnummer</label>
+    <input id="titelnummer" type="text" maxlength="5">
+    <button id="anhoerenButton">Anhören</button>
+</div>
+<div class="two-column-container">
+    <div class="playlistContainer" aria-label="Playlist">
+        <p class="containerTitle" aria-hidden="true">Playlist</p>
+        <div class="playlist" role="menu">
+            <ul>
+                <li>Kein Hörbuch geladen</li>
+            </ul>
+        </div>
+    </div>
+    <div class="audioplayer" role="application" aria-label="Web Audio Player">
+        <div class="loading">
+            <p>Loading...</p>
+        </div>
+        <div class="panel">
+            <div class="audiobookInfoContainer" role="contentinfo" aria-label="Audiobook Information">
+                <p class="containerTitle" aria-hidden="true">Hörbuch-Informationen</p>
+                <div class="titel">
+                    <p aria-hidden="true">Titel</p>
+                    <span role="contentinfo" aria-label="Titel">&nbsp;</span>
+                </div>
+                <div class="titelnummer">
+                    <p aria-hidden="true">Titelnummer</p>
+                    <span role="contentinfo" aria-label="Titelnummer">&nbsp;</span>
+                </div>
+                <div class="author">
+                    <p aria-hidden="true">Autor</p>
+                    <span role="contentinfo" aria-label="Author">&nbsp;</span>
+                </div>
+                <div class="narrator">
+                    <p aria-hidden="true">Sprecher</p>
+                    <span role="contentinfo" aria-label="Narrator">&nbsp;</span>
+                </div>
+            </div>
+            <div class="progressContainer" role="contentinfo" aria-label="Progress">
+                <p class="containerTitle" aria-hidden="true">Fortschritt</p>
+                <div class="title">
+                    <p aria-hidden="true">Titel</p>
+                    <span role="contentinfo" aria-label="Titel">&nbsp;</span>
+                </div>
+                <div class="timeContainer">
+                    <div class="time" aria-label="Time Progress">
+                        <span id="currentTime">0:00</span>&nbsp;/&nbsp;<span id="maxTime">0:00</span>
+                    </div>
+                </div>
+                <div class="sliderContainer" aria-label="Track Slider">
+                    <input class="slider"
+                           role="slider" aria-label="Track Slider" alt="Track Slider"
+                           type="range" min="0" max="60" value="0">
+                </div>
+                <div class="progressbar" aria-label="Progressbar"></div>
+                <div class="secondsButtons" aria-label="Track Controls">
+                    <button class="prev10" role="button">&lt; 10s</button>
+                    <button class="next10" role="button">10s &gt;</button>
+                </div>
+            </div>
+            <div class="controlsContainer" role="menu" aria-label="Player Controls">
+                <p class="containerTitle" aria-hidden="true">Player Controls</p>
+                <div class="trackButtons" aria-label="Player Controls">
+                    <button class="previousTrack" role="button" accesskey="y">&lt;&lt;</button>
+                    <button class="play" role="button" accesskey="P">Play</button>
+                    <button class="nextTrack" role="button" accesskey="x">&gt;&gt;</button>
+                </div>
+                <div class="volumeSliderContainer" aria-label="Volume Slider">
+                    <input class="volumeSlider"
+                           role="slider" aria-label="Volume Slider" alt="Volume Slider"
+                           type="range" min="1" max="10" value="1">
+                </div>
+                <div class="volumeButtons" aria-label="Volume Controls">
+                    <button class="volumeDown" role="button" aria-label="Volume Down">v</button>
+                    <button class="volumeUp" role="button" aria-label="Volume Up">^</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="module" src="./audioplayer.html.js"></script>
+</body>
+</html>
