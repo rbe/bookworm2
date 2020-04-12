@@ -10,7 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.WatermarkedMp3Service;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 
 @Singleton
 public final class WatermarkedMp3ServiceImpl implements WatermarkedMp3Service {

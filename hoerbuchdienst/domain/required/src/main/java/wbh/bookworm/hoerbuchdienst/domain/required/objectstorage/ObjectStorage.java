@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.required;
+package wbh.bookworm.hoerbuchdienst.domain.required.objectstorage;
 
 import java.io.InputStream;
 import java.util.List;

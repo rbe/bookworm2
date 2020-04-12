@@ -6,36 +6,33 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import io.micronaut.http.MediaType;
+import io.micronaut.test.annotation.MicronautTest;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.ObjectStorage;
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@MicronautTest
 @Slf4j
 class ObjectStorageImplTest {
 
     public static final String BUCKET_NAME = "rogers";
 
-    private static ObjectStorage objectStorage;
-
-    @BeforeAll
-    public static void beforeAll() {
-        final String accessKey = "accesskey";
-        final String secretKey = "secretkey";
-        final URI uri = URI.create("https://storage.medienhof9.rootaid.de");
-        objectStorage = new ObjectStorageImpl(uri, accessKey, secretKey);
-    }
+    @Inject
+    @Named("minio")
+    private ObjectStorage objectStorage;
 
     @Test
     void shouldCreateBucket() {
@@ -54,6 +51,7 @@ class ObjectStorageImplTest {
         final InputStream inputStream = getClass().getResourceAsStream("/PutObjectTest.txt");
         objectStorage.put(BUCKET_NAME, objectName, inputStream, MediaType.TEXT_PLAIN);
         assertTrue(objectStorage.objectExists(BUCKET_NAME, objectName));
+        assertArrayEquals("This is a text file\n".getBytes(), objectStorage.asBytes(BUCKET_NAME, "/PutObjectTest.txt"));
     }
 
     @Test

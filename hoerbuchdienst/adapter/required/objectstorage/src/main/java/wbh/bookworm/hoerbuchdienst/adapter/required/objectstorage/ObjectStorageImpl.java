@@ -39,8 +39,8 @@ import io.minio.messages.Bucket;
 import io.minio.messages.Item;
 import lombok.extern.slf4j.Slf4j;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.ObjectMetaInfo;
-import wbh.bookworm.hoerbuchdienst.domain.required.ObjectStorage;
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectMetaInfo;
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
 @Slf4j
 public class ObjectStorageImpl implements ObjectStorage {
@@ -104,7 +104,8 @@ public class ObjectStorageImpl implements ObjectStorage {
                 log.warn("Bucket already exists.");
             } else {
                 minioClient.makeBucket(bucketName);
-                minioClient.disableVersioning(bucketName);
+                // TODO NotImplemented, message = A header you provided implies functionality that is not implemented
+                // TODO minioClient.disableVersioning(bucketName);
             }
         } catch (final MinioException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
             throw new ObjectStorageException(e);

@@ -18,8 +18,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntry;
-import wbh.bookworm.hoerbuchdienst.domain.required.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 
 @Singleton
 @Slf4j

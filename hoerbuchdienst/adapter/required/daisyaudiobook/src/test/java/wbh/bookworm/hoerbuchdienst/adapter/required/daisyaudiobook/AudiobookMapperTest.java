@@ -9,8 +9,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
 
 class AudiobookMapperTest {
 

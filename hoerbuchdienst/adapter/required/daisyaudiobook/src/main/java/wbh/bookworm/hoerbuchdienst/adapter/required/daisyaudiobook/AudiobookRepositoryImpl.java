@@ -27,10 +27,10 @@ import io.micronaut.context.annotation.Property;
 import lombok.ToString;
 import lombok.extern.slf4j.Slf4j;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookMapper;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookRepository;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookViews;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookViews;
 
 @Singleton
 @Slf4j
@@ -67,9 +67,11 @@ public class AudiobookRepositoryImpl implements AudiobookRepository {
     @Override
     public boolean index() {
         List<String> audiobooksAsJson = null;
-        try (final Stream<Path> paths = Files.walk(streamBase.resolve("."), 1).filter(p -> p.endsWith("Kapitel"))) {
+        try (final Stream<Path> paths = Files.walk(streamBase.resolve("."), 1)
+                .filter(p -> p.endsWith("Kapitel"))) {
             audiobooksAsJson = paths.peek(p -> log.info("{}", p.getFileName()))
-                    .map(p -> audiobookMapper.from(p.getFileName().toString().replace("Kapitel", "")))
+                    .map(p -> p.getFileName().toString().replace("Kapitel", ""))
+                    .map(audiobookMapper::from)
                     .map(audiobook -> {
                         try {
                             return objectMapper.writerWithView(AudiobookViews.SearchIndex.class)
@@ -85,14 +87,6 @@ public class AudiobookRepositoryImpl implements AudiobookRepository {
         } catch (IOException e) {
             throw new ElasticsearchClientException(e);
         }
-        /*final Audiobook audiobook = audiobookMapper.from("32901");
-        try {
-            final String string = objectMapper.writerWithView(AudiobookViews.SearchIndex.class)
-                    .writeValueAsString(audiobook);
-            return elasticsearchClient.index(string);
-        } catch (JsonProcessingException e) {
-            throw new AudiobookRepositoryException(e);
-        }*/
         return elasticsearchClient.bulkIndex(audiobooksAsJson);
     }
 

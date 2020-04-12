@@ -4,10 +4,11 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.required;
+package wbh.bookworm.hoerbuchdienst.domain.required.audiobook;
 
-public interface AudiobookMapper {
+public final class AudiobookViews {
 
-    Audiobook from(String name);
+    public static class SearchIndex {}
+    public static class Default extends SearchIndex {}
 
 }

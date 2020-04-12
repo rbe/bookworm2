@@ -26,10 +26,10 @@ import org.w3c.smil10.Ref;
 import org.w3c.smil10.Seq;
 import org.w3c.smil10.Smil;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.AudiobookMapper;
-import wbh.bookworm.hoerbuchdienst.domain.required.Audioclip;
-import wbh.bookworm.hoerbuchdienst.domain.required.Audiotrack;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audioclip;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiotrack;
 
 @Singleton
 @CacheConfig("audiobook")
@@ -124,7 +124,7 @@ public class AudiobookMapperImpl implements AudiobookMapper {
             }
             for (final JAXBElement<?> jaxbElement : smil.getBody().getBodyContent()) {
                 if (jaxbElement.getName().getLocalPart().equals("ref")) {
-                    audiotracks.add(parseTitleFromRef((Ref) jaxbElement.getValue(), directory));
+                    audiotracks.add(fromRef((Ref) jaxbElement.getValue(), directory));
                 }
             }
             audiobook.setAudiotracks(audiotracks);
@@ -133,7 +133,7 @@ public class AudiobookMapperImpl implements AudiobookMapper {
         }
     }
 
-    private Audiotrack parseTitleFromRef(final Ref ref, final Path directory) {
+    private Audiotrack fromRef(final Ref ref, final Path directory) {
         final int hashtag = ref.getSrc().indexOf('#');
         final String nlzt = ref.getSrc().substring(0, hashtag);
         try (final InputStream stream = Files.newInputStream(directory.resolve(nlzt))) {
