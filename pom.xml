@@ -45,6 +45,8 @@
     </properties>
     <modules>
         <module>hoerbuchkatalog</module>
+        <module>hoerbuchdienst</module>
+        <module>thirdparty</module>
     </modules>
     <repositories>
         <!--
