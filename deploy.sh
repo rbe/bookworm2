@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 #
 # Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
 # Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
