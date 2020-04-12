@@ -30,7 +30,7 @@
         <!-- Mikrokosmos -->
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <!-- Jackson -->
-        <jackson.version>2.9.6</jackson.version>
+        <jackson.version>2.10.1</jackson.version>
         <!-- Spring -->
         <spring-boot.version>2.1.1.RELEASE</spring-boot.version>
         <spring.version>5.1.3.RELEASE</spring.version>
