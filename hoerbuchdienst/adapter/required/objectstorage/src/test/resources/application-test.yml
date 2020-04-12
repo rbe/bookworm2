@@ -1,0 +1,6 @@
+objectstorage:
+  minio:
+    url: https://storage.medienhof9.rootaid.de
+    accessKey: Nae3bahcexie9eifaihe
+    secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
+    bucketName: buckrogers
