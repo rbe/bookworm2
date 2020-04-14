@@ -8,16 +8,9 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.time.Duration;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Setter;
-
-@Data
-@Setter
-@AllArgsConstructor
 public class AudiobookInfoDTO {
 
-    private /*TODO Titelnummer*/ String titelnummer;
+    private final /*TODO Titelnummer*/ String titelnummer;
 
     private final String titel;
 
@@ -26,5 +19,39 @@ public class AudiobookInfoDTO {
     private final String sprecher;
 
     private final Duration spieldauer;
+
+    public AudiobookInfoDTO(final String titelnummer, final String titel, final String autor, final String sprecher, final Duration spieldauer) {
+        this.titelnummer = titelnummer;
+        this.titel = titel;
+        this.autor = autor;
+        this.sprecher = sprecher;
+        this.spieldauer = spieldauer;
+    }
+
+    public String getTitelnummer() {
+        return titelnummer;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public String getSprecher() {
+        return sprecher;
+    }
+
+    public Duration getSpieldauer() {
+        return spieldauer;
+    }
+
+    @Override
+    public String toString() {
+        return String.format("AudiobookInfoDTO{titelnummer='%s', titel='%s', autor='%s', sprecher='%s', spieldauer=%s}",
+                titelnummer, titel, autor, sprecher, spieldauer);
+    }
 
 }

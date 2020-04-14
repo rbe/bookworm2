@@ -21,17 +21,17 @@ import java.util.stream.Stream;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Property;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookViews;
 
 @Singleton
-@Slf4j
-@ToString
-public class AudiobookIndexImpl implements AudiobookIndex {
+class AudiobookIndexImpl implements AudiobookIndex {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookIndexImpl.class);
 
     private final AudiobookMapper audiobookMapper;
 
@@ -83,6 +83,12 @@ public class AudiobookIndexImpl implements AudiobookIndex {
             throw new ElasticsearchClientException(e);
         }
         return elasticsearchClient.bulkIndex(audiobooksAsJson);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("AudiobookIndexImpl{audiobookMapper=%s, objectMapper=%s, elasticsearchClient=%s, streamBase=%s}",
+                audiobookMapper, objectMapper, elasticsearchClient, streamBase);
     }
 
 }

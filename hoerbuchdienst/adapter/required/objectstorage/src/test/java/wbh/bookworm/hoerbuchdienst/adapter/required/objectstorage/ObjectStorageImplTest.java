@@ -10,14 +10,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 import io.micronaut.http.MediaType;
 import io.micronaut.test.annotation.MicronautTest;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
@@ -25,8 +25,9 @@ import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest
-@Slf4j
 class ObjectStorageImplTest {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectStorageImplTest.class);
 
     public static final String BUCKET_NAME = "rogers";
 

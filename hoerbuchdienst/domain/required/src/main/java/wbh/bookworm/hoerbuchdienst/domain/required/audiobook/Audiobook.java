@@ -8,12 +8,11 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobook;
 
 import java.io.Serializable;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonView;
-import lombok.Data;
 
-@Data
 public final class Audiobook implements Serializable {
 
     private static final long serialVersionUID = -1L;
@@ -110,29 +109,180 @@ public final class Audiobook implements Serializable {
     @JsonView(AudiobookViews.Default.class)
     private Duration totalTime;
 
-    /**
-     * master.smil/body/ref
-     */
-    @JsonView(AudiobookViews.Default.class)
-    private Audiotrack[] audiotracks;
-
     @JsonView(AudiobookViews.Default.class)
     private String sourceDate;
 
     @JsonView(AudiobookViews.SearchIndex.class)
     private String sourcePublisher;
 
+    public static final Audiobook UNKNOWN = new Audiobook();
+
+    /**
+     * master.smil/body/ref
+     */
+    @JsonView(AudiobookViews.Default.class)
+    private List<Audiotrack> audiotracks = new ArrayList<>();
+
+    public String getTitelnummer() {
+        return titelnummer;
+    }
+
+    public void setTitelnummer(final String titelnummer) {
+        this.titelnummer = titelnummer;
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(final String identifier) {
+        this.identifier = identifier;
+    }
+
+    public String getFormat() {
+        return format;
+    }
+
+    public void setFormat(final String format) {
+        this.format = format;
+    }
+
+    public String getPublisher() {
+        return publisher;
+    }
+
+    public void setPublisher(final String publisher) {
+        this.publisher = publisher;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(final String date) {
+        this.date = date;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(final String language) {
+        this.language = language;
+    }
+
+    public String getIsbn() {
+        return isbn;
+    }
+
+    public void setIsbn(final String isbn) {
+        this.isbn = isbn;
+    }
+
+    public String getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(final String author) {
+        this.author = author;
+    }
+
+    public String getSetInfo() {
+        return setInfo;
+    }
+
+    public void setSetInfo(final String setInfo) {
+        this.setInfo = setInfo;
+    }
+
+    public String getNarrator() {
+        return narrator;
+    }
+
+    public void setNarrator(final String narrator) {
+        this.narrator = narrator;
+    }
+
+    public String getAudioformat() {
+        return audioformat;
+    }
+
+    public void setAudioformat(final String audioformat) {
+        this.audioformat = audioformat;
+    }
+
+    public String getCompression() {
+        return compression;
+    }
+
+    public void setCompression(final String compression) {
+        this.compression = compression;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public int getTocItems() {
+        return tocItems;
+    }
+
+    public void setTocItems(final int tocItems) {
+        this.tocItems = tocItems;
+    }
+
+    public Duration getTimeInThisSmil() {
+        return timeInThisSmil;
+    }
+
+    public void setTimeInThisSmil(final Duration timeInThisSmil) {
+        this.timeInThisSmil = timeInThisSmil;
+    }
+
+    public Duration getTotalTime() {
+        return totalTime;
+    }
+
+    public void setTotalTime(final Duration totalTime) {
+        this.totalTime = totalTime;
+    }
+
+    public String getSourceDate() {
+        return sourceDate;
+    }
+
+    public void setSourceDate(final String sourceDate) {
+        this.sourceDate = sourceDate;
+    }
+
+    public String getSourcePublisher() {
+        return sourcePublisher;
+    }
+
+    public void setSourcePublisher(final String sourcePublisher) {
+        this.sourcePublisher = sourcePublisher;
+    }
+
+    public List<Audiotrack> getAudiotracks() {
+        return new ArrayList<>(audiotracks);
+    }
+
     public void setTocItems(final String tocItems) {
         this.tocItems = Integer.parseInt(tocItems);
     }
 
-    public Audiotrack[] getAudiotracks() {
-        //return Arrays.copyOf(titles, titles.length);
-        return audiotracks.clone();
+    public void addAudiotrack(final Audiotrack audiotrack) {
+        this.audiotracks.add(audiotrack);
     }
 
-    public void setAudiotracks(final List<Audiotrack> audiotracks) {
-        this.audiotracks = audiotracks.toArray(Audiotrack[]::new);
+    @Override
+    public String toString() {
+        return String.format("Audiobook{titelnummer='%s', identifier='%s', format='%s', publisher='%s', date='%s', language='%s', isbn='%s', author='%s', setInfo='%s', narrator='%s', audioformat='%s', compression='%s', title='%s', tocItems=%d, timeInThisSmil=%s, totalTime=%s, sourceDate='%s', sourcePublisher='%s', audiotracks=%s}",
+                titelnummer, identifier, format, publisher, date, language, isbn, author, setInfo, narrator, audioformat, compression, title, tocItems, timeInThisSmil, totalTime, sourceDate, sourcePublisher, audiotracks);
     }
 
 }

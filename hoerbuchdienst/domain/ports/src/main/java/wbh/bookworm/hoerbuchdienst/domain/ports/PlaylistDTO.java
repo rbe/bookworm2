@@ -9,17 +9,20 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-
-@Data
-@AllArgsConstructor
 public final class PlaylistDTO {
 
     private List<PlaylistEntry> entries;
 
     public PlaylistDTO() {
         entries = new ArrayList<>();
+    }
+
+    public PlaylistDTO(final List<PlaylistEntry> entries) {
+        this.entries = entries;
+    }
+
+    public List<PlaylistEntry> getEntries() {
+        return entries;
     }
 
     public void add(PlaylistEntry entry) {

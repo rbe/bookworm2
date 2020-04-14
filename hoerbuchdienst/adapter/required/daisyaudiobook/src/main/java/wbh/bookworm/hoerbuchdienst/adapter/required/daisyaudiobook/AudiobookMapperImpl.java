@@ -17,8 +17,9 @@ import java.util.List;
 
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.context.annotation.Property;
-import lombok.extern.slf4j.Slf4j;
+import io.micronaut.context.BeanContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.smil10.Audio;
 import org.w3c.smil10.Meta;
 import org.w3c.smil10.Par;
@@ -33,11 +34,11 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiotrack;
 
 @Singleton
 @CacheConfig("audiobook")
-@Slf4j
-public class AudiobookMapperImpl implements AudiobookMapper {
+class AudiobookMapperImpl implements AudiobookMapper {
 
-    @Property(name = "hoerbuchdienst.repository.uri")
-    private Path baseDirectory;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImpl.class);
+
+    private final BeanContext beanContext;
 
     private final SmilReader smilReader;
 

@@ -8,10 +8,11 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
 import java.time.Duration;
 
-import lombok.experimental.UtilityClass;
-
-@UtilityClass
 final class SmilTimeHelper {
+
+    private SmilTimeHelper() {
+        throw new AssertionError();
+    }
 
     static Duration parseClipNpt(final String clip) {
         return Duration.parse(String.format("PT%sS", clip.substring(4, clip.length() - 1)));

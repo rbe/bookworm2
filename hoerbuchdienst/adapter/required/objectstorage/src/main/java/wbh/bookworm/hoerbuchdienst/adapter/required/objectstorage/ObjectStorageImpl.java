@@ -37,13 +37,15 @@ import io.minio.errors.MinioException;
 import io.minio.errors.XmlParserException;
 import io.minio.messages.Bucket;
 import io.minio.messages.Item;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectMetaInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
-@Slf4j
 public class ObjectStorageImpl implements ObjectStorage {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ObjectStorageImpl.class);
 
     private final MinioClient minioClient;
 
@@ -75,7 +77,7 @@ public class ObjectStorageImpl implements ObjectStorage {
                         try {
                             return obj.get();
                         } catch (final MinioException | NoSuchAlgorithmException | InvalidKeyException | IOException e) {
-                            log.error("", e);
+                            LOGGER.error("", e);
                             return null;
                         }
                     })
@@ -101,7 +103,7 @@ public class ObjectStorageImpl implements ObjectStorage {
     public void bucket(final String bucketName) {
         try {
             if (bucketExists(bucketName)) {
-                log.warn("Bucket already exists.");
+                LOGGER.warn("Bucket already exists.");
             } else {
                 minioClient.makeBucket(bucketName);
                 // TODO NotImplemented, message = A header you provided implies functionality that is not implemented

@@ -24,8 +24,8 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.UnsupportedTagException;
 import io.micronaut.context.annotation.Property;
-import lombok.ToString;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
@@ -33,9 +33,9 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookViews;
 
 @Singleton
-@Slf4j
-@ToString
-public class AudiobookRepositoryImpl implements AudiobookRepository {
+class AudiobookRepositoryImpl implements AudiobookRepository {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImpl.class);
 
     private static final byte[] EMPTY_BYTES = new byte[0];
 

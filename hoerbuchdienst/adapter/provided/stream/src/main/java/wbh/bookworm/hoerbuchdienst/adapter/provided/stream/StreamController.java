@@ -16,19 +16,21 @@ import io.micronaut.http.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.WatermarkedMp3Service;
-import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
 
 @OpenAPIDefinition(
         info = @Info(title = "wbh.sds", version = "0.0")
 )
 @Controller("/stream")
-@Slf4j
 public class StreamController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
 
     private final CatalogService catalogService;
 
@@ -57,8 +59,8 @@ public class StreamController {
     @Get(uri = "/{titelnummer}/track/{ident}", produces = "audio/mp3")
     public HttpResponse<byte[]> track(@PathVariable final String titelnummer,
                                       @PathVariable final String ident) {
-        log.info("Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab", titelnummer, ident);
-        return HttpResponse.ok(watermarkedMp3Service.fetch(titelnummer, ident))
+        LOGGER.info("Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab", titelnummer, ident);
+        return HttpResponse.ok(watermarkedMp3Service.track(titelnummer, ident))
                 .header("Accept-Ranges", "bytes");
     }
 

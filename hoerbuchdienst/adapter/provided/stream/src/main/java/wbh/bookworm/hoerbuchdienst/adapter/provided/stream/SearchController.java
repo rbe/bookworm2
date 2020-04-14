@@ -15,7 +15,8 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Info;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
@@ -24,8 +25,9 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
         info = @Info(title = "wbh.sds", version = "0.0")
 )
 @Controller("/search")
-@Slf4j
 public class SearchController {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 
     private final CatalogService catalogService;
 

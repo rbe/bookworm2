@@ -14,17 +14,19 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.server.exceptions.ExceptionHandler;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 @Produces
 @Requires(classes = {BusinessException.class, ExceptionHandler.class})
-@Slf4j
 public class CustomExceptionHandler implements ExceptionHandler<BusinessException, HttpResponse> {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CustomExceptionHandler.class);
 
     @Override
     public HttpResponse handle(HttpRequest request, BusinessException ex) {
-        log.error("", ex);
+        LOGGER.error("", ex);
         final ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), "");
         return HttpResponse.status(HttpStatus.CONFLICT).body(apiError);
     }

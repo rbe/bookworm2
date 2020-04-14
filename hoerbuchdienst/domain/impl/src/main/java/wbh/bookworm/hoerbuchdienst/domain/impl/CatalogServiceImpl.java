@@ -12,7 +12,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
@@ -22,7 +23,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 
 @Singleton
-@Slf4j
 public final class CatalogServiceImpl implements CatalogService {
 
     private final AudiobookRepository audiobookRepository;
@@ -49,7 +49,7 @@ public final class CatalogServiceImpl implements CatalogService {
         if (null == audiobook) {
             throw new IllegalStateException("Hörbuch nicht gefunden");
         }
-        log.info("Hörbuch '{}': Erstelle Hörbuch mit Playlist", titelnummer);
+        LOGGER.info("Hörbuch '{}': Erstelle Hörbuch mit Playlist", titelnummer);
         final PlaylistDTO playlistDTO = new PlaylistDTO();
         final List<PlaylistEntry> playlistEntries = Arrays.stream(audiobook.getAudiotracks())
                 .map(t -> {

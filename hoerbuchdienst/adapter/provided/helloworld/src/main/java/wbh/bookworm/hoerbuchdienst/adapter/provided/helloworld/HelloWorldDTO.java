@@ -6,15 +6,23 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.provided.helloworld;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class HelloWorldDTO {
 
     private String name;
+
+    public HelloWorldDTO() {
+    }
+
+    public HelloWorldDTO(final String name) {
+        this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(final String name) {
+        this.name = name;
+    }
 
 }

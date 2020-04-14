@@ -15,7 +15,6 @@ import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
@@ -32,12 +31,13 @@ import org.elasticsearch.common.xcontent.XContentType;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.elasticsearch.index.query.QueryBuilders.termQuery;
 import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
-@Slf4j
-class ElasticsearchClient {
+    private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchClientImpl.class);
 
     private static final String INDEX_NAME = "hoerbuecher";
 
@@ -101,7 +101,7 @@ class ElasticsearchClient {
             final IndexResponse indexResponse = restHighLevelClient.index(indexRequest, RequestOptions.DEFAULT);
             return 201 == indexResponse.status().getStatus();
         } catch (JsonProcessingException e) {
-            log.error("Kann '{}' nicht indizieren: {}", json, e);
+            LOGGER.error("Kann '{}' nicht indizieren: {}", json, e);
             return false;
         } catch (IOException e) {
             throw new ElasticsearchClientException(e);

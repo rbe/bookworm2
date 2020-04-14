@@ -11,9 +11,6 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
-import lombok.Data;
-
-@Data
 public final class Audiotrack implements Serializable {
 
     private static final long serialVersionUID = -1L;
@@ -42,12 +39,50 @@ public final class Audiotrack implements Serializable {
         this.audioclips = List.copyOf(audioclips);
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(final String title) {
+        this.title = title;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public Duration getTimeInThisSmil() {
+        return timeInThisSmil;
+    }
+
+    public void setTimeInThisSmil(final Duration timeInThisSmil) {
+        this.timeInThisSmil = timeInThisSmil;
+    }
+
+    public Duration getTotalTimeElapsed() {
+        return totalTimeElapsed;
+    }
+
+    public void setTotalTimeElapsed(final Duration totalTimeElapsed) {
+        this.totalTimeElapsed = totalTimeElapsed;
+    }
+
     public Audioclip[] getAudioclips() {
         return audioclips.toArray(Audioclip[]::new);
     }
 
     public void add(final Audioclip audioclip) {
         this.audioclips.add(audioclip);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("Audiotrack{title='%s', source='%s', timeInThisSmil=%s, totalTimeElapsed=%s, audioclips=%s}",
+                title, source, timeInThisSmil, totalTimeElapsed, audioclips);
     }
 
 }

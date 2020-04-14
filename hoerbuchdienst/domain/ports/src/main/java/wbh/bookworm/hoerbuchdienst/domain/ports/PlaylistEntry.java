@@ -6,14 +6,11 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.io.Serializable;
 
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-public class PlaylistEntry {
+public final class PlaylistEntry implements Serializable {
+
+    private static final long serialVersionUID = -1L;
 
     private static final Double[] NO_CLIPS = {};
 
@@ -27,6 +24,24 @@ public class PlaylistEntry {
         this.title = title;
         this.ident = ident;
         this.clips = NO_CLIPS;
+    }
+
+    public PlaylistEntry(final String title, final String ident, final Double[] clips) {
+        this.title = title;
+        this.ident = ident;
+        this.clips = clips;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getIdent() {
+        return ident;
+    }
+
+    public Double[] getClips() {
+        return clips;
     }
 
 }
