@@ -9,5 +9,6 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
+    <name>wbh-online.de Hörbuchdienst Domain Ports</name>
     <packaging>jar</packaging>
 </project>

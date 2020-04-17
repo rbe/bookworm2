@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.stream</artifactId>
+    <name>wbh-online.de Hörbuchdienst Provided Adapter Stream</name>
     <packaging>jar</packaging>
     <dependencies>
         <!-- Hörbuchdienst -->

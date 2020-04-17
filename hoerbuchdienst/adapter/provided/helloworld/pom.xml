@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.helloworld</artifactId>
+    <name>wbh-online.de Hörbuchdienst Provided Adapter HelloWorld</name>
     <packaging>jar</packaging>
     <dependencies>
         <!-- Micronaut -->

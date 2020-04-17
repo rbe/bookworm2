@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook</artifactId>
+    <name>wbh-online.de Hörbuchdienst Required Adapter Audiobook</name>
     <packaging>jar</packaging>
     <properties>
         <generated.src.directory>src/main/generated</generated.src.directory>
