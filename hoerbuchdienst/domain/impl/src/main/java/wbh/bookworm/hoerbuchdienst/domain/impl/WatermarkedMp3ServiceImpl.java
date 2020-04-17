@@ -13,12 +13,12 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.WatermarkedMp3Service;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 
 @Singleton
-public final class WatermarkedMp3ServiceImpl implements WatermarkedMp3Service {
+final class WatermarkedMp3ServiceImpl implements WatermarkedMp3Service {
 
     private final AudiobookRepository audiobookRepository;
 
     @Inject
-    public WatermarkedMp3ServiceImpl(final AudiobookRepository audiobookRepository) {
+    WatermarkedMp3ServiceImpl(final AudiobookRepository audiobookRepository) {
         this.audiobookRepository = audiobookRepository;
     }
 

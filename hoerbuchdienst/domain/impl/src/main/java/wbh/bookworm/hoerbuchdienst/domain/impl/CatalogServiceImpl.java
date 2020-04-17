@@ -23,7 +23,11 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 
 @Singleton
-public final class CatalogServiceImpl implements CatalogService {
+class CatalogServiceImpl implements CatalogService {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogServiceImpl.class);
+
+    private final AudiobookIndex audiobookIndex;
 
     private final AudiobookRepository audiobookRepository;
 
