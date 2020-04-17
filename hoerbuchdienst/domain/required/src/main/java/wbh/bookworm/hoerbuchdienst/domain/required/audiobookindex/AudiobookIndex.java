@@ -8,8 +8,8 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex;
 
 public interface AudiobookIndex {
 
-    String[] findAll(String keyword);
-
     boolean index();
+
+    String[] findAll(String keyword);
 
 }

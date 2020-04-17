@@ -21,6 +21,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntry;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
 
 @Singleton
 class CatalogServiceImpl implements CatalogService {
@@ -32,7 +33,8 @@ class CatalogServiceImpl implements CatalogService {
     private final AudiobookRepository audiobookRepository;
 
     @Inject
-    public CatalogServiceImpl(final AudiobookRepository audiobookRepository) {
+    CatalogServiceImpl(final AudiobookIndex audiobookIndex, final AudiobookRepository audiobookRepository) {
+        this.audiobookIndex = audiobookIndex;
         this.audiobookRepository = audiobookRepository;
     }
 
@@ -55,7 +57,7 @@ class CatalogServiceImpl implements CatalogService {
         }
         LOGGER.info("Hörbuch '{}': Erstelle Hörbuch mit Playlist", titelnummer);
         final PlaylistDTO playlistDTO = new PlaylistDTO();
-        final List<PlaylistEntry> playlistEntries = Arrays.stream(audiobook.getAudiotracks())
+        final List<PlaylistEntry> playlistEntries = audiobook.getAudiotracks().stream()
                 .map(t -> {
                     final Double[] clips = Arrays.stream(t.getAudioclips())
                             .filter(c -> c.getBegin().toMillis() > 0.0d)
@@ -81,7 +83,7 @@ class CatalogServiceImpl implements CatalogService {
     // TODO Automatisieren; hier nur für Testzwecke
     @Override
     public boolean index() {
-        return audiobookRepository.index();
+        return audiobookIndex.index();
     }
 
 }
