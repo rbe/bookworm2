@@ -8,12 +8,10 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobook;
 
 public interface AudiobookRepository {
 
-    Audiobook find(String titelnummer);
-
     /*TODO Titelnummer*/String[] findAll(String keyword);
 
-    byte[] read(/*TODO Titelnummer*/String titelnummer, String ident);
+    Audiobook find(/*TODO Titelnummer*/String titelnummer);
 
-    boolean index();
+    byte[] track(/*TODO Titelnummer*/String titelnummer, String ident);
 
 }
