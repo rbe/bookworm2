@@ -6,12 +6,10 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBElement;
-import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,142 +36,141 @@ class AudiobookMapperImpl implements AudiobookMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImpl.class);
 
-    private final BeanContext beanContext;
+    private final AudiobookStreamResolver audiobookStreamResolver;
 
     private final SmilReader smilReader;
 
-    public AudiobookMapperImpl() {
-        this.smilReader = new SmilReader();
-    }
-
-    private static void fromNcc(final Audiobook audiobook, final Path directory) {
-        try (final InputStream nccHtml = Files.newInputStream(directory.resolve("ncc.html"))) {
-            final NccReader nccReader = new NccReader(nccHtml);
-            audiobook.setFormat(nccReader.get(NccReader.Field.FORMAT));
-            audiobook.setTocItems(nccReader.get(NccReader.Field.TOC_ITEMS));
-            audiobook.setTitle(nccReader.get(NccReader.Field.TITLE));
-            audiobook.setPublisher(nccReader.get(NccReader.Field.PUBLISHER));
-            audiobook.setDate(nccReader.get(NccReader.Field.DATE));
-            audiobook.setAuthor(nccReader.get(NccReader.Field.CREATOR));
-            audiobook.setLanguage(nccReader.get(NccReader.Field.LANGUAGE));
-            audiobook.setTotalTime(SmilTimeHelper.parseDuration(nccReader.get(NccReader.Field.TOTAL_TIME)));
-            audiobook.setSetInfo(nccReader.get(NccReader.Field.SET_INFO)
-                    .replace(" of ", " von "));
-            audiobook.setSourceDate(nccReader.get(NccReader.Field.SOURCE_DATE));
-            final String source = nccReader.get(NccReader.Field.SOURCE);
-            if (source.startsWith("ISBN-")) {
-                audiobook.setIsbn(source.substring(5));
-            }
-            final String sourcePublisher = nccReader.get(NccReader.Field.SOURCE_PUBLISHER);
-            if (sourcePublisher.startsWith("Verlag: ")) {
-                audiobook.setSourcePublisher(sourcePublisher.substring(8));
-            } else {
-                audiobook.setSourcePublisher(sourcePublisher);
-            }
-            final String narrator = nccReader.get(NccReader.Field.NARRATOR);
-            if (narrator.startsWith("Sprecher: ")) {
-                audiobook.setNarrator(narrator.substring(10));
-            } else {
-                audiobook.setNarrator(narrator);
-            }
-            audiobook.setAudioformat(nccReader.get(NccReader.Field.AUDIOFORMAT));
-            audiobook.setCompression(nccReader.get(NccReader.Field.COMPRESSION));
-        } catch (IOException e) {
-            throw new AudiobookMapperException(e);
-        }
+    @Inject
+    AudiobookMapperImpl(final BeanContext beanContext) {
+        audiobookStreamResolver = beanContext.createBean(AudiobookStreamResolver.class);
+        smilReader = new SmilReader();
     }
 
     @Override
     @Cacheable
-    public Audiobook from(final String titelnummer) {
-        final Path audiobookDirectory = baseDirectory.resolve(String.format("%sKapitel", titelnummer));
-        if (Files.exists(audiobookDirectory)) {
-            final Audiobook audiobook = new Audiobook();
-            audiobook.setTitelnummer(titelnummer);
-            try {
-                fromNcc(audiobook, audiobookDirectory);
-                fromSmil(audiobook, audiobookDirectory);
-                return audiobook;
-            } catch (AudiobookMapperException e) {
-                log.error("", e);
+    public Audiobook audiobook(final String titelnummer) {
+        LOGGER.debug("Creating audiobook '{}'", titelnummer);
+        final Audiobook audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
+        LOGGER.debug("Audiobook '{}' created", audiobook);
+        return audiobook;
+    }
+
+    Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
+        final Audiobook audiobook = new Audiobook();
+        audiobook.setTitelnummer(titelnummer);
+        try {
+            fromNcc(audiobook, audiobookStreamResolver.nccHtmlStream(titelnummer));
+            final List<Ref> refs = fromMasterSmil(audiobook, audiobookStreamResolver.masterSmilStream(titelnummer));
+            for (final Ref ref : refs) {
+                final int hashtag = ref.getSrc().indexOf('#');
+                final String filename = ref.getSrc().substring(0, hashtag);
+                final InputStream refStream = audiobookStreamResolver.trackAsStream(titelnummer, filename);
+                audiobook.addAudiotrack(fromRef(ref, refStream));
             }
+            return audiobook;
+        } catch (AudiobookStreamResolverException | AudiobookMapperException e) {
+            //throw new AudiobookMapperException(e);
+            LOGGER.error("", e);
+            return null;
+        }
+    }
+
+    private void fromNcc(final Audiobook audiobook, final InputStream nccHtmlStream) {
+        final NccReader nccReader = new NccReader(nccHtmlStream);
+        audiobook.setFormat(nccReader.get(NccReader.Field.FORMAT));
+        audiobook.setTocItems(nccReader.get(NccReader.Field.TOC_ITEMS));
+        audiobook.setTitle(nccReader.get(NccReader.Field.TITLE));
+        audiobook.setPublisher(nccReader.get(NccReader.Field.PUBLISHER));
+        audiobook.setDate(nccReader.get(NccReader.Field.DATE));
+        audiobook.setAuthor(nccReader.get(NccReader.Field.CREATOR));
+        audiobook.setLanguage(nccReader.get(NccReader.Field.LANGUAGE));
+        audiobook.setTotalTime(SmilTimeHelper.parseDuration(nccReader.get(NccReader.Field.TOTAL_TIME)));
+        audiobook.setSetInfo(nccReader.get(NccReader.Field.SET_INFO)
+                .replace(" of ", " von "));
+        audiobook.setSourceDate(nccReader.get(NccReader.Field.SOURCE_DATE));
+        final String source = nccReader.get(NccReader.Field.SOURCE);
+        if (source.startsWith("ISBN-")) {
+            audiobook.setIsbn(source.substring(5));
+        }
+        final String sourcePublisher = nccReader.get(NccReader.Field.SOURCE_PUBLISHER);
+        if (sourcePublisher.startsWith("Verlag: ")) {
+            audiobook.setSourcePublisher(sourcePublisher.substring(8));
         } else {
-            log.error("Hörbuch {}: Verzeichnis existiert nicht", titelnummer);
+            audiobook.setSourcePublisher(sourcePublisher);
         }
-        return null;
+        final String narrator = nccReader.get(NccReader.Field.NARRATOR);
+        if (narrator.startsWith("Sprecher: ")) {
+            audiobook.setNarrator(narrator.substring(10));
+        } else {
+            audiobook.setNarrator(narrator);
+        }
+        audiobook.setAudioformat(nccReader.get(NccReader.Field.AUDIOFORMAT));
+        audiobook.setCompression(nccReader.get(NccReader.Field.COMPRESSION));
     }
 
-    private void fromSmil(final Audiobook audiobook, final Path directory) {
-        try (final InputStream masterSmil = Files.newInputStream(directory.resolve("master.smil"))) {
-            final Smil smil = smilReader.from(masterSmil);
-            final List<Audiotrack> audiotracks = new ArrayList<>();
-            for (final Object obj : smil.getHead().getContent()) {
-                if (Meta.class.isAssignableFrom(obj.getClass())) {
-                    final Meta meta = (Meta) obj;
-                    switch (meta.getName()) {
-                        case "dc:identifier":
-                            audiobook.setIdentifier(meta.getContent());
-                            break;
-                        case "dc:title":
-                            audiobook.setTitle(meta.getContent());
-                            break;
-                        case "ncc:timeInThisSmil":
-                            audiobook.setTimeInThisSmil(SmilTimeHelper.parseDuration(meta.getContent()));
-                            break;
-                    }
+    private List<Ref> fromMasterSmil(final Audiobook audiobook, final InputStream masterSmilStream) {
+        final Smil smil = smilReader.from(masterSmilStream);
+        final List<Ref> refs = new ArrayList<>();
+        for (final Object obj : smil.getHead().getContent()) {
+            if (Meta.class.isAssignableFrom(obj.getClass())) {
+                final Meta meta = (Meta) obj;
+                switch (meta.getName()) {
+                    case "dc:identifier":
+                        audiobook.setIdentifier(meta.getContent());
+                        break;
+                    case "dc:title":
+                        audiobook.setTitle(meta.getContent());
+                        break;
+                    case "ncc:timeInThisSmil":
+                        audiobook.setTimeInThisSmil(SmilTimeHelper.parseDuration(meta.getContent()));
+                        break;
                 }
             }
-            for (final JAXBElement<?> jaxbElement : smil.getBody().getBodyContent()) {
-                if (jaxbElement.getName().getLocalPart().equals("ref")) {
-                    audiotracks.add(fromRef((Ref) jaxbElement.getValue(), directory));
-                }
-            }
-            audiobook.setAudiotracks(audiotracks);
-        } catch (IOException e) {
-            throw new AudiobookMapperException(e);
         }
+        for (final JAXBElement<?> jaxbElement : smil.getBody().getBodyContent()) {
+            if (jaxbElement.getName().getLocalPart().equals("ref")) {
+                refs.add((Ref) jaxbElement.getValue());
+            }
+        }
+        return refs;
     }
 
-    private Audiotrack fromRef(final Ref ref, final Path directory) {
-        final int hashtag = ref.getSrc().indexOf('#');
-        final String nlzt = ref.getSrc().substring(0, hashtag);
-        try (final InputStream stream = Files.newInputStream(directory.resolve(nlzt))) {
-            final Smil smil = smilReader.from(stream);
-            final Audiotrack audiotrack = new Audiotrack();
-            audiotrack.setSource(ref.getSrc());
-            for (final Object headContentObj : smil.getHead().getContent()) {
-                if (Meta.class.isAssignableFrom(headContentObj.getClass())) {
-                    final Meta nlztMeta = (Meta) headContentObj;
-                    switch (nlztMeta.getName()) {
-                        case "ncc:timeInThisSmil":
-                            audiotrack.setTimeInThisSmil(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
-                            break;
-                        case "ncc:totalElapsedTime":
-                            audiotrack.setTotalTimeElapsed(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
-                            break;
-                        case "title":
-                            audiotrack.setTitle(nlztMeta.getContent());
-                            break;
-                    }
+    private Audiotrack fromRef(final Ref ref, final InputStream refStream) {
+        final Smil smil = smilReader.from(refStream);
+        final Audiotrack audiotrack = new Audiotrack();
+        audiotrack.setSource(ref.getSrc());
+        for (final Object headContentObj : smil.getHead().getContent()) {
+            if (Meta.class.isAssignableFrom(headContentObj.getClass())) {
+                final Meta nlztMeta = (Meta) headContentObj;
+                switch (nlztMeta.getName()) {
+                    case "ncc:timeInThisSmil":
+                        audiotrack.setTimeInThisSmil(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
+                        break;
+                    case "ncc:totalElapsedTime":
+                        audiotrack.setTotalTimeElapsed(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
+                        break;
+                    case "title":
+                        audiotrack.setTitle(nlztMeta.getContent());
+                        break;
                 }
             }
-            for (final JAXBElement<?> bodyContentElement : smil.getBody().getBodyContent()) {
-                if (bodyContentElement.getName().getLocalPart().equals("seq")) {
-                    final Seq seq1 = (Seq) bodyContentElement.getValue();
-                    for (final JAXBElement<?> seq1ContentElement : seq1.getSeqContent()) {
-                        if (seq1ContentElement.getName().getLocalPart().equals("par")) {
-                            final Par par = (Par) seq1ContentElement.getValue();
-                            for (final JAXBElement<?> parElement : par.getParContent()) {
-                                if (parElement.getName().getLocalPart().equals("seq")) {
-                                    final Seq seq2 = (Seq) parElement.getValue();
-                                    for (final JAXBElement<?> seq2ContentElement : seq2.getSeqContent()) {
-                                        if (seq2ContentElement.getName().getLocalPart().equals("audio")) {
-                                            final Audio audio = (Audio) seq2ContentElement.getValue();
-                                            final Audioclip audioclip = new Audioclip(audio.getSrc(),
-                                                    SmilTimeHelper.parseClipNpt(audio.getClipBegin()),
-                                                    SmilTimeHelper.parseClipNpt(audio.getClipEnd()));
-                                            audiotrack.add(audioclip);
-                                        }
+        }
+        for (final JAXBElement<?> bodyContentElement : smil.getBody().getBodyContent()) {
+            if (bodyContentElement.getName().getLocalPart().equals("seq")) {
+                final Seq seq1 = (Seq) bodyContentElement.getValue();
+                for (final JAXBElement<?> seq1ContentElement : seq1.getSeqContent()) {
+                    if (seq1ContentElement.getName().getLocalPart().equals("par")) {
+                        final Par par = (Par) seq1ContentElement.getValue();
+                        for (final JAXBElement<?> parElement : par.getParContent()) {
+                            if (parElement.getName().getLocalPart().equals("seq")) {
+                                final Seq seq2 = (Seq) parElement.getValue();
+                                for (final JAXBElement<?> seq2ContentElement : seq2.getSeqContent()) {
+                                    if (seq2ContentElement.getName().getLocalPart().equals("audio")) {
+                                        final Audio audio = (Audio) seq2ContentElement.getValue();
+                                        final Audioclip audioclip = new Audioclip(audio.getSrc(),
+                                                SmilTimeHelper.parseClipNpt(audio.getClipBegin()),
+                                                SmilTimeHelper.parseClipNpt(audio.getClipEnd()));
+                                        audiotrack.add(audioclip);
                                     }
                                 }
                             }
@@ -181,10 +178,8 @@ class AudiobookMapperImpl implements AudiobookMapper {
                     }
                 }
             }
-            return audiotrack;
-        } catch (IOException e) {
-            throw new AudiobookMapperException(e);
         }
+        return audiotrack;
     }
 
 }

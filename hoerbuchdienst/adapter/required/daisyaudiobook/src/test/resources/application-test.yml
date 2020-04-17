@@ -1,0 +1,26 @@
+hoerbuchdienst:
+  repository:
+    type: objectstorage
+    localdisk:
+      uri: ../../../Buecher-WBH
+      temporary:
+        path: /tmp
+    objectstorage:
+      name: minio
+
+objectstorage:
+  minio:
+    url: https://storage.medienhof9.rootaid.de
+    accessKey: Nae3bahcexie9eifaihe
+    secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
+    bucketName: buckrogers
+
+elasticsearch:
+  httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
+
+logger:
+  levels:
+    ROOT: INFO
+    wbh: DEBUG
+    io.micronaut.context.condition: TRACE
+    io.micronaut: INFO

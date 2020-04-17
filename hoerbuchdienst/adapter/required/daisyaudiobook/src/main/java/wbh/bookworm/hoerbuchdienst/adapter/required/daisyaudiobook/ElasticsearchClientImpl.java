@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
 import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +15,6 @@ import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.elasticsearch.action.admin.indices.create.CreateIndexRequest;
 import org.elasticsearch.action.admin.indices.get.GetIndexRequest;
 import org.elasticsearch.action.admin.indices.mapping.put.PutMappingRequest;
@@ -34,8 +34,8 @@ import org.elasticsearch.search.builder.SearchSourceBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.elasticsearch.index.query.QueryBuilders.termQuery;
-import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
+@Singleton
+class ElasticsearchClientImpl implements ElasticsearchClient {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ElasticsearchClientImpl.class);
 
@@ -43,15 +43,13 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
 
     private final RestHighLevelClient restHighLevelClient;
 
-    private final ObjectMapper objectMapper;
-
     @Inject
-    ElasticsearchClient(final RestHighLevelClient restHighLevelClient, final ObjectMapper objectMapper) {
+    ElasticsearchClientImpl(final RestHighLevelClient restHighLevelClient) {
         this.restHighLevelClient = restHighLevelClient;
-        this.objectMapper = objectMapper;
     }
 
-    boolean indexExists() {
+    @Override
+    public boolean indexExists() {
         final GetIndexRequest indexRequest = new GetIndexRequest();
         indexRequest.indices(INDEX_NAME);
         try {
@@ -61,7 +59,8 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
         }
     }
 
-    boolean createIndex() {
+    @Override
+    public boolean createIndex() {
         if (!indexExists()) {
             final CreateIndexRequest createIndexRequest = new CreateIndexRequest(INDEX_NAME);
             /*createIndexRequest.settings(Settings.builder()
@@ -90,7 +89,8 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
         }
     }
 
-    boolean index(String json) {
+    @Override
+    public boolean index(String json) {
         try {
             final IndexRequest indexRequest = new IndexRequest()
                     .index(INDEX_NAME)
@@ -108,7 +108,8 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
         }
     }
 
-    boolean bulkIndex(final List<String> jsonStrings) {
+    @Override
+    public boolean bulkIndex(final List<String> jsonStrings) {
         final BulkRequest bulkRequest = new BulkRequest();
         jsonStrings.forEach(json -> bulkRequest.add(new IndexRequest()
                 .index(INDEX_NAME)
@@ -123,14 +124,15 @@ import static org.elasticsearch.index.query.QueryBuilders.wildcardQuery;
         }
     }
 
-    SearchHit[] findAll(String keyword) {
+    @Override
+    public SearchHit[] findAll(final String[] keyword) {
         final SearchRequest searchRequest = new SearchRequest();
         searchRequest.indices(INDEX_NAME);
         final SearchSourceBuilder searchSourceBuilder = new SearchSourceBuilder();
-        final String k = "*"+keyword+"*";
+        final String k = String.format("*%s*", keyword[0]);
         searchSourceBuilder.query(QueryBuilders.boolQuery()
-                .should(wildcardQuery("title", k))
-                .should(wildcardQuery("author", k))
+                .should(QueryBuilders.wildcardQuery("title", k))
+                .should(QueryBuilders.wildcardQuery("author", k))
         );
         searchRequest.source(searchSourceBuilder);
         try {
