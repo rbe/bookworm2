@@ -8,20 +8,43 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketName;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketObjectStorage;
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectMetaInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
 public class BucketObjectStorageImpl implements BucketObjectStorage {
 
     private final ObjectStorage objectStorage;
 
-    private final String bucketName;
+    private final BucketName bucketName;
 
     @Inject
-    public BucketObjectStorageImpl(final ObjectStorage objectStorage, final String bucketName) {
+    public BucketObjectStorageImpl(final ObjectStorage objectStorage, final BucketName bucketName) {
         this.objectStorage = objectStorage;
         this.bucketName = bucketName;
+    }
+
+    @Override
+    public List<Path> listAll() {
+        return objectStorage.listAllObjects(bucketName)
+                .stream()
+                .map(ObjectMetaInfo::getObjectName)
+                .map(Path::of)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    @Override
+    public List<Path> listObjects(final String prefix) {
+        return objectStorage.listObjects(bucketName, prefix)
+                .stream()
+                .map(ObjectMetaInfo::getObjectName)
+                .map(Path::of)
+                .collect(Collectors.toUnmodifiableList());
     }
 
     @Override

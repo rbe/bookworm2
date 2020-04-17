@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-
 import java.io.InputStream;
 
 import io.micronaut.http.MediaType;
@@ -18,7 +17,6 @@ import org.junit.jupiter.api.Test;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketObjectStorage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest
@@ -30,11 +28,12 @@ class BucketObjectStorageImplTest {
 
     @Test
     void shouldPutTextFile() {
-        final String objectName = "PutObjectTest.txt";
+        final String objectName = String.format("%s.txt", getClass().getSimpleName());
         final InputStream inputStream = getClass().getResourceAsStream("/PutObjectTest.txt");
         bucketObjectStorage.put(objectName, inputStream, MediaType.TEXT_PLAIN);
         assertTrue(bucketObjectStorage.objectExists(objectName));
-        assertArrayEquals("This is a text file\n".getBytes(), bucketObjectStorage.asBytes("/PutObjectTest.txt"));
+        assertArrayEquals("This is a text file\n".getBytes(),
+                bucketObjectStorage.asBytes(objectName));
     }
 
 }

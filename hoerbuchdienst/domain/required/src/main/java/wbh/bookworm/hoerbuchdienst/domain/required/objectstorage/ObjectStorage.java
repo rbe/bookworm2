@@ -9,44 +9,109 @@ package wbh.bookworm.hoerbuchdienst.domain.required.objectstorage;
 import java.io.InputStream;
 import java.util.List;
 
+/**
+ * I provide access to an object storage (S3-compliant, like MinIO).
+ */
 public interface ObjectStorage {
 
-    List<String> listBuckets();
+    /**
+     * I run a Bucket notification listener in a separate thread and
+     * execute callback in their own threads.
+     */
+    void registerNotificationListener(BucketName bucketName,
+                                      ObjectStorageNotificationListener objectStorageNotificationListener,
+                                      S3Event event, S3Event... events);
 
-    List<ObjectMetaInfo> listObjects(String bucketName);
+    List<BucketName> listBuckets();
 
-    void bucket(String bucketName);
+    List<ObjectMetaInfo> listAllObjects(BucketName bucketName);
 
-    boolean bucketExists(String bucketName);
+    List<ObjectMetaInfo> listObjects(BucketName bucketName, String prefix);
 
-    void put(String bucketName, String objectStorageReference, InputStream stream, String contentType);
+    void bucket(BucketName bucketName);
 
-    ObjectMetaInfo metaInfo(String bucketName, String objectName);
+    boolean bucketExists(BucketName bucketName);
 
-    boolean objectExists(String bucketName, String objectName);
+    /**
+     * @param contentType See
+     * @see "io.micronaut.http.MediaType"
+     */
+    void put(BucketName bucketName, String objectName, InputStream stream, String contentType);
 
-    boolean directoryExists(String bucketName, String objectName);
+    ObjectMetaInfo metaInfo(BucketName bucketName, String objectName);
 
-    InputStream asStream(String bucketName, String objectName);
+    boolean objectExists(BucketName bucketName, String objectName);
 
-    byte[] asBytes(String bucketName, String objectName);
+    boolean directoryExists(BucketName bucketName, String objectName);
 
-    InputStream zip(String bucketName, String dirName);
+    InputStream asStream(BucketName bucketName, String objectName);
 
+    byte[] asBytes(BucketName bucketName, String objectName);
+
+    InputStream zip(BucketName bucketName, String dirName);
+
+    /**
+     * See <a href="https://docs.min.io/docs/minio-bucket-notification-guide.html">MinIO Bucket Notification Guide</a>
+     * <ul>
+     * <li>s3:ObjectCreated:*
+     *   <ul>
+     *     <li>s3:ObjectCreated:Put</li>
+     *     <li>s3:ObjectCreated:CompleteMultipartUpload</li>
+     *     <li>s3:ObjectCreated:Post</li>
+     *     <li>s3:ObjectCreated:Copy</li>
+     *   </ul>
+     * </li>
+     * <li>s3:ObjectAccessed:*
+     *   <ul>
+     *     <li>s3:ObjectAccessed:Head</li>
+     *     <li>s3:ObjectAccessed:Get</li>
+     *   </ul>
+     * </li>
+     * <li>s3:ObjectRemoved:Delete</li>
+     * </ul>
+     */
+    enum S3Event {
+
+        S3_OBJECT_CREATED_ALL("s3:ObjectCreated:*"),
+        S3_OBJECT_CREATED_PUT("s3:ObjectCreated:Put"),
+        S3_OBJECT_CREATED_COMPLETE_MULTIPART_UPLOAD("s3:ObjectCreated:CompleteMultipartUpload"),
+        S3_OBJECT_CREATED_POST("s3:ObjectCreated:Post"),
+        S3_OBJECT_CREATED_COPY("s3:ObjectCreated:Copy"),
+        S3_OBJECT_ACCESSED_ALL("s3:ObjectAccessed:*"),
+        S3_OBJECT_ACCESSED_HEAD("s3:ObjectAccessed:Head"),
+        S3_OBJECT_ACCESSED_GET("s3:ObjectAccessed:Get"),
+        S3_OBJECT_REMOVED("s3:ObjectRemoved:Delete");
+
+        private final String eventName;
+
+        S3Event(final String eventName) {
+            this.eventName = eventName;
+        }
+
+        public String getEventName() {
+            return eventName;
+        }
+
+    }
+
+    /**
+     * @see io.micronaut.http.MediaType
+     */
     enum ContentType {
 
         APPLICATION_OCTET_STREAM("application/octet-stream"),
+        APPLICATION_PDF("application/pdf"),
         TEXT_PLAIN("text/plain"),
         TEXT_HTML("text/html");
 
-        private final String mimeType;
+        private final String contentType;
 
-        ContentType(final String mimeType) {
-            this.mimeType = mimeType;
+        ContentType(final String contentType) {
+            this.contentType = contentType;
         }
 
-        public String getMimeType() {
-            return mimeType;
+        public String getContentType() {
+            return contentType;
         }
 
     }

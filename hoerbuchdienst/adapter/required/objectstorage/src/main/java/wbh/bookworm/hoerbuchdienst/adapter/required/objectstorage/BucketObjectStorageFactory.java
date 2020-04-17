@@ -13,6 +13,7 @@ import io.micronaut.context.annotation.EachBean;
 import io.micronaut.context.annotation.Factory;
 import io.micronaut.inject.qualifiers.Qualifiers;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketName;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketObjectStorage;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
@@ -26,7 +27,7 @@ class BucketObjectStorageFactory {
     BucketObjectStorage bucketObjectStorage(final ObjectStorageConfiguration configuration) {
         final ObjectStorage objectStorage = beanContext.getBean(ObjectStorage.class,
                 Qualifiers.byName(configuration.getName()));
-        return new BucketObjectStorageImpl(objectStorage, configuration.getBucketName());
+        return new BucketObjectStorageImpl(objectStorage, new BucketName(configuration.getBucketName()));
     }
 
 }

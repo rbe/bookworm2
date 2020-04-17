@@ -7,8 +7,14 @@
 package wbh.bookworm.hoerbuchdienst.domain.required.objectstorage;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.List;
 
 public interface BucketObjectStorage {
+
+    List<Path> listAll();
+
+    List<Path> listObjects(String prefix);
 
     void put(String objectName, InputStream stream, String contentType);
 

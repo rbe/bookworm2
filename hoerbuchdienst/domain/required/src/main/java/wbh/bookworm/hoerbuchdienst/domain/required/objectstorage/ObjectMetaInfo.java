@@ -14,6 +14,8 @@ public final class ObjectMetaInfo implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
+    private final String bucketName;
+
     private final String objectName;
 
     private final String contentType;
@@ -24,13 +26,19 @@ public final class ObjectMetaInfo implements Serializable {
 
     private final ZonedDateTime zonedDateTime;
 
-    public ObjectMetaInfo(final String objectName, final String contentType, final String etag,
+    public ObjectMetaInfo(final String bucketName, final String objectName,
+                          final String contentType, final String etag,
                           final long length, final ZonedDateTime zonedDateTime) {
+        this.bucketName = bucketName;
         this.objectName = objectName;
         this.contentType = contentType;
         this.etag = etag;
         this.length = length;
         this.zonedDateTime = zonedDateTime;
+    }
+
+    public String getBucketName() {
+        return bucketName;
     }
 
     public String getObjectName() {

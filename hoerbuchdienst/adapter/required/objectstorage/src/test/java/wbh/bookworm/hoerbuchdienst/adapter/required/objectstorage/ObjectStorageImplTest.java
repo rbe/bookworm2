@@ -12,6 +12,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import io.micronaut.http.MediaType;
 import io.micronaut.test.annotation.MicronautTest;
@@ -19,21 +21,60 @@ import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketName;
+import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectMetaInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.ObjectStorage.S3Event.S3_OBJECT_ACCESSED_HEAD;
 
 @MicronautTest
 class ObjectStorageImplTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectStorageImplTest.class);
 
-    public static final String BUCKET_NAME = "rogers";
+    public static final BucketName BUCKET_NAME = new BucketName("rogers");
 
     @Inject
     @Named("minio")
     private ObjectStorage objectStorage;
+
+    @Test
+    void shouldListenForBucketNotifications() {
+        objectStorage.registerNotificationListener(BUCKET_NAME, objectStorageEvent -> {
+            LOGGER.info("{}", objectStorageEvent);
+            assertEquals(BUCKET_NAME, objectStorageEvent.getBucketName());
+            assertNotNull(objectStorageEvent.getBucketArn());
+            assertNotNull(objectStorageEvent.getObjectName());
+            assertNotNull(objectStorageEvent.getEventName());
+        }, S3_OBJECT_ACCESSED_HEAD);
+        objectStorage.objectExists(BUCKET_NAME, "PutObjectTest.txt");
+        try {
+            TimeUnit.SECONDS.sleep(10);
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Test
+    void shouldListExistingBuckets() {
+        final List<BucketName> buckets = objectStorage.listBuckets();
+        assertNotNull(buckets);
+        LOGGER.info("{}", buckets);
+    }
+
+    @Test
+    void shouldListExistingObjects() {
+        final List<ObjectMetaInfo> objectMetaInfos = objectStorage.listAllObjects(BUCKET_NAME);
+        assertNotNull(objectMetaInfos);
+        for (ObjectMetaInfo objectMetaInfo : objectMetaInfos) {
+            LOGGER.info("{}", objectMetaInfo.getObjectName());
+        }
+    }
 
     @Test
     void shouldCreateBucket() {
@@ -61,7 +102,7 @@ class ObjectStorageImplTest {
         assertTrue(objectStorage.objectExists(BUCKET_NAME, objectName));
         try (final InputStream inputStream = objectStorage.asStream(BUCKET_NAME, objectName)) {
             final byte[] bytes = inputStream.readAllBytes();
-            log.info("{}", new String(bytes, StandardCharsets.UTF_8));
+            // TODO Assert content equals
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
@@ -81,7 +122,7 @@ class ObjectStorageImplTest {
         objectStorage.put(BUCKET_NAME, "dir/PutObjectTest.txt", inputStream1, MediaType.TEXT_PLAIN);
         assertTrue(objectStorage.objectExists(BUCKET_NAME, "dir/PutObjectTest.txt"));
         final InputStream inputStream2 = getClass().getResourceAsStream("/dummy.pdf");
-        objectStorage.put(BUCKET_NAME, "dir/dummy.pdf", inputStream2, MediaType.TEXT_PLAIN);
+        objectStorage.put(BUCKET_NAME, "dir/dummy.pdf", inputStream2, /* TODO ObjectStorage.Types */"application/pdf");
         assertTrue(objectStorage.objectExists(BUCKET_NAME, "dir/dummy.pdf"));
     }
 

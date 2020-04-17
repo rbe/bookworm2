@@ -13,9 +13,13 @@ import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-public class HashTools {
+class HashTools {
 
-    public static String md5(Path path) {
+    private HashTools() {
+        throw new AssertionError();
+    }
+
+    static String md5(Path path) {
         try {
             final byte[] bytes = Files.readAllBytes(path);
             MessageDigest md5 = MessageDigest.getInstance("MD5");
