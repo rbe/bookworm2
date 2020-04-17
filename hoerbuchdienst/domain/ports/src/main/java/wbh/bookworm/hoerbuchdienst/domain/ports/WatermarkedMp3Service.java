@@ -8,6 +8,6 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 public interface WatermarkedMp3Service {
 
-    byte[] fetch(String titelnummer, String ident);
+    byte[] track(String titelnummer, String ident);
 
 }

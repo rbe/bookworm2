@@ -23,8 +23,8 @@ public final class WatermarkedMp3ServiceImpl implements WatermarkedMp3Service {
     }
 
     @Override
-    public byte[] fetch(final String titelnummer, final String ident) {
-        final byte[] mp3 = audiobookRepository.read(titelnummer, ident);
+    public byte[] track(final String titelnummer, final String ident) {
+        final byte[] mp3 = audiobookRepository.track(titelnummer, ident);
         // TODO Insert watermark
         return mp3;
     }
