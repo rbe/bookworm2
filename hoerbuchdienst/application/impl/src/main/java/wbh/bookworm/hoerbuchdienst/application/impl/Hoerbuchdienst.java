@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.application;
+package wbh.bookworm.hoerbuchdienst.application.impl;
 
 import io.micronaut.runtime.Micronaut;
 

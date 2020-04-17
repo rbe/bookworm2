@@ -29,7 +29,6 @@
         <module>adapter</module>
         <module>domain</module>
         <module>application</module>
-        <module>container</module>
     </modules>
     <repositories>
         <repository>

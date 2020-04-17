@@ -29,7 +29,7 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>wbh.bookworm</groupId>
-                                    <artifactId>wbh.bookworm.hoerbuchdienst.application</artifactId>
+                                    <artifactId>wbh.bookworm.hoerbuchdienst.application.impl</artifactId>
                                     <version>LocalBuild</version>
                                 </artifactItem>
                             </artifactItems>
