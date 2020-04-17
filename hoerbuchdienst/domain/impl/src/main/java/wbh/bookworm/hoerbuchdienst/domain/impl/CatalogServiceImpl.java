@@ -74,6 +74,7 @@ public final class CatalogServiceImpl implements CatalogService {
                 .collect(Collectors.toUnmodifiableList());
     }
 
+    // TODO Automatisieren; hier nur für Testzwecke
     @Override
     public boolean index() {
         return audiobookRepository.index();

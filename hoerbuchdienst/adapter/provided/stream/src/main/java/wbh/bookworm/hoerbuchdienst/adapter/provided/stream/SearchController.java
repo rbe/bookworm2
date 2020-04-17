@@ -36,6 +36,7 @@ public class SearchController {
         this.catalogService = catalogService;
     }
 
+    // TODO Automatisieren; hier nur für Testzwecke
     @Get(uri = "/index", produces = MediaType.APPLICATION_JSON)
     public boolean index() {
         return catalogService.index();
