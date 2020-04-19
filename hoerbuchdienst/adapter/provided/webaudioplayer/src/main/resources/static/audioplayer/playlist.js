@@ -1,60 +1,77 @@
 /*
- * Copyright (C) 2011-2020 art of coding UG, https://www.art-of-coding.eu
+ * Copyright (C) 2019-2020 art of coding UG, https://www.art-of-coding.eu
  * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
  * All rights reserved. Use is subject to license terms.
  */
 
 "use strict";
 
+import {FetchErrorHandler} from "./lib/fetchErrorHandler.js";
+
 export class Playlist {
 
-    constructor(audioplayer, audiobookURL, onReadyCallback) {
+    constructor(elementSelectors, audioplayer, audiobookURL, onReadyCallback) {
+        this.elementSelectors = elementSelectors;
         this.audioplayer = audioplayer;
         this.audiobookURL = audiobookURL;
-        this.playlistSelector = 'div.playlist';
         this.playlist = [];
         this.currentTrackIndex = -1;
-        this.currentTrackTitle = document.querySelector(this.currentTrackTitleSelector);
-        window.EventBus.subscribe('nextTack');
+        this.currentTrackTitle = document.querySelector(this.elementSelectors.currentTrackTitleSelector);
+        window.EventBus.subscribe('previousTrack', event => this.previous);
+        window.EventBus.subscribe('nextTrack', event => this.next);
+        this.updatePlaylist(onReadyCallback);
+    }
+
+    updatePlaylist(onReadyCallback) {
         fetch(new URL('playlist', this.audiobookURL).toString())
             .then(response => {
-                return response.json();
-            })
-            .then(json => {
-                this.playlist = json.entries;
-                this.highestTrackIndex = this.playlist.length - 1;
-                this.render();
-                if (onReadyCallback) {
-                    onReadyCallback();
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
                 }
             })
-            .catch(reason => alert('Playlist#init: ' + reason));
+            .then(json => {
+                if (json) {
+                    this.playlist = json.entries;
+                    this.highestTrackIndex = this.playlist.length - 1;
+                    this.render();
+                    if (onReadyCallback) {
+                        onReadyCallback();
+                    }
+                }
+            })
+            .catch(reason => {
+                console.log('Playlist#init,fetch,catch: ' + reason);
+            });
     }
 
     render() {
         let playlistHtml = '<ul role="list" aria-label="Playlist">';
         for (let playlistIdx in this.playlist) {
-            const playlistElement = this.playlist[playlistIdx];
-            const playlistElementId = 'track-' + playlistIdx;
-            this.playlist[playlistIdx].playlistElementId = playlistElementId;
-            const title = playlistElement.title || playlistElement.ident;
-            playlistHtml += '<li role="listitem" aria-label="' + title + '" id="' + playlistElementId + '">' + title;
-            if (playlistElement.clips && playlistElement.clips.length > 0) {
-                playlistHtml += this.renderClips(playlistElement, playlistElement.clips);
+            if (this.playlist.hasOwnProperty(playlistIdx)) {
+                const playlistElement = this.playlist[playlistIdx];
+                const playlistElementId = 'track-' + playlistIdx;
+                this.playlist[playlistIdx].playlistElementId = playlistElementId;
+                const title = playlistElement.title || playlistElement.ident;
+                playlistHtml += '<li role="listitem" aria-label="' + title + '" id="' + playlistElementId + '">' + title;
+                if (playlistElement.clips && playlistElement.clips.length > 0) {
+                    playlistHtml += this.renderClips(playlistElement, playlistElement.clips);
+                }
+                playlistHtml += '</li>';
             }
-            playlistHtml += '</li>';
         }
         playlistHtml += '</ul>';
-        document.querySelector(this.playlistSelector).innerHTML = playlistHtml;
+        document.querySelector(this.elementSelectors.playlistSelector).innerHTML = playlistHtml;
         // hide clips
         const clipsList = document.querySelectorAll('div.playlist ul[aria-label="Clips"]');
-        for (let idx in clipsList) {
-            if (clipsList[idx].style) clipsList[idx].style.display = 'none';
+        for (const clipsListItem of clipsList) {
+            if (clipsListItem.style) clipsListItem.style.display = 'none';
         }
-        const elements = document.querySelector(this.playlistSelector + ' li ul');
+        const elements = document.querySelector(this.elementSelectors.playlistSelector + ' li ul');
         if (elements) elements.style.display = 'none';
         const self = this;
-        const playlistElements = document.querySelectorAll(this.playlistSelector + ' li');
+        const playlistElements = document.querySelectorAll(this.elementSelectors.playlistSelector + ' li');
         for (let idx = 0; idx < playlistElements.length; idx++) {
             const playlistElementId = playlistElements[idx].id;
             const playlistElementIdSelector = '#' + playlistElementId;
@@ -77,11 +94,10 @@ export class Playlist {
 
     renderClips(playlistElement, clips) {
         let clipsHtml = '<ul role="list" aria-label="Clips">';
-        for (let clipIdx in clips) {
-            // TODO hasOwnProperty
-            const clipId = Playlist.makeClipId(playlistElement.playlistElementId, clips[clipIdx]);
-            clipsHtml += '<li role="listitem" aria-label="" id="' + clipId + '">' + clips[clipIdx] + '</li>'
-        }
+        clips.forEach(element => {
+            const clipId = Playlist.makeClipId(playlistElement.playlistElementId, element);
+            clipsHtml += '<li role="listitem" aria-label="" id="' + clipId + '">' + element + '</li>'
+        });
         clipsHtml += '</ul>';
         return clipsHtml;
     }
@@ -90,7 +106,7 @@ export class Playlist {
         return this.playlist.length;
     }
 
-    track(trackIndex) {
+    trackInfo(trackIndex) {
         return this.playlist[trackIndex];
     }
 
@@ -116,6 +132,13 @@ export class Playlist {
     }
 
     disableButtons() {
+    }
+
+    reset() {
+        const playlistElement = document.querySelector(this.elementSelectors.playlistEntriesSelector);
+        if (playlistElement) {
+            playlistElement.remove();
+        }
     }
 
     static trackIdAndSecondFrom(playlistElementId) {

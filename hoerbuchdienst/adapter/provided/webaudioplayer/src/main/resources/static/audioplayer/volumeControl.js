@@ -1,22 +1,18 @@
 /*
- * Copyright (C) 2011-2020 art of coding UG, https://www.art-of-coding.eu
+ * Copyright (C) 2019-2020 art of coding UG, https://www.art-of-coding.eu
  * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
  * All rights reserved. Use is subject to license terms.
  */
 
 "use strict";
 
-export class PlayerControl {
+export class VolumeControl {
 
-    constructor(audio) {
+    constructor(elementSelectors, audio) {
         this.audio = audio;
-        this.playlistSelector = 'div.playlist';
-        this.volumeDownButtonSelector = 'button.volumeDown';
-        this.volumeUpButtonSelector = 'button.volumeUp';
-        this.volumeSliderInputSelector = 'input.volumeSlider';
-        this.volumeDownButton = document.querySelector(this.volumeDownButtonSelector);
-        this.volumeUpButton = document.querySelector(this.volumeUpButtonSelector);
-        this.volumeSlider = document.querySelector(this.volumeSliderInputSelector);
+        this.volumeDownButton = document.querySelector(elementSelectors.volumeDownButtonSelector);
+        this.volumeUpButton = document.querySelector(elementSelectors.volumeUpButtonSelector);
+        this.volumeSlider = document.querySelector(elementSelectors.volumeSliderInputSelector);
         this.initVolumeButtons();
         this.initVolumeEvents();
         this.syncSlider();

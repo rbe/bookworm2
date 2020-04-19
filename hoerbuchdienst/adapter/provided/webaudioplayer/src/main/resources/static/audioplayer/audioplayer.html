@@ -3,10 +3,12 @@
 <head>
     <meta charset="utf-8"/>
     <link href="audioplayer.css" rel="stylesheet" type="text/css"/>
-    <title>DAISY Web Audioplayer</title>
+    <title>Web Audio Player</title>
 </head>
 <body>
 <div class="audiobookChooser">
+    <label for="hoerernummer">Hörernummer</label>
+    <input id="hoerernummer" type="text" maxlength="5">
     <label for="titelnummer">Titelnummer</label>
     <input id="titelnummer" type="text" maxlength="5">
     <button id="anhoerenButton">Anhören</button>
@@ -14,19 +16,24 @@
 <div class="two-column-container">
     <div class="playlistContainer" aria-label="Playlist">
         <p class="containerTitle" aria-hidden="true">Playlist</p>
-        <div class="playlist" role="menu">
-            <ul>
-                <li>Kein Hörbuch geladen</li>
-            </ul>
-        </div>
-    </div>
-    <div class="audioplayer" role="application" aria-label="Web Audio Player">
         <div class="loading">
             <p>Loading...</p>
         </div>
+        <div class="notfound">
+            <p>Hörbuch nicht gefunden :-(</p>
+        </div>
+        <div class="playlist" role="menu"></div>
+    </div>
+    <div class="audioplayer" role="application" aria-label="Web Audio Player">
+        <p class="containerTitle" aria-hidden="true">Hörbuch-Informationen</p>
+        <div class="loading">
+            <p>Loading...</p>
+        </div>
+        <div class="notfound">
+            <p>Hörbuch nicht gefunden :-(</p>
+        </div>
         <div class="panel">
             <div class="audiobookInfoContainer" role="contentinfo" aria-label="Audiobook Information">
-                <p class="containerTitle" aria-hidden="true">Hörbuch-Informationen</p>
                 <div class="titel">
                     <p aria-hidden="true">Titel</p>
                     <span role="contentinfo" aria-label="Titel">&nbsp;</span>
@@ -45,9 +52,10 @@
                 </div>
             </div>
             <div class="progressContainer" role="contentinfo" aria-label="Progress">
-                <p class="containerTitle" aria-hidden="true">Fortschritt</p>
+                <div>
+                    <p class="containerTitle" aria-hidden="true">Fortschritt</p>
+                </div>
                 <div class="title">
-                    <p aria-hidden="true">Titel</p>
                     <span role="contentinfo" aria-label="Titel">&nbsp;</span>
                 </div>
                 <div class="timeContainer">
@@ -67,7 +75,6 @@
                 </div>
             </div>
             <div class="controlsContainer" role="menu" aria-label="Player Controls">
-                <p class="containerTitle" aria-hidden="true">Player Controls</p>
                 <div class="trackButtons" aria-label="Player Controls">
                     <button class="previousTrack" role="button" accesskey="y">&lt;&lt;</button>
                     <button class="play" role="button" accesskey="P">Play</button>
@@ -82,6 +89,10 @@
                     <button class="volumeDown" role="button" aria-label="Volume Down">v</button>
                     <button class="volumeUp" role="button" aria-label="Volume Up">^</button>
                 </div>
+            </div>
+            <div class="trackInfo">
+                <p class="containerTitle" aria-hidden="true">Titel-Informationen</p>
+                <pre role="contentinfo" aria-label="Titel-Informationen">&nbsp;</pre>
             </div>
         </div>
     </div>

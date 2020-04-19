@@ -5,16 +5,10 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst.adapter</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided</artifactId>
-    <name>wbh-online.de Hörbuchdienst Adapter Provided</name>
-    <packaging>pom</packaging>
-    <modules>
-        <module>api</module>
-        <module>helloworld</module>
-        <module>stream</module>
-        <module>webaudioplayer</module>
-    </modules>
+    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.webaudioplayer</artifactId>
+    <name>wbh-online.de Hörbuchdienst Provided Adapter Web Audio Player</name>
+    <packaging>jar</packaging>
 </project>

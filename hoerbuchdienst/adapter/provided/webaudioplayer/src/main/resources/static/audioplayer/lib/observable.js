@@ -1,8 +1,10 @@
 /*
- * Copyright (C) 2011-2020 art of coding UG, https://www.art-of-coding.eu
+ * Copyright (C) 2019-2020 art of coding UG, https://www.art-of-coding.eu
  * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
  * All rights reserved. Use is subject to license terms.
  */
+
+"use strict";
 
 export class Observable {
 
@@ -22,11 +24,13 @@ export class Observable {
         this.observers.forEach(observer => observer(data));
     }
 
-    /*fire(o, thisObj) {
+    /*
+    fire(o, thisObj) {
         const scope = thisObj || window;
         this.observers.forEach(function (item) {
             item.call(scope, o);
         });
-    }*/
+    }
+    */
 
 }

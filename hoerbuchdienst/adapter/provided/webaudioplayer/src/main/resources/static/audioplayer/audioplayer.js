@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2011-2020 art of coding UG, https://www.art-of-coding.eu
+ * Copyright (C) 2019-2020 art of coding UG, https://www.art-of-coding.eu
  * Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
  * All rights reserved. Use is subject to license terms.
  */
@@ -7,13 +7,16 @@
 "use strict";
 
 import {Time} from "./lib/time.js";
+import {FetchErrorHandler} from "./lib/fetchErrorHandler.js";
 import {Playlist} from "./playlist.js";
+import {VolumeControl} from "./volumeControl.js";
 
 export class Audioplayer {
 
     constructor() {
         this.audio = this.createAudioElement();
         this.initElementSelectors();
+        this.DEBUG = false;
     }
 
     init(audiobookURL, onReadyCallback) {
@@ -21,10 +24,11 @@ export class Audioplayer {
         this.playButton = document.querySelector(this.elementSelectors.playButtonSelector);
         this.currentTrackTitle = document.querySelector(this.elementSelectors.currentTrackTitleSelector);
         this.displayAudiobookInfo();
-        this.playlist = new Playlist(this, this.audiobookURL, () => {
+        this.playlist = new Playlist(this.elementSelectors, this, this.audiobookURL, () => {
             this.currentTrack = -1;
             this.initAudioEvents();
             this.initPlayerControls();
+            this.volumeControl = new VolumeControl(this.elementSelectors, this.audio);
             onReadyCallback();
         });
     }
@@ -32,16 +36,20 @@ export class Audioplayer {
     createAudioElement() {
         const audio = document.createElement('audio');
         audio.id = 'audio';
+        audio.load();
         return audio;
     }
 
     initElementSelectors() {
         this.elementSelectors = {
+            'playlistSelector': 'div.playlist',
+            'playlistEntriesSelector': 'div.playlist ul',
             'titleTextSelector': 'div.titel > span',
             'titelnummerTextSelector': 'div.titelnummer > span',
             'authorTextSelector': 'div.author > span',
             'narratorTextSelector': 'div.narrator > span',
             'currentTrackTitleSelector': 'div.title > span',
+            'trackInfoTextSelector': 'div.trackInfo > pre',
             'currentTimeSelector': '#currentTime',
             'maxTimeSelector': '#maxTime',
             'progressBarSelector': 'div.progressbar',
@@ -49,26 +57,36 @@ export class Audioplayer {
             'prev10TrackButtonSelector': 'button.prev10',
             'playButtonSelector': 'button.play',
             'next10TrackButtonSelector': 'button.next10',
-            'nextTrackButtonSelector': 'button.nextTrack'
+            'nextTrackButtonSelector': 'button.nextTrack',
+            'volumeDownButtonSelector': 'button.volumeDown',
+            'volumeUpButtonSelector': 'button.volumeUp',
+            'volumeSliderInputSelector': 'input.volumeSlider'
         };
     }
 
     displayAudiobookInfo() {
         fetch(new URL('info', this.audiobookURL).toString())
             .then(response => {
-                return response.json();
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
             })
             .then(json => {
-                document.querySelector(this.elementSelectors.titleTextSelector).innerHTML = json.titel;
-                document.querySelector(this.elementSelectors.titelnummerTextSelector).innerHTML = json.titelnummer;
-                document.querySelector(this.elementSelectors.authorTextSelector).innerHTML = json.autor;
-                document.querySelector(this.elementSelectors.narratorTextSelector).innerHTML = json.sprecher;
+                if (json) {
+                    document.querySelector(this.elementSelectors.titleTextSelector).innerHTML = json.titel;
+                    document.querySelector(this.elementSelectors.titelnummerTextSelector).innerHTML = json.titelnummer;
+                    document.querySelector(this.elementSelectors.authorTextSelector).innerHTML = json.autor;
+                    document.querySelector(this.elementSelectors.narratorTextSelector).innerHTML = json.sprecher;
+                }
             })
-            .catch(reason => alert('initSoundService 1: ' + reason));
+            .catch(reason => {
+                this.console('displayAudiobookInfo,fetch,catch: ' + reason);
+            });
     }
 
     initAudioEvents() {
-        //this.audio.canPlayType('audio/mp3')
         const currentTimeElement = document.querySelector(this.elementSelectors.currentTimeSelector);
         const maxTimeElement = document.querySelector(this.elementSelectors.maxTimeSelector);
         const progressbar = document.querySelector(this.elementSelectors.progressBarSelector);
@@ -78,14 +96,9 @@ export class Audioplayer {
             const pct = (this.audio.currentTime / this.audio.duration) * 100;
             progressbar.style.width = parseInt(pct, 10) + "%";
         });
-        this.audio.addEventListener('canplay', event => {
+        this.audio.addEventListener('canplaythrough', event => {
             maxTimeElement.innerHTML = Time.format(parseInt(this.audio.duration, 10));
         });
-        /*
-        this.audio.addEventListener('canplaythrough', event => {
-            console.log('canplaythrough');
-        });
-        */
         this.audio.addEventListener('ended', event => {
             const playButtonSaysPlaying = this.playButton.innerText === 'Pause';
             const moreTracksAvailable = this.currentTrack < this.playlist.highestTrackIndex;
@@ -97,22 +110,6 @@ export class Audioplayer {
         });
     }
 
-    resumeAudioContext() {
-        if (undefined === this.audioContext) {
-            const AudioContext = window.AudioContext || window.webkitAudioContext;
-            this.audioContext = new AudioContext();
-        }
-        if (this.audioContext.state === 'suspended') {
-            this.audioContext
-                .resume()
-                .then(() => {
-                    console.log('runAudioContext: Playback resumed successfully');
-                    this.selectTrack(this.currentTrack, 0);
-                    this.play();
-                });
-        }
-    }
-
     playPauseFunction = event => {
         const elt = event.target;
         switch (elt.innerText) {
@@ -120,7 +117,6 @@ export class Audioplayer {
                 if (this.currentTrack === -1) {
                     this.selectTrack(0, 0);
                 }
-                this.resumeAudioContext();
                 this.play();
                 break;
             case 'Pause':
@@ -128,7 +124,6 @@ export class Audioplayer {
                 break;
         }
     };
-
     initPlayerControls() {
         this.playButton.addEventListener('click', this.playPauseFunction);
         this.previousTrackButton = document.querySelector(this.elementSelectors.previousTrackButtonSelector);
@@ -143,15 +138,39 @@ export class Audioplayer {
 
     selectTrack(trackIndex, currentSecs = 0.0) {
         if (this.currentTrack > -1) {
-            const id = this.playlist.track(this.currentTrack).playlistElementId;
-            document.querySelector('#' + id).classList.remove('currently-playing');
+            const id = this.playlist.trackInfo(this.currentTrack).playlistElementId;
+            const elements = document.querySelectorAll('#' + id);
+            for (const element of elements) {
+                element.classList.remove('currently-playing');
+            }
         }
+        document.querySelector(this.elementSelectors.trackInfoTextSelector).innerHTML = '&nbsp;';
         trackIndex = parseInt(trackIndex);
-        const track = this.playlist.track(trackIndex);
+        const track = this.playlist.trackInfo(trackIndex);
         this.currentTrackTitle.innerText = track.title || track.ident;
+        fetch(new URL('track/' + track.ident + '/info', this.audiobookURL).toString())
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json) {
+                    document.querySelector(this.elementSelectors.trackInfoTextSelector)
+                        .innerHTML = JSON.stringify(json, undefined, 2);
+                }
+            })
+            .catch(reason => {
+                this.console('play,fetch,catch: ' + reason);
+            });
         const trackId = track.playlistElementId;
         document.querySelector('#' + trackId).classList.add('currently-playing');
-        this.audio.src = new URL('track/' + track.ident, this.audiobookURL).toString();
+        const url = new URL('track/' + track.ident, this.audiobookURL);
+        this.console('selectTrack: audio.src=' + url.toString());
+        this.audio.src = url.toString();
+        this.console('selectTrack: audio.load()');
         this.audio.load();
         if (currentSecs > 0) {
             this.audio.currentTime = parseFloat(currentSecs);
@@ -160,23 +179,16 @@ export class Audioplayer {
     }
 
     play() {
-        if (this.audioContext) {
-            if (this.audioContext.state !== 'suspended') {
-                const promise = this.audio.play();
-                if (undefined !== promise) {
-                    promise.then(_ => {
-                        this.playButton.innerText = 'Pause';
-                    }).catch(error => {
-                        console.log('play(): audio.play() was prevented: ' + error);
-                    });
-                } else {
-                    console.log('play(): No promise');
-                }
-            } else {
-                console.log('play(): AudioContext suspended');
-            }
+        const playPromise = this.audio.play();
+        if (undefined !== playPromise) {
+            playPromise.then(param => {
+                this.playButton.innerText = 'Pause';
+                this.console('play(): promise ended, param=' + param);
+            }).catch(error => {
+                this.console('play(): audio.play() was prevented: ' + error);
+            });
         } else {
-            console.log('play(): No AudioContext');
+            this.console('play(): No promise');
         }
     }
 
@@ -188,7 +200,6 @@ export class Audioplayer {
     playPrevious() {
         if (this.currentTrack > 0) {
             this.selectTrack(this.currentTrack - 1, 0);
-            // TODO Call play() if current state == playing?
             this.play();
         }
     }
@@ -204,7 +215,6 @@ export class Audioplayer {
     playNext() {
         if (this.currentTrack < this.playlist.count() - 1) {
             this.selectTrack(this.currentTrack + 1, 0);
-            // TODO Call play() if current state == playing?
             this.play();
         }
     }
@@ -214,18 +224,33 @@ export class Audioplayer {
             this.audio.src = '';
         }
         this.currentTrack = -1;
-        if (this.currentTrackTitle) this.currentTrackTitle.innerText = '';
+        if (this.currentTrackTitle) {
+            this.currentTrackTitle.innerText = '';
+        }
         const currentTimeElement = document.querySelector(this.elementSelectors.currentTimeSelector);
-        if (currentTimeElement) currentTimeElement.innerHTML = Time.format(0);
+        if (currentTimeElement) {
+            currentTimeElement.innerHTML = Time.format(0);
+        }
         const maxTimeElement = document.querySelector(this.elementSelectors.maxTimeSelector);
-        if (maxTimeElement) maxTimeElement.innerHTML = Time.format(0);
+        if (maxTimeElement) {
+            maxTimeElement.innerHTML = Time.format(0);
+        }
         const progressbar = document.querySelector(this.elementSelectors.progressBarSelector);
-        if (progressbar) progressbar.style.width = 0 + "%";
-        let playlistElement = document.querySelector('.playlist ul');
-        if (playlistElement) playlistElement.remove();
+        if (progressbar) {
+            progressbar.style.width = 0 + "%";
+        }
+        if (this.playlist) {
+            this.playlist.reset();
+        }
         if (this.playButton) {
             this.playButton.removeEventListener('click', this.playPauseFunction);
             this.playButton.innerText = 'Play';
+        }
+    }
+
+    console(str) {
+        if (this.DEBUG) {
+            this.console(str);
         }
     }
 

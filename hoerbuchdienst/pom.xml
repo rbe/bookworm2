@@ -25,7 +25,6 @@
         <junit-platform.version>1.3.2</junit-platform.version>
     </properties>
     <modules>
-        <module>webaudioplayer</module>
         <module>adapter</module>
         <module>domain</module>
         <module>application</module>
