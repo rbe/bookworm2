@@ -50,7 +50,7 @@ class AudiobookMapperImplTest {
     void shouldReadDaisyAudiobookByLocalDiskAudiobookStreamResolver() {
         final LocalDiskAudiobookStreamResolverImpl audiobookStreamResolver = beanContext.createBean(
                 LocalDiskAudiobookStreamResolverImpl.class);
-        final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(beanContext);
+        final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(audiobookStreamResolver);
         final Audiobook audiobook = audiobookMapper.createAudiobook(TITLENUMMER, audiobookStreamResolver);
         Assertions.assertNotNull(audiobook);
         Assertions.assertEquals("Halt die Wolken fest", audiobook.getTitle());
@@ -68,7 +68,7 @@ class AudiobookMapperImplTest {
     void shouldReadDaisyAudiobookByObjectStorageAudiobookStreamResolver() {
         final ObjectStorageAudiobookStreamResolverImpl audiobookStreamResolver = beanContext.createBean(
                 ObjectStorageAudiobookStreamResolverImpl.class, "minio");
-        final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(beanContext);
+        final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(audiobookStreamResolver);
         final Audiobook audiobook = audiobookMapper.createAudiobook(TITLENUMMER, audiobookStreamResolver);
         Assertions.assertNotNull(audiobook);
         Assertions.assertEquals("Halt die Wolken fest", audiobook.getTitle());

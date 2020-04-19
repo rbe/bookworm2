@@ -26,14 +26,6 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage</artifactId>
             <version>LocalBuild</version>
         </dependency>
-        <!-- MP3 -->
-        <!-- Siehe thirdparty/mp3agic -->
-        <dependency>
-            <groupId>com.mpatric</groupId>
-            <artifactId>mp3agic</artifactId>
-            <version>0.9.1</version>
-            <!--<version>0.9.2-SNAPSHOT</version>-->
-        </dependency>
         <!-- Elasticsearch -->
         <dependency>
             <groupId>io.micronaut.configuration</groupId>

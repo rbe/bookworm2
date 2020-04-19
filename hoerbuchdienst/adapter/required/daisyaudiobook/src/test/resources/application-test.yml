@@ -3,10 +3,10 @@ hoerbuchdienst:
     type: objectstorage
     localdisk:
       uri: ../../../Buecher-WBH
-      temporary:
-        path: /tmp
     objectstorage:
       name: minio
+  temporary:
+    path: /tmp/hoerbuchdienst
 
 objectstorage:
   minio:

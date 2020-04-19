@@ -6,8 +6,10 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
-public interface WatermarkedMp3Service {
+public interface Mp3RepositoryService {
 
-    byte[] track(String titelnummer, String ident);
+    TrackDTO trackInfo(String hoerernummer, String titelnummer, String ident);
+
+    byte[] track(String hoerernummer, String titelnummer, String ident);
 
 }

@@ -12,11 +12,12 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.micronaut.context.event.ApplicationEventPublisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntry;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
@@ -24,29 +25,23 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
 
 @Singleton
-class CatalogServiceImpl implements CatalogService {
+class KatalogServiceImpl implements KatalogService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(CatalogServiceImpl.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KatalogServiceImpl.class);
 
     private final AudiobookIndex audiobookIndex;
 
     private final AudiobookRepository audiobookRepository;
 
+    private final ApplicationEventPublisher applicationEventPublisher;
+
     @Inject
-    CatalogServiceImpl(final AudiobookIndex audiobookIndex, final AudiobookRepository audiobookRepository) {
+    KatalogServiceImpl(final AudiobookIndex audiobookIndex,
+                       final AudiobookRepository audiobookRepository,
+                       final ApplicationEventPublisher applicationEventPublisher) {
         this.audiobookIndex = audiobookIndex;
         this.audiobookRepository = audiobookRepository;
-    }
-
-    @Override
-    public AudiobookInfoDTO audiobookInfo(final String titelnummer) {
-        final Audiobook audiobook = audiobookRepository.find(titelnummer);
-        if (null == audiobook) {
-            throw new IllegalStateException(String.format("Hörbuch %s nicht gefunden", titelnummer));
-        }
-        return new AudiobookInfoDTO(titelnummer, audiobook.getTitle(),
-                audiobook.getAuthor(), audiobook.getNarrator(),
-                audiobook.getTimeInThisSmil());
+        this.applicationEventPublisher = applicationEventPublisher;
     }
 
     @Override
@@ -60,8 +55,8 @@ class CatalogServiceImpl implements CatalogService {
         final List<PlaylistEntry> playlistEntries = audiobook.getAudiotracks().stream()
                 .map(t -> {
                     final Double[] clips = Arrays.stream(t.getAudioclips())
-                            .filter(c -> c.getBegin().toMillis() > 0.0d)
-                            .map(c -> c.getBegin().toMillis() / 1000.0d)
+                            .filter(clip -> 0L < clip.getBegin().toMillis())
+                            .map(clip -> clip.getBegin().toMillis() / 1000.0d)
                             .collect(Collectors.toUnmodifiableList())
                             .toArray(Double[]::new);
                     return new PlaylistEntry(t.getTitle(),
@@ -70,7 +65,22 @@ class CatalogServiceImpl implements CatalogService {
                 })
                 .collect(Collectors.toUnmodifiableList());
         playlistDTO.addAll(playlistEntries);
+        applicationEventPublisher.publishEvent(new PlaylistCreatedEvent());
         return playlistDTO;
+    }
+
+    @Override
+    public AudiobookInfoDTO audiobookInfo(final String titelnummer) {
+        final Audiobook audiobook = audiobookRepository.find(titelnummer);
+        if (null == audiobook) {
+            throw new IllegalStateException(String.format("Hörbuch %s nicht gefunden", titelnummer));
+        }
+        return new AudiobookInfoDTO(titelnummer, audiobook.getTitle(),
+                audiobook.getAuthor(), audiobook.getNarrator(),
+                audiobook.getTimeInThisSmil());
+    }
+
+    public static class PlaylistCreatedEvent {
     }
 
     @Override

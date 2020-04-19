@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.util.List;
 
-public interface CatalogService {
+public interface KatalogService {
 
     AudiobookInfoDTO audiobookInfo(String titelnummer);
 

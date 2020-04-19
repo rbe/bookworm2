@@ -6,12 +6,14 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.required.audiobook;
 
+import java.io.InputStream;
+
 public interface AudiobookRepository {
 
     /*TODO Titelnummer*/String[] findAll(String keyword);
 
     Audiobook find(/*TODO Titelnummer*/String titelnummer);
 
-    byte[] track(/*TODO Titelnummer*/String titelnummer, String ident);
+    InputStream track(/* TODO Hoerernummer */String hoerernummer, /*TODO Titelnummer*/String titelnummer, String ident);
 
 }

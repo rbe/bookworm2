@@ -19,10 +19,12 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.Mp3RepositoryService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.WatermarkedMp3Service;
+import wbh.bookworm.hoerbuchdienst.domain.ports.TrackDTO;
 
 @OpenAPIDefinition(
         info = @Info(title = "wbh.sds", version = "0.0")
@@ -32,36 +34,67 @@ public class StreamController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
 
-    private final CatalogService catalogService;
+    private final KatalogService katalogService;
 
-    private final WatermarkedMp3Service watermarkedMp3Service;
+    private final Mp3RepositoryService mp3RepositoryService;
 
     @Inject
-    public StreamController(final CatalogService catalogService,
-                            final WatermarkedMp3Service watermarkedMp3Service) {
-        this.catalogService = catalogService;
-        this.watermarkedMp3Service = watermarkedMp3Service;
+    public StreamController(final KatalogService katalogService,
+                            final Mp3RepositoryService mp3RepositoryService) {
+        this.katalogService = katalogService;
+        this.mp3RepositoryService = mp3RepositoryService;
     }
 
     @ApiResponse
-    @Get(uri = "/{titelnummer}/info", produces = MediaType.APPLICATION_JSON)
-    public AudiobookInfoDTO info(@PathVariable final String titelnummer) {
-        return catalogService.audiobookInfo(titelnummer);
+    @Get(uri = "/{hoerernummer}/{titelnummer}/info", produces = MediaType.APPLICATION_JSON)
+    public AudiobookInfoDTO info(@PathVariable final String hoerernummer,
+                                 @PathVariable final String titelnummer) {
+        try {
+            return katalogService.audiobookInfo(titelnummer);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
     }
 
     @ApiResponse
-    @Get(uri = "/{titelnummer}/playlist", produces = MediaType.APPLICATION_JSON)
-    public PlaylistDTO playlist(@PathVariable final String titelnummer) {
-        return catalogService.playlist(titelnummer);
+    @Get(uri = "/{hoerernummer}/{titelnummer}/playlist", produces = MediaType.APPLICATION_JSON)
+    public PlaylistDTO playlist(@PathVariable final String hoerernummer,
+                                @PathVariable final String titelnummer) {
+        try {
+            return katalogService.playlist(titelnummer);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
     }
 
     @ApiResponse
-    @Get(uri = "/{titelnummer}/track/{ident}", produces = "audio/mp3")
-    public HttpResponse<byte[]> track(@PathVariable final String titelnummer,
+    @Get(uri = "/{hoerernummer}/{titelnummer}/track/{ident}/info", produces = MediaType.APPLICATION_JSON)
+    public TrackDTO trackInfo(@PathVariable final String hoerernummer,
+                              @PathVariable final String titelnummer,
+                              @PathVariable final String ident) {
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
+                hoerernummer, titelnummer, ident);
+        try {
+            return mp3RepositoryService.trackInfo(hoerernummer, titelnummer, ident);
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
+    }
+
+    @ApiResponse
+    @Get(uri = "/{hoerernummer}/{titelnummer}/track/{ident}", produces = "audio/mp3")
+    public HttpResponse<byte[]> track(@PathVariable final String hoerernummer,
+                                      @PathVariable final String titelnummer,
                                       @PathVariable final String ident) {
-        LOGGER.info("Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab", titelnummer, ident);
-        return HttpResponse.ok(watermarkedMp3Service.track(titelnummer, ident))
-                .header("Accept-Ranges", "bytes");
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab",
+                hoerernummer, titelnummer, ident);
+        try {
+            final byte[] track = mp3RepositoryService.track(hoerernummer, titelnummer, ident);
+            return HttpResponse.ok(track)
+                    .header("Accept-Ranges", "bytes");
+        } catch (Exception e) {
+            throw new BusinessException(e);
+        }
     }
 
 }

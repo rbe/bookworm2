@@ -19,7 +19,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.CatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 
 @OpenAPIDefinition(
         info = @Info(title = "wbh.sds", version = "0.0")
@@ -29,22 +29,23 @@ public class SearchController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
 
-    private final CatalogService catalogService;
+    private final KatalogService katalogService;
 
     @Inject
-    public SearchController(final CatalogService catalogService) {
-        this.catalogService = catalogService;
+    public SearchController(final KatalogService katalogService) {
+        this.katalogService = katalogService;
     }
 
     // TODO Automatisieren; hier nur für Testzwecke
     @Get(uri = "/index", produces = MediaType.APPLICATION_JSON)
     public boolean index() {
-        return catalogService.index();
+        return katalogService.index();
     }
 
-    @Get(uri = "/{keyword}", produces = MediaType.APPLICATION_JSON)
-    public List<AudiobookInfoDTO> findAll(@PathVariable final String keyword) {
-        return catalogService.findAll(keyword);
+    @Get(uri = "/{hoerernummer}/{keyword}", produces = MediaType.APPLICATION_JSON)
+    public List<AudiobookInfoDTO> findAll(@PathVariable final String hoerernummer,
+                                          @PathVariable final String keyword) {
+        return katalogService.findAll(keyword);
     }
 
 }

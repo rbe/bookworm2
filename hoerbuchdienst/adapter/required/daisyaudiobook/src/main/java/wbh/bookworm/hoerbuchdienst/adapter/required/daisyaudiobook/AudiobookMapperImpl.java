@@ -15,7 +15,6 @@ import java.util.List;
 
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
-import io.micronaut.context.BeanContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.smil10.Audio;
@@ -25,6 +24,7 @@ import org.w3c.smil10.Ref;
 import org.w3c.smil10.Seq;
 import org.w3c.smil10.Smil;
 
+import wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage.ObjectStorageException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audioclip;
@@ -41,17 +41,23 @@ class AudiobookMapperImpl implements AudiobookMapper {
     private final SmilReader smilReader;
 
     @Inject
-    AudiobookMapperImpl(final BeanContext beanContext) {
-        audiobookStreamResolver = beanContext.createBean(AudiobookStreamResolver.class);
+    AudiobookMapperImpl(final AudiobookStreamResolver audiobookStreamResolver) {
+        this.audiobookStreamResolver = audiobookStreamResolver;
         smilReader = new SmilReader();
     }
 
     @Override
     @Cacheable
     public Audiobook audiobook(final String titelnummer) {
+        Audiobook audiobook;
         LOGGER.debug("Creating audiobook '{}'", titelnummer);
-        final Audiobook audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
-        LOGGER.debug("Audiobook '{}' created", audiobook);
+        try {
+            audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
+            LOGGER.debug("Audiobook '{}' created", audiobook);
+        } catch (AudiobookMapperException e) {
+            audiobook = null;
+            LOGGER.error("", e);
+        }
         return audiobook;
     }
 
@@ -68,8 +74,9 @@ class AudiobookMapperImpl implements AudiobookMapper {
                 audiobook.addAudiotrack(fromRef(ref, refStream));
             }
             return audiobook;
+        } catch (ObjectStorageException e) {
+            throw new AudiobookMapperException(e);
         } catch (AudiobookStreamResolverException | AudiobookMapperException e) {
-            //throw new AudiobookMapperException(e);
             LOGGER.error("", e);
             return null;
         }
