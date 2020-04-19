@@ -18,7 +18,7 @@
         <!-- Hörbuchdienst -->
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.webaudioplayer</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.webaudioplayer</artifactId>
             <version>LocalBuild</version>
         </dependency>
         <dependency>
