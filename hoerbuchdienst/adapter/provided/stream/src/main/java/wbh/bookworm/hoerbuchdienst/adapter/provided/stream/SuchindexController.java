@@ -10,29 +10,25 @@ import javax.inject.Inject;
 import java.util.List;
 
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.micronaut.http.annotation.PathVariable;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 
-@OpenAPIDefinition(
-        info = @Info(title = "wbh.sds", version = "0.0")
-)
 @Controller("/search")
-public class SearchController {
+public class SuchindexController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(SearchController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SuchindexController.class);
 
     private final KatalogService katalogService;
 
     @Inject
-    public SearchController(final KatalogService katalogService) {
+    public SuchindexController(final KatalogService katalogService) {
         this.katalogService = katalogService;
     }
 
@@ -42,10 +38,10 @@ public class SearchController {
         return katalogService.index();
     }
 
-    @Get(uri = "/{hoerernummer}/{keyword}", produces = MediaType.APPLICATION_JSON)
-    public List<AudiobookInfoDTO> findAll(@PathVariable final String hoerernummer,
-                                          @PathVariable final String keyword) {
-        return katalogService.findAll(keyword);
+    @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public List<AudiobookInfoDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
+        return katalogService.findAll(suchindexAnfrageDTO.getHoerernummer(),
+                suchindexAnfrageDTO.getKeywords());
     }
 
 }

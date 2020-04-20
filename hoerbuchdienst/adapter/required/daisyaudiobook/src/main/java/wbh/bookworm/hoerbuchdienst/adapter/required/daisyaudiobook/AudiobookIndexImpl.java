@@ -75,8 +75,8 @@ class AudiobookIndexImpl implements AudiobookIndex {
     }
 
     @Override
-    public String[] findAll(String keyword) {
-        return Arrays.stream(elasticsearchClient.findAll(new String[]{keyword}))
+    public String[] findAll(String[] keywords) {
+        return Arrays.stream(elasticsearchClient.findAll(keywords))
                 .map(hit -> hit.getSourceAsMap().get("titelnummer").toString())
                 .collect(Collectors.toUnmodifiableList())
                 .toArray(String[]::new);

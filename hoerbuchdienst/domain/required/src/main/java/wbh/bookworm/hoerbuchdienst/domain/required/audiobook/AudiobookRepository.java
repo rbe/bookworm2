@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 public interface AudiobookRepository {
 
-    /*TODO Titelnummer*/String[] findAll(String keyword);
+    /*TODO Titelnummer*/String[] findAll(String[] keywords);
 
     Audiobook find(/*TODO Titelnummer*/String titelnummer);
 

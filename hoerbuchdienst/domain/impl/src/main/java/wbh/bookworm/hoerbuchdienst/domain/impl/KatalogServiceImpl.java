@@ -45,7 +45,7 @@ class KatalogServiceImpl implements KatalogService {
     }
 
     @Override
-    public PlaylistDTO playlist(final String titelnummer) {
+    public PlaylistDTO playlist(final String hoerernummer, final String titelnummer) {
         final Audiobook audiobook = audiobookRepository.find(titelnummer);
         if (null == audiobook) {
             throw new IllegalStateException("Hörbuch nicht gefunden");
@@ -70,7 +70,7 @@ class KatalogServiceImpl implements KatalogService {
     }
 
     @Override
-    public AudiobookInfoDTO audiobookInfo(final String titelnummer) {
+    public AudiobookInfoDTO audiobookInfo(final String hoerernummer, final String titelnummer) {
         final Audiobook audiobook = audiobookRepository.find(titelnummer);
         if (null == audiobook) {
             throw new IllegalStateException(String.format("Hörbuch %s nicht gefunden", titelnummer));
@@ -84,9 +84,9 @@ class KatalogServiceImpl implements KatalogService {
     }
 
     @Override
-    public List<AudiobookInfoDTO> findAll(final String keyword) {
-        return Arrays.stream(audiobookRepository.findAll(keyword))
-                .map(this::audiobookInfo)
+    public List<AudiobookInfoDTO> findAll(final String hoerernummer, final String[] keywords) {
+        return Arrays.stream(audiobookRepository.findAll(keywords))
+                .map(titelnummer -> audiobookInfo(hoerernummer, titelnummer))
                 .collect(Collectors.toUnmodifiableList());
     }
 

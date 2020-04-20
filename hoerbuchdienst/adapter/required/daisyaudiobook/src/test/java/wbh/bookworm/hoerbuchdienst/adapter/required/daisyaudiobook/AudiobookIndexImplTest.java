@@ -38,7 +38,7 @@ class AudiobookIndexImplTest {
     @Test
     @Order(2)
     void shouldFindAll() {
-        final String[] all = audiobookIndex.findAll("die");
+        final String[] all = audiobookIndex.findAll(new String[]{"die"});
         LOGGER.info("{}", all);
         assertTrue(0 < all.length);
     }

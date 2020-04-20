@@ -10,11 +10,11 @@ import java.util.List;
 
 public interface KatalogService {
 
-    AudiobookInfoDTO audiobookInfo(String titelnummer);
+    AudiobookInfoDTO audiobookInfo(String hoerernummer, String titelnummer);
 
-    PlaylistDTO playlist(String titelnummer);
+    PlaylistDTO playlist(String hoerernummer, String titelnummer);
 
-    List<AudiobookInfoDTO> findAll(String keyword);
+    List<AudiobookInfoDTO> findAll(String hoerernummer, String[] keywords);
 
     boolean index();
 

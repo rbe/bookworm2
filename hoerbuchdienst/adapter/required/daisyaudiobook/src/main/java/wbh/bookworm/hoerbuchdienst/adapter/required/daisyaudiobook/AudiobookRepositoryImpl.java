@@ -39,8 +39,8 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public String[] findAll(String keyword) {
-        return audiobookIndex.findAll(keyword);
+    public String[] findAll(String[] keywords) {
+        return audiobookIndex.findAll(keywords);
     }
 
     @Override

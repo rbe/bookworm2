@@ -10,6 +10,6 @@ public interface AudiobookIndex {
 
     boolean index();
 
-    String[] findAll(String keyword);
+    String[] findAll(String[] keywords);
 
 }
