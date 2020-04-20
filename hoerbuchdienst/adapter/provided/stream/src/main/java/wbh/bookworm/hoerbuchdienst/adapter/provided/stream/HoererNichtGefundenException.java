@@ -8,16 +8,16 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 
-public class HoerbuchNichtGefundenException extends BusinessException {
+public class HoererNichtGefundenException extends BusinessException {
 
-    public HoerbuchNichtGefundenException() {
+    public HoererNichtGefundenException() {
     }
 
-    public HoerbuchNichtGefundenException(final String message) {
+    public HoererNichtGefundenException(final String message) {
         super(message);
     }
 
-    public HoerbuchNichtGefundenException(final String message, final Throwable cause) {
+    public HoererNichtGefundenException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

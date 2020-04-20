@@ -16,21 +16,25 @@ export class Audioplayer {
     constructor() {
         this.audio = this.createAudioElement();
         this.initElementSelectors();
-        this.DEBUG = false;
+        this.DEBUG = true;
     }
 
-    init(audiobookURL, onReadyCallback) {
+    init(audiobookURL, hoerernummer, titelnummer, onReadyCallback) {
         this.audiobookURL = audiobookURL;
+        this.hoerernummer = hoerernummer;
+        this.titelnummer = titelnummer;
         this.playButton = document.querySelector(this.elementSelectors.playButtonSelector);
         this.currentTrackTitle = document.querySelector(this.elementSelectors.currentTrackTitleSelector);
         this.displayAudiobookInfo();
-        this.playlist = new Playlist(this.elementSelectors, this, this.audiobookURL, () => {
-            this.currentTrack = -1;
-            this.initAudioEvents();
-            this.initPlayerControls();
-            this.volumeControl = new VolumeControl(this.elementSelectors, this.audio);
-            onReadyCallback();
-        });
+        this.playlist = new Playlist(this.elementSelectors, this,
+            this.audiobookURL, this.hoerernummer, this.titelnummer,
+            () => {
+                this.currentTrack = -1;
+                this.initAudioEvents();
+                this.initPlayerControls();
+                this.volumeControl = new VolumeControl(this.elementSelectors, this.audio);
+                onReadyCallback();
+            });
     }
 
     createAudioElement() {
@@ -65,7 +69,18 @@ export class Audioplayer {
     }
 
     displayAudiobookInfo() {
-        fetch(new URL('info', this.audiobookURL).toString())
+        fetch(new URL('info/audiobook', this.audiobookURL).toString(),
+            {
+                'method': 'POST',
+                'headers': {
+                    'Content-Type': 'application/json'
+                },
+                'body': JSON.stringify({
+                    mandant: 'WBH',
+                    hoerernummer: this.hoerernummer,
+                    titelnummer: this.titelnummer
+                })
+            })
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -82,7 +97,7 @@ export class Audioplayer {
                 }
             })
             .catch(reason => {
-                this.console('displayAudiobookInfo,fetch,catch: ' + reason);
+                if (this.DEBUG) { console.log('displayAudiobookInfo,fetch,catch: ' + reason); }
             });
     }
 
@@ -96,7 +111,7 @@ export class Audioplayer {
             const pct = (this.audio.currentTime / this.audio.duration) * 100;
             progressbar.style.width = parseInt(pct, 10) + "%";
         });
-        this.audio.addEventListener('canplaythrough', event => {
+        this.audio.addEventListener('canplay', event => {
             maxTimeElement.innerHTML = Time.format(parseInt(this.audio.duration, 10));
         });
         this.audio.addEventListener('ended', event => {
@@ -137,6 +152,7 @@ export class Audioplayer {
     }
 
     selectTrack(trackIndex, currentSecs = 0.0) {
+        if (this.DEBUG) { console.log('selectTrack('+trackIndex+')'); }
         if (this.currentTrack > -1) {
             const id = this.playlist.trackInfo(this.currentTrack).playlistElementId;
             const elements = document.querySelectorAll('#' + id);
@@ -148,7 +164,19 @@ export class Audioplayer {
         trackIndex = parseInt(trackIndex);
         const track = this.playlist.trackInfo(trackIndex);
         this.currentTrackTitle.innerText = track.title || track.ident;
-        fetch(new URL('track/' + track.ident + '/info', this.audiobookURL).toString())
+        const init1 = {
+            'method': 'POST',
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': JSON.stringify({
+                'mandant': 'WBH',
+                'hoerernummer': this.hoerernummer,
+                'titelnummer': this.titelnummer,
+                'ident': track.ident
+            })
+        };
+        fetch(new URL('info/track', this.audiobookURL).toString(), init1)
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -163,44 +191,57 @@ export class Audioplayer {
                 }
             })
             .catch(reason => {
-                this.console('play,fetch,catch: ' + reason);
+                if (this.DEBUG) { console.log('play,fetch,catch: ' + reason); }
             });
         const trackId = track.playlistElementId;
         document.querySelector('#' + trackId).classList.add('currently-playing');
-        const url = new URL('track/' + track.ident, this.audiobookURL);
-        this.console('selectTrack: audio.src=' + url.toString());
-        this.audio.src = url.toString();
-        this.console('selectTrack: audio.load()');
-        this.audio.load();
-        if (currentSecs > 0) {
-            this.audio.currentTime = parseFloat(currentSecs);
-        }
-        this.currentTrack = trackIndex;
+        //const url = new URL('track/' + track.ident, this.audiobookURL);
+        const url = new URL('stream/track', this.audiobookURL);
+        fetch (url.toString(), init1)
+            .then(response => {
+                if (this.DEBUG) { console.log('selectTrack: POST audio.src=' + url.toString()); }
+                return response.blob();
+            })
+            .then(blob => {
+                //this.audio.srcObject = blob;
+                this.audio.src = URL.createObjectURL(blob);
+                if (this.DEBUG) { console.log('this.audio.src=' + this.audio.src); }
+                if (this.DEBUG) { console.log('selectTrack: audio.load()'); }
+                this.audio.load();
+                if (currentSecs > 0) {
+                    this.audio.currentTime = parseFloat(currentSecs);
+                }
+                this.currentTrack = trackIndex;
+                this.play();
+            })
     }
 
     play() {
+        if (this.DEBUG) { console.log('play()'); }
         const playPromise = this.audio.play();
         if (undefined !== playPromise) {
             playPromise.then(param => {
                 this.playButton.innerText = 'Pause';
-                this.console('play(): promise ended, param=' + param);
+                if (this.DEBUG) { console.log('play(): promise ended, param=' + param); }
             }).catch(error => {
-                this.console('play(): audio.play() was prevented: ' + error);
+                if (this.DEBUG) { console.log('play(): audio.play() was prevented: ' + error); }
             });
         } else {
-            this.console('play(): No promise');
+            if (this.DEBUG) { console.log('play(): No promise'); }
         }
     }
 
     pause() {
+        if (this.DEBUG) { console.log('pause()'); }
         this.audio.pause();
         this.playButton.innerText = 'Play';
     }
 
     playPrevious() {
+        if (this.DEBUG) { console.log('playPrevious()'); }
+        this.pause();
         if (this.currentTrack > 0) {
             this.selectTrack(this.currentTrack - 1, 0);
-            this.play();
         }
     }
 
@@ -213,9 +254,10 @@ export class Audioplayer {
     }
 
     playNext() {
+        if (this.DEBUG) { console.log('playNext()'); }
+        this.pause();
         if (this.currentTrack < this.playlist.count() - 1) {
             this.selectTrack(this.currentTrack + 1, 0);
-            this.play();
         }
     }
 
@@ -245,12 +287,6 @@ export class Audioplayer {
         if (this.playButton) {
             this.playButton.removeEventListener('click', this.playPauseFunction);
             this.playButton.innerText = 'Play';
-        }
-    }
-
-    console(str) {
-        if (this.DEBUG) {
-            this.console(str);
         }
     }
 

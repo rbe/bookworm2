@@ -14,6 +14,7 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.UUID;
 
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -48,8 +49,7 @@ final class Mp3RepositoryServiceImpl implements Mp3RepositoryService {
         final InputStream trackAsStream = audiobookRepository.track(hoerernummer, titelnummer, ident);
         final Path tempMp3File = temporaryDirectory
                 .resolve(hoerernummer)
-                .resolve(String.format("%sKapitel", titelnummer))
-                .resolve(String.format("%s.trackInfo", ident));
+                .resolve(String.format("%sKapitel-%s-%s-trackinfo", titelnummer, ident, UUID.randomUUID()));
         try {
             Files.createDirectories(tempMp3File.getParent());
         } catch (IOException e) {
@@ -95,8 +95,7 @@ final class Mp3RepositoryServiceImpl implements Mp3RepositoryService {
         final InputStream trackAsStream = audiobookRepository.track(hoerernummer, titelnummer, ident);
         final Path tempMp3File = temporaryDirectory
                 .resolve(hoerernummer)
-                .resolve(String.format("%sKapitel", titelnummer))
-                .resolve(String.format("%s.track", ident));
+                .resolve(String.format("%sKapitel-%s-%s-track", titelnummer, ident, UUID.randomUUID()));;
         try {
             Files.createDirectories(tempMp3File.getParent());
         } catch (IOException e) {
@@ -109,7 +108,8 @@ final class Mp3RepositoryServiceImpl implements Mp3RepositoryService {
         }
         final Mp3File mp3file;
         byte[] watermarkedMp3 = null;
-        final Path watermarkedMp3File = tempMp3File.getParent()
+        final Path watermarkedMp3File = tempMp3File
+                .getParent()
                 .resolve(tempMp3File.getFileName() + ".watermark");
         try {
             mp3file = new Mp3File(tempMp3File);

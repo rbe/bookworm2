@@ -21,23 +21,23 @@ import {Audioplayer} from "./audioplayer.js";
         'phraseSelected'
     ];
     DomEventBus.setup(events);
-    const audioplayer = new Audioplayer();
     document.querySelector('.playlistContainer .loading').style.display = 'none';
     document.querySelector('.playlistContainer .notfound').style.display = 'none';
     document.querySelector('.audioplayer .loading').style.display = 'none';
     document.querySelector('.audioplayer .notfound').style.display = 'none';
     document.querySelector('.audioplayer .panel').style.display = 'none';
+    const audioplayer = new Audioplayer();
     document.querySelector('#anhoerenButton')
         .addEventListener('click', event => {
-            audioplayer.reset();
-            const hoerernummer = document.querySelector('#hoerernummer').value;
-            const titelnummer = document.querySelector('#titelnummer').value;
-            const b = window.location;
-            const url = new URL(b.protocol + '//' + b.host + '/stream/' + hoerernummer + '/' + titelnummer + '/');
             document.querySelector('.playlistContainer .loading').style.display = 'block';
             document.querySelector('.audioplayer .panel').style.display = 'none';
             document.querySelector('.audioplayer .loading').style.display = 'block';
-            audioplayer.init(url, () => {
+            audioplayer.reset();
+            const b = window.location;
+            const url = new URL(b.protocol + '//' + b.host + '/');
+            const hoerernummer = document.querySelector('#hoerernummer').value;
+            const titelnummer = document.querySelector('#titelnummer').value;
+            audioplayer.init(url, hoerernummer, titelnummer, () => {
                 document.querySelector('.playlistContainer .loading').style.display = 'none';
                 document.querySelector('.playlistContainer .notfound').style.display = 'none';
                 document.querySelector('.audioplayer .loading').style.display = 'none';

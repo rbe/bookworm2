@@ -14,7 +14,7 @@ export class Time {
         const sec = time % 60;
         let sec_min = "";
         if (hr > 0) {
-            sec_min += "" + hrs + ":" + (min < 10 ? "0" : "");
+            sec_min += "" + hr + ":" + (min < 10 ? "0" : "");
         }
         sec_min += "" + min + ":" + (sec < 10 ? "0" : "");
         sec_min += "" + sec;

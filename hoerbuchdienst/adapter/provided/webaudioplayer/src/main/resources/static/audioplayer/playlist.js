@@ -10,10 +10,12 @@ import {FetchErrorHandler} from "./lib/fetchErrorHandler.js";
 
 export class Playlist {
 
-    constructor(elementSelectors, audioplayer, audiobookURL, onReadyCallback) {
+    constructor(elementSelectors, audioplayer, audiobookURL, hoerernummer, titelnummer, onReadyCallback) {
         this.elementSelectors = elementSelectors;
         this.audioplayer = audioplayer;
         this.audiobookURL = audiobookURL;
+        this.hoerernummer = hoerernummer;
+        this.titelnummer = titelnummer;
         this.playlist = [];
         this.currentTrackIndex = -1;
         this.currentTrackTitle = document.querySelector(this.elementSelectors.currentTrackTitleSelector);
@@ -23,7 +25,18 @@ export class Playlist {
     }
 
     updatePlaylist(onReadyCallback) {
-        fetch(new URL('playlist', this.audiobookURL).toString())
+        fetch(new URL('info/playlist', this.audiobookURL).toString(),
+            {
+                'method': 'POST',
+                'headers': {
+                    'Content-Type': 'application/json'
+                },
+                'body': JSON.stringify({
+                    'mandant': 'WBH',
+                    'hoerernummer': this.hoerernummer,
+                    'titelnummer': this.titelnummer
+                })
+            })
             .then(response => {
                 if (response.ok) {
                     return response.json();
