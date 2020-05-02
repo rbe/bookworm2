@@ -51,10 +51,22 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook</artifactId>
             <version>LocalBuild</version>
         </dependency>
+        <!-- Mikrokosmos -->
         <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage</artifactId>
-            <version>LocalBuild</version>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.objectstorage.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.objectstorage.impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.elasticsearch.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.elasticsearch.impl</artifactId>
         </dependency>
         <!-- Swagger -->
         <dependency>

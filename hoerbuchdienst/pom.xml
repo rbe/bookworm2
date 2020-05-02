@@ -19,6 +19,7 @@
         <maven.compiler.source>${jdk.version}</maven.compiler.source>
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
+        <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <micronaut.version>1.3.4</micronaut.version>
         <!--<elasticsearch.version>7.4.1</elasticsearch.version>-->
         <!--<lombok.version>1.18.4</lombok.version>-->
@@ -37,6 +38,28 @@
     </repositories>
     <dependencyManagement>
         <dependencies>
+            <!-- Mikrokosmos -->
+            <dependency>
+                <groupId>aoc.mikrokosmos</groupId>
+                <artifactId>aoc.mikrokosmos.objectstorage.api</artifactId>
+                <version>${mikrokosmos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>aoc.mikrokosmos</groupId>
+                <artifactId>aoc.mikrokosmos.objectstorage.impl</artifactId>
+                <version>${mikrokosmos.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>aoc.mikrokosmos</groupId>
+                <artifactId>aoc.mikrokosmos.elasticsearch.api</artifactId>
+                <version>LocalBuild</version>
+            </dependency>
+            <dependency>
+                <groupId>aoc.mikrokosmos</groupId>
+                <artifactId>aoc.mikrokosmos.elasticsearch.impl</artifactId>
+                <version>LocalBuild</version>
+            </dependency>
+            <!-- Micronaut -->
             <dependency>
                 <groupId>io.micronaut</groupId>
                 <artifactId>micronaut-bom</artifactId>

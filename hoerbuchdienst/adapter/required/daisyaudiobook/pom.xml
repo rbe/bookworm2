@@ -21,34 +21,26 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.domain.required</artifactId>
             <version>LocalBuild</version>
         </dependency>
+        <!-- Mikrokosmos -->
         <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage</artifactId>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.objectstorage.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.objectstorage.impl</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.elasticsearch.api</artifactId>
             <version>LocalBuild</version>
         </dependency>
-        <!-- Elasticsearch -->
         <dependency>
-            <groupId>io.micronaut.configuration</groupId>
-            <artifactId>micronaut-elasticsearch</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.elasticsearch.client</groupId>
-            <artifactId>elasticsearch-rest-high-level-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.logging.log4j</groupId>
-            <artifactId>log4j-to-slf4j</artifactId>
-            <version>2.13.1</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>1.7.30</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>1.7.30</version>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.elasticsearch.impl</artifactId>
+            <version>LocalBuild</version>
+            <scope>test</scope>
         </dependency>
         <!-- Jackson -->
         <dependency>
