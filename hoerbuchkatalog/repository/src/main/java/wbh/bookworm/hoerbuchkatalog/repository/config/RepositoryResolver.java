@@ -6,17 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.config;
 
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.CdLieferungRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.CdLieferungRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
 
 @Component
 public final class RepositoryResolver {
@@ -53,8 +52,10 @@ public final class RepositoryResolver {
         return getBean(CdLieferungRepository.class);
     }
 
+    /*
     public DownloadsRepository downloadsRepository() {
         return getBean(DownloadsRepository.class);
     }
+    */
 
 }
