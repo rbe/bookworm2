@@ -12,9 +12,9 @@ import javax.xml.bind.JAXBElement;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.smil10.Audio;
@@ -24,11 +24,12 @@ import org.w3c.smil10.Ref;
 import org.w3c.smil10.Seq;
 import org.w3c.smil10.Smil;
 
-import wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage.ObjectStorageException;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audioclip;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiotrack;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audioclip;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiotrack;
+
+import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 @Singleton
 @CacheConfig("audiobook")
@@ -47,8 +48,8 @@ class AudiobookMapperImpl implements AudiobookMapper {
     }
 
     @Override
-    @Cacheable
     public Audiobook audiobook(final String titelnummer) {
+        Objects.requireNonNull(titelnummer);
         Audiobook audiobook;
         LOGGER.debug("Creating audiobook '{}'", titelnummer);
         try {
@@ -62,14 +63,15 @@ class AudiobookMapperImpl implements AudiobookMapper {
     }
 
     Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
+        Objects.requireNonNull(titelnummer);
+        Objects.requireNonNull(audiobookStreamResolver);
         final Audiobook audiobook = new Audiobook();
         audiobook.setTitelnummer(titelnummer);
         try {
             fromNcc(audiobook, audiobookStreamResolver.nccHtmlStream(titelnummer));
             final List<Ref> refs = fromMasterSmil(audiobook, audiobookStreamResolver.masterSmilStream(titelnummer));
             for (final Ref ref : refs) {
-                final int hashtag = ref.getSrc().indexOf('#');
-                final String filename = ref.getSrc().substring(0, hashtag);
+                final String filename = filenameFromSrc(ref);
                 final InputStream refStream = audiobookStreamResolver.trackAsStream(titelnummer, filename);
                 audiobook.addAudiotrack(fromRef(ref, refStream));
             }
@@ -80,6 +82,12 @@ class AudiobookMapperImpl implements AudiobookMapper {
             LOGGER.error("", e);
             return null;
         }
+    }
+
+    String filenameFromSrc(final Ref ref) {
+        final String src = ref.getSrc();
+        final int hashtag = src.indexOf('#');
+        return src.substring(0, -1 < hashtag ? hashtag : src.length());
     }
 
     private void fromNcc(final Audiobook audiobook, final InputStream nccHtmlStream) {

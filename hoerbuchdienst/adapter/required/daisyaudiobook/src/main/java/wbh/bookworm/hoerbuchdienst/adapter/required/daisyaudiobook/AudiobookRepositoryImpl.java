@@ -10,13 +10,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.InputStream;
 
+import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 
 @Singleton
 class AudiobookRepositoryImpl implements AudiobookRepository {
@@ -39,12 +40,13 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public String[] findAll(String[] keywords) {
+    public String[] findAll(final String[] keywords) {
         return audiobookIndex.findAll(keywords);
     }
 
     @Override
-    public Audiobook find(String titelnummer) {
+    @Cacheable
+    public Audiobook find(final String titelnummer) {
         return audiobookMapper.audiobook(titelnummer);
     }
 

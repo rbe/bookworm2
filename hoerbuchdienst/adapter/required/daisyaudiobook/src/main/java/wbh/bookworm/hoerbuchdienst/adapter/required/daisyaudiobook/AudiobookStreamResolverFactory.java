@@ -17,13 +17,12 @@ import io.micronaut.context.annotation.Parameter;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.inject.qualifiers.Qualifiers;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketObjectStorage;
+import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
 
 @Factory
 class AudiobookStreamResolverFactory {
 
-    @Inject
-    private BeanContext beanContext;
+    private final BeanContext beanContext;
 
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_REPOSITORY_TYPE)
     private String repositoryType;
@@ -33,6 +32,11 @@ class AudiobookStreamResolverFactory {
 
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_REPOSITORY_LOCALDISK_URI)
     private Path localdiskUri;
+
+    @Inject
+    AudiobookStreamResolverFactory(final BeanContext beanContext) {
+        this.beanContext = beanContext;
+    }
 
     @Bean
     AudiobookStreamResolver audiobookStreamResolver() {

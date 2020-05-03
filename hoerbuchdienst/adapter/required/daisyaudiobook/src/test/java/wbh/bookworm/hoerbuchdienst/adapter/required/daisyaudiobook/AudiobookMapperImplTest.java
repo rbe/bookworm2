@@ -14,9 +14,12 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.smil10.Ref;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookMapper;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @MicronautTest
 class AudiobookMapperImplTest {
@@ -35,14 +38,14 @@ class AudiobookMapperImplTest {
     void shouldReadDaisyAudiobookByAudiobookMapper() {
         final Audiobook audiobook = audiobookMapper.audiobook(TITLENUMMER);
         Assertions.assertNotNull(audiobook);
-        Assertions.assertEquals("Halt die Wolken fest", audiobook.getTitle());
-        Assertions.assertEquals("Stiller, Dorothea", audiobook.getAuthor());
-        Assertions.assertEquals("WBH", audiobook.getPublisher());
-        Assertions.assertEquals("2020", audiobook.getDate());
-        Assertions.assertEquals("2018", audiobook.getSourceDate());
-        Assertions.assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
-        Assertions.assertEquals("Seifert, Jutta", audiobook.getNarrator());
-        Assertions.assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
+        assertEquals("Halt die Wolken fest", audiobook.getTitle());
+        assertEquals("Stiller, Dorothea", audiobook.getAuthor());
+        assertEquals("WBH", audiobook.getPublisher());
+        assertEquals("2020", audiobook.getDate());
+        assertEquals("2018", audiobook.getSourceDate());
+        assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
+        assertEquals("Seifert, Jutta", audiobook.getNarrator());
+        assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
         LOGGER.info("{}", audiobook);
     }
 
@@ -53,14 +56,14 @@ class AudiobookMapperImplTest {
         final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(audiobookStreamResolver);
         final Audiobook audiobook = audiobookMapper.createAudiobook(TITLENUMMER, audiobookStreamResolver);
         Assertions.assertNotNull(audiobook);
-        Assertions.assertEquals("Halt die Wolken fest", audiobook.getTitle());
-        Assertions.assertEquals("Stiller, Dorothea", audiobook.getAuthor());
-        Assertions.assertEquals("WBH", audiobook.getPublisher());
-        Assertions.assertEquals("2020", audiobook.getDate());
-        Assertions.assertEquals("2018", audiobook.getSourceDate());
-        Assertions.assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
-        Assertions.assertEquals("Seifert, Jutta", audiobook.getNarrator());
-        Assertions.assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
+        assertEquals("Halt die Wolken fest", audiobook.getTitle());
+        assertEquals("Stiller, Dorothea", audiobook.getAuthor());
+        assertEquals("WBH", audiobook.getPublisher());
+        assertEquals("2020", audiobook.getDate());
+        assertEquals("2018", audiobook.getSourceDate());
+        assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
+        assertEquals("Seifert, Jutta", audiobook.getNarrator());
+        assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
         LOGGER.info("{}", audiobook);
     }
 
@@ -71,15 +74,31 @@ class AudiobookMapperImplTest {
         final AudiobookMapperImpl audiobookMapper = new AudiobookMapperImpl(audiobookStreamResolver);
         final Audiobook audiobook = audiobookMapper.createAudiobook(TITLENUMMER, audiobookStreamResolver);
         Assertions.assertNotNull(audiobook);
-        Assertions.assertEquals("Halt die Wolken fest", audiobook.getTitle());
-        Assertions.assertEquals("Stiller, Dorothea", audiobook.getAuthor());
-        Assertions.assertEquals("WBH", audiobook.getPublisher());
-        Assertions.assertEquals("2020", audiobook.getDate());
-        Assertions.assertEquals("2018", audiobook.getSourceDate());
-        Assertions.assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
-        Assertions.assertEquals("Seifert, Jutta", audiobook.getNarrator());
-        Assertions.assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
+        assertEquals("Halt die Wolken fest", audiobook.getTitle());
+        assertEquals("Stiller, Dorothea", audiobook.getAuthor());
+        assertEquals("WBH", audiobook.getPublisher());
+        assertEquals("2020", audiobook.getDate());
+        assertEquals("2018", audiobook.getSourceDate());
+        assertEquals("Love Birds Stuttgart", audiobook.getSourcePublisher());
+        assertEquals("Seifert, Jutta", audiobook.getNarrator());
+        assertEquals(audiobook.getTocItems(), audiobook.getAudiotracks().size());
         LOGGER.info("{}", audiobook);
+    }
+
+    @Test
+    void shouldGetFilenameWithHashtag() {
+        final Ref ref = new Ref();
+        ref.setSrc("nlzt0002.smil#rxtx_1234");
+        final String src = ((AudiobookMapperImpl) audiobookMapper).filenameFromSrc(ref);
+        assertEquals("nlzt0002.smil", src);
+    }
+
+    @Test
+    void shouldGetFilenameWithoutHashtag() {
+        final Ref ref = new Ref();
+        ref.setSrc("nlzt0002.smil");
+        final String src = ((AudiobookMapperImpl) audiobookMapper).filenameFromSrc(ref);
+        assertEquals("nlzt0002.smil", src);
     }
 
 }

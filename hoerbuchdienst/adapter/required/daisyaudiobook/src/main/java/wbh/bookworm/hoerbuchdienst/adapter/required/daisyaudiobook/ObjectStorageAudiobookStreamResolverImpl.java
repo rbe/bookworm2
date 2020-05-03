@@ -14,8 +14,8 @@ import java.util.stream.Collectors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.adapter.required.objectstorage.ObjectStorageException;
-import wbh.bookworm.hoerbuchdienst.domain.required.objectstorage.BucketObjectStorage;
+import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
+import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
