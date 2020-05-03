@@ -20,12 +20,12 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntry;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 
 @Singleton
-class KatalogServiceImpl implements KatalogService {
+public class KatalogServiceImpl implements KatalogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KatalogServiceImpl.class);
 
@@ -36,9 +36,9 @@ class KatalogServiceImpl implements KatalogService {
     private final ApplicationEventPublisher applicationEventPublisher;
 
     @Inject
-    KatalogServiceImpl(final AudiobookIndex audiobookIndex,
-                       final AudiobookRepository audiobookRepository,
-                       final ApplicationEventPublisher applicationEventPublisher) {
+    public KatalogServiceImpl(final AudiobookIndex audiobookIndex,
+                              final AudiobookRepository audiobookRepository,
+                              final ApplicationEventPublisher applicationEventPublisher) {
         this.audiobookIndex = audiobookIndex;
         this.audiobookRepository = audiobookRepository;
         this.applicationEventPublisher = applicationEventPublisher;

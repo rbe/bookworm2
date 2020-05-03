@@ -1,33 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst.domain</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.domain.impl</artifactId>
-    <name>wbh-online.de Hörbuchdienst Domain Impl</name>
+    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.watermark</artifactId>
+    <name>wbh-online.de Hörbuchdienst Required Adapter Watermark</name>
     <packaging>jar</packaging>
     <dependencies>
         <!-- Hörbuchdienst -->
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
-            <version>LocalBuild</version>
-        </dependency>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchdienst.domain.required</artifactId>
             <version>LocalBuild</version>
         </dependency>
-        <!-- MapStruct -->
+        <!-- MP3 -->
+        <!-- Siehe thirdparty/mp3agic -->
         <dependency>
-            <groupId>org.mapstruct</groupId>
-            <artifactId>mapstruct</artifactId>
-            <version>${mapstruct.version}</version>
+            <groupId>com.mpatric</groupId>
+            <artifactId>mp3agic</artifactId>
+            <version>0.9.1</version>
+            <!--<version>0.9.2-SNAPSHOT</version>-->
         </dependency>
         <!-- Micronaut -->
         <dependency>
@@ -36,4 +33,3 @@
         </dependency>
     </dependencies>
 </project>
-

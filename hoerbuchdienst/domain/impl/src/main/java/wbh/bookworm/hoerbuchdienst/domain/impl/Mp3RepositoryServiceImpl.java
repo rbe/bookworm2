@@ -16,86 +16,78 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.UUID;
 
-import com.mpatric.mp3agic.InvalidDataException;
-import com.mpatric.mp3agic.Mp3File;
-import com.mpatric.mp3agic.NotSupportedException;
-import com.mpatric.mp3agic.UnsupportedTagException;
 import io.micronaut.context.annotation.Property;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.Mp3RepositoryException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.Mp3RepositoryService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.TrackDTO;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.watermark.TrackInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 
 @Singleton
 final class Mp3RepositoryServiceImpl implements Mp3RepositoryService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Mp3RepositoryServiceImpl.class);
 
+    private static final String URL_PREFIX = "https://wbh-online.de/ausleihe-anfragen";
+
     private final AudiobookRepository audiobookRepository;
+
+    private final Watermarker watermarker;
 
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
 
     @Inject
-    Mp3RepositoryServiceImpl(final AudiobookRepository audiobookRepository) {
+    Mp3RepositoryServiceImpl(final AudiobookRepository audiobookRepository,
+                             final Watermarker watermarker) {
         this.audiobookRepository = audiobookRepository;
+        this.watermarker = watermarker;
     }
 
     @Override
     public TrackDTO trackInfo(final String hoerernummer, final String titelnummer, final String ident) {
-        final InputStream trackAsStream = audiobookRepository.track(hoerernummer, titelnummer, ident);
-        final Path tempMp3File = temporaryDirectory
-                .resolve(hoerernummer)
-                .resolve(String.format("%sKapitel-%s-%s-trackinfo", titelnummer, ident, UUID.randomUUID()));
-        try {
-            Files.createDirectories(tempMp3File.getParent());
-        } catch (IOException e) {
-            throw new Mp3RepositoryException(e);
-        }
-        try (final OutputStream tempMp3Stream = Files.newOutputStream(tempMp3File, StandardOpenOption.CREATE)) {
-            trackAsStream.transferTo(tempMp3Stream);
-        } catch (IOException e) {
-            throw new Mp3RepositoryException(e);
-        }
-        final TrackDTO trackDTO;
-        try {
-            final Mp3File mp3file = new Mp3File(tempMp3File);
-            addWatermark(hoerernummer, titelnummer, mp3file);
-            trackDTO = new TrackDTO(titelnummer, ident,
-                    mp3file.getId3v1Tag().getComment(),
-                    mp3file.getId3v1Tag().getArtist(),
-                    mp3file.getId3v1Tag().getYear(),
-                    mp3file.getId3v1Tag().getVersion(),
-                    mp3file.getId3v1Tag().getGenre(),
-                    mp3file.getId3v1Tag().getGenreDescription(),
-                    mp3file.getId3v2Tag().getComposer(),
-                    mp3file.getId3v2Tag().getCopyright(),
-                    mp3file.getId3v2Tag().getEncoder(),
-                    mp3file.getId3v2Tag().getUrl(),
-                    mp3file.getId3v2Tag().getWmpRating(),
-                    mp3file.getId3v2Tag().getBPM(),
-                    mp3file.getId3v2Tag().getLength(),
-                    mp3file.getId3v2Tag().getDataLength());
-        } catch (IOException | UnsupportedTagException | InvalidDataException e) {
-            throw new Mp3RepositoryException(e);
-        }
-        try {
-            Files.delete(tempMp3File);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
-        return trackDTO;
+        final Path tempMp3File = tempCopy(hoerernummer, titelnummer, ident, "trackinfo");
+        final TrackInfoDTO trackInfoDTO = watermarker.trackInfo(makeWatermark(hoerernummer, titelnummer),
+                URL_PREFIX, tempMp3File);
+        tryDeleteFile(tempMp3File);
+        return MyMapper.INSTANCE.convert(trackInfoDTO, titelnummer, ident);
     }
 
     @Override
     public byte[] track(final String hoerernummer, final String titelnummer, final String ident) {
+        final Path tempMp3File = tempCopy(hoerernummer, titelnummer, ident, "track");
+        final Path watermarkedMp3File;
+        final byte[] watermarkedMp3Track;
+        try {
+            watermarkedMp3File = watermarker.addWatermark(makeWatermark(hoerernummer, titelnummer),
+                    URL_PREFIX, tempMp3File);
+            watermarkedMp3Track = Files.readAllBytes(watermarkedMp3File);
+        } catch (IOException e) {
+            throw new Mp3RepositoryException(e);
+        }
+        tryDeleteFile(tempMp3File);
+        tryDeleteFile(watermarkedMp3File);
+        return watermarkedMp3Track;
+    }
+
+    private String makeWatermark(final String hoerernummer, final String titelnummer) {
+        return String.format("WBH-%s-%s", hoerernummer, titelnummer);
+    }
+
+    private Path tempCopy(final String hoerernummer,
+                          final String titelnummer, final String ident,
+                          final String temp) {
         final InputStream trackAsStream = audiobookRepository.track(hoerernummer, titelnummer, ident);
         final Path tempMp3File = temporaryDirectory
                 .resolve(hoerernummer)
-                .resolve(String.format("%sKapitel-%s-%s-track", titelnummer, ident, UUID.randomUUID()));;
+                .resolve(String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temp));
         try {
             Files.createDirectories(tempMp3File.getParent());
         } catch (IOException e) {
@@ -106,37 +98,26 @@ final class Mp3RepositoryServiceImpl implements Mp3RepositoryService {
         } catch (IOException e) {
             throw new Mp3RepositoryException(e);
         }
-        final Mp3File mp3file;
-        byte[] watermarkedMp3 = null;
-        final Path watermarkedMp3File = tempMp3File
-                .getParent()
-                .resolve(tempMp3File.getFileName() + ".watermark");
-        try {
-            mp3file = new Mp3File(tempMp3File);
-            addWatermark(hoerernummer, titelnummer, mp3file);
-            mp3file.save(watermarkedMp3File.toAbsolutePath().toString());
-            watermarkedMp3 = Files.readAllBytes(watermarkedMp3File);
-        } catch (IOException | NotSupportedException | UnsupportedTagException | InvalidDataException e) {
-            throw new Mp3RepositoryException(e);
-        }
+        return tempMp3File;
+    }
+
+    private void tryDeleteFile(final Path tempMp3File) {
         try {
             Files.delete(tempMp3File);
         } catch (IOException e) {
             LOGGER.error("", e);
         }
-        try {
-            Files.delete(watermarkedMp3File);
-        } catch (IOException e) {
-            LOGGER.error("", e);
-        }
-        return watermarkedMp3;
     }
 
-    private void addWatermark(final String hoerernummer, final String titelnummer, final Mp3File mp3file) {
-        final String watermark = String.format("WBH-%s-%s", hoerernummer, titelnummer);
-        mp3file.getId3v1Tag().setComment(watermark); // max 30 Zeichen
-        mp3file.getId3v2Tag().setCopyright(watermark); // max 30 Zeichen
-        mp3file.getId3v2Tag().setUrl(String.format("https://wbh-online.de/ausleihe-anfragen/%s", watermark));
+    @Mapper
+    public interface MyMapper {
+
+        MyMapper INSTANCE = Mappers.getMapper(MyMapper.class);
+
+        @Mapping(source = "titelnummer", target = "titelnummer")
+        @Mapping(source = "ident", target = "ident")
+        TrackDTO convert(TrackInfoDTO trackInfoDTO, String titelnummer, String ident);
+
     }
 
 }

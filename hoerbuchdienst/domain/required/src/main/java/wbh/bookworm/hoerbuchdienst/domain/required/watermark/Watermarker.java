@@ -6,12 +6,12 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.required.watermark;
 
-import java.io.File;
+import java.nio.file.Path;
 
 public interface Watermarker {
 
-    TrackInfoDTO trackInfo(String watermark, String urlPrefix, File file);
+    TrackInfoDTO trackInfo(String watermark, String urlPrefix, Path mp3);
 
-    File addWatermark(final String watermark, String urlPrefix, File file);
+    Path addWatermark(final String watermark, String urlPrefix, Path mp3);
 
 }

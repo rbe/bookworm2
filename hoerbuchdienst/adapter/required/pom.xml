@@ -13,6 +13,6 @@
     <packaging>pom</packaging>
     <modules>
         <module>daisyaudiobook</module>
-        <module>objectstorage</module>
+        <module>watermark</module>
     </modules>
 </project>
