@@ -288,6 +288,10 @@ export class Audioplayer {
             this.playButton.removeEventListener('click', this.playPauseFunction);
             this.playButton.innerText = 'Play';
         }
+        const trackInfoText = document.querySelector(this.elementSelectors.trackInfoTextSelector);
+        if (trackInfoText) {
+            trackInfoText.innerHTML = '&nbsp;';
+        }
     }
 
 }
