@@ -38,10 +38,3 @@ objectstorage:
 
 elasticsearch:
   httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
-
-logger:
-  levels:
-    ROOT: INFO
-    wbh: DEBUG
-    io.micronaut.context.condition: TRACE
-    io.micronaut: INFO
