@@ -6,18 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -25,6 +13,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
+
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Component
 @RequestScope

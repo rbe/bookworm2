@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain.katalog;
+package wbh.bookworm.shared.domain;
 
 /**
  * Value Object

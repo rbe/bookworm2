@@ -6,10 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.mikrokosmos.ddd.model.DomainValueObject;
-
 import java.util.Collections;
 import java.util.List;
+
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 /**
  * Value Object

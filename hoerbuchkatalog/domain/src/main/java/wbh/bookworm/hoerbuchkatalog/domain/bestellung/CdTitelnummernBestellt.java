@@ -6,10 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
 import java.util.Set;
+
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 /**
  * Event

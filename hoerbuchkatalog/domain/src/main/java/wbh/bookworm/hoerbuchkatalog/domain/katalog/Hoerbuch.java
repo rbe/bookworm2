@@ -6,15 +6,19 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.mikrokosmos.ddd.model.DomainEntity;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.Objects;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.model.DomainEntity;
 
 /**
  * Entity

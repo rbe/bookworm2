@@ -6,19 +6,19 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.mikrokosmos.ddd.model.DomainValueObject;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Objects;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 public final class BlistaDownload extends DomainValueObject {
 

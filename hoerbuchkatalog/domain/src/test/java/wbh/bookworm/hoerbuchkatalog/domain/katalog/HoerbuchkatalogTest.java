@@ -6,12 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
+import java.time.LocalDate;
+import java.util.TreeSet;
+
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.time.LocalDate;
-import java.util.TreeSet;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;

@@ -6,13 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +19,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import wbh.bookworm.shared.domain.AghNummer;
 
 @Component
 class AghNummernMapper {

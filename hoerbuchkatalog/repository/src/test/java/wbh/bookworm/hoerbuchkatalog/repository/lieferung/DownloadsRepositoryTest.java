@@ -6,9 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -16,6 +13,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {LieferungAppConfig.class})
 @ExtendWith(SpringExtension.class)

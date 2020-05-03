@@ -6,20 +6,18 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.nutzerdaten;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.RequestScope;
+
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 import wbh.bookworm.hoerbuchkatalog.ui.katalog.HoererSession;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.RequestScope;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 // TODO ELValueCache für Hoerer und CdLieferung benutzen
 @Component

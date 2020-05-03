@@ -4,12 +4,12 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain.katalog;
-
-import aoc.mikrokosmos.ddd.model.DomainId;
+package wbh.bookworm.shared.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import aoc.mikrokosmos.ddd.model.DomainId;
 
 /**
  * DomainId / Value Object

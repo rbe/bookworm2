@@ -6,13 +6,13 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import java.io.Serializable;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.io.Serializable;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Component
 @RequestScope

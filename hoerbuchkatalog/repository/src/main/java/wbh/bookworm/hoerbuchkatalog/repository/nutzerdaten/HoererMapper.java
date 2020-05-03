@@ -6,28 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
-import wbh.bookworm.hoerbuchkatalog.repository.as400.Datenformat;
-
-import aoc.mikrokosmos.io.dataformat.CsvFormat;
-import aoc.mikrokosmos.io.dataformat.CsvParser;
-import aoc.mikrokosmos.io.dataformat.Executor;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Component;
-
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -44,6 +22,28 @@ import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
+import org.springframework.context.annotation.Lazy;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Component;
+
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
+import wbh.bookworm.hoerbuchkatalog.repository.as400.Datenformat;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.io.dataformat.CsvFormat;
+import aoc.mikrokosmos.io.dataformat.CsvParser;
+import aoc.mikrokosmos.io.dataformat.Executor;
 
 import static java.util.function.Predicate.not;
 

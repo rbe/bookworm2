@@ -6,16 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechAufDieMerklisteGesetzt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechVonDerMerklisteEntfernt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
-
-import java.nio.file.Path;
-import java.util.Optional;
 
 // TODO @DomainRepositoryComponent
 public class MerklisteRepository extends JsonDomainRepository<Merkliste, MerklisteId> {

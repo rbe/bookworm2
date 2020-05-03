@@ -6,8 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
+import java.util.concurrent.ExecutorService;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -18,9 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Path;
-import java.util.concurrent.ExecutorService;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {NutzerdatenAppConfig.class})
 @ExtendWith(SpringExtension.class)

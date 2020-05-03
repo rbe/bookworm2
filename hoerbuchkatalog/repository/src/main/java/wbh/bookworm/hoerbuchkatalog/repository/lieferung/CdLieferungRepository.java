@@ -6,21 +6,21 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
-
-import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
-import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
+import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+import wbh.bookworm.shared.domain.Hoerernummer;
+
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 // TODO Daten aus dem Mapper hier speichern
 // TODO Umbenennen: (Hoerbuch)ArchivRepository

@@ -5,10 +5,13 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
+        <artifactId>wbh.bookworm</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.webaudioplayer</artifactId>
-    <name>wbh-online.de Hörbuchdienst Web Audio Player</name>
-    <packaging>jar</packaging>
+    <artifactId>wbh.bookworm.shared</artifactId>
+    <name>wbh-online.de Shared</name>
+    <packaging>pom</packaging>
+    <modules>
+        <module>domain</module>
+    </modules>
 </project>

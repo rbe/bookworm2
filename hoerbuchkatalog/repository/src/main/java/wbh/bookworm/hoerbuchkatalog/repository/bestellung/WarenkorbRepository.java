@@ -6,6 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
+import java.nio.file.Path;
+import java.util.Optional;
+
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdAusDemWarenkorbEntfernt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdInDenWarenkorbGelegt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
@@ -15,12 +18,9 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbGeleert;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
-
-import java.nio.file.Path;
-import java.util.Optional;
 
 // TODO @DomainRepositoryComponent
 public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, WarenkorbId> {

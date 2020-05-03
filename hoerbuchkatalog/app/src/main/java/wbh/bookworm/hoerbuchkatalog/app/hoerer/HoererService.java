@@ -6,16 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.hoerer;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Service
 public final class HoererService {

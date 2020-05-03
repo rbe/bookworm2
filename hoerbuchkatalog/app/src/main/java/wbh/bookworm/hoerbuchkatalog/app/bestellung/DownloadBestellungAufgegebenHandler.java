@@ -6,25 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailTemplateBuilder;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.Auftragsquittung;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-
-import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
-import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -38,6 +19,25 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
+import wbh.bookworm.hoerbuchkatalog.app.email.EmailTemplateBuilder;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.Auftragsquittung;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
 
 @Component
 class DownloadBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufgegeben> {

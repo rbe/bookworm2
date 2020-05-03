@@ -6,11 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
-import aoc.mikrokosmos.ddd.model.DomainAggregate;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -18,9 +16,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Objects;
-import java.util.Set;
-import java.util.TreeSet;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.model.DomainAggregate;
 
 public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
 

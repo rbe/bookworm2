@@ -6,13 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,7 +14,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import java.util.Optional;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Component
 @RequestScope

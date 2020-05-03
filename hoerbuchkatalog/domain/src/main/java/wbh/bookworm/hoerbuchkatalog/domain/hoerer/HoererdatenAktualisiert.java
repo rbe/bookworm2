@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
+import wbh.bookworm.shared.domain.Hoerernummer;
+
 public final class HoererdatenAktualisiert extends HoererdatenEvent {
 
     private static final long serialVersionUID = -1L;

@@ -6,9 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-
 import java.util.Objects;
+
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 public abstract class HoerbuchkatalogHoererEvent extends HoerbuchkatalogEvent {
 

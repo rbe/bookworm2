@@ -6,19 +6,19 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 // TODO Peristenz für Warenkörbe nicht notwendig -> WK nur pro Session gültig, Session persistieren
 @Service

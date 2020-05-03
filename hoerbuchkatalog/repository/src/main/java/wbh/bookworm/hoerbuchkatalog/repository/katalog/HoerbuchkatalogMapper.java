@@ -6,17 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.mikrokosmos.io.dataformat.ColumnPositionLineFileParser;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Component;
-
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -24,6 +13,17 @@ import java.nio.file.Path;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.io.dataformat.ColumnPositionLineFileParser;
 
 import static java.util.function.Predicate.not;
 

@@ -6,23 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsBook;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerke;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-
-import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
@@ -31,6 +14,23 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsBook;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerke;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 @DomainRepositoryComponent
 public class DownloadsRepository /* TODO implements DomainRepository<> */ {

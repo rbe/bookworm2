@@ -6,17 +6,15 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
+import java.util.Set;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Service
 public class MerklisteService {

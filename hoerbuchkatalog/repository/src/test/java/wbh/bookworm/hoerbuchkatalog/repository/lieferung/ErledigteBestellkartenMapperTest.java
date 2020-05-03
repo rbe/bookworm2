@@ -6,8 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+import java.util.List;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,7 +16,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.List;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {LieferungAppConfig.class})
 @ExtendWith(SpringExtension.class)

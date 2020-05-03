@@ -6,11 +6,11 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
+import java.util.Objects;
+
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainAggregateWriteEvent;
-
-import java.util.Objects;
 
 public class WarenkorbGeleert extends DomainAggregateWriteEvent<Warenkorb, WarenkorbId> {
 

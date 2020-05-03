@@ -6,6 +6,23 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionBindingEvent;
+import javax.servlet.http.HttpSessionBindingListener;
+import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.context.annotation.SessionScope;
+
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
@@ -22,41 +39,24 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererdatenAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.BlistaDownload;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
 import aoc.mikrokosmos.jsf.ELFunctionCache;
 import aoc.mikrokosmos.jsf.ELValueCache;
 import aoc.mikrokosmos.jsf.TimeoutCacheDecorator;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import org.springframework.web.context.annotation.SessionScope;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import javax.servlet.http.HttpSessionBindingEvent;
-import javax.servlet.http.HttpSessionBindingListener;
-import java.io.Serializable;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 @Component
 @SessionScope

@@ -6,16 +6,10 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.config.TestAppConfig;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import javax.mail.internet.MimeMessage;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.Set;
 
 import com.icegreen.greenmail.junit5.GreenMailExtension;
 import com.icegreen.greenmail.user.UserException;
@@ -29,10 +23,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import javax.mail.internet.MimeMessage;
-import java.io.IOException;
-import java.time.LocalDateTime;
-import java.util.Set;
+import wbh.bookworm.hoerbuchkatalog.app.config.TestAppConfig;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

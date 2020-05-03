@@ -6,10 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.ui.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
+import javax.faces.component.UIComponent;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.annotation.RequestScope;
 
-import javax.faces.component.UIComponent;
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
+import wbh.bookworm.shared.domain.Sachgebiet;
 
 @Component
 @RequestScope

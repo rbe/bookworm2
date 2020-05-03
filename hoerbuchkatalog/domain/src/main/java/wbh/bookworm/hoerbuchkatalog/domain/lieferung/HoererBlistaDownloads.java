@@ -6,16 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-
-import aoc.mikrokosmos.ddd.model.DomainValueObject;
-
 import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
+
+import wbh.bookworm.shared.domain.Hoerernummer;
+
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 public final class HoererBlistaDownloads extends DomainValueObject {
 

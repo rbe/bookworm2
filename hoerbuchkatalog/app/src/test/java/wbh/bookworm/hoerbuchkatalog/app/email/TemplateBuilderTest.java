@@ -6,24 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.email;
 
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Sachgebiet;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -33,6 +15,24 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Set;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 

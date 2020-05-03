@@ -6,14 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
-
-import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
-import aoc.mikrokosmos.ddd.model.DomainId;
-import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
+import java.nio.file.Path;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,12 +25,14 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import java.nio.file.Path;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
+import wbh.bookworm.shared.domain.AghNummer;
+
+import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
+import aoc.mikrokosmos.ddd.model.DomainId;
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 @Configuration
 @Component

@@ -6,12 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
+import java.util.Optional;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -19,7 +14,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import java.util.Optional;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

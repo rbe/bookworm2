@@ -6,15 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.AghNummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-
-import aoc.mikrokosmos.ddd.model.DomainAggregate;
-
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
@@ -25,6 +16,15 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.stream.Collectors;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Titelnummer;
+
+import aoc.mikrokosmos.ddd.model.DomainAggregate;
 
 // TODO ...ist eine Kombination: Set<Hoerbuch> mit LuceneIndex
 // TODO Daten geändert->zB JSF Beans: a) Version nutzen b) Event schicken

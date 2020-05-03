@@ -4,11 +4,11 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.domain.katalog;
-
-import aoc.mikrokosmos.ddd.model.DomainSingleValueObject;
+package wbh.bookworm.shared.domain;
 
 import java.util.regex.Pattern;
+
+import aoc.mikrokosmos.ddd.model.DomainSingleValueObject;
 
 /**
  * Value Object

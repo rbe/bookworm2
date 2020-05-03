@@ -6,11 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
-
-import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,9 +16,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicReference;
+import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
+import wbh.bookworm.shared.domain.Hoerernummer;
+
+import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 
 @Configuration
 @DomainRepositoryComponent

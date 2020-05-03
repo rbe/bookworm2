@@ -6,16 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
+import java.util.Collections;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
+import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
+import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Service
 public final class DownloadsLieferungService {

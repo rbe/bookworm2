@@ -6,13 +6,15 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import aoc.mikrokosmos.ddd.model.DomainAggregate;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import wbh.bookworm.shared.domain.Hoerernummer;
+
+import aoc.mikrokosmos.ddd.model.DomainAggregate;
 
 public final class Hoerer extends DomainAggregate<Hoerer, Hoerernummer> {
 

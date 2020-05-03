@@ -6,19 +6,19 @@
 
 package wbh.bookworm.hoerbuchkatalog.migrator;
 
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerernummer;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Titelnummer;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 public final class MerklisteMigrator {
 
