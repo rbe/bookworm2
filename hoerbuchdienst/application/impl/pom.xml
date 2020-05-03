@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.application</artifactId>
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.application.impl</artifactId>
@@ -43,12 +43,12 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.domain.required</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook</artifactId>
             <version>LocalBuild</version>
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.watermark</artifactId>
             <version>LocalBuild</version>
         </dependency>
         <!-- Mikrokosmos -->
@@ -76,28 +76,27 @@
         <!-- Micronaut -->
         <dependency>
             <groupId>io.micronaut</groupId>
-            <artifactId>micronaut-validation</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>io.micronaut</groupId>
             <artifactId>micronaut-runtime</artifactId>
-            <scope>compile</scope>
-        </dependency>
-        <dependency>
-            <groupId>javax.annotation</groupId>
-            <artifactId>javax.annotation-api</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http-server-netty</artifactId>
-            <scope>compile</scope>
         </dependency>
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http-client</artifactId>
-            <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-validation</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject-java</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
         </dependency>
         <!-- Test -->
         <dependency>
