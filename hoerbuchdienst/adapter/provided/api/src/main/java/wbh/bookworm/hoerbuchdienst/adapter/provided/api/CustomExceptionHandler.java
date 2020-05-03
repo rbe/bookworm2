@@ -25,7 +25,7 @@ public class CustomExceptionHandler implements ExceptionHandler<BusinessExceptio
     private static final Logger LOGGER = LoggerFactory.getLogger(CustomExceptionHandler.class);
 
     @Override
-    public HttpResponse handle(HttpRequest request, BusinessException ex) {
+    public HttpResponse handle(final HttpRequest request, final BusinessException ex) {
         LOGGER.error("", ex);
         final ApiError apiError = new ApiError(HttpStatus.CONFLICT, ex.getMessage(), "");
         return HttpResponse.status(HttpStatus.CONFLICT).body(apiError);

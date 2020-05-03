@@ -12,6 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Provided Adapter API</name>
     <packaging>jar</packaging>
     <dependencies>
+        <!-- Micronaut -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http</artifactId>
