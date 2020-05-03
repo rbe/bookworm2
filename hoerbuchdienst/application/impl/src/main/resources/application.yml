@@ -4,6 +4,7 @@ micronaut:
   server:
     host: localhost
     port: 8080
+    context-path: /
   router:
     static-resources:
       default:
