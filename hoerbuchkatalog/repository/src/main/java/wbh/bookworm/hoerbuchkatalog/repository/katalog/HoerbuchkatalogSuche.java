@@ -6,6 +6,25 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import org.apache.lucene.index.Term;
+import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanQuery;
+import org.apache.lucene.search.TermQuery;
+import org.apache.lucene.search.WildcardQuery;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
@@ -17,25 +36,6 @@ import aoc.mikrokosmos.ddd.search.LuceneIndex;
 import aoc.mikrokosmos.ddd.search.LuceneQuery;
 import aoc.mikrokosmos.ddd.search.QueryParameters;
 import aoc.mikrokosmos.lang.strings.StringNormalizer;
-
-import org.apache.lucene.index.Term;
-import org.apache.lucene.search.BooleanClause;
-import org.apache.lucene.search.BooleanQuery;
-import org.apache.lucene.search.TermQuery;
-import org.apache.lucene.search.WildcardQuery;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Locale;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 /**
  * Lucene reserved characters: + - && || ! ( ) { } [ ] ^ " ~ * ? : \
@@ -121,14 +121,14 @@ final class HoerbuchkatalogSuche {
         if (suchparameter.wertVorhanden(Suchparameter.Feld.STICHWORT)) {
             final String stichwort = suchparameter.wert(Suchparameter.Feld.STICHWORT);
             final BooleanQuery.Builder stichwoerterQuery = new BooleanQuery.Builder();
-            final String[] split = stichwort.split("\\s+");
-            stichwoerterQuery.setMinimumNumberShouldMatch(split.length);
-            for (String s : split) {
+            final String[] words = stichwort.split("\\s+");
+            stichwoerterQuery.setMinimumNumberShouldMatch(words.length);
+            for (final String word : words) {
                 final BooleanQuery.Builder stichwortQuery = new BooleanQuery.Builder();
                 stichwortQuery.setMinimumNumberShouldMatch(1);
-                stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), s)),
+                stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), word)),
                         BooleanClause.Occur.SHOULD);
-                final String stichwortWildcard = String.format("*%s*", s.toLowerCase());
+                final String stichwortWildcard = String.format("*%s*", StringNormalizer.normalize(word.toLowerCase()));
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
                         BooleanClause.Occur.SHOULD);
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.TITEL.luceneName(), stichwortWildcard)),
@@ -141,7 +141,7 @@ final class HoerbuchkatalogSuche {
                         BooleanClause.Occur.SHOULD);
                 stichwoerterQuery.add(stichwortQuery.build(), BooleanClause.Occur.SHOULD);
             }
-            booleanQueryBuilder.add(stichwoerterQuery.build(), BooleanClause.Occur.SHOULD);
+            booleanQueryBuilder.add(stichwoerterQuery.build(), BooleanClause.Occur.MUST);
         }
     }
 
