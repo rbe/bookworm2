@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication(scanBasePackages = {
         "wbh.bookworm.hoerbuchkatalog"
 })
-public class Main {
+public class HoerbuchkatalogMain {
 
     public static void main(String[] args) {
-        SpringApplication.run(Main.class, args);
+        SpringApplication.run(HoerbuchkatalogMain.class, args);
     }
 
 }

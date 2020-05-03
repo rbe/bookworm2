@@ -15,12 +15,12 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @ExtendWith(SpringExtension.class)
-class MainTest {
+class HoerbuchkatalogMainTest {
 
     @Test
     void shouldStartApp() {
         final ConfigurableApplicationContext applicationContext =
-                SpringApplication.run(Main.class);
+                SpringApplication.run(HoerbuchkatalogMain.class);
         assertTrue(applicationContext.isRunning());
     }
 
