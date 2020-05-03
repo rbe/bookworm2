@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.required.audiobook;
+package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
 import java.io.Serializable;
 import java.time.Duration;

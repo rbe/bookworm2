@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookobjectstorage;
 
 import java.io.InputStream;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobook.Audiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
 
 public interface AudiobookObjectStorage {
 

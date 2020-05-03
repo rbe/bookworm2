@@ -22,10 +22,15 @@
             <groupId>com.fasterxml.jackson.core</groupId>
             <artifactId>jackson-annotations</artifactId>
         </dependency>
+        <!-- Micronaut -->
         <dependency>
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http</artifactId>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-inject-java</artifactId>
         </dependency>
     </dependencies>
 </project>
