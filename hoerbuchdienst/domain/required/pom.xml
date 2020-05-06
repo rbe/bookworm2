@@ -12,10 +12,19 @@
     <name>wbh-online.de Hörbuchdienst Domain Required API</name>
     <packaging>jar</packaging>
     <dependencies>
+        <!-- Bookworm -->
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.shared.domain</artifactId>
+        </dependency>
         <!-- Mikrokosmos -->
         <dependency>
             <groupId>aoc.mikrokosmos</groupId>
             <artifactId>aoc.mikrokosmos.objectstorage.api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.ddd</artifactId>
         </dependency>
         <!-- Jackson -->
         <dependency>

@@ -18,7 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 
 @Controller("/stream")
 public class StreamController {

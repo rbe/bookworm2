@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.suchindex;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -14,11 +14,13 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 
 @Controller("/search")
 public class SuchindexController {
@@ -39,9 +41,19 @@ public class SuchindexController {
     }
 
     @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public List<AudiobookInfoDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
-        return katalogService.findAll(suchindexAnfrageDTO.getHoerernummer(),
+    public List<SuchindexAntwortDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
+        final List<AudiobookInfoDTO> result = katalogService.findAll(suchindexAnfrageDTO.getHoerernummer(),
                 suchindexAnfrageDTO.getKeywords());
+        return AntwortMapper.INSTANCE.convert(result);
+    }
+
+    @Mapper
+    public interface AntwortMapper {
+
+        AntwortMapper INSTANCE = Mappers.getMapper(AntwortMapper.class);
+
+        List<SuchindexAntwortDTO> convert(List<AudiobookInfoDTO> audiobookInfoDTO);
+
     }
 
 }

@@ -1,7 +1,8 @@
-package wbh.bookworm.hoerbuchdienst.domain.ports;
+package wbh.bookworm.hoerbuchdienst.domain.ports.mandant;
 
 import java.io.Serializable;
 
+// TODO ValueObject -> shared.domain
 public final class StorageCredentials implements Serializable {
 
     private static final long serialVersionUID = 5088986321877616394L;

@@ -31,6 +31,11 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     private static final String GENRE_SPEECH = "Speech";
 
     @Override
+    public String makeWatermark(/* TODO Mandant mandant,*/final String hoerernummer, final String titelnummer) {
+        return String.format(/* TODO Mandant */"WBH-%s-%s", hoerernummer, titelnummer);
+    }
+
+    @Override
     public WatermarkedTrackInfo trackInfo(final String watermark, final String urlPrefix, final Path mp3) {
         addWatermarkInPlace(watermark, urlPrefix, mp3);
         try {

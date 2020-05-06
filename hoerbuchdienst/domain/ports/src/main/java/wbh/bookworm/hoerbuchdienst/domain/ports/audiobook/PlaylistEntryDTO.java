@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.ports;
+package wbh.bookworm.hoerbuchdienst.domain.ports.audiobook;
 
 import java.io.Serializable;
 

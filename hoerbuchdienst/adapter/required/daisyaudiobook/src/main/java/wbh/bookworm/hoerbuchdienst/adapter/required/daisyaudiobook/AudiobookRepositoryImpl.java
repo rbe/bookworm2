@@ -8,14 +8,20 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
+import java.util.UUID;
 
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
+import io.micronaut.context.annotation.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
@@ -26,30 +32,47 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImpl.class);
 
+    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
+    private Path temporaryDirectory;
+
     private final AudiobookStreamResolver audiobookStreamResolver;
 
     private final AudiobookMapper audiobookMapper;
 
-    private final AudiobookIndex audiobookIndex;
-
     @Inject
     AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
-                            final AudiobookMapper audiobookMapper,
-                            final AudiobookIndex audiobookIndex) {
+                            final AudiobookMapper audiobookMapper) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
-        this.audiobookIndex = audiobookIndex;
     }
 
-    @Override
-    public String[] findAll(final String[] keywords) {
-        return audiobookIndex.findAll(keywords);
-    }
+    // TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
 
     @Override
     @Cacheable
     public Audiobook find(final String titelnummer) {
         return audiobookMapper.audiobook(titelnummer);
+    }
+
+    @Override
+    public Path localCopyOfTrack(final String hoerernummer,
+                                 final String titelnummer, final String ident,
+                                 final String temporaryId) {
+        // TODO "Kapitel" Suffix ist mandantenspezifisch
+        final String tempId = String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
+        final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
+        try {
+            Files.createDirectories(tempMp3File.getParent());
+        } catch (IOException e) {
+            throw new AudiobookRepositoryException("", e);
+        }
+        try (final InputStream trackAsStream = trackAsStream(titelnummer, ident);
+             final OutputStream tempMp3Stream = Files.newOutputStream(tempMp3File, StandardOpenOption.CREATE)) {
+            trackAsStream.transferTo(tempMp3Stream);
+            return tempMp3File;
+        } catch (IOException e) {
+            throw new AudiobookRepositoryException("", e);
+        }
     }
 
     @Override

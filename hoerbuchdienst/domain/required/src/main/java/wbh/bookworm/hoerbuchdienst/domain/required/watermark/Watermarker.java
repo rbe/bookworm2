@@ -10,6 +10,9 @@ import java.nio.file.Path;
 
 public interface Watermarker {
 
+    // TODO String->Watermark
+    String makeWatermark(String hoerernummer, String titelnummer);
+
     WatermarkedTrackInfo trackInfo(String watermark, String urlPrefix, Path mp3);
 
     void addWatermarkInPlace(final String watermark, String urlPrefix, Path mp3);

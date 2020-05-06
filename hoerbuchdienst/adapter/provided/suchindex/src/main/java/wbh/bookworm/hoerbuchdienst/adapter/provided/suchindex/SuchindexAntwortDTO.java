@@ -4,16 +4,16 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.ports;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.suchindex;
 
 import java.io.Serializable;
 import java.time.Duration;
 
-public final class AudiobookInfoDTO implements Serializable {
+public final class SuchindexAntwortDTO implements Serializable {
 
     private static final long serialVersionUID = -5138272137326494323L;
 
-    private final /*TODO Titelnummer*/ String titelnummer;
+    private final String titelnummer;
 
     private final String titel;
 
@@ -23,7 +23,7 @@ public final class AudiobookInfoDTO implements Serializable {
 
     private final Duration spieldauer;
 
-    public AudiobookInfoDTO(final String titelnummer, final String titel, final String autor, final String sprecher, final Duration spieldauer) {
+    public SuchindexAntwortDTO(final String titelnummer, final String titel, final String autor, final String sprecher, final Duration spieldauer) {
         this.titelnummer = titelnummer;
         this.titel = titel;
         this.autor = autor;
