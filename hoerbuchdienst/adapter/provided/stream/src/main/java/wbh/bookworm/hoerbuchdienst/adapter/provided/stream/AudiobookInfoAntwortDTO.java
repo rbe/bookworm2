@@ -4,51 +4,63 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.ports;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import java.io.Serializable;
 import java.time.Duration;
 
-public final class AudiobookInfoDTO implements Serializable {
+public final class AudiobookInfoAntwortDTO implements Serializable {
 
-    private static final long serialVersionUID = -5138272137326494323L;
+    private static final long serialVersionUID = -4381992038292934470L;
 
-    private final /*TODO Titelnummer*/ String titelnummer;
+    private String titelnummer;
 
-    private final String titel;
+    private String titel;
 
-    private final String autor;
+    private String autor;
 
-    private final String sprecher;
+    private String sprecher;
 
-    private final Duration spieldauer;
-
-    public AudiobookInfoDTO(final String titelnummer, final String titel, final String autor, final String sprecher, final Duration spieldauer) {
-        this.titelnummer = titelnummer;
-        this.titel = titel;
-        this.autor = autor;
-        this.sprecher = sprecher;
-        this.spieldauer = spieldauer;
-    }
+    private Duration spieldauer;
 
     public String getTitelnummer() {
         return titelnummer;
+    }
+
+    public void setTitelnummer(final String titelnummer) {
+        this.titelnummer = titelnummer;
     }
 
     public String getTitel() {
         return titel;
     }
 
+    public void setTitel(final String titel) {
+        this.titel = titel;
+    }
+
     public String getAutor() {
         return autor;
+    }
+
+    public void setAutor(final String autor) {
+        this.autor = autor;
     }
 
     public String getSprecher() {
         return sprecher;
     }
 
+    public void setSprecher(final String sprecher) {
+        this.sprecher = sprecher;
+    }
+
     public Duration getSpieldauer() {
         return spieldauer;
+    }
+
+    public void setSpieldauer(final Duration spieldauer) {
+        this.spieldauer = spieldauer;
     }
 
     @Override

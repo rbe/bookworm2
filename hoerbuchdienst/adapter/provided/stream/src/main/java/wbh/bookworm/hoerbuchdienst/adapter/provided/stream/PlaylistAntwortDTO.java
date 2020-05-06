@@ -4,23 +4,25 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.domain.ports;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class PlaylistDTO implements Serializable {
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 
-    private static final long serialVersionUID = -8820698782758681073L;
+public final class PlaylistAntwortDTO implements Serializable {
+
+    private static final long serialVersionUID = -1729563029415037788L;
 
     private List<PlaylistEntryDTO> entries;
 
-    public PlaylistDTO() {
+    public PlaylistAntwortDTO() {
         entries = new ArrayList<>();
     }
 
-    public PlaylistDTO(final List<PlaylistEntryDTO> entries) {
+    public PlaylistAntwortDTO(final List<PlaylistEntryDTO> entries) {
         this.entries = entries;
     }
 

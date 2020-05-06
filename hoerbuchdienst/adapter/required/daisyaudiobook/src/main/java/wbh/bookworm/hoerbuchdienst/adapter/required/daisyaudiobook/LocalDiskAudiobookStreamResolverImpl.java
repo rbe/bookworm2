@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -28,10 +29,16 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
         this.audiobookDirectory = baseDirectory;
     }
 
+    @PostConstruct
+    private void postConstruct() {
+        LOGGER.debug("This is {}", this);
+    }
+
     @Override
     public List<Path> listAll() {
         final List<Path> list = new ArrayList<>();
         try (final Stream<Path> paths = Files.walk(audiobookDirectory.resolve("."), 1)) {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
             list.addAll(paths.filter(p -> p.getFileName().toString().endsWith("Kapitel"))
                     .collect(Collectors.toUnmodifiableList()));
         } catch (IOException e) {
@@ -45,6 +52,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
         final List<Path> list = new ArrayList<>();
         try (final Stream<Path> paths = Files.walk(audiobookDirectory
                 .resolve(titelnummer).resolve("."), 1)) {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
             list.addAll(paths.filter(p -> p.getFileName().toString().endsWith("Kapitel"))
                     .collect(Collectors.toUnmodifiableList()));
         } catch (IOException e) {
@@ -57,6 +65,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream nccHtmlStream(final String titelnummer) {
         try {
             return Files.newInputStream(audiobookDirectory
+                    // TODO "Kapitel" Suffix ist mandantenspezifisch
                     .resolve(String.format("%sKapitel", titelnummer))
                     .resolve("ncc.html"));
         } catch (IOException e) {
@@ -68,6 +77,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream masterSmilStream(final String titelnummer) {
         try {
             return Files.newInputStream(audiobookDirectory
+                    // TODO "Kapitel" Suffix ist mandantenspezifisch
                     .resolve(String.format("%sKapitel", titelnummer))
                     .resolve("master.smil"));
         } catch (IOException e) {
@@ -79,11 +89,17 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream trackAsStream(final String titelnummer, final String ident) {
         try {
             return Files.newInputStream(audiobookDirectory
+                    // TODO "Kapitel" Suffix ist mandantenspezifisch
                     .resolve(String.format("%sKapitel", titelnummer))
                     .resolve(ident));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException(e);
         }
+    }
+
+    @Override
+    public InputStream zipAsStream(final String titelnummer) {
+        throw new UnsupportedOperationException();
     }
 
 }

@@ -8,6 +8,6 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
 public interface AudiobookMapper {
 
-    Audiobook audiobook(String titlenummer);
+    Audiobook audiobook(/*TODO Titelnummer*/String titlenummer);
 
 }

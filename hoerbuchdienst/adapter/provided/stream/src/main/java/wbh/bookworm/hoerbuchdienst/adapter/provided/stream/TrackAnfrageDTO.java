@@ -6,22 +6,36 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 
+@Introspected
 public final class TrackAnfrageDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
+    @NotBlank
+    @Min(3)
     private final String mandant;
 
+    // TODO Validation ist mandatenspezifisch
+    @NotBlank
+    @Min(3)
     private final String hoerernummer;
 
+    // TODO Validation ist mandatenspezifisch
+    @NotBlank
+    @Min(5)
     private final String titelnummer;
 
+    @NotBlank
+    @Min(5)
     private final String ident;
 
     @JsonCreator

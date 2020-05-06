@@ -11,13 +11,15 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 
+@Introspected
 public final class AudiobookAnfrageDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
     private final String mandant;
-    
+
     private final String hoerernummer;
 
     private final String titelnummer;

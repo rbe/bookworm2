@@ -4,14 +4,9 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
-
-import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.api;
 
 public class MandantNichtGefundenException extends BusinessException {
-
-    public MandantNichtGefundenException() {
-    }
 
     public MandantNichtGefundenException(final String message) {
         super(message);

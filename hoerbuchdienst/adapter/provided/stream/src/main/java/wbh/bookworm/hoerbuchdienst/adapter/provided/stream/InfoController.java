@@ -12,15 +12,17 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Post;
+import org.mapstruct.Mapper;
+import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.Mp3RepositoryService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.TrackDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.TrackInfoDTO;
 
 @Controller("/info")
 public class InfoController {
@@ -29,48 +31,78 @@ public class InfoController {
 
     private final KatalogService katalogService;
 
-    private final Mp3RepositoryService mp3RepositoryService;
+    private final AudiobookService audiobookService;
 
     @Inject
     public InfoController(final KatalogService katalogService,
-                          final Mp3RepositoryService mp3RepositoryService) {
+                          final AudiobookService audiobookService) {
         this.katalogService = katalogService;
-        this.mp3RepositoryService = mp3RepositoryService;
+        this.audiobookService = audiobookService;
     }
 
     @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public AudiobookInfoDTO audiobook(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public AudiobookInfoAntwortDTO audiobookInfo(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         try {
-            return katalogService.audiobookInfo(audiobookAnfrageDTO.getHoerernummer(),
+            final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getHoerernummer(),
                     audiobookAnfrageDTO.getTitelnummer());
+            return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
         } catch (Exception e) {
-            throw new BusinessException("", e);
+            throw new BusinessException("Hörbuch " + audiobookAnfrageDTO.getTitelnummer() + " nicht gefunden", e);
         }
     }
 
     @Post(uri = "playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public PlaylistDTO playlist(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public PlaylistAntwortDTO playlist(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         try {
-            return katalogService.playlist(audiobookAnfrageDTO.getHoerernummer(),
+            final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getHoerernummer(),
                     audiobookAnfrageDTO.getTitelnummer());
+            return PlaylistMapper.INSTANCE.convert(playlist);
         } catch (Exception e) {
             throw new BusinessException("", e);
         }
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public TrackDTO track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
+    public TrackInfoAntwortDTO track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
                 trackAnfrageDTO.getHoerernummer(),
                 trackAnfrageDTO.getTitelnummer(),
                 trackAnfrageDTO.getIdent());
         try {
-            return mp3RepositoryService.trackInfo(trackAnfrageDTO.getHoerernummer(),
+            final TrackInfoDTO trackInfoDTO = audiobookService.trackInfo(trackAnfrageDTO.getHoerernummer(),
                     trackAnfrageDTO.getTitelnummer(),
                     trackAnfrageDTO.getIdent());
+            return TrackMapper.INSTANCE.convert(trackInfoDTO);
         } catch (Exception e) {
             throw new BusinessException("", e);
         }
+    }
+
+    @Mapper
+    public interface AudiobookMapper {
+
+        AudiobookMapper INSTANCE = Mappers.getMapper(AudiobookMapper.class);
+
+        AudiobookInfoAntwortDTO convert(AudiobookInfoDTO audiobookInfoDTO);
+
+    }
+
+    @Mapper
+    public interface PlaylistMapper {
+
+        PlaylistMapper INSTANCE = Mappers.getMapper(PlaylistMapper.class);
+
+        PlaylistAntwortDTO convert(PlaylistDTO playlistDTO);
+
+    }
+
+    @Mapper
+    public interface TrackMapper {
+
+        TrackMapper INSTANCE = Mappers.getMapper(TrackMapper.class);
+
+        TrackInfoAntwortDTO convert(TrackInfoDTO trackInfoDTO);
+
     }
 
 }

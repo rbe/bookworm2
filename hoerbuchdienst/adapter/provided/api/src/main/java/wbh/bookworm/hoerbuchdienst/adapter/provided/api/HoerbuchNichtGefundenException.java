@@ -4,14 +4,9 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.api;
 
-import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-
-public class HoerbuchNichtGefundenException extends BusinessException {
-
-    public HoerbuchNichtGefundenException() {
-    }
+public class HoerbuchNichtGefundenException extends HoerbuchException {
 
     public HoerbuchNichtGefundenException(final String message) {
         super(message);

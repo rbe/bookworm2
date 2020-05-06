@@ -37,13 +37,6 @@ export class Audioplayer {
             });
     }
 
-    createAudioElement() {
-        const audio = document.createElement('audio');
-        audio.id = 'audio';
-        audio.load();
-        return audio;
-    }
-
     initElementSelectors() {
         this.elementSelectors = {
             'playlistSelector': 'div.playlist',
@@ -66,6 +59,13 @@ export class Audioplayer {
             'volumeUpButtonSelector': 'button.volumeUp',
             'volumeSliderInputSelector': 'input.volumeSlider'
         };
+    }
+
+    createAudioElement() {
+        const audio = document.createElement('audio');
+        audio.id = 'audio';
+        audio.load();
+        return audio;
     }
 
     displayAudiobookInfo() {
@@ -254,11 +254,50 @@ export class Audioplayer {
     }
 
     playNext() {
-        if (this.DEBUG) { console.log('playNext()'); }
+        if (this.DEBUG) {
+            console.log('playNext()');
+        }
         this.pause();
         if (this.currentTrack < this.playlist.count() - 1) {
             this.selectTrack(this.currentTrack + 1, 0);
         }
+    }
+
+    download() {
+        const init1 = {
+            'method': 'POST',
+            'headers': {
+                'Content-Type': 'application/json'
+            },
+            'body': JSON.stringify({
+                'mandant': 'WBH',
+                'hoerernummer': this.hoerernummer,
+                'titelnummer': this.titelnummer
+            })
+        };
+        fetch(new URL('stream/zip', this.audiobookURL).toString(), init1)
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(blob => {
+                if (blob) {
+                    const a = document.createElement('a');
+                    a.href = window.URL.createObjectURL(blob);
+                    a.download = this.titelnummer + '.zip';
+                    a.click();
+                } else {
+                    console.log('download(): Sorry, no blob');
+                }
+            })
+            .catch(reason => {
+                if (this.DEBUG) {
+                    console.log('play,fetch,catch: ' + reason);
+                }
+            });
     }
 
     reset() {

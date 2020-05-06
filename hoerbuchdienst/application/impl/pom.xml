@@ -68,6 +68,10 @@
             <groupId>aoc.mikrokosmos</groupId>
             <artifactId>aoc.mikrokosmos.elasticsearch.impl</artifactId>
         </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.io</artifactId>
+        </dependency>
         <!-- Swagger -->
         <dependency>
             <groupId>io.swagger.core.v3</groupId>

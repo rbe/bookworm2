@@ -1,3 +1,10 @@
+micronaut:
+  caches:
+    audiobookRepository:
+      maximumSize: 5
+  jcache:
+    enabled: true
+
 hoerbuchdienst:
   repository:
     type: objectstorage

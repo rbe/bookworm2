@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook;
 
+import javax.annotation.PostConstruct;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
@@ -27,12 +28,18 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         this.bucketObjectStorage = bucketObjectStorage;
     }
 
+    @PostConstruct
+    private void postConstruct() {
+        LOGGER.debug("This is {}", this);
+    }
+
     @Override
     public List<Path> listAll() {
         try {
             return bucketObjectStorage.listAll()
                     .stream()
                     .map(path -> path.getName(0))
+                    // TODO "Kapitel" Suffix ist mandantenspezifisch
                     .filter(path -> path.toString().endsWith("Kapitel"))
                     .distinct()
                     .collect(Collectors.toUnmodifiableList());
@@ -53,6 +60,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream nccHtmlStream(final String titelnummer) {
         try {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/ncc.html", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException(e);
@@ -62,6 +70,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream masterSmilStream(final String titelnummer) {
         try {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/master.smil", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException(e);
@@ -71,7 +80,18 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream trackAsStream(final String titelnummer, final String ident) {
         try {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/%s", titelnummer, ident));
+        } catch (ObjectStorageException e) {
+            throw new AudiobookStreamResolverException(e);
+        }
+    }
+
+    @Override
+    public InputStream zipAsStream(final String titelnummer) {
+        try {
+            // TODO "Kapitel" Suffix ist mandantenspezifisch
+            return bucketObjectStorage.asZip(String.format("%sKapitel", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException(e);
         }

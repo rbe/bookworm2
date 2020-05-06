@@ -8,7 +8,9 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.watermark;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
 import com.mpatric.mp3agic.ID3v1Genres;
@@ -19,7 +21,7 @@ import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.watermark.TrackInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.required.watermark.WatermarkedTrackInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.WatermarkerException;
 
@@ -29,11 +31,11 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     private static final String GENRE_SPEECH = "Speech";
 
     @Override
-    public TrackInfoDTO trackInfo(final String watermark, final String urlPrefix, final Path mp3) {
-        final Path watermarkedFile = addWatermark(watermark, urlPrefix, mp3);
+    public WatermarkedTrackInfo trackInfo(final String watermark, final String urlPrefix, final Path mp3) {
+        addWatermarkInPlace(watermark, urlPrefix, mp3);
         try {
-            final Mp3File mp3file = new Mp3File(watermarkedFile);
-            return new TrackInfoDTO(
+            final Mp3File mp3file = new Mp3File(mp3);
+            return new WatermarkedTrackInfo(
                     // ID3v1
                     mp3file.getId3v1Tag().getComment(),
                     mp3file.getId3v1Tag().getArtist(),
@@ -84,17 +86,17 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     }
 
     @Override
-    public Path addWatermark(final String watermark, final String urlPrefix, final Path mp3) {
+    public void addWatermarkInPlace(final String watermark, final String urlPrefix, final Path mp3) {
         final Path watermarkedMp3File = mp3.getParent()
                 .resolve(String.format("%s.watermark.%s", mp3.getFileName(), UUID.randomUUID()));
         try {
             final Mp3File mp3file = new Mp3File(mp3.toFile());
             addWatermarkToId3Tags(watermark, urlPrefix, mp3file);
             mp3file.save(watermarkedMp3File.toAbsolutePath().toString());
+            Files.move(watermarkedMp3File, mp3, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException | NotSupportedException | UnsupportedTagException | InvalidDataException e) {
             throw new WatermarkerException("", e);
         }
-        return watermarkedMp3File;
     }
 
     private void addWatermarkToId3Tags(final String watermark, final String urlPrefix, final Mp3File mp3file) {

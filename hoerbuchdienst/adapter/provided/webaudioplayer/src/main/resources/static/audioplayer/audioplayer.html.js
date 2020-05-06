@@ -26,8 +26,10 @@ import {Audioplayer} from "./audioplayer.js";
     document.querySelector('.audioplayer .loading').style.display = 'none';
     document.querySelector('.audioplayer .notfound').style.display = 'none';
     document.querySelector('.audioplayer .panel').style.display = 'none';
+    const downloadButton = document.querySelector('#downloadButton');
+    downloadButton.style.display = 'none';
     const audioplayer = new Audioplayer();
-    document.querySelector('#anhoerenButton')
+    document.querySelector('#ladenButton')
         .addEventListener('click', event => {
             document.querySelector('.playlistContainer .loading').style.display = 'block';
             document.querySelector('.audioplayer .panel').style.display = 'none';
@@ -43,6 +45,14 @@ import {Audioplayer} from "./audioplayer.js";
                 document.querySelector('.audioplayer .loading').style.display = 'none';
                 document.querySelector('.audioplayer .notfound').style.display = 'none';
                 document.querySelector('.audioplayer .panel').style.display = 'block';
+                downloadButton.style.display = 'block';
             });
         });
+    downloadButton.addEventListener('click', event => {
+        if (audioplayer) {
+            audioplayer.download();
+        } else {
+            console.log('Cannot download, Audioplayer not initialized');
+        }
+    });
 })();

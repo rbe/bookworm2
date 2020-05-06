@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 import java.io.Serializable;
 import java.util.Arrays;
 
-public final class TrackDTO implements Serializable {
+public final class TrackInfoDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
@@ -93,7 +93,7 @@ public final class TrackDTO implements Serializable {
 
     private boolean obseleteFormat;
 
-    public TrackDTO() {
+    public TrackInfoDTO() {
     }
 
     public String getTitelnummer() {
@@ -418,7 +418,7 @@ public final class TrackDTO implements Serializable {
 
     @Override
     public String toString() {
-        return "TrackDTO{" +
+        return "TrackInfoDTO{" +
                 "comment='" + comment + '\'' +
                 ", artist='" + artist + '\'' +
                 ", year='" + year + '\'' +

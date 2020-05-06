@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.InputStream;
 
+import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 
 @Singleton
+@CacheConfig("audiobookRepository")
 class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImpl.class);
@@ -51,8 +53,13 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public InputStream track(final String hoerernummer, final String titelnummer, final String ident) {
+    public InputStream trackAsStream(final String titelnummer, final String ident) {
         return audiobookStreamResolver.trackAsStream(titelnummer, ident);
+    }
+
+    @Override
+    public InputStream zipAsStream(final String titelnummer) {
+        return audiobookStreamResolver.zipAsStream(titelnummer);
     }
 
 }

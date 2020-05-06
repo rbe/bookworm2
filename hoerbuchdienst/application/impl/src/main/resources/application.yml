@@ -15,7 +15,7 @@ micronaut:
     csp:
       enabled: true
   caches:
-    audiobook:
+    audiobookRepository:
       maximumSize: 20
   jcache:
     enabled: true

@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import io.micronaut.cache.annotation.CacheConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.smil10.Audio;
@@ -32,7 +31,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiotrac
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 @Singleton
-@CacheConfig("audiobook")
 class AudiobookMapperImpl implements AudiobookMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImpl.class);

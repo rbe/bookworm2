@@ -275,8 +275,8 @@ public final class Audiobook implements Serializable {
         this.tocItems = Integer.parseInt(tocItems);
     }
 
-    public void addAudiotrack(final Audiotrack audiotrack) {
-        this.audiotracks.add(audiotrack);
+    public boolean addAudiotrack(final Audiotrack audiotrack) {
+        return audiotracks.add(audiotrack);
     }
 
     @Override

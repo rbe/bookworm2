@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.io.Serializable;
 
-public final class PlaylistEntry implements Serializable {
+public final class PlaylistEntryDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
@@ -20,13 +20,13 @@ public final class PlaylistEntry implements Serializable {
 
     private Double[] clips;
 
-    public PlaylistEntry(final String title, final String ident) {
+    public PlaylistEntryDTO(final String title, final String ident) {
         this.title = title;
         this.ident = ident;
         this.clips = NO_CLIPS;
     }
 
-    public PlaylistEntry(final String title, final String ident, final Double[] clips) {
+    public PlaylistEntryDTO(final String title, final String ident, final Double[] clips) {
         this.title = title;
         this.ident = ident;
         this.clips = clips;

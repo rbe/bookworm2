@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Objects;
 
-public final class Mandant implements Serializable {
+public final class MandantDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
@@ -22,9 +22,9 @@ public final class Mandant implements Serializable {
 
     private final StorageCredentials storageCredentials;
 
-    public Mandant(final String hoerbuecherei,
-                   final List<String> hoerernummern, final List<String> aghNummern,
-                   final StorageCredentials storageCredentials) {
+    public MandantDTO(final String hoerbuecherei,
+                      final List<String> hoerernummern, final List<String> aghNummern,
+                      final StorageCredentials storageCredentials) {
         this.hoerbuecherei = hoerbuecherei;
         this.hoerernummern = hoerernummern;
         this.aghNummern = aghNummern;
@@ -51,10 +51,10 @@ public final class Mandant implements Serializable {
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final Mandant mandant = (Mandant) o;
-        return hoerbuecherei.equals(mandant.hoerbuecherei) &&
-                hoerernummern.equals(mandant.hoerernummern) &&
-                aghNummern.equals(mandant.aghNummern);
+        final MandantDTO mandantDTO = (MandantDTO) o;
+        return hoerbuecherei.equals(mandantDTO.hoerbuecherei) &&
+                hoerernummern.equals(mandantDTO.hoerernummern) &&
+                aghNummern.equals(mandantDTO.aghNummern);
     }
 
     @Override

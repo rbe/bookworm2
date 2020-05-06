@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchdienst.domain.required.watermark;
 
 import java.io.Serializable;
 
-public final class TrackInfoDTO implements Serializable {
+public final class WatermarkedTrackInfo implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
@@ -88,19 +88,19 @@ public final class TrackInfoDTO implements Serializable {
 
     private final boolean obseleteFormat;
 
-    public TrackInfoDTO(final String comment, final String artist, final String year,
-                        final String version, final int genre,
-                        final boolean padding, final boolean hasFooter, final boolean hasUnsynchronisation,
-                        final int bpm, final String grouping, final String key, final String date,
-                        final String composer, final String publisher, final String originalArtist,
-                        final String albumArtist, final String copyright, final String artistUrl,
-                        final String commercialUrl, final String copyrightUrl, final String audiofileUrl,
-                        final String audioSourceUrl, final String radiostationUrl, final String paymentUrl,
-                        final String publisherUrl, final String url, final String partOfSet,
-                        final boolean compilation, final String encoder, final byte[] albumImage,
-                        final String albumImageMimeType, final int wmpRating, final String itunesComment,
-                        final String lyrics, final String genreDescription, final int dataLength,
-                        final int length, final boolean obseleteFormat) {
+    public WatermarkedTrackInfo(final String comment, final String artist, final String year,
+                                final String version, final int genre,
+                                final boolean padding, final boolean hasFooter, final boolean hasUnsynchronisation,
+                                final int bpm, final String grouping, final String key, final String date,
+                                final String composer, final String publisher, final String originalArtist,
+                                final String albumArtist, final String copyright, final String artistUrl,
+                                final String commercialUrl, final String copyrightUrl, final String audiofileUrl,
+                                final String audioSourceUrl, final String radiostationUrl, final String paymentUrl,
+                                final String publisherUrl, final String url, final String partOfSet,
+                                final boolean compilation, final String encoder, final byte[] albumImage,
+                                final String albumImageMimeType, final int wmpRating, final String itunesComment,
+                                final String lyrics, final String genreDescription, final int dataLength,
+                                final int length, final boolean obseleteFormat) {
         this.comment = toStringOrEmpty(comment);
         this.artist = toStringOrEmpty(artist);
         this.year = toStringOrEmpty(year);

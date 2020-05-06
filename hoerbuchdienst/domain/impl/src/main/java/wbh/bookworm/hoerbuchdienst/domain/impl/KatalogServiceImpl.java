@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntry;
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookindex.AudiobookIndex;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
@@ -52,14 +52,14 @@ public class KatalogServiceImpl implements KatalogService {
         }
         LOGGER.info("Hörbuch '{}': Erstelle Hörbuch mit Playlist", titelnummer);
         final PlaylistDTO playlistDTO = new PlaylistDTO();
-        final List<PlaylistEntry> playlistEntries = audiobook.getAudiotracks().stream()
+        final List<PlaylistEntryDTO> playlistEntries = audiobook.getAudiotracks().stream()
                 .map(t -> {
                     final Double[] clips = Arrays.stream(t.getAudioclips())
                             .filter(clip -> 0L < clip.getBegin().toMillis())
                             .map(clip -> clip.getBegin().toMillis() / 1000.0d)
                             .collect(Collectors.toUnmodifiableList())
                             .toArray(Double[]::new);
-                    return new PlaylistEntry(t.getTitle(),
+                    return new PlaylistEntryDTO(t.getTitle(),
                             t.getAudioclips()[0].getFilename(),
                             clips);
                 })

@@ -14,6 +14,8 @@ public interface AudiobookRepository {
 
     Audiobook find(/*TODO Titelnummer*/String titelnummer);
 
-    InputStream track(/* TODO Hoerernummer */String hoerernummer, /*TODO Titelnummer*/String titelnummer, String ident);
+    InputStream trackAsStream(/*TODO Titelnummer*/String titelnummer, String ident);
+
+    InputStream zipAsStream(String titelnummer);
 
 }

@@ -14,12 +14,14 @@ interface AudiobookStreamResolver {
 
     List<Path> listAll();
 
-    List<Path> list(String titelnummer);
+    List<Path> list(/* TODO AGH Nummer o.ä. */String titelnummer);
 
-    InputStream nccHtmlStream(String titelnummer);
+    InputStream nccHtmlStream(/* TODO AGH Nummer o.ä. */String titelnummer);
 
-    InputStream masterSmilStream(String titelnummer);
+    InputStream masterSmilStream(/* TODO AGH Nummer o.ä. */String titelnummer);
 
-    InputStream trackAsStream(String titelnummer, String ident);
+    InputStream trackAsStream(/* TODO AGH Nummer o.ä. */String titelnummer, String ident);
+
+    InputStream zipAsStream(/* TODO AGH Nummer o.ä. */String titelnummer);
 
 }

@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -17,23 +18,30 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.Mp3RepositoryService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookService;
 
 @Controller("/stream")
 public class StreamController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
 
-    private final Mp3RepositoryService mp3RepositoryService;
+    private final AudiobookService audiobookService;
 
     @Inject
-    public StreamController(final Mp3RepositoryService mp3RepositoryService) {
-        this.mp3RepositoryService = mp3RepositoryService;
+    public StreamController(final AudiobookService audiobookService) {
+        this.audiobookService = audiobookService;
     }
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_OCTET_STREAM)
     public HttpResponse<byte[]> audiobook(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        throw new BusinessException("Noch nicht implementiert");
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Hörbuch mit Wasserzeichen als ZIP ab",
+                audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
+        try (final InputStream audiobook = audiobookService.zipAsStream(audiobookAnfrageDTO.getHoerernummer(),
+                audiobookAnfrageDTO.getTitelnummer())) {
+            return HttpResponse.ok(audiobook.readAllBytes());
+        } catch (Exception e) {
+            throw new BusinessException("", e);
+        }
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = "audio/mp3")
@@ -41,10 +49,9 @@ public class StreamController {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab",
                 trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
                 trackAnfrageDTO.getIdent());
-        try {
-            final byte[] track = mp3RepositoryService.track(trackAnfrageDTO.getHoerernummer(),
-                    trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
-            return HttpResponse.ok(track)
+        try (final InputStream track = audiobookService.trackAsStream(trackAnfrageDTO.getHoerernummer(),
+                trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent())) {
+            return HttpResponse.ok(track.readAllBytes())
                     .header("Accept-Ranges", "bytes");
         } catch (Exception e) {
             throw new BusinessException("", e);

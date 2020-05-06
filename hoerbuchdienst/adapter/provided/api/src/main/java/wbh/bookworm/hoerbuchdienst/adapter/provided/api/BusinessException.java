@@ -8,9 +8,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.api;
 
 public class BusinessException extends RuntimeException {
 
-    public BusinessException() {
-    }
-
     public BusinessException(final String message) {
         super(message);
     }
