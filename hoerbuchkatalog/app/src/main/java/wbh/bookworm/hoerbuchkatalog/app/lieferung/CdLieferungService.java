@@ -21,7 +21,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.CdLieferungRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.nutzerdaten.HoererRepository;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 @Service
 public final class CdLieferungService {

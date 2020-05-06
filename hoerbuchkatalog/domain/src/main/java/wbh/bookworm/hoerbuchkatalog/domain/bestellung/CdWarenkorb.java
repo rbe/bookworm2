@@ -13,8 +13,8 @@ import java.util.TreeSet;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import wbh.bookworm.shared.domain.Hoerernummer;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 

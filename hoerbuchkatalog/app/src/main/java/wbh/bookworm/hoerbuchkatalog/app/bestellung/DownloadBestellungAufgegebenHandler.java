@@ -32,9 +32,9 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.Auftragsqui
 import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-import wbh.bookworm.shared.domain.AghNummer;
-import wbh.bookworm.shared.domain.Hoerernummer;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;

@@ -15,7 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 @SpringBootTest(classes = {LieferungAppConfig.class})
 @ExtendWith(SpringExtension.class)

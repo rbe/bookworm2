@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.shared.domain;
+package wbh.bookworm.shared.domain.hoerbuch;
 
 import java.util.regex.Pattern;
 

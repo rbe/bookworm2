@@ -17,7 +17,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
 import wbh.bookworm.hoerbuchkatalog.ui.katalog.HoererSession;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 // TODO ELValueCache für Hoerer und CdLieferung benutzen
 @Component

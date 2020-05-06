@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEvent;
 

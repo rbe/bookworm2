@@ -28,7 +28,7 @@ import org.springframework.stereotype.Component;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.HoerbuchkatalogId;
-import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.model.DomainId;

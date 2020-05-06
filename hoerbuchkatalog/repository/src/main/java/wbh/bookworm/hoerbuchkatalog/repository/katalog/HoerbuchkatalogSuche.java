@@ -28,7 +28,7 @@ import org.springframework.context.ApplicationContext;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 import aoc.mikrokosmos.ddd.model.DomainId;
 import aoc.mikrokosmos.ddd.search.BooleanQueryBuilder;

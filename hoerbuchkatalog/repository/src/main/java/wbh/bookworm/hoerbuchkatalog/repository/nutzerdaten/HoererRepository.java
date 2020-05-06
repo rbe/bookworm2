@@ -18,7 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 

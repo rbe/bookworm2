@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 @Service
 public final class DownloadsLieferungService {

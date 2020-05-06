@@ -18,8 +18,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
-import wbh.bookworm.shared.domain.Hoerernummer;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;

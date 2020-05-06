@@ -15,7 +15,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @Component
 @RequestScope

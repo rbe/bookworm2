@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 import java.util.Collections;
 import java.util.List;
 
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

@@ -46,6 +46,7 @@
     <modules>
         <module>hoerbuchkatalog</module>
         <module>hoerbuchdienst</module>
+        <module>shared</module>
         <module>thirdparty</module>
     </modules>
     <dependencyManagement>

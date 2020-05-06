@@ -17,8 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
-import wbh.bookworm.shared.domain.Hoerernummer;
-import wbh.bookworm.shared.domain.Titelnummer;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 public final class MerklisteMigrator {
 

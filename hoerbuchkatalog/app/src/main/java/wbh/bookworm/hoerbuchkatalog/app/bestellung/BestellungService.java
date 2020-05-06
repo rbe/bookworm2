@@ -21,7 +21,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
-import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.QueryPredicate;
 
