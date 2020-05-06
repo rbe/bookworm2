@@ -38,7 +38,7 @@
         <skipTests>true</skipTests>
         <maven.test.skip>true</maven.test.skip>
         <!-- Repository -->
-        <repository.url>http://localhost:8999/nexus/repository</repository.url>
+        <repository.url>http://nexus.local/nexus/repository</repository.url>
         <buildScmBranch>unknown</buildScmBranch>
         <versionName>${project.version} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})</versionName>
         <git.dirty>-devel</git.dirty>
@@ -48,21 +48,6 @@
         <module>hoerbuchdienst</module>
         <module>thirdparty</module>
     </modules>
-    <repositories>
-        <!--
-        <repository>
-            <id>bintray</id>
-            <name>bintray</name>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <url>https://jcenter.bintray.com</url>
-        </repository>
-        -->
-    </repositories>
     <dependencyManagement>
         <dependencies>
             <!-- Mikrokosmos -->
@@ -675,7 +660,7 @@
         <profile>
             <id>bookworm.staticanalysis</id>
             <properties>
-                <sonar.host.url>http://localhost:9000</sonar.host.url>
+                <sonar.host.url>http://sonarqube.local</sonar.host.url>
                 <sonar.java.binaries>target/classes</sonar.java.binaries>
                 <!--<sonar.java.libraries>target/unpack/**/*.jar</sonar.java.libraries>-->
                 <sonar.java.test.binaries>target/test-classes</sonar.java.test.binaries>
@@ -770,11 +755,11 @@
             <distributionManagement>
                 <snapshotRepository>
                     <id>nexus-snapshots</id>
-                    <url>http://localhost:8999/nexus/repository/maven-snapshots/</url>
+                    <url>http://nexus.local/nexus/repository/maven-snapshots/</url>
                 </snapshotRepository>
                 <repository>
                     <id>nexus-releases</id>
-                    <url>http://localhost:8999/nexus/repository/maven-releases/</url>
+                    <url>http://nexus.local/nexus/repository/maven-releases/</url>
                 </repository>
             </distributionManagement>
         </profile>
