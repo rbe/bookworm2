@@ -18,8 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
+import wbh.bookworm.hoerbuchdienst.adapter.provided.api.HoerbuchNichtGefundenException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
@@ -31,13 +31,9 @@ public class InfoController {
 
     private final KatalogService katalogService;
 
-    private final AudiobookService audiobookService;
-
     @Inject
-    public InfoController(final KatalogService katalogService,
-                          final AudiobookService audiobookService) {
+    public InfoController(final KatalogService katalogService) {
         this.katalogService = katalogService;
-        this.audiobookService = audiobookService;
     }
 
     @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -47,7 +43,7 @@ public class InfoController {
                     audiobookAnfrageDTO.getTitelnummer());
             return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
         } catch (Exception e) {
-            throw new BusinessException("Hörbuch " + audiobookAnfrageDTO.getTitelnummer() + " nicht gefunden", e);
+            throw new HoerbuchNichtGefundenException("Hörbuch " + audiobookAnfrageDTO.getTitelnummer() + " nicht gefunden", e);
         }
     }
 
@@ -69,7 +65,7 @@ public class InfoController {
                 trackAnfrageDTO.getTitelnummer(),
                 trackAnfrageDTO.getIdent());
         try {
-            final TrackInfoDTO trackInfoDTO = audiobookService.trackInfo(trackAnfrageDTO.getHoerernummer(),
+            final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
                     trackAnfrageDTO.getTitelnummer(),
                     trackAnfrageDTO.getIdent());
             return TrackMapper.INSTANCE.convert(trackInfoDTO);
