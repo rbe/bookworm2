@@ -5,19 +5,17 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.application</artifactId>
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.container</artifactId>
     <name>wbh-online.de Hörbuchdienst Container</name>
-    <version>LocalBuild</version>
     <packaging>pom</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
-                <version>3.1.1</version>
                 <executions>
                     <execution>
                         <id>default</id>

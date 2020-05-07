@@ -51,6 +51,11 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.watermark</artifactId>
             <version>LocalBuild</version>
         </dependency>
+        <!-- Bookworm -->
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.shared.domain</artifactId>
+        </dependency>
         <!-- Mikrokosmos -->
         <dependency>
             <groupId>aoc.mikrokosmos</groupId>
@@ -102,6 +107,11 @@
             <groupId>javax.annotation</groupId>
             <artifactId>javax.annotation-api</artifactId>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -140,7 +150,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-shade-plugin</artifactId>
-                <version>3.1.0</version>
+                <version>3.2.1</version>
                 <executions>
                     <execution>
                         <phase>package</phase>
