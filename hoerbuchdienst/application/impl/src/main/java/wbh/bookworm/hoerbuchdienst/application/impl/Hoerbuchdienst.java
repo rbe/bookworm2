@@ -11,6 +11,7 @@ import io.micronaut.runtime.Micronaut;
 public class Hoerbuchdienst {
 
     public static void main(final String[] args) {
+        // TODO Setup UncaughtExceptionHandler and cleanup temporary files?
         Micronaut.run(Hoerbuchdienst.class);
     }
 

@@ -1,4 +1,4 @@
-package wbh.bookworm.hoerbuchdienst.domain.impl.audiobook;
+package wbh.bookworm.hoerbuchdienst.domain.ports.audiobook;
 
 import java.io.Serializable;
 
