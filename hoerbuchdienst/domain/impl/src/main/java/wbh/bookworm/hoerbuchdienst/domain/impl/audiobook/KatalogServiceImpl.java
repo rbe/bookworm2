@@ -22,6 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistCreatedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistEntryDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
@@ -30,6 +31,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.WatermarkedTrackInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
+
+import aoc.mikrokosmos.io.fs.FilesUtils;
 
 @Singleton
 public class KatalogServiceImpl implements KatalogService {
@@ -76,7 +79,7 @@ public class KatalogServiceImpl implements KatalogService {
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         final WatermarkedTrackInfo watermarkedTrackInfo = watermarker.trackInfo(watermark,
                 PIRACY_INQUIRY_URL_PREFIX, tempMp3File);
-        FilesHelper.tryDelete(tempMp3File);
+        FilesUtils.tryDelete(tempMp3File);
         return TrackDtoMapper.INSTANCE.convert(watermarkedTrackInfo, titelnummer, ident);
     }
 

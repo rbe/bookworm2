@@ -27,6 +27,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookServiceExcept
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 
+import aoc.mikrokosmos.io.fs.FilesUtils;
 import aoc.mikrokosmos.io.zip.Zip;
 
 @Singleton
@@ -56,16 +57,15 @@ final class AudiobookServiceImpl implements AudiobookService {
     public InputStream trackAsStream(final String hoerernummer, final String titelnummer, final String ident) {
         final Path tempMp3File = audiobookRepository.localCopyOfTrack(hoerernummer, titelnummer, ident,
                 "trackAsByteArray");
-        final byte[] watermarkedMp3Track;
         try {
             watermarker.addWatermarkInPlace(watermarker.makeWatermark(hoerernummer, titelnummer),
                     PIRACY_INQUIRY_URL_PREFIX, tempMp3File);
-            watermarkedMp3Track = Files.readAllBytes(tempMp3File);
+            final byte[] watermarkedMp3Track = Files.readAllBytes(tempMp3File);
+            FilesUtils.tryDelete(tempMp3File);
+            return new ByteArrayInputStream(watermarkedMp3Track);
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
         }
-        FilesHelper.tryDelete(tempMp3File);
-        return new ByteArrayInputStream(watermarkedMp3Track);
     }
 
     // TODO Lasttest mit n Hörbüchern und n Threads, wobei n=1,2,4,6,8,...
@@ -82,6 +82,8 @@ final class AudiobookServiceImpl implements AudiobookService {
             zip.unzip(sourceZipStream, audiobookDirectory);
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
+        } finally {
+            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
         }
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         // Wasserzeichen an MP3s anbringen
@@ -97,6 +99,8 @@ final class AudiobookServiceImpl implements AudiobookService {
                     });
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
+        } finally {
+            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
         }
         // Wasserzeichen als Textdatei in ZIP legen
         LOGGER.info("Lege Wasserzeichen {} als Textdatei in DAISY ZIP", watermark);
@@ -111,11 +115,12 @@ final class AudiobookServiceImpl implements AudiobookService {
             final List<Path> files = paths.collect(Collectors.toUnmodifiableList());
             LOGGER.info("Erstelle DAISY Hörbuch {} mit folgenden Dateien: {}", titelnummer, files);
             zipInputStream = zip.zipAsStream(files);
+            return zipInputStream;
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
+        } finally {
+            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
         }
-        FilesHelper.tryDelete(audiobookDirectory);
-        return zipInputStream;
     }
 
 }
