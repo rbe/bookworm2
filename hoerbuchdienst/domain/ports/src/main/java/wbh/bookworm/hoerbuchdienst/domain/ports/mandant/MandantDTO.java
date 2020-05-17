@@ -20,15 +20,21 @@ public final class MandantDTO implements Serializable {
 
     private final List<String> aghNummern;
 
-    private final StorageCredentials storageCredentials;
+    private final String storageUrl;
+
+    private final String accessKey;
+
+    private final String secretKey;
 
     public MandantDTO(final String hoerbuecherei,
                       final List<String> hoerernummern, final List<String> aghNummern,
-                      final StorageCredentials storageCredentials) {
+                      final String storageUrl, final String accessKey, final String secretKey) {
         this.hoerbuecherei = hoerbuecherei;
         this.hoerernummern = hoerernummern;
         this.aghNummern = aghNummern;
-        this.storageCredentials = storageCredentials;
+        this.storageUrl = storageUrl;
+        this.accessKey = accessKey;
+        this.secretKey = secretKey;
     }
 
     public String getHoerbuecherei() {
@@ -43,29 +49,28 @@ public final class MandantDTO implements Serializable {
         return aghNummern;
     }
 
-    public StorageCredentials getStorageCredentials() {
-        return storageCredentials;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        final MandantDTO mandantDTO = (MandantDTO) o;
-        return hoerbuecherei.equals(mandantDTO.hoerbuecherei) &&
-                hoerernummern.equals(mandantDTO.hoerernummern) &&
-                aghNummern.equals(mandantDTO.aghNummern);
+        final MandantDTO that = (MandantDTO) o;
+        return hoerbuecherei.equals(that.hoerbuecherei) &&
+                hoerernummern.equals(that.hoerernummern) &&
+                aghNummern.equals(that.aghNummern) &&
+                storageUrl.equals(that.storageUrl) &&
+                accessKey.equals(that.accessKey) &&
+                secretKey.equals(that.secretKey);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(hoerbuecherei, hoerernummern, aghNummern);
+        return Objects.hash(hoerbuecherei, hoerernummern, aghNummern, storageUrl, accessKey, secretKey);
     }
 
     @Override
     public String toString() {
-        return String.format("Mandant{hoerbuecherei='%s', hoerernummern=%d Einträge, aghNummern=%d Einträge}",
-                hoerbuecherei, hoerernummern.size(), aghNummern.size());
+        return String.format("MandantDTO{hoerbuecherei='%s', hoerernummern=%s, aghNummern=%s, storageUrl='%s', accessKey='%d' bytes, secretKey='%d' bytes}",
+                hoerbuecherei, hoerernummern, aghNummern, storageUrl, accessKey.length(), secretKey.length());
     }
 
 }
