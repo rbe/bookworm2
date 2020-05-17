@@ -1,0 +1,30 @@
+----
+cat /data1/.minio.sys/buckets/buck/TicketTemplate.txt/fs.json
+{
+  "version": "1.0.2",
+  "checksum": {
+    "algorithm": "",
+    "blocksize": 0,
+    "hashes": null
+  },
+  "meta": {
+    "X-Minio-Internal-Server-Side-Encryption-Iv": "O/AEHH0z21Lj6hwrgLqk86iFLCcuj//nfExG5uXqde0=",
+    "X-Minio-Internal-Server-Side-Encryption-S3-Kms-Key-Id": "minio-key-1",
+    "X-Minio-Internal-Server-Side-Encryption-S3-Kms-Sealed-Key": "eyJhZWFkIjoiQUVTLTI1Ni1HQ00tSE1BQy1TSEEtMjU2IiwiaXYiOiJrT0h3amhiOXd0RXRnQ0ZJem5SWS9BPT0iLCJub25jZSI6IjB2Z3RyM1hUSnZHZ0NJQ2IiLCJieXRlcyI6IkhJMWJGVnZxK085b3ZyMzAzTDJsMitzUmNrb0p2YkdCcnc5Zk1BYkhISVlENFo1dmJXLzl4NmVzMHgwMDN2b2oifQ==",
+    "X-Minio-Internal-Server-Side-Encryption-S3-Sealed-Key": "IAAfAImN/RoEp3w9OyLNLDKy2RSxrRy+VfG8hQhlN84GVrH6Mla/nXk2Qvzupya6OOzVanX48co3VFyxDJszBQ==",
+    "X-Minio-Internal-Server-Side-Encryption-Seal-Algorithm": "DAREv2-HMAC-SHA256",
+    "content-type": "text/plain",
+    "etag": "20000f009701a1bea33ea4358f6ad2da795269a82e7bc641e2ee3e81914a8c15901dde81bbf149ada24c6a8e95c8b57a"
+  }
+}
+----
+
+Read:
+
+* https://docs.min.io/docs/minio-kms-quickstart-guide.html
+* https://github.com/minio/kes/blob/master/server-config.yaml
+* https://github.com/minio/kes/wiki/Hashicorp-Vault-Keystore
+* https://github.com/minio/minio/blob/master/docs/minio-limits.md
+* https://github.com/minio/kes/wiki/Concepts
+* https://github.com/minio/kes/wiki/MinIO-Object-Storage
+* https://github.com/minio/kes/wiki/Hashicorp-Vault-Keystore

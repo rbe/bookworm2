@@ -1,0 +1,31 @@
+[rbe@medienhof10 ~]$ docker ps 
+CONTAINER ID        IMAGE                              COMMAND                  CREATED             STATUS                    PORTS                                      NAMES
+eb1de77b486d        joomla:3.9.5-php7.3-fpm-alpine     "/entrypoint.sh php-…"   12 months ago       Up 9 months (unhealthy)   9000/tcp                                   wbhonline_joomla_1
+83b063c58d75        bookworm/datatransfer:LocalBuild   "/usr/sbin/sshd -D"      12 months ago       Up 9 months               0.0.0.0:2201->22/tcp                       wbhonline_datatransfer_1
+523c751f34b8        mysql:5.6                          "docker-entrypoint.s…"   12 months ago       Up 9 months (unhealthy)                                              wbhonline_joomla-db_1
+2e6d68db1bbc        f2b0a5267a3d                       "nginx"                  12 months ago       Up 9 months (unhealthy)   0.0.0.0:80->80/tcp, 0.0.0.0:443->443/tcp   wbhonline_rproxy_1
+89d9abfe3556        bookworm/admin:LocalBuild          "/usr/sbin/sshd -D"      12 months ago       Up 9 months               0.0.0.0:2202->22/tcp                       wbhonline_admin_1
+b0b4f6552dac        bookworm/vault:LocalBuild          "/opt/vault/vault se…"   12 months ago       Up 9 months                                                          wbhonline_vault_1
+bce42ee4044d        wbhcms/assets:LocalBuild           "/usr/sbin/sshd -D"      12 months ago       Up 9 months               0.0.0.0:2203->22/tcp                       wbhonline_assets_1
+
+
+docker start wbhonline_admin_1
+docker start wbhonline_datatransfer_1
+docker start wbhonline_assets_1
+
+docker start wbhonline_joomla-db_1
+docker start wbhonline_joomla_1
+
+docker start wbhonline_hoerbuchkatalog_1
+
+docker start wbhonline_rproxy_1
+
+docker start wbhonline_vault_1
+
+
+docker context create my-context \
+    --docker "host=unix:///run/docker.sock"
+
+docker context update default --docker "host=unix:///run/docker.sock"
+
+Error response from daemon: OCI runtime create failed: container with id exists: unknown Error: failed to start containers:

@@ -1,5 +1,4 @@
-
-== Ressourcen
+== Hörbuchdienst
 
 === Web Audio Player
 
@@ -69,3 +68,21 @@
 === Barrierefreiheit
 
 * https://www.barrierefrei-kommunizieren.de/datenbank/
+
+=== MP3
+
+https://id3.org/Implementations
+
+.APE Tag
+https://de.wikipedia.org/wiki/APE-Tag
+http://wiki.hydrogenaud.io/index.php?title=APEv1_specification
+http://wiki.hydrogenaud.io/index.php?title=APEv2
+http://wiki.hydrogenaud.io/index.php?title=APEv2_specification
+http://wiki.hydrogenaud.io/index.php?title=APE_key
+
+.Java MP3 Library
+https://github.com/mpatric/mp3agic
+https://github.com/rbackhouse/Music-Server
+https://github.com/ericfarng/jid3lib
+http://javamusictag.sourceforge.net/docs.htm
+

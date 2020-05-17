@@ -1,0 +1,32 @@
+== Variante 1
+
+----
+cd wbh.bookworm/
+#git reset --hard
+git pull
+./mvnw -P aoc.platform,bookworm.hoerbuchkatalog,bookworm.assembly clean install
+docker cp hoerbuchkatalog/assembly/target/wbh.bookworm.hoerbuchkatalog.assembly.jar wbhonline_admin_1:/opt/bookworm/app
+docker restart wbhonline_hoerbuchkatalog_1
+docker logs -f wbhonline_hoerbuchkatalog_1
+----
+
+docker exec -it wbhonline_hoerbuchkatalog_1 bash
+
+== Variante 2
+
+----
+scp wbh.bookworm.hoerbuchkatalog.assembly.jar medienhof10:
+----
+
+.medienhof10
+----
+docker exec -it wbhonline_admin_1 ash
+cd /opt/bookworm/app
+cp wbh.bookworm.hoerbuchkatalog.assembly.jar wbh.bookworm.hoerbuchkatalog.assembly1.jar
+----
+
+----
+docker cp wbh.bookworm.hoerbuchkatalog.assembly.jar wbhonline_admin_1:/opt/bookworm/app
+docker restart wbhonline_hoerbuchkatalog_1
+docker logs -f wbhonline_hoerbuchkatalog_1
+----
