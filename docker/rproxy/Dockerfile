@@ -18,7 +18,7 @@ RUN apk update \
         openssl \
         certbot-nginx \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo "${TZ}" >/etc/timezone
+    && echo "${TZ}" >/etc/timezone \
     && rm /etc/nginx/conf.d/default.conf* \
     && adduser -u 82 -D -S -G www-data www-data \
     && git clone https://github.com/h5bp/server-configs-nginx.git /etc/nginx/h5bp
@@ -31,7 +31,7 @@ COPY docker/rproxy/${ENV_NAME}/index.html /usr/share/nginx/html
 COPY docker/rproxy/${ENV_NAME}/robots.txt /usr/share/nginx/html
 
 COPY docker/rproxy-certbot/nginx-tls.sh /
-RUN chmod 500 /nginx-tls.sh
+RUN chmod 500 /nginx-tls.sh \
     && openssl rand 80 >/etc/nginx/ssl_session_ticket.key \
     && /nginx-tls.sh self-signed-${ENV_TYPE}
 
