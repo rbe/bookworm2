@@ -78,6 +78,7 @@ export class Audioplayer {
                 'body': JSON.stringify({
                     mandant: 'WBH',
                     hoerernummer: this.hoerernummer,
+                    aghNummer: 'TODO',
                     titelnummer: this.titelnummer
                 })
             })

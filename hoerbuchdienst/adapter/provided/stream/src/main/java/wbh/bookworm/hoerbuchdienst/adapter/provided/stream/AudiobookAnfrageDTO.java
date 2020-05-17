@@ -6,6 +6,8 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
 import java.util.Objects;
 
@@ -18,18 +20,31 @@ public final class AudiobookAnfrageDTO implements Serializable {
 
     private static final long serialVersionUID = -1L;
 
+    @Min(3)
+    @Max(20)
     private final String mandant;
 
+    @Min(2)
+    @Max(20)
     private final String hoerernummer;
 
+    @Min(13)
+    @Max(13)
+    private final String aghNummer;
+
+    // TODO Titelnummer durch ...Resolver beim Mandanten auflösen
+    @Min(1)
+    @Max(5)
     private final String titelnummer;
 
     @JsonCreator
     public AudiobookAnfrageDTO(@JsonProperty("mandant") final String mandant,
                                @JsonProperty("hoerernummer") final String hoerernummer,
+                               @JsonProperty("aghNummer") final String aghNummer,
                                @JsonProperty("titelnummer") final String titelnummer) {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
+        this.aghNummer = aghNummer;
         this.titelnummer = titelnummer;
     }
 
@@ -39,6 +54,10 @@ public final class AudiobookAnfrageDTO implements Serializable {
 
     public String getHoerernummer() {
         return hoerernummer;
+    }
+
+    public String getAghNummer() {
+        return aghNummer;
     }
 
     public String getTitelnummer() {

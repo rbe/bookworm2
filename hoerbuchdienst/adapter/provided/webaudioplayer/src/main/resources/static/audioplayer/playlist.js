@@ -32,9 +32,10 @@ export class Playlist {
                     'Content-Type': 'application/json'
                 },
                 'body': JSON.stringify({
-                    'mandant': 'WBH',
-                    'hoerernummer': this.hoerernummer,
-                    'titelnummer': this.titelnummer
+                    mandant: 'WBH',
+                    hoerernummer: this.hoerernummer,
+                    aghNummer: 'TODO',
+                    titelnummer: this.titelnummer
                 })
             })
             .then(response => {
