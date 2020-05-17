@@ -43,7 +43,7 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisyaudiobook</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisy</artifactId>
             <version>LocalBuild</version>
         </dependency>
         <dependency>

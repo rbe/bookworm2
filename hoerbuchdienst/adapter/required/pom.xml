@@ -12,7 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Adapter Required</name>
     <packaging>pom</packaging>
     <modules>
-        <module>daisyaudiobook</module>
+        <module>daisy</module>
         <module>watermark</module>
     </modules>
 </project>
