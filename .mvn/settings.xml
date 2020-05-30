@@ -18,13 +18,13 @@
         </server>
     </servers>
     <mirrors>
+        <!--
         <mirror>
             <id>mirror-central</id>
             <name>mirror-central</name>
             <url>http://nexus.local/nexus/repository/maven-public/</url>
             <mirrorOf>central</mirrorOf>
         </mirror>
-        <!--
         <mirror>
             <id>mirror-all</id>
             <name>mirror-all</name>
