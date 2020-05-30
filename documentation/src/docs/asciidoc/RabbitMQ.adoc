@@ -1,0 +1,28 @@
+== RabbitMQ
+
+=== Ressources
+
+* https://www.rabbitmq.com/api-guide.html[Java Client API Guide]
+
+* https://www.rabbitmq.com/getstarted.html[Get Started]
+* https://www.rabbitmq.com/tutorials/amqp-concepts.html[AMQP 0-9-1 Model Explained]
+* https://medium.com/faun/different-types-of-rabbitmq-exchanges-9fefd740505d[Different types of RabbitMQ Exchanges]
+
+* https://micronaut-projects.github.io/micronaut-rabbitmq/latest/guide/[Micronaut RabbitMQ]
+* https://guides.micronaut.io/micronaut-rabbitmq-rpc/guide/index.html[RabbitMQ RPC and Micronaut]
+* https://guides.micronaut.io/micronaut-rabbitmq/guide/[RabbitMQ and Micronaut - Event driven applications]
+* https://www.rabbitmq.com/uri-spec.html[URI Spec]
+
+* https://www.rabbitmq.com/tutorials/tutorial-three-java.html[Publish/Subscribe Tutorial]
+* https://www.rabbitmq.com/tutorials/tutorial-six-java.html[RPC Tutorial]
+
+* https://www.rabbitmq.com/admin-guide.html[Admin Guide]
+* https://www.rabbitmq.com/federated-queues.html[Federated Queues]
+* https://www.rabbitmq.com/federation.html[Federation Plugin]
+* https://www.rabbitmq.com/configure.html
+* https://github.com/rabbitmq/rabbitmq-server/blob/v3.8.x/docs/rabbitmq.conf.example
+* https://www.rabbitmq.com/troubleshooting-networking.html
+* https://www.rabbitmq.com/ssl.html
+* https://www.rabbitmq.com/troubleshooting-ssl.html
+* https://github.com/docker-library/rabbitmq/issues/165
+* https://github.com/docker-library/rabbitmq/blob/master/docker-entrypoint.sh

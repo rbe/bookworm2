@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.katalog;
 
 import java.io.Serializable;
 import java.util.ArrayList;

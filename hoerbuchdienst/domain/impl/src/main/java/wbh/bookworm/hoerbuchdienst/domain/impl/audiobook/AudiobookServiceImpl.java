@@ -26,6 +26,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookServiceException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 import aoc.mikrokosmos.io.fs.FilesUtils;
 import aoc.mikrokosmos.io.zip.Zip;
@@ -54,8 +55,13 @@ final class AudiobookServiceImpl implements AudiobookService {
     }
 
     @Override
+    public int shardLocation(final String titelnummer) {
+        return audiobookRepository.lookupShard(titelnummer).intValue();
+    }
+
+    @Override
     public InputStream trackAsStream(final String hoerernummer, final String titelnummer, final String ident) {
-        final Path tempMp3File = audiobookRepository.localCopyOfTrack(hoerernummer, titelnummer, ident,
+        final Path tempMp3File = audiobookRepository.makeLocalCopyOfTrack(hoerernummer, titelnummer, ident,
                 "trackAsByteArray");
         try {
             watermarker.addWatermarkInPlace(watermarker.makeWatermark(hoerernummer, titelnummer),
@@ -121,6 +127,11 @@ final class AudiobookServiceImpl implements AudiobookService {
         } finally {
             FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
         }
+    }
+
+    @Override
+    public boolean putZip(final InputStream inputStream, final String titelnummer) {
+        return audiobookRepository.putZip(inputStream, new Titelnummer(titelnummer));
     }
 
 }

@@ -6,7 +6,9 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-class RepositoryConfigurationKeys {
+final class RepositoryConfigurationKeys {
+
+    static final String HOERBUCHDIENST_SHARD_ID = "hoerbuchdienst.repository.shard.id";
 
     static final String HOERBUCHDIENST_TEMPORARY_PATH = "hoerbuchdienst.temporary.path";
 

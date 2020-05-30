@@ -74,7 +74,7 @@ public class KatalogServiceImpl implements KatalogService {
 
     @Override
     public TrackInfoDTO trackInfo(final String hoerernummer, final String titelnummer, final String ident) {
-        final Path tempMp3File = audiobookRepository.localCopyOfTrack(hoerernummer, titelnummer, ident,
+        final Path tempMp3File = audiobookRepository.makeLocalCopyOfTrack(hoerernummer, titelnummer, ident,
                 "trackinfo");
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         final WatermarkedTrackInfo watermarkedTrackInfo = watermarker.trackInfo(watermark,

@@ -21,6 +21,8 @@ import io.micronaut.context.annotation.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
+
 @Named("localdisk")
 class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
@@ -52,6 +54,11 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
             throw new AudiobookStreamResolverException("", e);
         }
         return list;
+    }
+
+    @Override
+    public List<ObjectMetaInfo> allObjectsMetaInfo() {
+        throw new UnsupportedOperationException();
     }
 
     @Override
@@ -106,6 +113,11 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
     @Override
     public InputStream zipAsStream(final String titelnummer) {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void putZip(final InputStream inputStream, final String titelnummer) {
         throw new UnsupportedOperationException();
     }
 

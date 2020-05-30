@@ -10,8 +10,12 @@ import java.io.InputStream;
 
 public interface AudiobookService {
 
-    InputStream trackAsStream(String hoerernummer, String titelnummer, String ident);
+    int shardLocation(/* TODO AghNummer */String titelnummer);
 
-    InputStream zipAsStream(String hoerernummer, String titelnummer);
+    InputStream trackAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer, String ident);
+
+    InputStream zipAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer);
+
+    boolean putZip(InputStream inputStream, /* TODO AghNummer */String titelnummer);
 
 }

@@ -16,11 +16,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
+import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ObjectStorageAudiobookStreamResolverImpl.class);
+
+    private static final String APPLICATION_ZIP = "application/zip";
 
     private final BucketObjectStorage bucketObjectStorage;
 
@@ -36,7 +39,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public List<Path> listAll() {
         try {
-            return bucketObjectStorage.listAll()
+            return bucketObjectStorage.listAllObjects()
                     .stream()
                     .map(path -> path.getName(0))
                     // TODO "Kapitel" Suffix ist mandantenspezifisch
@@ -49,9 +52,14 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
+    public List<ObjectMetaInfo> allObjectsMetaInfo() {
+        return bucketObjectStorage.allObjectsMetaInfo();
+    }
+
+    @Override
     public List<Path> list(final String titelnummer) {
         try {
-            return bucketObjectStorage.listObjects(titelnummer);
+            return bucketObjectStorage.listAllObjects(titelnummer);
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }

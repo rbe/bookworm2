@@ -23,8 +23,10 @@ rabbitmq:
 hoerbuchdienst:
   repository:
     type: objectstorage
+    shard:
+      id: 1
+      numshards: 1
     localdisk:
-
       uri: ../../../Buecher-WBH
     objectstorage:
       name: minio
@@ -33,10 +35,11 @@ hoerbuchdienst:
 
 objectstorage:
   minio:
-    url: https://storage.medienhof9.rootaid.de
+    url: https://s3.medienhof9.rootaid.de
     accessKey: Nae3bahcexie9eifaihe
     secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
     bucketName: buckrogers
+    serversideencryption: atRest
 
 elasticsearch:
   httpHosts: "http://localhost:9200,http://127.0.0.1:9200"

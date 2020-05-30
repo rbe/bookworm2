@@ -14,7 +14,12 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Semaphore;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
@@ -27,6 +32,9 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @Singleton
 @CacheConfig("audiobookRepository")
@@ -66,8 +74,13 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     private List<ShardObject> shardObjects;
 
     @Inject
-    AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
+    AudiobookRepositoryImpl(final ShardDistributionStrategy shardDistributionStrategy,
+                            final ReshardingMessageSender reshardingMessageSender,
+                            final AudiobookStreamResolver audiobookStreamResolver,
                             final AudiobookMapper audiobookMapper) {
+        this.shardDistributionStrategy = shardDistributionStrategy;
+        this.reshardingMessageSender = reshardingMessageSender;
+        shardObjects = new ArrayList<>();
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
     }
@@ -186,9 +199,9 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public Path localCopyOfTrack(final String hoerernummer,
-                                 final String titelnummer, final String ident,
-                                 final String temporaryId) {
+    public Path makeLocalCopyOfTrack(final String hoerernummer,
+                                     final String titelnummer, final String ident,
+                                     final String temporaryId) {
         // TODO "Kapitel" Suffix ist mandantenspezifisch
         final String tempId = String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
         final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
@@ -214,6 +227,12 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     @Override
     public InputStream zipAsStream(final String titelnummer) {
         return audiobookStreamResolver.zipAsStream(titelnummer);
+    }
+
+    @Override
+    public boolean putZip(final InputStream inputStream, final Titelnummer titelnummer) {
+        audiobookStreamResolver.putZip(inputStream, titelnummer.getValue());
+        return true;
     }
 
 }

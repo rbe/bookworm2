@@ -10,9 +10,13 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
+import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
+
 public interface AudiobookStreamResolver {
 
     List<Path> listAll();
+
+    List<ObjectMetaInfo> allObjectsMetaInfo();
 
     List<Path> list(/* TODO AGH Nummer o.ä. */String titelnummer);
 
@@ -23,5 +27,7 @@ public interface AudiobookStreamResolver {
     InputStream trackAsStream(/* TODO AGH Nummer o.ä. */String titelnummer, String ident);
 
     InputStream zipAsStream(/* TODO AGH Nummer o.ä. */String titelnummer);
+
+    void putZip(InputStream inputStream, /* TODO AGH Nummer o.ä. */String titelnummer);
 
 }
