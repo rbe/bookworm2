@@ -97,4 +97,15 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         }
     }
 
+    @Override
+    public void putZip(final InputStream inputStream, final String titelnummer) {
+        LOGGER.debug("Unpack zip archive for object '{}'", titelnummer);
+        // TODO unpack zip and put every file into object storage
+        //for every file {
+        LOGGER.debug("Putting file '{}' into object storage", titelnummer);
+        bucketObjectStorage.put(titelnummer + "Kapitel", inputStream, APPLICATION_ZIP);
+        LOGGER.info("Sucessfully put object '{}' into object storage", titelnummer);
+        //}
+    }
+
 }

@@ -5,6 +5,21 @@ micronaut:
   jcache:
     enabled: true
 
+rabbitmq:
+  #host: localhost
+  #port: 5672
+  #username: guest
+  #password: guest
+  #host: 188.68.50.68
+  #port: 5671
+  #username: bugs
+  #password: bunny
+  servers:
+    default:
+      uri: amqps://bugs:bunny@rabbitmq.shard1.audiobook.wbh-online.de
+    shard2:
+      uri: amqps://bugs:bunny@rabbitmq.shard2.audiobook.wbh-online.de
+
 hoerbuchdienst:
   repository:
     type: objectstorage

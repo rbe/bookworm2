@@ -1,0 +1,69 @@
+/* this propery specifies the default colours for the body content of all pages */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 11pt;
+    font-style: normal;
+    font-weight: normal;
+    margin: 5px;
+    background-color: black;
+    color: white;
+}
+
+td.beaglebuddy {
+    border: 1px solid black;
+    vertical-align: top;
+    text-align: left;
+    padding: 5px;
+}
+
+/* this property specifies the colours used to display hyperlinks when they are   */
+/* not currently selected, ie, the mouse cursor is not positioned over them.      */
+/* the colours specified here need to match the link property colours.            */
+.menu_item {
+    border-color: black;
+    background-color: black;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* this property specifies the colours used to display hyperlinks when they are   */
+/* not currently selected, ie, the mouse cursor is not positioned over them.      */
+.menu_item:link {
+    background-color: black;
+    color: white;
+    text-decoration: none;
+}
+
+/* this property specifies the colours used to display hyperlinks after they have */
+/* clicked on once.                                                               */
+.menu_item:active {
+    border-color: black;
+    background-color: black;
+    color: white;
+    text-decoration: none;
+}
+
+/* this property specifies the colours used to display hyperlinks when the mouse  */
+/* cursor is positioned over it.  It is this property that creates the "selected" */
+/* effect.                                                                        */
+.menu_item:hover {
+    border-color: black;
+    background-color: #c09458;
+    color: white;
+    text-decoration: none;
+}
+
+p {
+    text-align: left;
+    margin: 10px;
+}
+
+ul {
+    text-align: left;
+}
+
+ul.beaglebuddy {
+    text-align: center;
+}
