@@ -12,7 +12,8 @@
     <name>wbh-online.de ThirdParty Libraries</name>
     <packaging>pom</packaging>
     <modules>
-        <module>mp3agic</module>
+        <!--<module>mp3agic</module>-->
         <!--<module>beaglebuddy</module>-->
+        <!--<module>jaudiotagger</module>-->
     </modules>
 </project>
