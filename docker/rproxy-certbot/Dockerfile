@@ -13,7 +13,8 @@ RUN apk update \
         certbot-nginx \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone \
-    && echo "0 0 * * WED,SUN /nginx-tls.sh renew" | crontab -
+    &&
+    echo "0 0 * * WED,SUN /nginx-tls.sh renew" | crontab -
 
 ADD .version /
 
