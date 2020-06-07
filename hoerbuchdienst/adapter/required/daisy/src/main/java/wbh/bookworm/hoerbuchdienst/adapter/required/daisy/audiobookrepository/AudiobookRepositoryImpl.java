@@ -14,16 +14,15 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.Semaphore;
-import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import io.micronaut.cache.annotation.CacheConfig;
 import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.context.annotation.Property;
+import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,150 +31,81 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
+// TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
 @Singleton
 @CacheConfig("audiobookRepository")
 class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImpl.class);
 
-    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_SHARD_ID)
-    private static final ShardNumber MY_SHARD_NUMBER = ShardNumber.of(1);
-
-    private static final List<ShardObject> staticShardObjects = new ArrayList<>();
-
-    static {
-        for (int i = 1; i < 2_000 + 1; i++) {
-            final String titelnummer = String.format("%05d", i);
-            staticShardObjects.add(new ShardObject(ShardNumber.of(1), titelnummer, 380 * 1024L * 1024L, "" + titelnummer.hashCode()));
-        }
-    }
-
-    private final ShardDistributionStrategy shardDistributionStrategy;
-
-    private final ReshardingMessageSender reshardingMessageSender;
-
-    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
-    private Path temporaryDirectory;
-
     private final AudiobookStreamResolver audiobookStreamResolver;
 
     private final AudiobookMapper audiobookMapper;
 
-    private final Semaphore reshardingInProgressLock = new Semaphore(1);
-
-    // TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
-
-    private final Object reshardLockMonitor = new Object();
+    private final ShardDistributionStrategy shardDistributionStrategy;
 
     private List<ShardObject> shardObjects;
 
+    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_SHARD_NUMBER)
+    private int myShardNumber;
+
+    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
+    private Path temporaryDirectory;
+
     @Inject
-    AudiobookRepositoryImpl(final ShardDistributionStrategy shardDistributionStrategy,
-                            final ReshardingMessageSender reshardingMessageSender,
-                            final AudiobookStreamResolver audiobookStreamResolver,
-                            final AudiobookMapper audiobookMapper) {
-        this.shardDistributionStrategy = shardDistributionStrategy;
-        this.reshardingMessageSender = reshardingMessageSender;
-        shardObjects = new ArrayList<>();
+    AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
+                            final AudiobookMapper audiobookMapper,
+                            final ShardDistributionStrategy shardDistributionStrategy) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
+        this.shardDistributionStrategy = shardDistributionStrategy;
     }
 
     @Override
     public ShardNumber lookupShard(final String titelnummer) {
-        return shardObjects
-                .stream()
-                .filter(shardObject -> shardObject.getTitelnummer().equals(titelnummer))
-                .findFirst()
-                .get()
-                .getShardNumber();
+        final Optional<ShardObject> first = shardObjects.stream()
+                .filter(shardObject -> shardObject.getId().equals(titelnummer))
+                .findFirst();
+        return first.map(ShardObject::getShardNumber).orElse(null);
     }
 
-    @Override
-    public void processShardRedistributionLock(final boolean lock) {
-        if (lock) {
-            // set a flag that lock is already held in another shard
-            try {
-                if (reshardingInProgressLock.tryAcquire(100, TimeUnit.MILLISECONDS)) {
-                    LOGGER.debug("Sucessfully acquired shardRedistributionLock");
-                }
-            } catch (InterruptedException e) {
-                LOGGER.error("Cannot acquire shardRedistributionLock", e);
-            }
-        } else {
-            // unset a flag that lock is already held in another shard
-            maybeUnlockRedistributionRunning();
-        }
+    @EventListener
+    public void onShardDisappeared(final ShardDisappearedEvent event) {
+        LOGGER.debug("Shard disappeared, {}", event);
+        // TODO stop any active resharding
+        // TODO disallow resharding
     }
 
-    @Override
-    // TODO @Schedule, damit redistributing nicht lange Zeit in Anspruch nimmt?
-    public void startResharding() {
-        // set redistribution lock on all shards
-        if (acquireShardRedistributionLock()) {
-            reshardingMessageSender.lock(true);
-            // TODO update shard distribution from all shards
-            final List<ShardObject> updatedShardObjects = shardDistributionStrategy.calculate(staticShardObjects);
-            reshardingMessageSender.send(updatedShardObjects);
-        }
-    }
-
-    private boolean acquireShardRedistributionLock() {
-        synchronized (reshardLockMonitor) {
-            try {
-                final boolean b = reshardingInProgressLock.tryAcquire(250L, TimeUnit.MILLISECONDS);
-                if (b) {
-                    LOGGER.debug("Sucessfully acquired shardRedistributionLock");
-                } else {
-                    LOGGER.warn("redistributionRunningLock already taken");
-                }
-                return b;
-            } catch (InterruptedException e) {
-                LOGGER.error("Acquiring shardRedistributionLock was interrupted", e);
-                if (Thread.interrupted()) {
-                    LOGGER.debug("Cleared thread interrupted status");
-                }
-            }
-            return false;
-        }
-    }
-
-    private void maybeUnlockRedistributionRunning() {
-        synchronized (reshardLockMonitor) {
-            if (0 == reshardingInProgressLock.availablePermits()) {
-                try {
-                    reshardingInProgressLock.release(1);
-                    LOGGER.debug("Unlocked shardRedistributionLock");
-                } catch (IllegalMonitorStateException e) {
-                    // I did not held the lock
-                    LOGGER.debug("Cannot unlock shardRedistributionLock", e);
-                }
-            } else {
-                LOGGER.warn("Cannot unlock shardRedistributionLock, no lock was acquired before");
-            }
-        }
+    @EventListener
+    public void onShardReappeared(final ShardReappearedEvent event) {
+        LOGGER.debug("Shard reappeared, {}", event);
+        // TODO allow resharding again
     }
 
     /**
      * shard receives object list (push, by message queue)
      */
     @Override
-    public void processRedistribution(final List<ShardObject> shardObjects) {
-        // filter all objects not belonging to this shard anymore
-        final List<ShardObject> foreignObjects = shardObjects
-                .stream()
-                .filter(shardObject -> !MY_SHARD_NUMBER.equals(shardObject.getShardNumber()))
+    public void maybeReshard(final DataHeartbeats dataHeartbeats) {
+        shardObjects = shardDistributionStrategy.calculate(dataHeartbeats);
+        // filter all objects not belonging to this shard (anymore)
+        final ShardNumber itsme = ShardNumber.of(myShardNumber);
+        final List<ShardObject> foreignObjects = shardObjects.stream()
+                .filter(shardObject -> !itsme.equals(shardObject.getShardNumber()))
                 .collect(Collectors.toUnmodifiableList());
-        // move all objects now belonging to another/recently added shard
-        LOGGER.info("Moving {} to other shards", foreignObjects);
-        // shard receives object (push, by REST endpoint)
-        // check if objects are received successfully (compare hash)
-        // remove redistribution lock on all shards, TODO when all objects were redistributed
-        reshardingMessageSender.lock(false);
+        if (!foreignObjects.isEmpty()) {
+            LOGGER.info("Moving {} to other shards", foreignObjects);
+            // TODO move all objects now belonging to another/recently added shard
+            // TODO invalidate cache
+            // TODO remove objects from object storage
+        }
     }
 
     @Override

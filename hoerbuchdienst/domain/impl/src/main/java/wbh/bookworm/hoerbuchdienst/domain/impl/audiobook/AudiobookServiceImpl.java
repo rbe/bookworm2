@@ -130,7 +130,7 @@ final class AudiobookServiceImpl implements AudiobookService {
     }
 
     @Override
-    public boolean putZip(final InputStream inputStream, final String titelnummer) {
+    public boolean putZip(final String titelnummer, final InputStream inputStream, final String hash) {
         return audiobookRepository.putZip(inputStream, new Titelnummer(titelnummer));
     }
 

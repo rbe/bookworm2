@@ -74,7 +74,7 @@ class AudiobookRepositoryImplTest {
     void shouldReshard() {
         // wait for heartbeat
         wait10Secs();
-        audiobookRepository.startResharding();
+        //audiobookRepository.startResharding();
         wait10Secs();
     }
 

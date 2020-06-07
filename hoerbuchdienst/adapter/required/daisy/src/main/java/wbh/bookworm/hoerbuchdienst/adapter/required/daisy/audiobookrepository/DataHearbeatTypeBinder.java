@@ -1,5 +1,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.util.Optional;
@@ -10,31 +11,35 @@ import io.micronaut.configuration.rabbitmq.bind.RabbitTypeArgumentBinder;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
+
 @Singleton
-final class HearbeatInfoTypeBinder implements RabbitTypeArgumentBinder<HeartbeatInfo> {
+final class DataHearbeatTypeBinder implements RabbitTypeArgumentBinder<DataHeartbeat> {
 
     private final ObjectMapper objectMapper;
 
-    HearbeatInfoTypeBinder(final ObjectMapper objectMapper) {
+    @Inject
+    DataHearbeatTypeBinder(final ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Override
-    public Argument<HeartbeatInfo> argumentType() {
-        return Argument.of(HeartbeatInfo.class);
+    public Argument<DataHeartbeat> argumentType() {
+        return Argument.of(DataHeartbeat.class);
     }
 
     @Override
-    public BindingResult<HeartbeatInfo> bind(final ArgumentConversionContext<HeartbeatInfo> context, final RabbitConsumerState source) {
+    public BindingResult<DataHeartbeat> bind(final ArgumentConversionContext<DataHeartbeat> context,
+                                             final RabbitConsumerState source) {
         try {
-            final HeartbeatInfo heartbeatInfo = objectMapper.readValue(source.getBody(), HeartbeatInfo.class);
-            return () -> Optional.of(heartbeatInfo);
+            final DataHeartbeat dataHeartbeat = objectMapper.readValue(source.getBody(), DataHeartbeat.class);
+            return () -> Optional.of(dataHeartbeat);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
         /*return new BindingResult<>() {
             @Override
-            public Optional<HeartbeatInfo> getValue() {
+            public Optional<Heartbeat> getValue() {
                 return Optional.empty();
             }
 

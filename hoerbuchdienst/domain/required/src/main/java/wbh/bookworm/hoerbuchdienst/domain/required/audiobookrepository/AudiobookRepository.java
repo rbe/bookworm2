@@ -16,11 +16,7 @@ public interface AudiobookRepository {
 
     ShardNumber lookupShard(/* TODO AghNummer */String titelnummer);
 
-    void processShardRedistributionLock(boolean lock);
-
-    void startResharding();
-
-    void processRedistribution(List<ShardObject> shardObjects);
+    void maybeReshard(DataHeartbeats dataHeartbeats);
 
     List</* TODO AghNummer */Titelnummer> allEntriesByKey();
 

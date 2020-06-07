@@ -2,45 +2,42 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.time.ZonedDateTime;
 
+import io.micronaut.context.annotation.Property;
 import io.micronaut.scheduling.annotation.Scheduled;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
-
-import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
 
 @Singleton
 final class ScheduledHeartbeatMessageSender {
 
-    private static final long TOTAL_4TB = 4L * 1024L * 1024L * 1024L * 1024L;
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledHeartbeatMessageSender.class);
 
-    private final AudiobookStreamResolver audiobookStreamResolver;
+    private final MyHostname myHostname;
 
     private final HeartbeatMessageSender heartbeatMessageSender;
 
+    // TODO derive shard number from hostname (...shardN.audiobook.wbh-online.de)
+    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_SHARD_NUMBER)
+    private Integer myShardNumber;
+
     @Inject
-    ScheduledHeartbeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
+    ScheduledHeartbeatMessageSender(final MyHostname myHostname,
                                     final HeartbeatMessageSender heartbeatMessageSender) {
-        this.audiobookStreamResolver = audiobookStreamResolver;
+        this.myHostname = myHostname;
         this.heartbeatMessageSender = heartbeatMessageSender;
     }
 
-    @Scheduled(fixedDelay = "5s")
+    @Scheduled(fixedDelay = "1s")
     void sendHeartbeat() {
-        final Long usedBytes = audiobookStreamResolver.allObjectsMetaInfo()
-                .stream()
-                .map(ObjectMetaInfo::getLength)
-                .reduce(0L, Long::sum);
-        final String hostName;
-        try {
-            hostName = InetAddress.getLocalHost().getHostName();
-        } catch (UnknownHostException e) {
-            throw new RuntimeException(e);
-        }
-        final HeartbeatInfo heartbeatInfo = new HeartbeatInfo(hostName, TOTAL_4TB, usedBytes);
-        heartbeatMessageSender.heartbeat(hostName, heartbeatInfo);
+        final Heartbeat heartbeat = new Heartbeat(ZonedDateTime.now().toInstant(), myHostname.myHostname(),
+                ShardNumber.of(myShardNumber));
+        LOGGER.trace("Sending heartbeat {}", heartbeat);
+        heartbeatMessageSender.send(myHostname.myHostname(), heartbeat);
     }
 
 }

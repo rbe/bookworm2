@@ -41,6 +41,8 @@ public class StreamController {
     @Head(uri = "location/{titelnummer}")
     public HttpResponse<Object> location(@PathVariable final /* TODO AghNummer */String titelnummer) {
         final int shardNumber = audiobookService.shardLocation(titelnummer);
+        /*final URI location = URI.create(String.format("", shardNumber));
+        return HttpResponse.redirect(location).header("X-Shard-Location", String.format("%s", shardNumber));*/
         return HttpResponse.ok().header("X-Shard-Location", String.format("%s", shardNumber));
     }
 

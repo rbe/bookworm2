@@ -1,48 +1,38 @@
 package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
-import java.util.Map;
+import java.io.Serializable;
 import java.util.Objects;
-import java.util.concurrent.ConcurrentHashMap;
 
-public final class ShardNumber extends Number {
+import com.fasterxml.jackson.annotation.JsonCreator;
+import io.micronaut.core.annotation.Introspected;
+
+@Introspected
+public final class ShardNumber implements Serializable {
 
     private static final long serialVersionUID = -1351069385413170972L;
 
-    private static final Map<Integer, ShardNumber> SHARD_NUMBER_CACHE = new ConcurrentHashMap<>();
+    private Integer shardNumber;
 
-    private static final transient Object LOCK = new Object();
-
-    private final int shardNumber;
-
-    private ShardNumber(int shardNumber) {
+    @JsonCreator
+    public ShardNumber(final Integer shardNumber) {
+        Objects.requireNonNull(shardNumber);
         this.shardNumber = shardNumber;
     }
 
     public static ShardNumber of(int shardNumber) {
-        synchronized (LOCK) {
-            SHARD_NUMBER_CACHE.putIfAbsent(shardNumber, new ShardNumber(shardNumber));
-            return SHARD_NUMBER_CACHE.get(shardNumber);
-        }
+        return new ShardNumber(shardNumber);
     }
 
-    @Override
-    public int intValue() {
+    public Integer getShardNumber() {
         return shardNumber;
     }
 
-    @Override
-    public long longValue() {
-        throw new UnsupportedOperationException();
+    public void setShardNumber(final int shardNumber) {
+        this.shardNumber = shardNumber;
     }
 
-    @Override
-    public float floatValue() {
-        throw new UnsupportedOperationException();
-    }
-
-    @Override
-    public double doubleValue() {
-        throw new UnsupportedOperationException();
+    public int intValue() {
+        return shardNumber;
     }
 
     @Override

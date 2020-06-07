@@ -16,6 +16,6 @@ public interface AudiobookService {
 
     InputStream zipAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer);
 
-    boolean putZip(InputStream inputStream, /* TODO AghNummer */String titelnummer);
+    boolean putZip(String titelnummer, /* TODO AghNummer */InputStream inputStream, String hash);
 
 }

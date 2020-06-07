@@ -1,9 +1,3 @@
-micronaut:
-  caches:
-    audiobookRepository:
-      maximumSize: 5
-  jcache:
-    enabled: true
 rabbitmq:
   servers:
     default:
@@ -28,17 +22,3 @@ objectstorage:
     secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
     bucketName: hoerbuchdienst
     serversideencryption: atRest
-
-elasticsearch:
-  httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
-
-jackson:
-  serialization:
-    writeDatesAsTimestamps: false
-
-logger:
-  levels:
-    ROOT: INFO
-    wbh: DEBUG
-    io.micronaut.context.condition: TRACE
-    io.micronaut: INFO

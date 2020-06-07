@@ -1,19 +1,13 @@
-micronaut:
-  caches:
-    audiobookRepository:
-      maximumSize: 5
-  jcache:
-    enabled: true
 rabbitmq:
   servers:
     default:
-      uri: amqps://bugs:phaiR9Pho4ki@rabbitmq.shard1.audiobook.wbh-online.de/hoerbuchdienst
+      uri: amqps://bugs:oobahy9too9X@rabbitmq.shard2.audiobook.wbh-online.de/hoerbuchdienst
 
 hoerbuchdienst:
   repository:
     type: objectstorage
     shard:
-      id: 1
+      id: 2
     localdisk:
       uri: ../../../Buecher-WBH
     objectstorage:
@@ -28,17 +22,3 @@ objectstorage:
     secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
     bucketName: hoerbuchdienst
     serversideencryption: atRest
-
-elasticsearch:
-  httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
-
-jackson:
-  serialization:
-    writeDatesAsTimestamps: false
-
-logger:
-  levels:
-    ROOT: INFO
-    wbh: DEBUG
-    io.micronaut.context.condition: TRACE
-    io.micronaut: INFO

@@ -3,57 +3,76 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 import java.io.Serializable;
 import java.util.Objects;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import io.micronaut.core.annotation.Introspected;
 
+@Introspected
 public final class ShardObject implements Serializable {
 
     private static final long serialVersionUID = -1698948107854015839L;
 
-    private final String titelnummer;
+    private String id;
 
-    private final long size;
+    private long size;
 
-    private final String hashValue;
+    private String hashValue;
 
     private ShardNumber shardNumber;
 
-    @JsonCreator
-    public ShardObject(@JsonProperty("shardNumber") final ShardNumber shardNumber,
-                       @JsonProperty("titelnummer") final String titelnummer,
-                       @JsonProperty("size") final long size,
-                       @JsonProperty("hashValue") final String hashValue) {
-        this.shardNumber = shardNumber;
-        this.titelnummer = titelnummer;
+    public ShardObject() {
+    }
+
+    public ShardObject(final String id,
+                       final long size,
+                       final String hashValue,
+                       final int shardNumber) {
+        this.id = id;
         this.size = size;
         this.hashValue = hashValue;
+        this.shardNumber = ShardNumber.of(shardNumber);
     }
 
-    public ShardObject(final ShardObject shardObject, final ShardNumber shardNumber) {
-        this.shardNumber = shardNumber;
-        titelnummer = shardObject.getTitelnummer();
-        size = shardObject.getSize();
-        hashValue = shardObject.getHashValue();
+    public static ShardObject of(final ShardObject shardObject, final ShardNumber shardNumber) {
+        return new ShardObject(shardObject.getId(),
+                shardObject.getSize(),
+                shardObject.getHashValue(),
+                shardNumber.intValue());
     }
 
-    public ShardNumber getShardNumber() {
-        return shardNumber;
+    public String getId() {
+        return id;
     }
 
-    public void reshard(final ShardNumber shardNumber) {
-        this.shardNumber = shardNumber;
-    }
-
-    public String getTitelnummer() {
-        return titelnummer;
+    public void setId(final String id) {
+        this.id = id;
     }
 
     public long getSize() {
         return size;
     }
 
+    public void setSize(final long size) {
+        this.size = size;
+    }
+
     public String getHashValue() {
         return hashValue;
+    }
+
+    public void setHashValue(final String hashValue) {
+        this.hashValue = hashValue;
+    }
+
+    public ShardNumber getShardNumber() {
+        return shardNumber;
+    }
+
+    public void setShardNumber(final ShardNumber shardNumber) {
+        this.shardNumber = shardNumber;
+    }
+
+    /* TODO unnötig */
+    public void reshard(final ShardNumber shardNumber) {
+        this.shardNumber = shardNumber;
     }
 
     @Override
@@ -63,17 +82,17 @@ public final class ShardObject implements Serializable {
         final ShardObject that = (ShardObject) o;
         return shardNumber == that.shardNumber &&
                 size == that.size &&
-                titelnummer.equals(that.titelnummer);
+                id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shardNumber, titelnummer, size);
+        return Objects.hash(shardNumber, id, size);
     }
 
     @Override
     public String toString() {
-        return String.format("ShardEntry{shardNumer='%s', titelnummer='%s'}", shardNumber, titelnummer);
+        return String.format("ShardObject{shardNumber='%s', id='%s'}", shardNumber, id);
     }
 
 }

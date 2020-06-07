@@ -20,22 +20,26 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 
-@Controller("/sharding")
-public class RedistributeController {
+@Controller("/resharding")
+public class ReshardingController {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(RedistributeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ReshardingController.class);
 
     private final AudiobookService audiobookService;
 
     @Inject
-    public RedistributeController(final AudiobookService audiobookService) {
+    public ReshardingController(final AudiobookService audiobookService) {
         this.audiobookService = audiobookService;
     }
 
-    @Post(uri = "zip/{titelnummer}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_OCTET_STREAM)
-    public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer, @Body final InputStream inputStream) {
+    // shard receives object (push, by REST endpoint)
+    @Post(uri = "zip/{titelnummer}/{hash}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_OCTET_STREAM)
+    public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
+                                           @PathVariable final String hash,
+                                           @Body final InputStream inputStream) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        if (audiobookService.putZip(inputStream, titelnummer)) {
+        if (audiobookService.putZip(titelnummer, inputStream, hash)) {
+            // TODO check if object was received and stored successfully (compare computed with received hash)
             return HttpResponse.ok(Boolean.TRUE);
         } else {
             return HttpResponse.ok(Boolean.FALSE);

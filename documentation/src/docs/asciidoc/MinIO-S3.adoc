@@ -18,8 +18,8 @@ hostnamectl set-hostname $(cat /etc/hostname)
 cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.
 # See hosts(5) for details.
-188.68.50.68    shard1.audiobook.wbh-online.de  shard1  rabbitmq.shard1.audiobook.wbh-online.de
-188.68.43.25    shard2.audiobook.wbh-online.de  shard2  rabbitmq.shard2.audiobook.wbh-online.de
+188.68.50.68    shard1.audiobook.wbh-online.de  rabbitmq.shard1.audiobook.wbh-online.de  shard1
+188.68.43.25    shard2.audiobook.wbh-online.de  rabbitmq.shard2.audiobook.wbh-online.de  shard2
 EOF
 ----
 

@@ -1,5 +1,42 @@
 == RabbitMQ
 
+=== Setup
+
+.Generate password for user federator
+[source,bash,linenum]
+----
+pwgen -Bcn 12
+----
+
+.Setup federation on all nodes
+[source,bash,linenum]
+----
+docker-compose exec rabbitmq rabbitmqctl change_password federator <generated password>
+docker-compose exec rabbitmq rabbitmq-setup-federation.sh federator:<generated password>
+docker-compose exec rabbitmq rabbitmq-add-federation.sh federator:<generated password> heartbeat fanout heartbeat true
+----
+
+.Test federated exchange
+On node1:
+
+----
+docker-compose exec rabbitmq rabbitmqadmin \
+    -s --host="rabbitmq.shard1.audiobook.wbh-online.de" --port=15671 \
+    --username=federator --password=Lo3ciishaiha \
+    --vhost=hoerbuchdienst \
+    publish exchange="federated.heartbeat" routing_key="" payload="hello, world"
+----
+
+On node2:
+
+----
+docker-compose exec rabbitmq rabbitmqadmin \
+    -s --host="rabbitmq.shard2.audiobook.wbh-online.de" --port=15671 \
+    --username=federator --password=Lo3ciishaiha \
+    --vhost=hoerbuchdienst \
+    get queue="heartbeat" ackmode=ack_requeue_false
+----
+
 === Ressources
 
 * https://www.rabbitmq.com/api-guide.html[Java Client API Guide]
