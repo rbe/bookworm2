@@ -42,7 +42,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify && mvn install"
+  ash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify && mvn install"
 popd >/dev/null
 echo "done"
 
@@ -62,7 +62,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
+  ash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
 popd >/dev/null
 echo "done"
 
