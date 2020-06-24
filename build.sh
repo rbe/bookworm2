@@ -60,7 +60,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   maven:3.6.3-openjdk-11 \
-  bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
+  bash -c "apt-get update && apt-get install docker-compose && cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
 popd >/dev/null
 echo "done"
 
