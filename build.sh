@@ -15,11 +15,14 @@ execdir="$(
 )"
 
 hostname="$(hostname -f)"
-MAVEN_OPTS="-Dmaven.repo.local=/var/local/.m2 -Dmaven.artifact.threads=1"
+MAVEN_OPTS="-Dmaven.repo.local=/var/local/.m2 -Dmaven.artifact.threads=10"
 
-pushd "${execdir}"/mikrokosmos >/dev/null
+echo "Updating Mikrokosmos"
+pushd "${execdir}"/../mikrokosmos >/dev/null
 git reset --hard
 git pull
+echo "done"
+echo "Building Mikrokosmos"
 docker run \
   --rm \
   --name maven \
@@ -29,10 +32,14 @@ docker run \
   maven:3.6.3-openjdk-11 \
   bash -c "cd /var/local/mikrokosmos && mvn clean && mvn compile && mvn package && mvn verify"
 popd >/dev/null
+echo "done"
 
+echo "Updating WBH Bookworm"
 pushd "${execdir}" >/dev/null
 git reset --hard
 git pull
+echo "done"
+echo "Building WBH Bookworm"
 docker run \
   --rm \
   --name maven \
@@ -43,5 +50,6 @@ docker run \
   maven:3.6.3-openjdk-11 \
   bash -c "cd /var/local/bookworm2 && mvn clean && mvn compile && mvn package && mvn verify"
 popd >/dev/null
+echo "done"
 
 exit 0
