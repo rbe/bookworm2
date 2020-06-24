@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.sharding</artifactId>
+    <name>wbh-online.de Hörbuchdienst Provided Adapter Sharding</name>
     <packaging>jar</packaging>
     <dependencies>
         <!-- Hörbuchdienst -->

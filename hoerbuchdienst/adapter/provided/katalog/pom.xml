@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.katalog</artifactId>
+    <name>wbh-online.de Hörbuchdienst Provided Adapter Katalog</name>
     <packaging>jar</packaging>
     <dependencies>
         <!-- Hörbuchdienst -->

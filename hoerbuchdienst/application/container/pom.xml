@@ -9,7 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.hoerbuchdienst.container</artifactId>
-    <name>wbh-online.de Hörbuchdienst Container</name>
+    <name>wbh-online.de Hörbuchdienst Application Container</name>
     <packaging>pom</packaging>
     <build>
         <plugins>
