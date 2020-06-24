@@ -40,7 +40,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   maven:3.6.3-openjdk-11 \
-  bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
+  bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify && mvn install"
 popd >/dev/null
 echo "done"
 
