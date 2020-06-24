@@ -1,0 +1,10 @@
+version: '3.7'
+
+services:
+  hoerbuchkatalog:
+  datatransfer-ssh:
+    ports:
+      - "2201:22"
+  admin-ssh:
+    ports:
+      - "2202:22"

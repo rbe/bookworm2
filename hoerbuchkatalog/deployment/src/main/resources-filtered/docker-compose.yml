@@ -1,0 +1,85 @@
+version: '3.7'
+
+services:
+  hoerbuchkatalog:
+    build:
+      context: ./hoerbuchkatalog
+    image: wbh-hbk/hoerbuchkatalog:${hbk.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
+    volumes:
+      - app:/opt/bookworm:ro
+      - templates:/opt/bookworm/var/templates:ro
+      - wbh:/opt/bookworm/var/wbh:rw
+      - blista:/opt/bookworm/var/blista:rw
+      - repository:/opt/bookworm/var/repository:rw
+    networks:
+      - backend
+      - frontend
+    expose:
+      - 8080
+  datatransfer-ssh:
+    build:
+      context: ./datatransfer-ssh
+    image: wbh-hbk/datatransfer-ssh:${hbk.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    volumes:
+      - datatransfer_etc_ssh:/etc/ssh:ro
+      - wbh:/opt/bookworm/var/wbh:rw
+    networks:
+      - frontend
+    ports:
+      - "2201:22"
+  admin-ssh:
+    build:
+      context: ./admin-ssh
+    image: wbh-hbk/admin-ssh:${hbk.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    volumes:
+      - admin_etc_ssh:/etc/ssh:ro
+      - app:/opt/bookworm:rw
+      - templates:/opt/bookworm/var/templates:rw
+      - wbh:/opt/bookworm/var/wbh:rw
+      - blista:/opt/bookworm/var/blista:rw
+      - repository:/opt/bookworm/var/repository:rw
+    networks:
+      - frontend
+    ports:
+      - "2202:22"
+
+volumes:
+  admin_etc_ssh:
+    driver: local
+  datatransfer_etc_ssh:
+    driver: local
+  app:
+    driver: local
+  templates:
+    driver: local
+  repository:
+    driver: local
+  wbh:
+    driver: local
+  blista:
+    driver: local
+
+networks:
+  backend:
+    name: hbk-backend
+    driver: bridge
+    external: false
+    internal: true
+  frontend:
+    name: hbk-frontend
+    driver: bridge
+    external: false
+    internal: false

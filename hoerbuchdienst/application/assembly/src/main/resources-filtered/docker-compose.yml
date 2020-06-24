@@ -1,0 +1,298 @@
+version: '3.7'
+
+services:
+  vault:
+    build:
+      context: ./vault
+    image: wbh-hbd/vault:${hbd.release}
+    restart: unless-stopped
+    hostname: ${vault.hostname}
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - VAULT_SKIP_VERIFY=1
+    volumes:
+      - rproxycerts:/etc/letsencrypt:ro
+      - vaultconfig:/vault/config:rw
+      - vaultlogs:/vault/logs:rw
+      - vaultfile:/vault/file:rw
+    networks:
+      backend:
+        aliases:
+          - ${vault.hostname}
+    expose:
+      - 8200
+  kes:
+    build:
+      context: ./kes
+    image: wbh-hbd/kes:${hbd.release}
+    restart: unless-stopped
+    hostname: ${kes.hostname}
+    depends_on:
+      - vault
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    volumes:
+      - rproxycerts:/etc/letsencrypt:ro
+      - keslocal:/var/local/kes:rw
+      - vaultconfig:/vault/config:ro
+    networks:
+      backend:
+        aliases:
+          - ${kes.hostname}
+    expose:
+      - 7373
+  minio:
+    build:
+      context: ./minio
+    image: wbh-hbd/minio:${hbd.release}
+    restart: unless-stopped
+    hostname: ${minio.hostname}
+    depends_on:
+      - kes
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - MINIO_RELEASE=${minio.release}
+      - MINIO_HOSTNAME=${minio.hostname}
+      - MINIO_DOMAIN=${minio.hostname}
+      - MINIO_PORT=9000
+      - MINIO_UPDATE=off
+      - MINIO_REGION_NAME=us-east-1
+      - MINIO_REGION_COMMENT=Data Universe
+      - MINIO_KMS_KES_ENDPOINT=https://${kes.hostname}:7373
+      - MINIO_KMS_KES_KEY_FILE=/var/local/kes/minio.key
+      - MINIO_KMS_KES_CERT_FILE=/var/local/kes/minio.cert
+      - MINIO_KMS_KES_CA_PATH=${tls.path}/${kes.hostname}/cert.pem
+      - MINIO_KMS_KES_KEY_NAME=minio-key-1
+      - MINIO_KMS_AUTO_ENCRYPTION=off
+      - MINIO_KMS_MASTER_KEY_FILE=
+      - MINIO_SSE_MASTER_KEY_FILE=
+      - MINIO_ACCESS_KEY_FILE=/var/local/minio/access_key
+      - MINIO_SECRET_KEY_FILE=/var/local/minio/secret_key
+    volumes:
+      - rproxycerts:/etc/letsencrypt:ro
+      - miniolocal:/var/local/minio:rw
+      - keslocal:/var/local/kes:ro
+      - miniodata:/miniodata:rw
+    networks:
+      backend:
+        aliases:
+          - ${minio.hostname}
+    expose:
+      - 9000
+  mc:
+    build:
+      context: ./mc
+    image: wbh-hbd/mc:${hbd.release}
+    restart: unless-stopped
+    depends_on:
+      - minio
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - MINIO_HOSTNAME=${minio.hostname}
+      - MINIO_ACCESS_KEY_FILE=/var/local/minio/access_key
+      - MINIO_SECRET_KEY_FILE=/var/local/minio/secret_key
+    volumes:
+      - mcrootconfig:/root/.mc:rw
+      - mclocal:/var/local/mc:rw
+      - miniolocal:/var/local/minio:ro
+    networks:
+      - backend
+    entrypoint: tail -f /dev/null
+  rabbitmq:
+    build:
+      context: rabbitmq
+    image: wbh-hbd/rabbitmq:${hbd.release}
+    restart: unless-stopped
+    hostname: ${rabbitmq.hostname}
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - RABBITMQ_RELEASE=${rabbitmq.release}
+      - RABBITMQ_HOSTNAME=${rabbitmq.hostname}
+      - RABBITMQ_NODENAME=${rabbitmq.nodename}
+      - RABBITMQ_USE_LONGNAME=true
+      - RABBITMQ_CTL_ERL_ARGS=-proto_dist inet_tls
+      - RABBITMQ_SSL_KEYFILE=${tls.path}/${rabbitmq.hostname}/privkey.pem
+      - RABBITMQ_SSL_CERTFILE=${tls.path}/${rabbitmq.hostname}/cert.pem
+      - RABBITMQ_SSL_CACERTFILE=${tls.path}/${rabbitmq.hostname}/chain.pem
+      - RABBITMQ_SSL_DEPTH=1
+      - RABBITMQ_SSL_FAIL_IF_NO_PEER_CERT=false
+      - RABBITMQ_SSL_VERIFY=verify_peer
+      - RABBITMQ_MANAGEMENT_SSL_KEYFILE=${tls.path}/${rabbitmq.hostname}/privkey.pem
+      - RABBITMQ_MANAGEMENT_SSL_CERTFILE=${tls.path}/${rabbitmq.hostname}/cert.pem
+      - RABBITMQ_MANAGEMENT_SSL_CACERTFILE=${tls.path}/${rabbitmq.hostname}/chain.pem
+      - RABBITMQ_MANAGEMENT_SSL_DEPTH=1
+      - RABBITMQ_MANAGEMENT_SSL_FAIL_IF_NO_PEER_CERT=false
+      - RABBITMQ_MANAGEMENT_SSL_VERIFY=verify_peer
+      - MY_RABBITMQ_VHOST=hoerbuchdienst
+      - MY_RABBITMQ_FEDERATION_PREFIX=federated.
+    volumes:
+      - rproxycerts:/etc/letsencrypt:ro
+      - rabbitmqconf:/etc/rabbitmq:rw
+      - rabbitmqdata:/var/lib/rabbitmq:rw
+    networks:
+      backend:
+        aliases:
+          - ${rabbitmq.hostname}
+      frontend:
+    expose:
+      - 5671
+      - 5672
+      - 15671
+      - 15672
+    ports:
+      - "5671:5671"
+      - "15671:15671"
+  #elasticsearch:
+  #  image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
+  #  #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+  #  container_name: es01
+  #  environment:
+  #    - node.name=es01
+  #    - cluster.name=es-docker-cluster
+  #    - discovery.type=single-node
+  #    - bootstrap.memory_lock=true
+  #    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+  #  ulimits:
+  #    memlock:
+  #      soft: -1
+  #      hard: -1
+  #  volumes:
+  #    - esdata01:/usr/share/elasticsearch/data
+  #  networks:
+  #    - backend
+  #  ports:
+  #    - 9200:9200
+  #    - 9300:9300
+  #elastichq:
+  #  image: elastichq/elasticsearch-hq:release-v3.5.12
+  #  networks:
+  #    - backend
+  #  ports:
+  #    - 5000:5000
+  #keycloakpostgres:
+  #  image: postgres:${keycloak.postgres.release}
+  #  restart: unless-stopped
+  #  environment:
+  #    - POSTGRES_USER=keycloak
+  #    - POSTGRES_PASSWORD=password
+  #    - POSTGRES_DB=keycloak
+  #    - POSTGRES_HOST=postgres
+  #  volumes:
+  #    - keycloakpostgresdata:/var/lib/postgresql/data
+  #  networks:
+  #    backend:
+  #      aliases:
+  #        - ${keycloak.postgres.hostname}
+  #  expose:
+  #    - 5432
+  #keycloak:
+  #  image: jboss/keycloak:${keycloak.release}
+  #  depends_on:
+  #    - keycloakpostgres
+  #  restart: unless-stopped
+  #  environment:
+  #    - DB_VENDOR=postgres
+  #    - DB_ADDR=keycloakpostgres
+  #    - DB_PORT=5432
+  #    - DB_DATABASE=keycloak
+  #    - DB_USER=keycloak
+  #    - DB_PASSWORD=password
+  #    - KEYCLOAK_USER=admin
+  #    - KEYCLOAK_PASSWORD=Pa55w0rd
+  #    - PROXY_ADDRESS_FORWARDING=true
+  #    - KEYCLOAK_LOGLEVEL=DEBUG
+  #  networks:
+  #    backend:
+  #      aliases:
+  #        - ${keycloak.hostname}
+  #  expose:
+  #    - 8080
+  hoerbuchdienst:
+    image: wbh-hbd/hoerbuchdienst:${hbd.release}
+    restart: unless-stopped
+    depends_on:
+      - rabbitmq
+      - minio
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    networks:
+      backend:
+        aliases:
+          - ${hbd.hostname}
+    expose:
+      - 8080
+    entrypoint: tail -f /dev/null
+  hbd-rproxy:
+    build:
+      context: ./rproxy
+    image: wbh-hbd/rproxy:${hbd.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - VAULT_HOSTNAME=${vault.hostname}
+      - KES_HOSTNAME=${kes.hostname}
+      - MINIO_HOSTNAME=${minio.hostname}
+      - RABBITMQ_HOSTNAME=${rabbitmq.hostname}
+      - HBD_HOSTNAME=${hbd.hostname}
+    volumes:
+      - rproxyconf:/etc/nginx:rw
+      - rproxycerts:/etc/letsencrypt:rw
+    networks:
+      - backend
+      - frontend
+    expose:
+      - 80
+      - 443
+
+networks:
+  backend:
+    name: hbd-backend
+    driver: bridge
+    internal: true
+    external: false
+  frontend:
+    name: hbd-frontend
+    driver: bridge
+    internal: false
+    external: false
+
+volumes:
+  keycloakpostgresdata:
+    driver: local
+  vaultconfig:
+    driver: local
+  vaultlogs:
+    driver: local
+  vaultfile:
+    driver: local
+  keslocal:
+    driver: local
+  miniolocal:
+    driver: local
+  miniodata:
+    driver: local
+  mcrootconfig:
+    driver: local
+  mclocal:
+    driver: local
+  rabbitmqconf:
+    driver: local
+  rabbitmqdata:
+    driver: local
+  #esdata01:
+  #  driver: local
+  rproxyconf:
+    driver: local
+  rproxycerts:
+    driver: local

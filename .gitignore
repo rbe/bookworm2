@@ -42,7 +42,6 @@ secrets*.json
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
-/approxy/composer.phar
-/approxy/src/main/php/approxy/composer.lock
-/approxy/src/main/php/approxy/vendor/
-/hoerbuchdienst/Buecher-WBH/
+/cms/approxy/composer.phar
+/cms/approxy/src/main/php/approxy/composer.lock
+/cms/approxy/src/main/php/approxy/vendor/

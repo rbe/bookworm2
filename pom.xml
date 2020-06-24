@@ -42,6 +42,7 @@
         <git.dirty>-devel</git.dirty>
     </properties>
     <modules>
+        <module>cms</module>
         <module>hoerbuchkatalog</module>
         <module>hoerbuchdienst</module>
         <module>shared</module>
@@ -519,12 +520,6 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
-        <profile>
-            <id>bookworm.approxy</id>
-            <modules>
-                <module>approxy</module>
-            </modules>
         </profile>
         <profile>
             <id>bookworm.staticanalysis</id>

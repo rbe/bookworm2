@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  vault:
+  kes:
+  minio:
+  mc:
+  rabbitmq:
+    ports:
+      - "5671:5671"
+  #keycloakpostgres:
+  #keycloak:
+  hoerbuchdienst:
+  hbd-rproxy:
+    ports:
+      - "80:80"
+      - "443:443"

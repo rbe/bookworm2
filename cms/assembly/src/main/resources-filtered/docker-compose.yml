@@ -1,0 +1,103 @@
+version: '3.7'
+
+services:
+  mysql:
+    build:
+      context: ./mysql
+    image: wbh-cms/mysql:${cms.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - MYSQL_ROOT_PASSWORD=example
+      - MYSQL_DATABASE=joomla
+      - MYSQL_USER=joomla
+      - MYSQL_PASSWORD=joomla
+    volumes:
+      - mysqldata:/var/lib/mysql:rw
+    networks:
+      - backend
+    expose:
+      - 3306
+  joomla:
+    build:
+      context: ./joomla
+    image: wbh-cms/joomla:${cms.release}
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    environment:
+      - TZ=Europe/Berlin
+      - JOOMLA_DB_HOST=mysql
+      - JOOMLA_DB_USER=joomla
+      - JOOMLA_DB_PASSWORD=joomla
+    volumes:
+      - html:/var/www/html:rw
+    networks:
+      - backend
+      - frontend
+    expose:
+      - 9000
+  assets-ssh:
+    build:
+      context: ./assets-ssh
+    image: wbh-cms/assets-ssh:${cms.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - assetsconf:/etc/ssh:ro
+      - html:/var/www/html:rw
+    networks:
+      - backend
+    ports:
+      - "2203:22"
+  cms-rproxy:
+    build:
+      context: ./rproxy
+    image: wbh-cms/rproxy:${cms.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - rproxyconf:/etc/nginx:rw
+      - rproxycerts:/etc/letsencrypt:rw
+      - html:/var/www/html:ro
+    networks:
+      - backend
+      - frontend
+  rproxy-certbot:
+    build:
+      context: ./rproxy-certbot
+    image: wbh-cms/rproxy-certbot:${cms.release}
+    restart: unless-stopped
+    depends_on:
+      - cms-rproxy
+    environment:
+      - TZ=Europe/Berlin
+    volumes:
+      - rproxyconf:/etc/nginx:rw
+      - rproxycerts:/etc/letsencrypt:rw
+
+networks:
+  backend:
+    name: cms-backend
+    driver: bridge
+    external: false
+    internal: true
+  frontend:
+    name: cms-frontend
+    driver: bridge
+    external: false
+    internal: false
+
+volumes:
+  assetsconf:
+    driver: local
+  mysqldata:
+    driver: local
+  html:
+    driver: local
+  rproxyconf:
+    driver: local
+  rproxycerts:
+    driver: local

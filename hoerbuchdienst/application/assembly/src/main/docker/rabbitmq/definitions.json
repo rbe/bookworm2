@@ -1,0 +1,138 @@
+{
+  "rabbit_version": "3.8.3",
+  "rabbitmq_version": "3.8.3",
+  "users": [
+    {
+      "name": "bugs",
+      "password_hash": "bQDNgXUrFArwxXN8D0MnOLsxhq9ME3anjPtSndBCIomfz7X2",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": ""
+    },
+    {
+      "name": "federator",
+      "password_hash": "orqrdJauSODuQqQ0Mje2ImmAf5Ua7Q5X+OorA4c7YccsugIS",
+      "hashing_algorithm": "rabbit_password_hashing_sha256",
+      "tags": "administrator"
+    }
+  ],
+  "vhosts": [
+    {
+      "name": "hoerbuchdienst"
+    }
+  ],
+  "permissions": [
+    {
+      "user": "bugs",
+      "vhost": "hoerbuchdienst",
+      "configure": "",
+      "write": ".*",
+      "read": ".*"
+    },
+    {
+      "user": "federator",
+      "vhost": "hoerbuchdienst",
+      "configure": ".*",
+      "write": ".*",
+      "read": ".*"
+    }
+  ],
+  "topic_permissions": [],
+  "parameters": [],
+  "global_parameters": [],
+  "policies": [
+    {
+      "vhost": "hoerbuchdienst",
+      "name": "federate-queues",
+      "pattern": "^federated\\.",
+      "apply-to": "queues",
+      "definition": {
+        "federation-upstream-set": "all"
+      },
+      "priority": 10
+    },
+    {
+      "vhost": "hoerbuchdienst",
+      "name": "heartbeat-message-ttl",
+      "pattern": "^heartbeat$",
+      "apply-to": "queues",
+      "definition": {
+        "message-ttl": 1000
+      },
+      "priority": 0
+    },
+    {
+      "vhost": "hoerbuchdienst",
+      "name": "federate-exchanges",
+      "pattern": "^federated\\.",
+      "apply-to": "exchanges",
+      "definition": {
+        "federation-upstream-set": "all"
+      },
+      "priority": 10
+    },
+    {
+      "vhost": "hoerbuchdienst",
+      "name": "dataheartbeat-message-ttl",
+      "pattern": "^dataheartbeat$",
+      "apply-to": "queues",
+      "definition": {
+        "message-ttl": 30000
+      },
+      "priority": 0
+    }
+  ],
+  "queues": [
+    {
+      "name": "heartbeat",
+      "vhost": "hoerbuchdienst",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    },
+    {
+      "name": "dataheartbeat",
+      "vhost": "hoerbuchdienst",
+      "durable": true,
+      "auto_delete": false,
+      "arguments": {}
+    }
+  ],
+  "exchanges": [
+    {
+      "name": "federated.heartbeat",
+      "vhost": "hoerbuchdienst",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    },
+    {
+      "name": "federated.dataheartbeat",
+      "vhost": "hoerbuchdienst",
+      "type": "fanout",
+      "durable": true,
+      "auto_delete": false,
+      "internal": false,
+      "arguments": {}
+    }
+  ],
+  "bindings": [
+    {
+      "source": "federated.dataheartbeat",
+      "vhost": "hoerbuchdienst",
+      "destination": "dataheartbeat",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    },
+    {
+      "source": "federated.heartbeat",
+      "vhost": "hoerbuchdienst",
+      "destination": "heartbeat",
+      "destination_type": "queue",
+      "routing_key": "",
+      "arguments": {}
+    }
+  ]
+}

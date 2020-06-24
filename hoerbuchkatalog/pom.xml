@@ -12,6 +12,7 @@
     <packaging>pom</packaging>
     <modules>
         <module>assembly</module>
+        <module>deployment</module>
         <module>ui</module>
         <module>app</module>
         <module>repository</module>

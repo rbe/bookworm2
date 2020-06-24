@@ -32,7 +32,7 @@ joinfaces:
 
 server:
   address: 127.0.0.1
-  port: 9080
+  port: 8080
   compression:
     enabled: true
   error:

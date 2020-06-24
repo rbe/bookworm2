@@ -1,0 +1,20 @@
+{
+  "api_addr": "https://127.0.0.1:8200",
+  "backend": {
+    "file": {
+      "path": "vault/file"
+    }
+  },
+  "default_lease_ttl": "168h",
+  "max_lease_ttl": "720h",
+  "listener": {
+    "tcp": {
+      "address": "0.0.0.0:8200",
+      "tls_cert_file": "${tls.path}/${vault.hostname}/cert.pem",
+      "tls_key_file": "${tls.path}/${vault.hostname}/privkey.pem",
+      "tls_min_version": "tls12",
+      "proxy_protocol_behaviour": "use_always"
+    }
+  },
+  "ui": true
+}

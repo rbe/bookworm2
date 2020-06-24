@@ -14,5 +14,6 @@
     <modules>
         <module>impl</module>
         <module>container</module>
+        <module>assembly</module>
     </modules>
 </project>
