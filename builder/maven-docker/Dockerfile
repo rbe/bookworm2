@@ -1,6 +1,7 @@
 FROM alpine:3.12
 RUN apk update \
     && apk add git \
+    && apk add openjdk11-jdk \
     && apk add maven \
     && apk add docker \
     && apk add docker-compose
