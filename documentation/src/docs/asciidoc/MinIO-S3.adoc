@@ -18,6 +18,7 @@ hostnamectl set-hostname $(cat /etc/hostname)
 cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.
 # See hosts(5) for details.
+127.0.0.1       localhost
 188.68.50.68    shard1.audiobook.wbh-online.de  rabbitmq.shard1.audiobook.wbh-online.de  shard1
 188.68.43.25    shard2.audiobook.wbh-online.de  rabbitmq.shard2.audiobook.wbh-online.de  shard2
 EOF
@@ -41,6 +42,9 @@ echo "0 * * * * ( cd ~/rootaid-archroot ; git reset --hard ; git pull )" | cront
 ----
 cd ~/rootaid-archroot
 ./archroot.sh install
+----
+
+----
 reboot
 ----
 
@@ -61,7 +65,7 @@ mount /var/lib/docker
 ----
 
 ----
-lvcreate -L4T -n dockervolumes tank
+lvcreate -L4.5T -n dockervolumes tank
 mkfs.ext4 /dev/tank/dockervolumes
 export $(blkid -o export /dev/tank/dockervolumes)
 cat >>/etc/fstab <<EOF

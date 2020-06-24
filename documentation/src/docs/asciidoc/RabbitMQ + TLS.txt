@@ -1,0 +1,29 @@
+RabbitMQ + TLS
+
+aCeir4ooJapu
+amqps://federator:aCeir4ooJapu@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&verify=verify_peer&heartbeat=10&connection_timeout=10000
+amqps://federator:aCeir4ooJapu@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&cacertfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/fullchain.pem&certfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/cert.pem&keyfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/privkey.pem&verify=verify_peer&heartbeat=10&connection_timeout=10000
+
+
+openssl verify rootaid-archroot/storage/isrgrootx1.pem.txt  
+rootaid-archroot/storage/isrgrootx1.pem.txt: OK
+
+openssl x509 -noout -subject -in rootaid-archroot/storage/isrgrootx1.pem.txt
+subject= /C=US/O=Internet Security Research Group/CN=ISRG Root X1
+
+openssl x509 -noout -subject -in rootaid-archroot/storage/lets-encrypt-x3-cross-signed.pem.txt 
+subject= /C=US/O=Let's Encrypt/CN=Let's Encrypt Authority X3
+
+
+
+openssl verify /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem 
+CN = rabbitmq.shard1.audiobook.wbh-online.de
+error 20 at 0 depth lookup: unable to get local issuer certificate
+error /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem: verification failed
+
+openssl x509 -in /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem -noout -issuer
+issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
+
+
+
+openssl s_client -connect rabbitmq.shard1.audiobook.wbh-online.de:5671 -cert cert1.pem -key privkey1.pem -CAfile chain1.pem

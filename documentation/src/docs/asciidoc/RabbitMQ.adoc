@@ -5,7 +5,7 @@
 .Generate password for user federator
 [source,bash,linenum]
 ----
-pwgen -Bcn 12
+pwgen -Bcn 16
 ----
 
 .Setup federation on all nodes
