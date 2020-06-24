@@ -1,0 +1,14 @@
+version: '3.7'
+
+services:
+  maven:
+    build:
+      context: maven-docker
+    image: wbh-bookworm/builder:1
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - m2cache:/var/local/.m2
+
+volumes:
+  m2cache:
+    driver: local

@@ -20,10 +20,8 @@ MAVEN_REPO_CNT="/var/local/.m2"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
 
-echo "Building Docker Image 'builder'"
-pushd "${execdir}"/builder >/dev/null
-docker build -t wbh-bookworm/builder:1 .
-popd >/dev/null
+echo "Creating local Maven repository destination ${MAVEN_REPO}"
+mkdir -p "${MAVEN_REPO}"
 echo "done"
 
 echo "Updating Mikrokosmos"
@@ -37,11 +35,11 @@ docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
+  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
-  wbh-bookworm/builder:1 \
+  maven:3.6.3-openjdk-11 \
   bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify && mvn install"
 popd >/dev/null
 echo "done"
@@ -57,11 +55,11 @@ docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
+  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
-  wbh-bookworm/builder:1 \
+  maven:3.6.3-openjdk-11 \
   bash -c "cd /var/local/source && mvn clean && mvn compile && mvn package && mvn verify"
 popd >/dev/null
 echo "done"
