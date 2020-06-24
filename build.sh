@@ -15,7 +15,7 @@ execdir="$(
 )"
 
 hostname="$(hostname -f)"
-MAVEN_REPO="${execdir}/.m2"
+MAVEN_REPO="${execdir}/../.m2"
 MAVEN_REPO_CNT="/var/local/.m2"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 
