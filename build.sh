@@ -20,8 +20,8 @@ MAVEN_REPO_CNT="/var/local/.m2"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
 
-echo "Building Docker Image 'maven-docker'"
-pushd "${execdir}"/builder/maven-docker >/dev/null
+echo "Building Docker Image 'builder'"
+pushd "${execdir}"/builder/openjdk11-maven-docker >/dev/null
 docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
