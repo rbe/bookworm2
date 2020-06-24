@@ -33,7 +33,7 @@ docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${execdir},destination=/var/local/mikrokosmos \
+  --mount type=bind,source=${execdir}/../mikrokosmos,destination=/var/local/mikrokosmos \
   --mount type=bind,source=${execdir}/.m2,destination=${MAVEN_REPO_CNT} \
   maven:3.6.3-openjdk-11 \
   bash -c "cd /var/local/mikrokosmos && mvn clean && mvn compile && mvn package && mvn verify"
