@@ -12,7 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Application Assembly</name>
     <packaging>pom</packaging>
     <properties>
-        <domain>shard1.example.com</domain>
+        <domain>${domain}</domain>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
         <nginx.enable.servers>

@@ -11,6 +11,7 @@
     <artifactId>wbh.bookworm.cms.assembly</artifactId>
     <packaging>pom</packaging>
     <properties>
+        <domain>${domain}</domain>
         <alpine.release>3.12</alpine.release>
         <mysql.release>5.6</mysql.release>
         <joomla.release>3.9.8-php7.1-fpm-alpine</joomla.release>
