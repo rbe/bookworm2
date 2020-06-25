@@ -17,7 +17,7 @@ execdir="$(
 hostname="$(hostname -f)"
 MAVEN_REPO="$(pushd "${execdir}/../.m2" >/dev/null ; pwd ; popd >/dev/null)"
 MAVEN_REPO_CNT="/var/local/.m2"
-MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
+MAVEN_OPTS="-XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
 
 echo "Building Docker Image 'builder'"
