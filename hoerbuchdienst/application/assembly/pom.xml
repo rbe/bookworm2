@@ -41,8 +41,10 @@
         <tls.path>/etc/letsencrypt/live</tls.path>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker.project.name>hbd</docker.project.name>
-        <docker-compose.file>${project.basedir}/target/${project.artifactId}-${project.version}/docker-compose.yml
-        </docker-compose.file>
+        <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
+        <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
+        <docker-compose.dev.file>${docker-compose.dir}/docker-compose.dev.yml</docker-compose.dev.file>
+        <docker-compose.prod.file>${docker-compose.dir}/docker-compose.prod.yml</docker-compose.prod.file>
     </properties>
     <profiles>
         <profile>
@@ -54,6 +56,61 @@
                     vault minio rabbitmq hoerbuchdienst
                 </nginx.enable.servers>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.dkanejs.maven.plugins</groupId>
+                        <artifactId>docker-compose-maven-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>up</goal>
+                                </goals>
+                                <configuration>
+                                    <composeFiles>
+                                        <composeFile>${docker-compose.file}</composeFile>
+                                        <composeFile>${docker-compose.dev.file}</composeFile>
+                                    </composeFiles>
+                                    <detachedMode>true</detachedMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+        <profile>
+            <id>bookworm.docker.prod</id>
+            <properties>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.dkanejs.maven.plugins</groupId>
+                        <artifactId>docker-compose-maven-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>deploy</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>up</goal>
+                                </goals>
+                                <configuration>
+                                    <composeFiles>
+                                        <composeFile>${docker-compose.file}</composeFile>
+                                        <composeFile>${docker-compose.prod.file}</composeFile>
+                                    </composeFiles>
+                                    <detachedMode>true</detachedMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
     <build>
@@ -275,16 +332,6 @@
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>deploy</id>
-                        <phase>deploy</phase>
-                        <goals>
-                            <goal>up</goal>
-                        </goals>
-                        <configuration>
-                            <detachedMode>true</detachedMode>
                         </configuration>
                     </execution>
                 </executions>

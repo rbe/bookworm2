@@ -26,6 +26,10 @@ docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
 
+#./mvnw ${mvnp} \
+#  org.codehaus.mojo:versions-maven-plugin:2.7:set \
+#  -DnewVersion=${VERSION}
+
 echo "Updating Mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
 git reset --hard
