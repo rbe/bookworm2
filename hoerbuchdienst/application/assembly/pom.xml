@@ -176,18 +176,6 @@
                     <removeOrphans>true</removeOrphans>
                 </configuration>
                 <executions>
-                    <!--<execution>
-                        <id>clean</id>
-                        <phase>clean</phase>
-                        <goals>
-                            <goal>down</goal>
-                        </goals>
-                        <configuration>
-                            <removeImages>true</removeImages>
-                            <removeOrphans>true</removeOrphans>
-                            <removeVolumes>true</removeVolumes>
-                        </configuration>
-                    </execution>-->
                     <execution>
                         <id>build-hbd-rproxy</id>
                         <phase>package</phase>
@@ -287,6 +275,16 @@
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>deploy</id>
+                        <phase>deploy</phase>
+                        <goals>
+                            <goal>up</goal>
+                        </goals>
+                        <configuration>
+                            <detachedMode>true</detachedMode>
                         </configuration>
                     </execution>
                 </executions>
