@@ -30,7 +30,7 @@ MAVEN_REPO="$(
 )"
 MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
-MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${env}"
+MAVEN_CMD_LINE_ARGS="-X -B -s .mvn/settings.xml --fail-fast"
 
 case "${project}" in
 cms-hbk)
@@ -64,9 +64,8 @@ docker run \
   --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
-  -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn help:effective-pom clean verify && mvn install" |
+  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} help:effective-pom clean verify && mvn install" |
   tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
@@ -85,9 +84,8 @@ docker run \
   --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
-  -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS} -X -pl ${MAVEN_PL}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn help:effective-pom clean verify" |
+  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} -pl ${MAVEN_PL} help:effective-pom clean verify" |
   tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"

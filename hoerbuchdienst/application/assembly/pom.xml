@@ -14,6 +14,7 @@
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd-HH-mm</maven.build.timestamp.format>
         <domain>${domain}</domain>
+        <tls.path></tls.path>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
         <vault.release>1.4.0</vault.release>
@@ -23,7 +24,7 @@
         <kes_client_tls_key_file>/var/local/kes/minio.key</kes_client_tls_key_file>
         <kes_client_tls_cert_file>/var/local/kes/minio.cert</kes_client_tls_cert_file>
         <minio.release>RELEASE.2020-05-16T01-33-21Z</minio.release>
-        <minio.hostname>minio.${domain}</minio.hostname>
+        <minio.hostname>s3.${domain}</minio.hostname>
         <mc.release>RELEASE.2020-05-16T01-44-37Z</mc.release>
         <rabbitmq.release>3.8.3-management-alpine</rabbitmq.release>
         <rabbitmq.hostname>rabbitmq.${domain}</rabbitmq.hostname>
