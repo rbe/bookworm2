@@ -14,13 +14,18 @@ execdir="$(
   popd >/dev/null
 )"
 
-MAVEN_REPO="$(pushd "${execdir}/../.m2" >/dev/null ; pwd ; popd >/dev/null)"
+MAVEN_REPO="$(
+  pushd "${execdir}/../.m2" >/dev/null
+  pwd
+  popd >/dev/null
+)"
 MAVEN_REPO_CNT="/var/local/.m2"
-MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
+MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT}"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
 
 env="${1:-prod}"
 echo "Starting WBH Bookworm: ${env}"
+pushd "${execdir}" >/dev/null
 docker run \
   --rm \
   --name maven \
@@ -30,8 +35,8 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && java -Xshare:dump && mvn -P bookworm.docker.${env} deploy" \
-  | tee deploy-wbh.bookworm.log
+  ash -c "cd /var/local/source && mvn -P bookworm.docker.${env} install" |
+  tee deploy-wbh.bookworm.log
 popd >/dev/null
 echo "done"
 

@@ -15,7 +15,11 @@ execdir="$(
 )"
 
 hostname="$(hostname -f)"
-MAVEN_REPO="$(pushd "${execdir}/../.m2" >/dev/null ; pwd ; popd >/dev/null)"
+MAVEN_REPO="$(
+  pushd "${execdir}/../.m2" >/dev/null
+  pwd
+  popd >/dev/null
+)"
 MAVEN_REPO_CNT="/var/local/.m2"
 MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
@@ -46,8 +50,8 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify && mvn install" \
-  | tee build-mikrokosmos.bookworm.log
+  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify && mvn install" |
+  tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
 
@@ -67,8 +71,8 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify" \
-  | tee build-wbh.bookworm.log
+  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify" |
+  tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"
 
