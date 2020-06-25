@@ -63,6 +63,8 @@ services:
       - rproxycerts:/etc/letsencrypt:rw
       - html:/var/www/html:ro
     networks:
+      #- proxy-hbk-backend
+      - hbk-backend
       - backend
       - frontend
   rproxy-certbot:
@@ -77,8 +79,18 @@ services:
     volumes:
       - rproxyconf:/etc/nginx:rw
       - rproxycerts:/etc/letsencrypt:rw
+    networks:
+      - hbk-backend
 
 networks:
+  #proxy-hbk-backend:
+  #  external:
+  #    name: hbk-backend
+  hbk-backend:
+    name: hbk-backend
+    driver: bridge
+    external: false
+    internal: true
   backend:
     name: cms-backend
     driver: bridge

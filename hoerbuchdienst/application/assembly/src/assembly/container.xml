@@ -35,7 +35,7 @@
             <source>target/classes/wbh-hbd.sh</source>
             <destName>wbh-hbd.sh</destName>
             <outputDirectory>.</outputDirectory>
-            <fileMode>555</fileMode>
+            <fileMode>755</fileMode>
         </file>
     </files>
 </assembly>

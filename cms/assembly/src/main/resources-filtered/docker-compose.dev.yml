@@ -5,14 +5,7 @@ services:
   joomla:
   assets-ssh:
   cms-rproxy:
-    networks:
-      - proxy-hbk-backend
     ports:
       - "8080:80"
       - "8443:443"
   rproxy-certbot:
-
-networks:
-  proxy-hbk-backend:
-    external:
-      name: hbk-backend

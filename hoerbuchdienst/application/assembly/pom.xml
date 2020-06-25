@@ -12,6 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Application Assembly</name>
     <packaging>pom</packaging>
     <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd-HH-mm</maven.build.timestamp.format>
         <domain>${domain}</domain>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
@@ -62,6 +63,9 @@
                         <groupId>com.dkanejs.maven.plugins</groupId>
                         <artifactId>docker-compose-maven-plugin</artifactId>
                         <version>4.0.0</version>
+                        <configuration>
+                            <projectName>dev-wbh-cms-${maven.build.timestamp}</projectName>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>dev-up</id>
@@ -75,6 +79,7 @@
                                         <composeFile>${docker-compose.dev.file}</composeFile>
                                     </composeFiles>
                                     <detachedMode>true</detachedMode>
+                                    <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
                         </executions>
@@ -95,6 +100,9 @@
                         <groupId>com.dkanejs.maven.plugins</groupId>
                         <artifactId>docker-compose-maven-plugin</artifactId>
                         <version>4.0.0</version>
+                        <configuration>
+                            <projectName>prod-wbh-cms-${maven.build.timestamp}</projectName>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>prod-up</id>
@@ -108,6 +116,7 @@
                                         <composeFile>${docker-compose.prod.file}</composeFile>
                                     </composeFiles>
                                     <detachedMode>true</detachedMode>
+                                    <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
                         </executions>

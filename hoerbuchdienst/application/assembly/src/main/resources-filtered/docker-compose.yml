@@ -268,8 +268,8 @@ networks:
     external: false
 
 volumes:
-  keycloakpostgresdata:
-    driver: local
+  #keycloakpostgresdata:
+  #  driver: local
   vaultconfig:
     driver: local
   vaultlogs:

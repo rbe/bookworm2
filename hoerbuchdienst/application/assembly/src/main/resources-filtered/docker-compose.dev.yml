@@ -8,8 +8,8 @@ services:
   rabbitmq:
     ports:
       - "5671:5671"
-  keycloakpostgres:
-  keycloak:
+  #keycloakpostgres:
+  #keycloak:
   hoerbuchdienst:
   hbd-rproxy:
     ports:

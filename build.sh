@@ -20,7 +20,7 @@ MAVEN_REPO="$(
   popd >/dev/null
 )"
 MAVEN_REPO_CNT="/var/local/maven-repository"
-MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
+MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
 
 echo "Building Docker Image 'builder'"

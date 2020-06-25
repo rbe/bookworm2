@@ -11,12 +11,13 @@
     <artifactId>wbh.bookworm.hoerbuchkatalog.deployment</artifactId>
     <packaging>pom</packaging>
     <properties>
-        <tls.path>/etc/letsencrypt/live</tls.path>
+        <maven.build.timestamp.format>yyyy-MM-dd-HH-mm</maven.build.timestamp.format>
         <alpine.release>3.12</alpine.release>
         <openjdk.release>11-jre-slim</openjdk.release>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
         <hbk.release>${project.version}</hbk.release>
+        <tls.path>/etc/letsencrypt/live</tls.path>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker.project.name>hbk</docker.project.name>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
@@ -38,6 +39,35 @@
                 <domain>local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
             </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.dkanejs.maven.plugins</groupId>
+                        <artifactId>docker-compose-maven-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <configuration>
+                            <projectName>dev-wbh-cms-${maven.build.timestamp}</projectName>
+                        </configuration>
+                        <executions>
+                            <execution>
+                                <id>dev-up</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>up</goal>
+                                </goals>
+                                <configuration>
+                                    <composeFiles>
+                                        <composeFile>${docker-compose.file}</composeFile>
+                                        <composeFile>${docker-compose.dev.file}</composeFile>
+                                    </composeFiles>
+                                    <detachedMode>true</detachedMode>
+                                    <removeOrphans>true</removeOrphans>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
         <profile>
             <id>bookworm.docker.prod</id>
@@ -47,6 +77,9 @@
                         <groupId>com.dkanejs.maven.plugins</groupId>
                         <artifactId>docker-compose-maven-plugin</artifactId>
                         <version>4.0.0</version>
+                        <configuration>
+                            <projectName>prod-wbh-cms-${maven.build.timestamp}</projectName>
+                        </configuration>
                         <executions>
                             <execution>
                                 <id>prod-up</id>
@@ -60,6 +93,7 @@
                                         <composeFile>${docker-compose.prod.file}</composeFile>
                                     </composeFiles>
                                     <detachedMode>true</detachedMode>
+                                    <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
                         </executions>

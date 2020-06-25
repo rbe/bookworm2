@@ -8,6 +8,15 @@
 set -o nounset
 set -o errexit
 
+if [[ $# != 2 ]]; then
+  echo "usage: $0 <env> <project>"
+  echo "  env        dev | prod"
+  echo "  project    cms-hbk | hbd"
+fi
+env=$1
+shift
+project=$1
+
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
@@ -21,11 +30,19 @@ MAVEN_REPO="$(
 )"
 MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT}"
-env="${1:-prod}"
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${env}"
 
+case "${project}" in
+cms-hbk)
+  MAVEN_PL="wbh.bookworm.cms.assembly,wbh.bookworm.hoerbuckatalog.deployment"
+  ;;
+hbd)
+  MAVEN_PL="wbh.bookworm.hoerbuckdienst.application.assembly"
+  ;;
+esac
+
 HOSTNAME="$(hostname -f)"
-echo "Starting WBH Bookworm ${env} at ${HOSTNAME}"
+echo "Deploying WBH Bookworm ${env}/${MAVEN_PL} at ${HOSTNAME}"
 pushd "${execdir}" >/dev/null
 docker run \
   --rm \
@@ -36,8 +53,8 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && mvn install" \
-  | tee deploy-wbh.bookworm.log
+  ash -c "cd /var/local/source && rm .mvn/maven.config && mvn -pl ${MAVEN_PL} install" |
+  tee deploy-wbh.bookworm.log
 popd >/dev/null
 echo "done"
 
