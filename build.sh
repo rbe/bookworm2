@@ -85,9 +85,9 @@ docker run \
   --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
-  -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
+  -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS} -X -pl ${MAVEN_PL}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn -pl ${MAVEN_PL} help:effective-pom clean verify" |
+  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn help:effective-pom clean verify" |
   tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"
