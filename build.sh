@@ -26,10 +26,6 @@ docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
 
-echo "Initializing Java CDS"
-java -Xshare:dump
-echo "done"
-
 echo "Updating Mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
 git reset --hard
@@ -46,7 +42,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && mvn help:effective-pom clean verify && mvn install" \
+  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify && mvn install" \
   | tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
@@ -67,7 +63,7 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && mvn help:effective-pom clean verify" \
+  ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify" \
   | tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"
