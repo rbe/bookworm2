@@ -34,7 +34,7 @@
         <keycloak.release>10.0.2</keycloak.release>
         <keycloak.hostname>keycloak.${domain}</keycloak.hostname>
         -->
-        <hbd.release>wbh-hbd-${maven.build.timestamp}</hbd.release>
+        <hbd.release>${maven.build.timestamp}</hbd.release>
         <hbd.hostname>hoerbuchdienst.${domain}</hbd.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker.project.name>hbd</docker.project.name>

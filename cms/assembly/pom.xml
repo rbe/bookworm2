@@ -17,7 +17,7 @@
         <mysql.release>5.6</mysql.release>
         <joomla.release>3.9.8-php7.1-fpm-alpine</joomla.release>
         <nginx.release>1.17-alpine</nginx.release>
-        <cms.release>wbh-cms-${maven.build.timestamp}</cms.release>
+        <cms.release>${maven.build.timestamp}</cms.release>
         <hbk.hostname>www.${domain}</hbk.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker.project.name>hbk</docker.project.name>
