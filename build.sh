@@ -37,7 +37,7 @@ cms-hbk)
   MAVEN_PL="wbh.bookworm.cms.assembly,wbh.bookworm.hoerbuckatalog.deployment"
   ;;
 hbd)
-  MAVEN_PL="wbh.bookworm.hoerbuckdienst.application.assembly"
+  MAVEN_PL="wbh.bookworm.hoerbuchdienst.application.assembly"
   ;;
 esac
 
