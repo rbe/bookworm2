@@ -19,8 +19,10 @@
         <hbk.release>${project.version}</hbk.release>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker.project.name>hbk</docker.project.name>
-        <docker-compose.file>${project.basedir}/target/${project.artifactId}-${project.version}/docker-compose.yml
-        </docker-compose.file>
+        <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
+        <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
+        <docker-compose.dev.file>${docker-compose.dir}/docker-compose.dev.yml</docker-compose.dev.file>
+        <docker-compose.prod.file>${docker-compose.dir}/docker-compose.prod.yml</docker-compose.prod.file>
     </properties>
     <dependencies>
         <dependency>
@@ -36,6 +38,34 @@
                 <domain>local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
             </properties>
+        </profile>
+        <profile>
+            <id>bookworm.docker.prod</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>com.dkanejs.maven.plugins</groupId>
+                        <artifactId>docker-compose-maven-plugin</artifactId>
+                        <version>4.0.0</version>
+                        <executions>
+                            <execution>
+                                <id>prod-up</id>
+                                <phase>install</phase>
+                                <goals>
+                                    <goal>up</goal>
+                                </goals>
+                                <configuration>
+                                    <composeFiles>
+                                        <composeFile>${docker-compose.file}</composeFile>
+                                        <composeFile>${docker-compose.prod.file}</composeFile>
+                                    </composeFiles>
+                                    <detachedMode>true</detachedMode>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
         </profile>
     </profiles>
     <build>

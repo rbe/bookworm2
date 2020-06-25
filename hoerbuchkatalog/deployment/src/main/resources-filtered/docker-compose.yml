@@ -34,8 +34,8 @@ services:
       - wbh:/opt/bookworm/var/wbh:rw
     networks:
       - frontend
-    ports:
-      - "2201:22"
+    expose:
+      - 2201
   admin-ssh:
     build:
       context: ./admin-ssh
@@ -53,8 +53,8 @@ services:
       - repository:/opt/bookworm/var/repository:rw
     networks:
       - frontend
-    ports:
-      - "2202:22"
+    expose:
+      - 2202
 
 volumes:
   admin_etc_ssh:

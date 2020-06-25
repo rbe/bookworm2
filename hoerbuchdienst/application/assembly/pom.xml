@@ -84,6 +84,11 @@
         </profile>
         <profile>
             <id>bookworm.docker.prod</id>
+            <properties>
+                <nginx.enable.servers>
+                    minio hoerbuchdienst
+                </nginx.enable.servers>
+            </properties>
             <build>
                 <plugins>
                     <plugin>

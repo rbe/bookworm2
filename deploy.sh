@@ -21,10 +21,11 @@ MAVEN_REPO="$(
 )"
 MAVEN_REPO_CNT="/var/local/.m2"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT}"
-MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast"
-
 env="${1:-prod}"
-echo "Starting WBH Bookworm: ${env}"
+MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${env}"
+
+HOSTNAME="$(hostname -f)"
+echo "Starting WBH Bookworm ${env} at ${HOSTNAME}"
 pushd "${execdir}" >/dev/null
 docker run \
   --rm \
@@ -32,11 +33,11 @@ docker run \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
   --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
-  -e MAVEN_OPTS="${MAVEN_OPTS}" \
+  -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && mvn -P bookworm.docker.${env} install" |
-  tee deploy-wbh.bookworm.log
+  ash -c "cd /var/local/source && mvn install" \
+  | tee deploy-wbh.bookworm.log
 popd >/dev/null
 echo "done"
 

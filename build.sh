@@ -14,7 +14,6 @@ execdir="$(
   popd >/dev/null
 )"
 
-hostname="$(hostname -f)"
 MAVEN_REPO="$(
   pushd "${execdir}/../.m2" >/dev/null
   pwd
@@ -61,14 +60,15 @@ git reset --hard
 git pull
 rm .mvn/maven.config
 echo "done"
-echo "Building WBH Bookworm"
+HOSTNAME="$(hostname -f)"
+echo "Building WBH Bookworm for ${HOSTNAME}"
 docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
   --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
-  -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${hostname}" \
+  -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   -e MAVEN_CMD_LINE_ARGS="${MAVEN_CMD_LINE_ARGS}" \
   wbh-bookworm/builder:1 \
   ash -c "cd /var/local/source && java -Xshare:dump && mvn help:effective-pom clean verify" |
