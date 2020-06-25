@@ -34,10 +34,10 @@ MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${en
 
 case "${project}" in
 cms-hbk)
-  MAVEN_PL="wbh.bookworm.cms.assembly,wbh.bookworm.hoerbuckatalog.deployment"
+  MAVEN_PL=":wbh.bookworm.cms.assembly,:wbh.bookworm.hoerbuckatalog.deployment"
   ;;
 hbd)
-  MAVEN_PL="wbh.bookworm.hoerbuchdienst.application.assembly"
+  MAVEN_PL=":wbh.bookworm.hoerbuchdienst.application.assembly"
   ;;
 esac
 
