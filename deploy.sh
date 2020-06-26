@@ -33,10 +33,10 @@ MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT}"
 case "${project}" in
 cms-hbk)
-  MAVEN_PL="wbh.bookworm.cms.assembly,wbh.bookworm.hoerbuckatalog.deployment"
+  MAVEN_PL=":wbh.bookworm.cms.assembly,:wbh.bookworm.hoerbuckatalog.deployment"
   ;;
 hbd)
-  MAVEN_PL="wbh.bookworm.hoerbuckdienst.application.assembly"
+  MAVEN_PL=":wbh.bookworm.hoerbuckdienst.application.assembly"
   ;;
 esac
 MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${env} -pl ${MAVEN_PL}"
