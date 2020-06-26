@@ -12,6 +12,7 @@ if [[ $# != 2 ]]; then
   echo "usage: $0 <env> <project>"
   echo "  env        dev | prod"
   echo "  project    cms-hbk | hbd"
+  exit 1
 fi
 env=$1
 shift
@@ -65,7 +66,7 @@ docker run \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} help:effective-pom clean verify && mvn install" |
+  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} help:effective-pom clean verify && mvn install" |
   tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
@@ -85,7 +86,7 @@ docker run \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} -pl ${MAVEN_PL} help:effective-pom clean verify" |
+  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} -pl ${MAVEN_PL} help:effective-pom clean verify" |
   tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"
