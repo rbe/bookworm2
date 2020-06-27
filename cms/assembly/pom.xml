@@ -12,7 +12,6 @@
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm</maven.build.timestamp.format>
-        <domain>${domain}</domain>
         <alpine.release>3.12</alpine.release>
         <mysql.release>5.6</mysql.release>
         <joomla.release>3.9.8-php7.1-fpm-alpine</joomla.release>
@@ -78,6 +77,7 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
+                <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
                 <nginx.enable.servers>
                     wbhonline

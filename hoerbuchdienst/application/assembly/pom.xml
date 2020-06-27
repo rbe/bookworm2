@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM'T'dd-HH-mm</maven.build.timestamp.format>
-        <domain>${domain}</domain>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
         <vault.release>1.4.0</vault.release>
@@ -86,6 +85,7 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
+                <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
                 <nginx.enable.servers>
                     minio hoerbuchdienst

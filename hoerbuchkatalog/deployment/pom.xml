@@ -71,6 +71,7 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
+                <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
             </properties>
             <build>
