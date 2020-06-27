@@ -16,6 +16,7 @@
             <organizationUrl>https://art-of-coding.eu</organizationUrl>
             <roles>
                 <role>Software Architect</role>
+                <role>Developer</role>
             </roles>
         </developer>
     </developers>
@@ -23,7 +24,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Maven -->
         <maven.require.version>3.6</maven.require.version>
-        <maven.build.timestamp.format>yyyy-MM-dd HH:mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss</maven.build.timestamp.format>
         <!-- Java -->
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
@@ -37,8 +38,7 @@
         <!-- Repository -->
         <repository.url>http://nexus.local/nexus/repository</repository.url>
         <buildScmBranch>unknown</buildScmBranch>
-        <versionName>${project.version} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})
-        </versionName>
+        <versionName>${project.version} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})</versionName>
         <git.dirty>-devel</git.dirty>
     </properties>
     <modules>
@@ -47,6 +47,7 @@
         <module>hoerbuchdienst</module>
         <module>shared</module>
         <module>thirdparty</module>
+        <module>assembly</module>
     </modules>
     <dependencyManagement>
         <dependencies>
@@ -233,10 +234,6 @@
         </pluginManagement>
         <plugins>
             <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
@@ -400,9 +397,7 @@
                 </property>
             </activation>
             <properties>
-                <versionName>${project.version} build #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch
-                    ${buildScmBranch}, commit ${buildNumber})
-                </versionName>
+                <versionName>${project.version} build #${env.BUILD_NUMBER} (${maven.build.timestamp}, branch ${buildScmBranch}, commit ${buildNumber})</versionName>
             </properties>
         </profile>
         <profile>

@@ -12,7 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Application Assembly</name>
     <packaging>pom</packaging>
     <properties>
-        <maven.build.timestamp.format>yyyy-MM-dd-HH-mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM'T'dd-HH-mm</maven.build.timestamp.format>
         <domain>${domain}</domain>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>nginx.${domain}</nginx.hostname>
@@ -62,7 +62,7 @@
                         <configuration>
                             <projectName>dev-wbh-hbd-${maven.build.timestamp}</projectName>
                         </configuration>
-                        <executions>
+                        <!--<executions>
                             <execution>
                                 <id>dev-up</id>
                                 <phase>install</phase>
@@ -78,7 +78,7 @@
                                     <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
-                        </executions>
+                        </executions>-->
                     </plugin>
                 </plugins>
             </build>
@@ -100,7 +100,7 @@
                         <configuration>
                             <projectName>prod-wbh-hbd-${maven.build.timestamp}</projectName>
                         </configuration>
-                        <executions>
+                        <!--<executions>
                             <execution>
                                 <id>prod-up</id>
                                 <phase>install</phase>
@@ -116,7 +116,7 @@
                                     <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
-                        </executions>
+                        </executions>-->
                     </plugin>
                 </plugins>
             </build>
@@ -177,6 +177,7 @@
                                 <descriptor>src/assembly/dist.xml</descriptor>
                             </descriptors>
                             <appendAssemblyId>false</appendAssemblyId>
+                            <finalName>${project.artifactId}-${hbd.release}</finalName>
                         </configuration>
                     </execution>
                 </executions>

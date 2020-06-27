@@ -8,41 +8,27 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 2 ]]; then
-  echo "usage: $0 <env> <project>"
+if [[ $# != 1 ]]; then
+  echo "usage: $0 <env>"
   echo "  env        dev | prod"
-  echo "  project    cms-hbk | hbd"
   exit 1
 fi
 env=$1
-shift
-project=$1
-
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
   popd >/dev/null
 )"
-
 MAVEN_REPO="$(
   pushd "${execdir}/../maven-repository" >/dev/null
   pwd
   popd >/dev/null
 )"
 MAVEN_REPO_CNT="/var/local/maven-repository"
-MAVEN_OPTS="-Xshare:on -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
-MAVEN_CMD_LINE_ARGS="-X -B -s .mvn/settings.xml --fail-fast"
+MAVEN_OPTS="-Xshare:on -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10 -T 2C"
+MAVEN_CMD_LINE_ARGS="-X -s .mvn/settings.xml --batch --fail-fast"
 
-case "${project}" in
-cms-hbk)
-  MAVEN_PL=":wbh.bookworm.cms.assembly,:wbh.bookworm.hoerbuckatalog.deployment"
-  ;;
-hbd)
-  MAVEN_PL=":wbh.bookworm.hoerbuchdienst.application.assembly"
-  ;;
-esac
-
-echo "Building Docker Image 'builder'"
+echo "Building Docker Image 'Java/Maven/Docker builder'"
 pushd "${execdir}"/builder/openjdk11-maven-docker >/dev/null
 docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
@@ -58,6 +44,7 @@ git reset --hard
 git pull
 echo "done"
 echo "Building Mikrokosmos"
+rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
 docker run \
   --rm \
   --name maven \
@@ -66,7 +53,7 @@ docker run \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} help:effective-pom clean verify && mvn install" |
+  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} help:effective-pom clean verify && mvn clean install" |
   tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
@@ -78,6 +65,7 @@ git pull
 echo "done"
 HOSTNAME="$(hostname -f)"
 echo "Building WBH Bookworm for ${HOSTNAME}"
+rm -rf "${MAVEN_REPO}/wbh"
 docker run \
   --rm \
   --name maven \
@@ -86,7 +74,7 @@ docker run \
   --mount type=bind,source=$(pwd),destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} -pl ${MAVEN_PL} help:effective-pom clean verify" |
+  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} help:effective-pom clean verify" |
   tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"

@@ -1,0 +1,17 @@
+<assembly xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xmlns="http://maven.apache.org/ASSEMBLY/2.1.0"
+          xsi:schemaLocation="http://maven.apache.org/ASSEMBLY/2.1.0 http://maven.apache.org/xsd/assembly-2.1.0.xsd">
+    <id>dist</id>
+    <formats>
+        <format>zip</format>
+    </formats>
+    <baseDirectory>${project.basedir}</baseDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>target/${project.artifactId}-${project.version}</directory>
+            <outputDirectory>.</outputDirectory>
+            <directoryMode>755</directoryMode>
+            <fileMode>644</fileMode>
+        </fileSet>
+    </fileSets>
+</assembly>

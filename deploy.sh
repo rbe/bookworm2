@@ -8,52 +8,58 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 2 ]]; then
-  echo "usage: $0 <env> <project>"
+if [[ $# != 3 ]]; then
+  echo "usage: $0 <env> <project> <timestamp>"
   echo "  env        dev | prod"
   echo "  project    cms-hbk | hbd"
+  echo "  timestamp  yyyy-mm-ddThh-mm"
   exit 1
 fi
 env=$1
 shift
 project=$1
+shift
+timestamp=$1
 
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
   popd >/dev/null
 )"
-
-MAVEN_REPO="$(
-  pushd "${execdir}/../maven-repository" >/dev/null
+assemblydir="$(
+  pushd "${execdir}/assembly/target/dependency" >/dev/null
   pwd
   popd >/dev/null
 )"
-MAVEN_REPO_CNT="/var/local/maven-repository"
-MAVEN_OPTS="-Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT}"
-case "${project}" in
-cms-hbk)
-  MAVEN_PL=":wbh.bookworm.cms.assembly,:wbh.bookworm.hoerbuckatalog.deployment"
-  ;;
-hbd)
-  MAVEN_PL=":wbh.bookworm.hoerbuchdienst.application.assembly"
-  ;;
-esac
-MAVEN_CMD_LINE_ARGS="-B -s .mvn/settings.xml --fail-fast -P bookworm.docker.${env} -pl ${MAVEN_PL}"
+releasedir="$(
+  pushd "${execdir}/../releases" >/dev/null
+  pwd
+  popd >/dev/null
+)"
+COMPOSE_PROJECT="${env}-${project}"
+ARTIFACT="${env}-${project}-${timestamp}"
 
-HOSTNAME="$(hostname -f)"
-echo "Deploying WBH Bookworm ${env}/${MAVEN_PL} at ${HOSTNAME}"
-pushd "${execdir}" >/dev/null
-docker run \
-  --rm \
-  --name maven \
-  --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
-  --mount type=bind,source=$(pwd),destination=/var/local/source \
-  -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
-  wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm -f .mvn/maven.config && mvn ${MAVEN_CMD_LINE_ARGS} install" |
-  tee deploy-wbh.bookworm.log
+echo "Deploying WBH Bookworm ${env}"
+if [[ ! -d "${releasedir}" ]]; then
+  mkdir "${releasedir}"
+fi
+# check releases directory for artifact
+if [[ ! -f "${releasedir}"/${ARTIFACT} ]]; then
+  unzip "${assemblydir}/${ARTIFACT}"-LocalBuild.zip \
+    docker-compose.yml docker-compose.${env}.yml \
+    -d "${releasedir}/${ARTIFACT}"
+else
+  echo "Artifact ${ARTIFACT} already exists"
+fi
+
+pushd "${releasedir}/${ARTIFACT}" >/dev/null
+echo "Starting ${env} containers from $(pwd)"
+docker-compose \
+  -p "${COMPOSE_PROJECT}" \
+  -f docker-compose.yml -f docker-compose.${env}.yml \
+  up \
+  -d \
+  --no-build
 popd >/dev/null
 echo "done"
 

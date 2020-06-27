@@ -11,6 +11,10 @@
     <artifactId>wbh.bookworm.hoerbuchdienst.container</artifactId>
     <name>wbh-online.de Hörbuchdienst Application Container</name>
     <packaging>pom</packaging>
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM'T'dd-HH-mm</maven.build.timestamp.format>
+        <hbd.release>${maven.build.timestamp}</hbd.release>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -42,20 +46,20 @@
                 <executions>
                     <execution>
                         <id>default</id>
+                        <phase>package</phase>
                         <goals>
                             <goal>build</goal>
-                            <goal>push</goal>
                         </goals>
+                        <configuration>
+                            <repository>wbh-hbd/hoerbuchdienst</repository>
+                            <tag>${hbd.release}</tag>
+                            <buildArgs>
+                                <!--<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
+                                <JAR_FILE>wbh.bookworm.hoerbuchdienst.application.impl-${project.version}.jar</JAR_FILE>
+                            </buildArgs>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <repository>wbh-hbd/hoerbuchdienst</repository>
-                    <tag>${project.version}</tag>
-                    <buildArgs>
-                        <!--<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
-                        <JAR_FILE>wbh.bookworm.hoerbuchdienst.application.impl-${project.version}.jar</JAR_FILE>
-                    </buildArgs>
-                </configuration>
             </plugin>
         </plugins>
     </build>
