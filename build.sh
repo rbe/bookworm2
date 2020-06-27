@@ -26,7 +26,7 @@ MAVEN_REPO="$(
 )"
 MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Xshare:on -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
-MAVEN_CMD_LINE_ARGS="-X -s .mvn/settings.xml --batch --fail-fast -T 2C"
+MAVEN_CMD_LINE_ARGS="-X -s .mvn/settings.xml --batch-mode --fail-fast -T 2C"
 
 echo "Building Docker Image 'Java/Maven/Docker builder'"
 pushd "${execdir}"/builder/openjdk11-maven-docker >/dev/null
