@@ -12,7 +12,7 @@
     <name>wbh-online.de Hörbuchdienst Application Container</name>
     <packaging>pom</packaging>
     <properties>
-        <maven.build.timestamp.format>yyyy-MM'T'dd-HH-mm</maven.build.timestamp.format>
+        <maven.build.timestamp.format>yyyy-MM'T'dd-HH-mm-ss'Z'</maven.build.timestamp.format>
         <hbd.release>${maven.build.timestamp}</hbd.release>
     </properties>
     <build>
