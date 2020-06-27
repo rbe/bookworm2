@@ -31,7 +31,7 @@ assemblydir="$(
   pwd
   popd >/dev/null
 )"
-if [[ ! -d "${execdir}/../releases ]]; then
+if [[ ! -d "${execdir}/../releases" ]]; then
   mkdir "${execdir}/../releases"
 fi
 releasedir="$(
