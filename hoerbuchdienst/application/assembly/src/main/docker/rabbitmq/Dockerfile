@@ -18,9 +18,5 @@ RUN chmod +x /usr/local/bin/*.sh
 FROM base
 COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf.disabled
 COPY definitions.json /etc/rabbitmq
-ARG RABBITMQ_HOSTNAME
-RUN sed -i'' \
-        -e "s#RABBITMQ_HOSTNAME#${RABBITMQ_HOSTNAME}#g" \
-        /etc/rabbitmq/rabbitmq.conf.disabled \
-    && mv /etc/rabbitmq/rabbitmq.conf.disabled /etc/rabbitmq/rabbitmq.conf
+RUN mv /etc/rabbitmq/rabbitmq.conf.disabled /etc/rabbitmq/rabbitmq.conf
 VOLUME ["/etc/rabbitmq", "/var/lib/rabbitmq"]

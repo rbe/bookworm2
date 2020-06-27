@@ -81,6 +81,12 @@ docker_switch_user() {
   fi
 }
 
+if [ -n "${MINIO_ACCESS_KEY_OLD}" ] || [ -n "${MINIO_SECRET_KEY_OLD}" ]; then
+  echo "ATTENTION:"
+  echo "ATTENTION: MinIO old access/secret keys are set"
+  echo "ATTENTION:"
+fi
+
 ## Set access env from secrets if necessary.
 docker_secrets_env
 

@@ -39,14 +39,14 @@ releasedir="$(
 COMPOSE_PROJECT="${env}-${project}"
 ARTIFACT="${env}-${project}-${timestamp}"
 
-echo "Deploying WBH Bookworm ${env}"
 if [[ ! -d "${releasedir}" ]]; then
   mkdir "${releasedir}"
 fi
-# check releases directory for artifact
-if [[ ! -f "${releasedir}"/${ARTIFACT} ]]; then
-  unzip "${assemblydir}/${ARTIFACT}"-LocalBuild.zip \
-    docker-compose.yml docker-compose.${env}.yml \
+
+echo "Deploying WBH Bookworm ${env}"
+if [[ ! -f "${releasedir}/${ARTIFACT}" ]]; then
+  unzip "${assemblydir}/${ARTIFACT}.zip" \
+    docker-compose.yml docker-compose.${env}.yml wbh-\*.sh \
     -d "${releasedir}/${ARTIFACT}"
 else
   echo "Artifact ${ARTIFACT} already exists"

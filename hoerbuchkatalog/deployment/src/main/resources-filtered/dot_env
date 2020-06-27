@@ -1,4 +1,0 @@
-NGINX_RELEASE=${nginx.release}
-HBK_HOSTNAME=${hbk.hostname}
-HBK_RELEASE=${project.version}
-DOMAIN=${domain}

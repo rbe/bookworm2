@@ -69,7 +69,7 @@ services:
       - MINIO_KMS_KES_KEY_FILE=/var/local/kes/minio.key
       - MINIO_KMS_KES_CERT_FILE=/var/local/kes/minio.cert
       - MINIO_KMS_KES_CA_PATH=${tls.path}/${kes.hostname}/cert.pem
-      - MINIO_KMS_KES_KEY_NAME=minio-key-1
+      - MINIO_KMS_KES_KEY_NAME=minio-masterkey-1
       - MINIO_KMS_AUTO_ENCRYPTION=off
       - MINIO_KMS_MASTER_KEY_FILE=
       - MINIO_SSE_MASTER_KEY_FILE=
@@ -240,8 +240,6 @@ services:
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
-      - VAULT_HOSTNAME=${vault.hostname}
-      - KES_HOSTNAME=${kes.hostname}
       - MINIO_HOSTNAME=${minio.hostname}
       - RABBITMQ_HOSTNAME=${rabbitmq.hostname}
       - HBD_HOSTNAME=${hbd.hostname}

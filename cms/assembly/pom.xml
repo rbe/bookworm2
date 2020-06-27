@@ -25,14 +25,6 @@
         <docker-compose.dev.file>${docker-compose.dir}/docker-compose.dev.yml</docker-compose.dev.file>
         <docker-compose.prod.file>${docker-compose.dir}/docker-compose.prod.yml</docker-compose.prod.file>
     </properties>
-    <dependencies>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.cms.approxy</artifactId>
-            <version>LocalBuild</version>
-            <type>zip</type>
-        </dependency>
-    </dependencies>
     <profiles>
         <profile>
             <id>bookworm.docker.local</id>
@@ -146,6 +138,7 @@
                 <version>3.1.1</version>
                 <executions>
                     <execution>
+                        <id>unpack</id>
                         <phase>prepare-package</phase>
                         <goals>
                             <goal>unpack</goal>
@@ -155,6 +148,7 @@
                                 <artifactItem>
                                     <groupId>wbh.bookworm</groupId>
                                     <artifactId>wbh.bookworm.cms.approxy</artifactId>
+                                    <version>LocalBuild</version>
                                     <type>zip</type>
                                     <outputDirectory>target/classes/joomla</outputDirectory>
                                 </artifactItem>
@@ -214,7 +208,6 @@
                         <JOOMLA_RELEASE>${joomla.release}</JOOMLA_RELEASE>
                         <NGINX_RELEASE>${nginx.release}</NGINX_RELEASE>
                         <CMS_RELEASE>${cms.release}</CMS_RELEASE>
-                        <HBK_HOSTNAME>${hbk.hostname}.${domain}</HBK_HOSTNAME>
                     </envVars>
                     <buildArgs>
                         <noCache>true</noCache>

@@ -223,18 +223,11 @@
                     <envVars>
                         <DOMAIN>${domain}</DOMAIN>
                         <NGINX_RELEASE>${nginx.release}</NGINX_RELEASE>
-                        <NGINX_HOSTNAME>${nginx.hostname}</NGINX_HOSTNAME>
-                        <VAULT_RELEASE>${vault.release}</VAULT_RELEASE>
-                        <VAULT_HOSTNAME>${vault.hostname}</VAULT_HOSTNAME>
                         <KES_RELEASE>${kes.release}</KES_RELEASE>
-                        <KES_HOSTNAME>${kes.hostname}</KES_HOSTNAME>
                         <MINIO_RELEASE>${minio.release}</MINIO_RELEASE>
-                        <MINIO_HOSTNAME>${minio.hostname}</MINIO_HOSTNAME>
                         <MC_RELEASE>${mc.release}</MC_RELEASE>
                         <RABBITMQ_RELEASE>${rabbitmq.release}</RABBITMQ_RELEASE>
-                        <RABBITMQ_HOSTNAME>${rabbitmq.hostname}</RABBITMQ_HOSTNAME>
                         <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
-                        <HBD_HOSTNAME>${hbd.hostname}</HBD_HOSTNAME>
                     </envVars>
                     <buildArgs>
                         <noCache>true</noCache>
@@ -254,9 +247,6 @@
                             <buildArgs>
                                 <args>
                                     <NGINX_RELEASE>${nginx.release}</NGINX_RELEASE>
-                                    <VAULT_HOSTNAME>${vault.hostname}</VAULT_HOSTNAME>
-                                    <MINIO_HOSTNAME>${minio.hostname}</MINIO_HOSTNAME>
-                                    <HBD_HOSTNAME>${hbd.hostname}</HBD_HOSTNAME>
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>
@@ -273,7 +263,6 @@
                             <buildArgs>
                                 <args>
                                     <VAULT_RELEASE>${vault.release}</VAULT_RELEASE>
-                                    <VAULT_HOSTNAME>${vault.hostname}</VAULT_HOSTNAME>
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>
@@ -338,7 +327,6 @@
                             <buildArgs>
                                 <args>
                                     <RABBITMQ_RELEASE>${rabbitmq.release}</RABBITMQ_RELEASE>
-                                    <RABBITMQ_HOSTNAME>${rabbitmq.hostname}</RABBITMQ_HOSTNAME>
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>

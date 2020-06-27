@@ -73,17 +73,18 @@ case "${mode}" in
         docker-compose -p "${PROJECT_NAME}" down
         echo "done"
         echo "Removing MinIO _OLD keys"
-        sed -i'' \
-            -e "/MINIO_ACCESS_KEY_OLD=\(.*\)/d" \
-            "${execdir}"/variables-minio.env
-        sed -i'' \
-            -e "/MINIO_SECRET_KEY_OLD=\(.*\)/d" \
-            "${execdir}"/variables-minio.env
+        rm -f "${execdir}/.env"
+        #sed -i'' \
+        #    -e "/MINIO_ACCESS_KEY_OLD=\(.*\)/d" \
+        #    "${execdir}/docker-compose*.yml"
+        #sed -i'' \
+        #    -e "/MINIO_SECRET_KEY_OLD=\(.*\)/d" \
+        #    "${execdir}/docker-compose*.yml"
         echo "done"
         echo "Enabling MinIO KMS auto encryption"
         sed -i'' \
             -e "s#MINIO_KMS_AUTO_ENCRYPTION=.*#MINIO_KMS_AUTO_ENCRYPTION=on#" \
-            "${execdir}"/variables-minio.env
+            "${execdir}/docker-compose.yml"
         echo "done"
         echo "Waiting for services to come up"
         docker-compose -p "${PROJECT_NAME}" up -d

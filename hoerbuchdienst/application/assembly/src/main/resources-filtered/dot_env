@@ -1,8 +1,2 @@
-KES_HOSTNAME=${kes.hostname}
-VAULT_HOSTNAME=${vault.hostname}
-MINIO_HOSTNAME=${minio.hostname}
 MINIO_ACCESS_KEY_OLD=AKIAIOSFODNN7EXAMPLE
 MINIO_SECRET_KEY_OLD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-RABBITMQ_HOSTNAME=${rabbitmq.hostname}
-HBD_HOSTNAME=${hbd.hostname}
-HBD_RELEASE=${project.version}

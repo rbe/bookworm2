@@ -39,14 +39,14 @@ kes server \
     --config=${local}/server-config.yml \
     --root "${root_identity}" \
     --auth=off \
-    --key=${tls.path}/${KES_HOSTNAME}/privkey.pem \
-    --cert=${tls.path}/${KES_HOSTNAME}/cert.pem &
+    --key=${tls.path}/${kes.hostname}/privkey.pem \
+    --cert=${tls.path}/${kes.hostname}/cert.pem &
 
 if [ ! -f ${local}/is_initialized ]
 then
     echo "Creating MinIO master key"
     sleep 5
-    kes key create minio-key-1 -k
+    kes key create minio-masterkey-1 -k
     echo "done"
     touch ${local}/is_initialized
 fi
