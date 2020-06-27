@@ -31,6 +31,9 @@ assemblydir="$(
   pwd
   popd >/dev/null
 )"
+if [[ ! -d "${releasedir}" ]]; then
+  mkdir "${releasedir}"
+fi
 releasedir="$(
   pushd "${execdir}/../releases" >/dev/null
   pwd
@@ -38,10 +41,6 @@ releasedir="$(
 )"
 COMPOSE_PROJECT="${env}-${project}"
 ARTIFACT="${env}-${project}-${timestamp}"
-
-if [[ ! -d "${releasedir}" ]]; then
-  mkdir "${releasedir}"
-fi
 
 echo "Deploying WBH Bookworm ${env}"
 if [[ ! -f "${releasedir}/${ARTIFACT}" ]]; then
