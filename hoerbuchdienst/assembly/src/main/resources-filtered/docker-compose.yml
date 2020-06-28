@@ -99,8 +99,6 @@ services:
       - backend
     entrypoint: tail -f /dev/null
   rabbitmq:
-    build:
-      context: rabbitmq
     image: wbh-hbd/rabbitmq:${hbd.release}
     restart: unless-stopped
     hostname: ${rabbitmq.hostname}

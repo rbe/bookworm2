@@ -56,7 +56,7 @@ esac
 for artifact in "${ARTIFACTS[@]}"; do
     echo "Deploying WBH Bookworm ${env} ${artifact}"
     file="${assemblydir}/${artifact}-${timestamp}"
-    dir="${releasedir}/${env}-${artifact}-${timestamp}"
+    dir="${releasedir}/${env}-${project}-${timestamp}"
     if [[ ! -f "${dir}" ]]; then
         unzip "${file}.zip" \
             docker-compose.yml docker-compose.${env}.yml wbh-\*.sh \
