@@ -42,12 +42,15 @@ releasedir="$(
 
 ARTIFACTS=()
 case "${project}" in
-    cms-hbk)
+    wbh-hbk)
         ARTIFACTS=("wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly")
         ;;
-    hbd)
+    wbh-hbd)
         ARTIFACTS=("wbh.bookworm.hoerbuchdienst.application.assembly")
         ;;
+    *)
+        echo "Unknwon project: ${OPT}"
+        exit 1
 esac
 
 for artifact in "${!ARTIFACTS[@]}"; do
