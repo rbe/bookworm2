@@ -53,7 +53,7 @@ case "${project}" in
         exit 1
 esac
 
-for artifact in "${!ARTIFACTS[@]}"; do
+for artifact in "${ARTIFACTS[@]}"; do
     echo "Deploying WBH Bookworm ${env} ${artifact}"
     file="${assemblydir}/${artifact}-${timestamp}"
     dir="${releasedir}/${artifact}"
