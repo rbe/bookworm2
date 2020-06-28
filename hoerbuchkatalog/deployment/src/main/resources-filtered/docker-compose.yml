@@ -2,8 +2,6 @@ version: '3.7'
 
 services:
   hoerbuchkatalog:
-    build:
-      context: ./hoerbuchkatalog
     image: wbh-hbk/hoerbuchkatalog:${hbk.release}
     restart: unless-stopped
     environment:
@@ -22,8 +20,6 @@ services:
     expose:
       - 8080
   datatransfer-ssh:
-    build:
-      context: ./datatransfer-ssh
     image: wbh-hbk/datatransfer-ssh:${hbk.release}
     restart: unless-stopped
     environment:
@@ -37,8 +33,6 @@ services:
     expose:
       - 2201
   admin-ssh:
-    build:
-      context: ./admin-ssh
     image: wbh-hbk/admin-ssh:${hbk.release}
     restart: unless-stopped
     environment:

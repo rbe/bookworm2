@@ -29,6 +29,7 @@
         <module>adapter</module>
         <module>domain</module>
         <module>application</module>
+        <module>assembly</module>
     </modules>
     <repositories>
         <repository>

@@ -2,8 +2,6 @@ version: '3.7'
 
 services:
   vault:
-    build:
-      context: ./vault
     image: wbh-hbd/vault:${hbd.release}
     restart: unless-stopped
     hostname: ${vault.hostname}
@@ -25,8 +23,6 @@ services:
     expose:
       - 8200
   kes:
-    build:
-      context: ./kes
     image: wbh-hbd/kes:${hbd.release}
     restart: unless-stopped
     hostname: ${kes.hostname}
@@ -48,8 +44,6 @@ services:
     expose:
       - 7373
   minio:
-    build:
-      context: ./minio
     image: wbh-hbd/minio:${hbd.release}
     restart: unless-stopped
     hostname: ${minio.hostname}
@@ -87,8 +81,6 @@ services:
     expose:
       - 9000
   mc:
-    build:
-      context: ./mc
     image: wbh-hbd/mc:${hbd.release}
     restart: unless-stopped
     depends_on:
@@ -233,8 +225,6 @@ services:
       - 8080
     entrypoint: tail -f /dev/null
   hbd-rproxy:
-    build:
-      context: ./rproxy
     image: wbh-hbd/rproxy:${hbd.release}
     restart: unless-stopped
     environment:

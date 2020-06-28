@@ -1,0 +1,12 @@
+version: '3.7'
+
+services:
+  hoerbuchkatalog:
+    build:
+      context: ./hoerbuchkatalog
+  datatransfer-ssh:
+    build:
+      context: ./datatransfer-ssh
+  admin-ssh:
+    build:
+      context: ./admin-ssh

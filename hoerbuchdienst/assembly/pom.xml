@@ -5,11 +5,11 @@
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst.application</artifactId>
+        <artifactId>wbh.bookworm.hoerbuchdienst</artifactId>
         <version>LocalBuild</version>
     </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.application.assembly</artifactId>
-    <name>wbh-online.de Hörbuchdienst Application Assembly</name>
+    <artifactId>wbh.bookworm.hoerbuchdienst.assembly</artifactId>
+    <name>wbh-online.de Hörbuchdienst Assembly</name>
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
@@ -39,6 +39,7 @@
         <docker.project.name>hbd</docker.project.name>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
+        <docker-compose.build.file>${docker-compose.dir}/docker-compose.build.yml</docker-compose.build.file>
         <docker-compose.dev.file>${docker-compose.dir}/docker-compose.dev.yml</docker-compose.dev.file>
         <docker-compose.prod.file>${docker-compose.dir}/docker-compose.prod.yml</docker-compose.prod.file>
     </properties>
@@ -182,34 +183,6 @@
                     </execution>
                 </executions>
             </plugin>
-            <!--<plugin>
-                <groupId>io.fabric8</groupId>
-                <artifactId>docker-maven-plugin</artifactId>
-                <version>0.33.0</version>
-                <executions>
-                    <execution>
-                        <phase>package</phase>
-                        <goals>
-                            <goal>start</goal>
-                        </goals>
-                        <configuration>
-                            <images>
-                                <image>
-                                    <name>provisioner:%v</name>
-                                    <run>
-                                        <wait>
-                                            <exec>
-                                                <postStart>/opt/init_db.sh</postStart>
-                                                <preStop>/opt/notify_end.sh</preStop>
-                                            </exec>
-                                        </wait>
-                                    </run>
-                                </image>
-                            </images>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>-->
             <plugin>
                 <groupId>com.dkanejs.maven.plugins</groupId>
                 <artifactId>docker-compose-maven-plugin</artifactId>
@@ -219,6 +192,7 @@
                     <host>unix:///var/run/docker.sock</host>
                     <composeFiles>
                         <composeFile>${docker-compose.file}</composeFile>
+                        <composeFile>${docker-compose.build.file}</composeFile>
                     </composeFiles>
                     <envVars>
                         <DOMAIN>${domain}</DOMAIN>

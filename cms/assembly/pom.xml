@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.cms.assembly</artifactId>
+    <name>wbhonline.de CMS Assembly</name>
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
@@ -22,6 +23,7 @@
         <docker.project.name>hbk</docker.project.name>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
+        <docker-compose.build.file>${docker-compose.dir}/docker-compose.build.yml</docker-compose.build.file>
         <docker-compose.dev.file>${docker-compose.dir}/docker-compose.dev.yml</docker-compose.dev.file>
         <docker-compose.prod.file>${docker-compose.dir}/docker-compose.prod.yml</docker-compose.prod.file>
     </properties>
@@ -200,6 +202,7 @@
                     <host>unix:///var/run/docker.sock</host>
                     <composeFiles>
                         <composeFile>${docker-compose.file}</composeFile>
+                        <composeFile>${docker-compose.build.file}</composeFile>
                     </composeFiles>
                     <envVars>
                         <DOMAIN>${domain}</DOMAIN>

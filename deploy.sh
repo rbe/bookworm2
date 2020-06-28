@@ -11,8 +11,8 @@ set -o errexit
 if [[ $# != 3 ]]; then
     echo "usage: $0 <env> <project> <timestamp>"
     echo "  env        dev | prod"
-    echo "  project    cms-hbk | hbd"
-    echo "  timestamp  yyyy-mm-ddThh-mm"
+    echo "  project    wbh-hbk | wbh-hbd"
+    echo "  timestamp  yyyy-mm-ddThh-mm-ssZ"
     exit 1
 fi
 env=$1
@@ -46,7 +46,7 @@ case "${project}" in
         ARTIFACTS=("wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly")
         ;;
     wbh-hbd)
-        ARTIFACTS=("wbh.bookworm.hoerbuchdienst.application.assembly")
+        ARTIFACTS=("wbh.bookworm.hoerbuchdienst.assembly")
         ;;
     *)
         echo "Unknwon project: ${OPT}"
@@ -56,7 +56,7 @@ esac
 for artifact in "${ARTIFACTS[@]}"; do
     echo "Deploying WBH Bookworm ${env} ${artifact}"
     file="${assemblydir}/${artifact}-${timestamp}"
-    dir="${releasedir}/${artifact}"
+    dir="${releasedir}/${env}-${artifact}-${timestamp}"
     if [[ ! -f "${dir}" ]]; then
         unzip "${file}.zip" \
             docker-compose.yml docker-compose.${env}.yml wbh-\*.sh \

@@ -1,0 +1,22 @@
+version: '3.7'
+
+services:
+  vault:
+    build:
+      context: vault
+  kes:
+    build:
+      context: kes
+  minio:
+    build:
+      context: minio
+  mc:
+    build:
+      context: mc
+  rabbitmq:
+    build:
+      context: rabbitmq
+  hoerbuchdienst:
+  hbd-rproxy:
+    build:
+      context: rproxy

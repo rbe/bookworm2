@@ -9,6 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.assembly</artifactId>
+    <name>wbhonline.de Assembly</name>
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
