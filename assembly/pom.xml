@@ -10,26 +10,9 @@
     </parent>
     <artifactId>wbh.bookworm.assembly</artifactId>
     <packaging>pom</packaging>
-    <!--<dependencies>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.cms.assembly</artifactId>
-            <version>LocalBuild</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.deployment</artifactId>
-            <version>LocalBuild</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchdienst.application.assembly</artifactId>
-            <version>LocalBuild</version>
-            <type>zip</type>
-        </dependency>
-    </dependencies>-->
+    <properties>
+        <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
+    </properties>
     <build>
         <plugins>
             <plugin>
@@ -44,12 +27,6 @@
                             <goal>copy</goal>
                         </goals>
                         <configuration>
-                            <!--<includeArtifactIds>
-                                wbh.bookworm.cms.assembly,
-                                wbh.bookworm.hoerbuchkatalog.deployment,
-                                wbh.bookworm.hoerbuchdienst.application.assembly,
-                            </includeArtifactIds>
-                            <includeTypes>zip</includeTypes>-->
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>wbh.bookworm</groupId>
