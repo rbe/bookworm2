@@ -45,10 +45,10 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>wbh.bookworm</groupId>
-                                    <artifactId>wbh.bookworm.hoerbuchdienst.application.assembly</artifactId>
+                                    <artifactId>wbh.bookworm.hoerbuchdienst.assembly</artifactId>
                                     <version>LocalBuild</version>
                                     <type>zip</type>
-                                    <destFileName>wbh.bookworm.hoerbuchdienst.application.assembly-${maven.build.timestamp}.zip</destFileName>
+                                    <destFileName>wbh.bookworm.hoerbuchdienst.assembly-${maven.build.timestamp}.zip</destFileName>
                                 </artifactItem>
                             </artifactItems>
                         </configuration>
