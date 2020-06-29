@@ -19,8 +19,8 @@
         <vault.hostname>vault.${domain}</vault.hostname>
         <kes.release>v0.8.2</kes.release>
         <kes.hostname>kes.${domain}</kes.hostname>
-        <kes_client_tls_key_file>/var/local/kes/minio.key</kes_client_tls_key_file>
-        <kes_client_tls_cert_file>/var/local/kes/minio.cert</kes_client_tls_cert_file>
+        <kes.minio.tls.key.file>/var/local/kes/minio.key</kes.minio.tls.key.file>
+        <kes.minio.tls.cert.file>/var/local/kes/minio.cert</kes.minio.tls.cert.file>
         <minio.release>RELEASE.2020-05-16T01-33-21Z</minio.release>
         <minio.hostname>s3.${domain}</minio.hostname>
         <mc.release>RELEASE.2020-05-16T01-44-37Z</mc.release>
@@ -36,7 +36,6 @@
         <hbd.release>${maven.build.timestamp}</hbd.release>
         <hbd.hostname>hoerbuchdienst.${domain}</hbd.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
-        <docker.project.name>hbd</docker.project.name>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
         <docker-compose.build.file>${docker-compose.dir}/docker-compose.build.yml</docker-compose.build.file>
@@ -47,6 +46,7 @@
         <profile>
             <id>bookworm.docker.local</id>
             <properties>
+                <docker.project.name>dev-hbd</docker.project.name>
                 <domain>shard1.local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
                 <nginx.enable.servers>
@@ -86,6 +86,7 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
+                <docker.project.name>prod-hbd</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
                 <nginx.enable.servers>

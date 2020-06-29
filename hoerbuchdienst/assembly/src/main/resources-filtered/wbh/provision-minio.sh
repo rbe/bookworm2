@@ -9,17 +9,16 @@ set -o errexit
 ADMIN_PASSWORD="Uuphuk3ayi7faghaik3wiekahnahxoo3oej4tee9"
 WBH_ACCESS_KEY="Nae3bahcexie9eifaihe"
 WBH_SECRET_KEY="eenieth9hoquohcooyeiRukoxopooPheew3caip7"
-
 MINIO_URL="http://minio:9000"
 MINIO_ACCESS_KEY="$(docker run --rm \
     -v ${PROJECT_NAME}_miniolocal:/var/local/minio \
     alpine:3.12 \
     cat /var/local/minio/access_key)"
+echo "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
 MINIO_SECRET_KEY="$(docker run --rm \
     -v ${PROJECT_NAME}_miniolocal:/var/local/minio \
     alpine:3.12 \
     cat /var/local/minio/secret_key)"
-echo "MINIO_ACCESS_KEY=${MINIO_ACCESS_KEY}"
 echo "MINIO_SECRET_KEY=${MINIO_SECRET_KEY}"
 
 echo "Configuring MinIO mc"

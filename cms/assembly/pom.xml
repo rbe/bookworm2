@@ -20,7 +20,6 @@
         <cms.release>${maven.build.timestamp}</cms.release>
         <hbk.hostname>www.${domain}</hbk.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
-        <docker.project.name>hbk</docker.project.name>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
         <docker-compose.build.file>${docker-compose.dir}/docker-compose.build.yml</docker-compose.build.file>
@@ -31,6 +30,7 @@
         <profile>
             <id>bookworm.docker.local</id>
             <properties>
+                <docker.project.name>dev-hbk</docker.project.name>
                 <domain>local</domain>
                 <hbk.hostname>wbhonline.${domain}</hbk.hostname>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
@@ -71,6 +71,7 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
+                <docker.project.name>prod-hbk</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
                 <nginx.enable.servers>

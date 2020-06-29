@@ -1,21 +1,26 @@
 #!/usr/bin/env bash
 # Copyright (C) 2020 art of coding UG, Hamburg
 
-PROJECT_NAME="${docker.project.name}"
-
 set -o nounset
 set -o errexit
 
-execdir="$(pushd $(dirname $0) >/dev/null ; pwd ; popd >/dev/null)"
+execdir="$(
+    pushd "$(dirname "$0")" >/dev/null
+    pwd
+    popd >/dev/null
+)"
 
 usage() {
-    echo "usage: $0 < destroy | provision | start | stop >"
+    echo "usage: $0 < destroy | provision | start | stop > <project>"
     exit 1
 }
 
-[[ $# -lt 1 ]] && usage
+[[ $# != 2 ]] && usage
 
-mode=$1 ; shift
+mode=$1
+shift
+PROJECT_NAME="$1"
+shift
 case "${mode}" in
     destroy)
         [[ $# -eq 1 ]] && all="$1" || all="no"
@@ -46,13 +51,12 @@ case "${mode}" in
         docker image prune -f
         set -o errexit
         popd >/dev/null
-    ;;
+        ;;
     provision)
         pushd "${execdir}" >/dev/null
-        if [[ ! -f /var/lib/docker/volumes/storage_rproxycerts/_data/is_initialized ]]
-        then
+        if [[ ! -f /var/lib/docker/volumes/storage_rproxycerts/_data/is_initialized ]]; then
             echo "Starting nginx to generate TLS server certitifaces"
-            docker-compose -p "${PROJECT_NAME}" up -d rproxy
+            docker-compose -p "${PROJECT_NAME}" up -d hbd-rproxy
             echo "Waiting 60 seconds"
             sleep 60
             echo "done"
@@ -92,26 +96,27 @@ case "${mode}" in
         echo "done"
         echo "Setting up shard"
         chmod +x wbh/*.sh
-        wbh/setup-shard.sh
+        wbh/provision-rabbitmq.sh
+        wbh/provision-minio.sh
         echo "done"
         echo "Shutting down all services"
         docker-compose -p "${PROJECT_NAME}" down
         sleep 10
         echo "done"
-    ;;
+        ;;
     start)
         pushd "${execdir}" >/dev/null
         docker-compose -p "${PROJECT_NAME}" up -d
         popd >/dev/null
-    ;;
+        ;;
     stop)
         pushd "${execdir}" >/dev/null
         docker-compose -p "${PROJECT_NAME}" down
         popd >/dev/null
-    ;;
+        ;;
     *)
         usage
-    ;;
+        ;;
 esac
 
 exit 0

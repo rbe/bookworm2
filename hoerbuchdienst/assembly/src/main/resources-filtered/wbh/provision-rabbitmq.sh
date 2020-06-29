@@ -6,22 +6,25 @@ PROJECT_NAME="${docker.project.name}"
 set -o nounset
 set -o errexit
 
-if [[ $# != 1 ]]
-then
-    echo "usage: $0 [<federator password>]"
-    exit 1
+if [[ $# == 1 ]]; then
+    FEDERATOR_PASSWORD="$1"
+else
+    if [ $(command -v pwgen) ]; then
+        FEDERATOR_PASSWORD="$(pwgen -BCn 16 1)"
+    else
+        FEDERATOR_PASSWORD="$(docker run --rm alpine:3.12 ash -c "apk add -q pwgen && pwgen -BCn 16 1")"
+    fi
+    echo "Password is ${FEDERATOR_PASSWORD}"
 fi
-FEDERATOR_PASSWORD=$1
 
-execdir="$(pushd $(dirname $0) >/dev/null ; pwd ; popd >/dev/null)"
-pushd "${execdir}"/.. >/dev/null
+echo "$0: executing in $(pwd)"
+
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
     rabbitmqctl change_password \
     federator "${FEDERATOR_PASSWORD}"
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
     rabbitmq-setup-federation.sh \
     federator:"${FEDERATOR_PASSWORD}"
-popd >/dev/null
 
 ## node1: send message
 #docker-compose exec rabbitmq rabbitmqadmin \

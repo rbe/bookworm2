@@ -11,7 +11,7 @@ set -o errexit
 if [[ $# != 3 ]]; then
     echo "usage: $0 <env> <project> <timestamp>"
     echo "  env        dev | prod"
-    echo "  project    wbh-hbk | wbh-hbd"
+    echo "  project    hbk | hbd"
     echo "  timestamp  yyyy-mm-ddThh-mm-ssZ"
     exit 1
 fi
@@ -31,49 +31,66 @@ assemblydir="$(
     pwd
     popd >/dev/null
 )"
-if [[ ! -d "${execdir}/../releases" ]]; then
-    mkdir "${execdir}/../releases"
-fi
 releasedir="$(
     pushd "${execdir}/../releases" >/dev/null
     pwd
     popd >/dev/null
 )"
+project_name="${env}-${project}"
+project_dir="${releasedir}/${project_name}-${timestamp}"
+if [[ ! -d "${project_dir}" ]]; then
+    mkdir "${project_dir}"
+fi
 
-ARTIFACTS=()
+function deploy_artifacts() {
+    local artifacts=("$@")
+    echo "Deploying artifacts ${artifacts[*]}"
+    for artifact in "${artifacts[@]}"; do
+        echo "Deploying WBH Bookworm ${env} ${artifact}"
+        file="${assemblydir}/${artifact}-${timestamp}"
+        if [[ ! -d "${project_dir}/${artifact}" ]]; then
+            unzip "${file}.zip" \
+                docker-compose.yml docker-compose.${env}.yml .env \*.sh \
+                -d "${project_dir}/${artifact}"
+        else
+            echo "Artifact ${artifact} already exists hoerbuchkatalog ${project_dir}/${artifact}"
+        fi
+    done
+    echo "done"
+}
+
 case "${project}" in
-    wbh-hbk)
-        ARTIFACTS=("wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly")
+    hbk)
+        artifacts=("wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly")
+        deploy_artifacts "${artifacts[@]}"
+        for artifact in "${artifacts[@]}"; do
+            pushd "${project_dir}/${artifact}" >/dev/null
+            echo "Starting ${artifact}"
+            docker-compose \
+                -p "${project_name}" \
+                -f docker-compose.yml -f docker-compose.${env}.yml \
+                up \
+                -d \
+                --no-build
+            popd >/dev/null
+            echo "done"
+        done
         ;;
-    wbh-hbd)
-        ARTIFACTS=("wbh.bookworm.hoerbuchdienst.assembly")
+    hbd)
+        deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
+        if [[ $(docker volume ls | grep -c minio) == 0 ]]; then
+            echo "Provisioning ${project_name}"
+            pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
+            chmod +x hbd.sh
+            ./hbd.sh provision "${project_name}"
+            popd >/dev/null
+            echo "done"
+        fi
         ;;
     *)
-        echo "Unknwon project: ${OPT}"
+        echo "Unknown project: ${project}"
         exit 1
+        ;;
 esac
-
-for artifact in "${ARTIFACTS[@]}"; do
-    echo "Deploying WBH Bookworm ${env} ${artifact}"
-    file="${assemblydir}/${artifact}-${timestamp}"
-    dir="${releasedir}/${env}-${project}-${timestamp}"
-    if [[ ! -f "${dir}" ]]; then
-        unzip "${file}.zip" \
-            docker-compose.yml docker-compose.${env}.yml wbh-\*.sh \
-            -d "${dir}"
-    else
-        echo "Artifact ${artifact} already exists"
-    fi
-    pushd "${dir}" >/dev/null
-    compose_project="${env}-${artifact}"
-    docker-compose \
-        -p "${compose_project}" \
-        -f docker-compose.yml -f docker-compose.${env}.yml \
-        up \
-        -d \
-        --no-build
-    popd >/dev/null
-    echo "done"
-done
 
 exit 0

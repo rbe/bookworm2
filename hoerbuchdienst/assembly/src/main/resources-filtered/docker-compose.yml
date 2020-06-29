@@ -60,8 +60,8 @@ services:
       - MINIO_REGION_NAME=us-east-1
       - MINIO_REGION_COMMENT=Data Universe
       - MINIO_KMS_KES_ENDPOINT=https://${kes.hostname}:7373
-      - MINIO_KMS_KES_KEY_FILE=/var/local/kes/minio.key
-      - MINIO_KMS_KES_CERT_FILE=/var/local/kes/minio.cert
+      - MINIO_KMS_KES_KEY_FILE=${kes.minio.tls.key.file}
+      - MINIO_KMS_KES_CERT_FILE=${kes.minio.tls.cert.file}
       - MINIO_KMS_KES_CA_PATH=${tls.path}/${kes.hostname}/cert.pem
       - MINIO_KMS_KES_KEY_NAME=minio-masterkey-1
       - MINIO_KMS_AUTO_ENCRYPTION=off

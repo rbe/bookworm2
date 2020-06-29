@@ -1,7 +1,7 @@
 #!/usr/bin/env ash
 # Copyright (C) 2020 art of coding UG, Hamburg
 
-echo "Starting at $(date)"
+echo "Starting at $(date), domain ${domain}"
 env
 ls -l /etc/nginx/conf.d
 cat /etc/nginx/nginx.conf
@@ -47,6 +47,7 @@ then
     echo "done"
 fi
 
+echo "Enabling servers: ${nginx.enable.servers}"
 for server in ${nginx.enable.servers}
 do
     if [ -f /etc/nginx/conf.d/${server}.conf.disabled ] && [ ! -f /etc/nginx/conf.d/${server}.conf ]

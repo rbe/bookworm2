@@ -25,6 +25,7 @@ openssl req -new -x509 \
     -addext "subjectAltName = IP:127.0.0.1,DNS:${HOSTNAME}"
 cp ${SELFSIGNED_PATH}/${HOSTNAME}/cert.pem ${SELFSIGNED_PATH}/${HOSTNAME}/chain.pem
 cp ${SELFSIGNED_PATH}/${HOSTNAME}/cert.pem ${SELFSIGNED_PATH}/${HOSTNAME}/fullchain.pem
+chmod a+r ${SELFSIGNED_PATH}/${HOSTNAME}/*
 echo "done"
 ls -l ${SELFSIGNED_PATH}/${HOSTNAME}
 
