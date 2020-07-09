@@ -22,7 +22,7 @@ execdir="$(
 MAVEN_REPO="${execdir}/../maven-repository"
 [[ ! -d ${MAVEN_REPO} ]] && mkdir -p "${MAVEN_REPO}"
 MAVEN_REPO="$(
-    pushd "${maven_repository}" >/dev/null
+    pushd "${MAVEN_REPO}" >/dev/null
     pwd
     popd >/dev/null
 )"
