@@ -27,11 +27,14 @@
         <rabbitmq.release>3.8.3-management-alpine</rabbitmq.release>
         <rabbitmq.hostname>rabbitmq.${domain}</rabbitmq.hostname>
         <rabbitmq.nodename>rabbitmq@${rabbitmq.hostname}</rabbitmq.nodename>
+        <virenscanner.release>1.7</virenscanner.release>
         <!--
         <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
         <keycloak.postgres.hostname>keycloakpostgres.${domain}</keycloak.postgres.hostname>
         <keycloak.release>10.0.2</keycloak.release>
         <keycloak.hostname>keycloak.${domain}</keycloak.hostname>
+        -->
+        <!-- Elasticsearch
         -->
         <hbd.release>${maven.build.timestamp}</hbd.release>
         <hbd.hostname>hoerbuchdienst.${domain}</hbd.hostname>
@@ -50,7 +53,7 @@
                 <domain>shard1.local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
                 <nginx.enable.servers>
-                    vault minio rabbitmq hoerbuchdienst
+                    vault minio rabbitmq
                 </nginx.enable.servers>
             </properties>
             <build>
@@ -62,23 +65,6 @@
                         <configuration>
                             <projectName>dev-wbh-hbd-${maven.build.timestamp}</projectName>
                         </configuration>
-                        <!--<executions>
-                            <execution>
-                                <id>dev-up</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>up</goal>
-                                </goals>
-                                <configuration>
-                                    <composeFiles>
-                                        <composeFile>${docker-compose.file}</composeFile>
-                                        <composeFile>${docker-compose.dev.file}</composeFile>
-                                    </composeFiles>
-                                    <detachedMode>true</detachedMode>
-                                    <removeOrphans>true</removeOrphans>
-                                </configuration>
-                            </execution>
-                        </executions>-->
                     </plugin>
                 </plugins>
             </build>
@@ -102,23 +88,6 @@
                         <configuration>
                             <projectName>prod-wbh-hbd-${maven.build.timestamp}</projectName>
                         </configuration>
-                        <!--<executions>
-                            <execution>
-                                <id>prod-up</id>
-                                <phase>install</phase>
-                                <goals>
-                                    <goal>up</goal>
-                                </goals>
-                                <configuration>
-                                    <composeFiles>
-                                        <composeFile>${docker-compose.file}</composeFile>
-                                        <composeFile>${docker-compose.prod.file}</composeFile>
-                                    </composeFiles>
-                                    <detachedMode>true</detachedMode>
-                                    <removeOrphans>true</removeOrphans>
-                                </configuration>
-                            </execution>
-                        </executions>-->
                     </plugin>
                 </plugins>
             </build>
@@ -302,6 +271,22 @@
                             <buildArgs>
                                 <args>
                                     <RABBITMQ_RELEASE>${rabbitmq.release}</RABBITMQ_RELEASE>
+                                    <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
+                                </args>
+                            </buildArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-virenscanner</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <services>virenscanner</services>
+                            <buildArgs>
+                                <args>
+                                    <VIRENSCANNER_RELEASE>${virenscanner.release}</VIRENSCANNER_RELEASE>
                                     <HBD_RELEASE>${hbd.release}</HBD_RELEASE>
                                 </args>
                             </buildArgs>

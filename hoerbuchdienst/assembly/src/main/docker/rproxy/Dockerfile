@@ -5,15 +5,16 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN apk update \
-    && apk --no-cache add \
-        tzdata \
+RUN apk update
+RUN apk --no-cache add tzdata \
+    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" >/etc/timezone
+RUN apk --no-cache add \
+        bash \
         curl \
-        nginx-mod-http-headers-more \
+        git \
         openssl \
         certbot-nginx \
-    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo "${TZ}" >/etc/timezone \
     && rm /etc/nginx/conf.d/default.conf* \
     && adduser -u 82 -D -S -G www-data www-data \
     && echo "0 0 * * WED,SUN certbot renew" | crontab -

@@ -1,4 +1,4 @@
-#!/usr/bin/env ash
+#!/usr/bin/env bash
 # Copyright (C) 2020 art of coding UG, Hamburg
 
 echo "Starting at $(date), domain ${domain}"
@@ -20,10 +20,11 @@ fi
 echo "done"
 
 domain_name="${domain}"
+tld="${domain_name/*.}"
 if [ ! -f /etc/letsencrypt/is_initialized ]
 then
-    echo "No TLS certificates exist, generating for domain ${domain}"
-    if [ "${domain_name/*.}" == "local" ]
+    echo "No TLS certificates exist, generating for domain ${tld}"
+    if [ "${tld}" == "local" ]
     then
         echo "Creating self-signed TLS server certificates"
         selfsigned-openssl.sh ${vault.hostname}
@@ -32,8 +33,9 @@ then
         selfsigned-openssl.sh ${rabbitmq.hostname}
         #selfsigned-openssl.sh ${keycloak.hostname}
         selfsigned-openssl.sh ${hbd.hostname}
-    else
-        echo "Creating TLS server certificates"
+    elif [ -n "${domain}" ]
+    then
+        echo "Creating Let's Encrypt TLS server certificates"
         certonly_args="--agree-tos -m support@rootaid.de
             --webroot --webroot-path=/var/lib/letsencrypt
             --uir
@@ -50,19 +52,21 @@ then
             && certbot certonly ${certonly_args} -d ${minio.hostname}
         [ ! -d /etc/letsencrypt/live/${rabbitmq.hostname} ] \
             && certbot certonly ${certonly_args} -d ${rabbitmq.hostname}
-        [ ! -d /etc/letsencrypt/live/${keycloak.hostname} ] \
-            && certbot certonly ${certonly_args} -d ${keycloak.hostname}
+        #[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ] \
+        #    && certbot certonly ${certonly_args} -d ${keycloak.hostname}
         [ ! -d /etc/letsencrypt/live/${hbd.hostname} ] \
             && certbot certonly ${certonly_args} -d ${hbd.hostname}
         chmod 755 /etc/letsencrypt/archive
         chown 100:101 /etc/letsencrypt/archive/${rabbitmq.hostname}
         chown 100:101 /etc/letsencrypt/archive/${rabbitmq.hostname}/*
         chmod 755 /etc/letsencrypt/live
+    else
+        echo "Unknown domain, no TLS certificates generated"
     fi
-    touch /etc/letsencrypt/is_initialized
     ls -lR ${tls.path}
     echo "done"
 fi
+touch /etc/letsencrypt/is_initialized
 
 echo "Enabling servers: ${nginx.enable.servers}"
 for server in ${nginx.enable.servers}
@@ -74,7 +78,7 @@ do
     fi
 done
 
-if [ "${domain_name/*.}" != "local" ]
+if [ "${tld}" != "local" ]
 then
     echo "Starting crond to renew Lets Encrypt certificates"
     crond -b -S -l 8

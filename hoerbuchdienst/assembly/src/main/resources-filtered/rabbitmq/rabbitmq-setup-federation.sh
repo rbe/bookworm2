@@ -19,13 +19,13 @@ username=${credentials/:*/}
 password=${credentials/*:/}
 
 # Nodes
+my_node_name="$(hostname -f)"
 domain="$(hostname -d)"
 domain="${domain##shard?.}"
 nodes=()
 for node in "${ALL_NODES[@]}"; do
   nodes+=("${node}.${domain}")
 done
-my_node_name="$(hostname -f)"
 
 # Upstreams
 last_idx=$((${#nodes[@]} - 1))

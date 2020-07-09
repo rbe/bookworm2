@@ -50,7 +50,7 @@
                         <!--<executions>
                             <execution>
                                 <id>dev-up</id>
-                                <phase>install</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>up</goal>
                                 </goals>
@@ -60,7 +60,6 @@
                                         <composeFile>${docker-compose.dev.file}</composeFile>
                                     </composeFiles>
                                     <detachedMode>true</detachedMode>
-                                    <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
                         </executions>-->
@@ -90,7 +89,7 @@
                         <!--<executions>
                             <execution>
                                 <id>prod-up</id>
-                                <phase>install</phase>
+                                <phase>deploy</phase>
                                 <goals>
                                     <goal>up</goal>
                                 </goals>
@@ -100,7 +99,6 @@
                                         <composeFile>${docker-compose.prod.file}</composeFile>
                                     </composeFiles>
                                     <detachedMode>true</detachedMode>
-                                    <removeOrphans>true</removeOrphans>
                                 </configuration>
                             </execution>
                         </executions>-->

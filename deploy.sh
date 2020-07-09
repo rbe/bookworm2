@@ -31,6 +31,8 @@ assemblydir="$(
     pwd
     popd >/dev/null
 )"
+releasedir="${execdir}/../releases"
+[[ ! -d "${releasedir}" ]] && mkdir "${releasedir}"
 releasedir="$(
     pushd "${execdir}/../releases" >/dev/null
     pwd

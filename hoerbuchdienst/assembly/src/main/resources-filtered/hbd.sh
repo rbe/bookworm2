@@ -57,8 +57,11 @@ case "${mode}" in
         if [[ ! -f /var/lib/docker/volumes/storage_rproxycerts/_data/is_initialized ]]; then
             echo "Starting nginx to generate TLS server certitifaces"
             docker-compose -p "${PROJECT_NAME}" up -d hbd-rproxy
-            echo "Waiting 60 seconds"
-            sleep 60
+            domain_name="${domain}"
+            tld="${domain_name/*./}"
+            [[ "${tld}" == "local" ]] && wait_for_nginx=5 || wait_for_nginx=60
+            echo "Waiting ${wait_for_nginx} seconds"
+            sleep ${wait_for_nginx}
             echo "done"
         fi
         echo "Starting Vault"
@@ -72,9 +75,6 @@ case "${mode}" in
         echo "Starting MinIO to exchange keys"
         docker-compose -p "${PROJECT_NAME}" up -d minio
         sleep 10
-        echo "done"
-        echo "Stopping all containers"
-        docker-compose -p "${PROJECT_NAME}" down
         echo "done"
         echo "Removing MinIO _OLD keys"
         rm -f "${execdir}/.env"
@@ -99,9 +99,8 @@ case "${mode}" in
         wbh/provision-rabbitmq.sh
         wbh/provision-minio.sh
         echo "done"
-        echo "Shutting down all services"
+        echo "Stopping all containers"
         docker-compose -p "${PROJECT_NAME}" down
-        sleep 10
         echo "done"
         ;;
     start)
