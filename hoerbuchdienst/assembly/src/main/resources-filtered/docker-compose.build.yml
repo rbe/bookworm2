@@ -6,17 +6,20 @@ services:
       context: vault
   kes:
     build:
-      context: kes
+        context: kes
   minio:
-    build:
-      context: minio
+      build:
+          context: minio
   mc:
-    build:
-      context: mc
+      build:
+          context: mc
   rabbitmq:
-    build:
-      context: rabbitmq
+      build:
+          context: rabbitmq
+  virenscanner:
+      build:
+          context: virenscanner
   hoerbuchdienst:
   hbd-rproxy:
-    build:
-      context: rproxy
+      build:
+          context: rproxy
