@@ -80,14 +80,17 @@ case "${project}" in
         ;;
     hbd)
         deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
-        if [[ $(docker volume ls | grep -c minio) == 0 ]]; then
+        pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
+        chmod +x hbd.sh
+        if [[ $(docker volume ls | grep -c "${env}-minio") == 0 ]]; then
             echo "Provisioning ${project_name}"
-            pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
-            chmod +x hbd.sh
             ./hbd.sh provision "${project_name}"
-            popd >/dev/null
             echo "done"
+        else
+            echo "Won't provision ${project_name}, there are volumes present already"
+            echo "Execute $(pwd)/hbd.sh at your own risk"
         fi
+        popd >/dev/null
         ;;
     *)
         echo "Unknown project: ${project}"

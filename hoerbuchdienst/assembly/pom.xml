@@ -75,9 +75,7 @@
                 <docker.project.name>prod-hbd</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
-                <nginx.enable.servers>
-                    minio hoerbuchdienst
-                </nginx.enable.servers>
+                <nginx.enable.servers/>
             </properties>
             <build>
                 <plugins>

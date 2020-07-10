@@ -98,6 +98,7 @@ case "${mode}" in
         chmod +x wbh/*.sh
         wbh/provision-rabbitmq.sh
         wbh/provision-minio.sh
+        wbh/provision-rproxy.sh minio hoerbuchdienst
         echo "done"
         echo "Stopping all containers"
         docker-compose -p "${PROJECT_NAME}" down
