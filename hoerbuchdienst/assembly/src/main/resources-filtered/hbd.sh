@@ -11,16 +11,19 @@ execdir="$(
 )"
 
 usage() {
-    echo "usage: $0 < destroy | provision | start | stop > <project>"
+    echo "usage: $0 < destroy | provision | start | stop > <env> <project>"
     exit 1
 }
 
-[[ $# != 2 ]] && usage
+[[ $# != 3 ]] && usage
 
 mode=$1
 shift
+env=$1
+shift
 PROJECT_NAME="$1"
 shift
+dc="docker-compose -p "${PROJECT_NAME}" -f docker-compose.yml -f docker-compose.${env}.yml"
 case "${mode}" in
     destroy)
         [[ $# -eq 1 ]] && all="$1" || all="no"
@@ -56,7 +59,7 @@ case "${mode}" in
         pushd "${execdir}" >/dev/null
         if [[ ! -f /var/lib/docker/volumes/storage_rproxycerts/_data/is_initialized ]]; then
             echo "Starting nginx to generate TLS server certitifaces"
-            docker-compose -p "${PROJECT_NAME}" up -d hbd-rproxy
+            ${dc} up -d hbd-rproxy
             domain_name="${domain}"
             tld="${domain_name/*./}"
             [[ "${tld}" == "local" ]] && wait_for_nginx=5 || wait_for_nginx=60
@@ -65,15 +68,15 @@ case "${mode}" in
             echo "done"
         fi
         echo "Starting Vault"
-        docker-compose -p "${PROJECT_NAME}" up -d vault
+        ${dc} up -d vault
         sleep 5
         echo "done"
         echo "Starting MinIO KES"
-        docker-compose -p "${PROJECT_NAME}" up -d kes
+        ${dc} up -d kes
         sleep 5
         echo "done"
         echo "Starting MinIO to exchange keys"
-        docker-compose -p "${PROJECT_NAME}" up -d minio
+        ${dc} up -d minio
         sleep 10
         echo "done"
         echo "Removing MinIO _OLD keys"
@@ -91,7 +94,7 @@ case "${mode}" in
             "${execdir}/docker-compose.yml"
         echo "done"
         echo "Waiting for services to come up"
-        docker-compose -p "${PROJECT_NAME}" up -d
+        ${dc} up -d
         sleep 10
         echo "done"
         echo "Setting up shard"
@@ -101,17 +104,17 @@ case "${mode}" in
         wbh/provision-rproxy.sh minio hoerbuchdienst
         echo "done"
         echo "Stopping all containers"
-        docker-compose -p "${PROJECT_NAME}" down
+        ${dc} down
         echo "done"
         ;;
     start)
         pushd "${execdir}" >/dev/null
-        docker-compose -p "${PROJECT_NAME}" up -d
+        ${dc} up -d
         popd >/dev/null
         ;;
     stop)
         pushd "${execdir}" >/dev/null
-        docker-compose -p "${PROJECT_NAME}" down
+        ${dc} down
         popd >/dev/null
         ;;
     *)
