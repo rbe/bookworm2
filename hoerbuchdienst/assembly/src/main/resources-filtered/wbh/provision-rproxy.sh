@@ -13,7 +13,7 @@ PROJECT_NAME="${docker.project.name}"
 
 function enable_nginx_conf {
   local server="$1"
-  echo "Enabling reverse proxy server ${server}-rproxy"
+  echo "Enabling reverse proxy server ${server}"
   docker-compose -p "${PROJECT_NAME}" \
     exec hbd-rproxy \
     mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"

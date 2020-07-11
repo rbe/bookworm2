@@ -9,25 +9,24 @@ domain_name="${domain}"
 tld="${domain_name/*.}"
 
 if [[ $# == 1 ]]; then
-    FEDERATOR_PASSWORD="$1"
+  FEDERATOR_PASSWORD="$1"
 else
-    if [ $(command -v pwgen) ]; then
-        FEDERATOR_PASSWORD="$(pwgen -BCn 16 1)"
-    else
-        FEDERATOR_PASSWORD="$(docker run --rm alpine:latest ash -c "apk add -q pwgen && pwgen -BCn 16 1")"
-    fi
-    echo "Password is ${FEDERATOR_PASSWORD}"
+  if [ $(command -v pwgen) ]; then
+    FEDERATOR_PASSWORD="$(pwgen -BCn 16 1)"
+  else
+    FEDERATOR_PASSWORD="$(docker run --rm alpine:latest ash -c "apk add -q pwgen && pwgen -BCn 16 1")"
+  fi
+  echo "Password is ${FEDERATOR_PASSWORD}"
 fi
 
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
   ash -c "rabbitmqctl await_startup && echo 'RabbitMQ appers to be online'"
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
-    rabbitmqctl change_password \
-    federator "${FEDERATOR_PASSWORD}"
+  rabbitmqctl change_password \
+  federator "${FEDERATOR_PASSWORD}"
 if [[ "${tld}" != "local" ]]; then
-    docker-compose -p ${PROJECT_NAME} exec rabbitmq \
-        rabbitmq-setup-federation.sh \
-        federator:"${FEDERATOR_PASSWORD}"
+  docker-compose -p ${PROJECT_NAME} exec rabbitmq \
+    rabbitmq-setup-federation.sh federator:"${FEDERATOR_PASSWORD}"
 fi
 
 exit 0

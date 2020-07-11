@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Copyright (C) 2020 art of coding UG, Hamburg
 
-# Naming convention: rabbitmq.shard<N>.<same domain>
+# Naming convention: rabbitmq.shard<N>.<same-shard_domain[.same-shard_domain]>.<tld>
 ALL_NODES=("rabbitmq.shard1" "rabbitmq.shard2")
 CONNECTION_PARAMS="heartbeat=10&connection_timeout=10000"
 
@@ -29,11 +29,12 @@ password=${credentials/*:/}
 # Nodes
 my_node_name="$(hostname -f)"
 echo "My node name is ${my_node_name}"
-domain="$(hostname -d)"
-domain="${domain##shard?.}"
+shard_domain="$(hostname -d)"
+shard_domain="${shard_domain##shard?.}"
+echo "Common domain for all shards is ${shard_domain}"
 nodes=()
 for node in "${ALL_NODES[@]}"; do
-  nodes+=("${node}.${domain}")
+  nodes+=("${node}.${shard_domain}")
 done
 echo "Computed all nodes in shard: ${nodes[*]}"
 
