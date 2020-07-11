@@ -33,6 +33,8 @@ services:
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
+      - KES_CLIENT_TLS_KEY_FILE=/var/local/kes/minio.key
+      - KES_CLIENT_TLS_CERT_FILE=/var/local/kes/minio.cert
     volumes:
       - rproxycerts:/etc/letsencrypt:ro
       - keslocal:/var/local/kes:rw
