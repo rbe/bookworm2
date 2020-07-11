@@ -5,9 +5,11 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN mkdir /var/local/mc \
-    && mkdir /var/local/mc/policy
-COPY policy/*.json /var/local/mc/policy/
-COPY docker-entrypoint.sh /usr/local/bin
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+RUN apk add pwgen
+RUN mkdir -p /var/local/mc/policy
+COPY *.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+FROM base
+COPY policy/*.json /var/local/mc/policy/
