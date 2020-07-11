@@ -35,20 +35,26 @@ else
   echo "RabbitMQ is not online"
   exit 1
 fi
+
 echo "Declaring exchange ${exchange_name}"
 rabbitmqadmin -s --host "${my_name}" --port 15671 \
   --username="${username}" --password="${password}" \
   --vhost="${MY_RABBITMQ_VHOST}" \
   declare exchange name="${exchange_name}" type="${exchange_type}"
+echo "done"
+
 echo "Declaring queue ${queue_name}"
 rabbitmqadmin -s --host "${my_name}" --port 15671 \
   --username="${username}" --password="${password}" \
   --vhost="${MY_RABBITMQ_VHOST}" \
   declare queue name="${queue_name}" durable="${queue_durable}"
+echo "done"
+
 echo "Creating binding between exchange ${exchange_name} and ${queue_name}"
 rabbitmqadmin -s --host "${my_name}" --port 15671 \
   --username="${username}" --password="${password}" \
   --vhost="${MY_RABBITMQ_VHOST}" \
   declare binding source="${exchange_name}" destination_type="queue" destination="${queue_name}" routing_key=""
+echo "done"
 
 exit 0

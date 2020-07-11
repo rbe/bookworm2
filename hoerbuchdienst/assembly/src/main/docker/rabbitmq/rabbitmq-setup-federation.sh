@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 # Copyright (C) 2020 art of coding UG, Hamburg
 
-# Naming convention: rabbitmq.shard<N>.<same-shard_domain[.same-shard_domain]>.<tld>
-ALL_NODES=("rabbitmq.shard1" "rabbitmq.shard2")
-CONNECTION_PARAMS="heartbeat=10&connection_timeout=10000"
-
 set -o nounset
 set -o errexit
 
-if [[ $# != 1 ]]; then
-  echo "usage: $0 <username:password>"
+if [[ $# -lt 1 ]]; then
+  echo "usage: $0 <server1:user:pwd[ server2:user:pwd .. serverN:user:pwd]>"
   exit 1
 fi
 
@@ -21,10 +17,11 @@ else
   exit 1
 fi
 
-credentials="$1"
-shift
-username=${credentials/:*/}
-password=${credentials/*:/}
+# ALL_NODES should contain short hostname rabbitmq.shard<N>
+# Naming convention for all shards:
+#   rabbitmq.shard<N>.<same-shard_domain[.same-shard_domain]>.<tld>
+ALL_NODES=("$@")
+CONNECTION_PARAMS="heartbeat=10&connection_timeout=10000"
 
 # Nodes
 my_node_name="$(hostname -f)"
@@ -32,19 +29,14 @@ echo "My node name is ${my_node_name}"
 shard_domain="$(hostname -d)"
 shard_domain="${shard_domain##shard?.}"
 echo "Common domain for all shards is ${shard_domain}"
-nodes=()
 for node in "${ALL_NODES[@]}"; do
-  nodes+=("${node}.${shard_domain}")
-done
-echo "Computed all nodes in shard: ${nodes[*]}"
-
-# Upstreams
-last_idx=$((${#nodes[@]} - 1))
-for idx in $(seq 0 ${last_idx}); do
-  upstream_node="${nodes[$idx]}"
-  upstream_name="rabbitmq-shard$((idx + 1))"
+  short_node_name="$(expr "${node}" : '\(.*\):.*:.*')"
+  node_username="$(expr "${node}" : '.*:\(.*\):.*')"
+  node_password="$(expr "${node}" : '.*:.*:\(.*\)')"
+  upstream_node="${short_node_name}.${shard_domain}"
+  upstream_name="${short_node_name/*./}"
   if [[ "${my_node_name}" != "${upstream_node}" ]]; then
-    base_uri="amqps://${username}:${password}@${upstream_node}:5671/${MY_RABBITMQ_VHOST}"
+    base_uri="amqps://${node_username}:${node_password}@${upstream_node}:5671/${MY_RABBITMQ_VHOST}"
     upstream_uri="${base_uri}"
     upstream_uri+="?server_name_indication=${upstream_node}"
     #upstream_uri+="&cacertfile=${tls.path}/${my_node_name}/chain.pem"
@@ -55,8 +47,9 @@ for idx in $(seq 0 ${last_idx}); do
     [[ -n "${CONNECTION_PARAMS}" ]] && upstream_uri+="&${CONNECTION_PARAMS}"
     echo "Adding federation upstream to ${upstream_node} at ${base_uri}"
     rabbitmqctl set_parameter --vhost="${MY_RABBITMQ_VHOST}" \
-      federation-upstream \
-      "${upstream_name}" "{\"uri\":\"${upstream_uri}\"}"
+      federation-upstream "${upstream_name}" "{\"uri\":\"${upstream_uri}\"}"
+  else
+    echo "Cannot add myself as upstream"
   fi
 done
 
