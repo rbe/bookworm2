@@ -4,18 +4,17 @@
 set -o nounset
 set -o errexit
 
-echo "Waiting for RabbitMQ to come up"
-#while ! rabbitmq-diagnostics check_running
-#do
-#    echo "Waiting for RabbitMQ to come up"
-#    sleep 1
-#done
-rabbitmqctl await_startup
-echo "RabbitMQ appers to be online"
+echo "Checking if RabbitMQ is online"
+if rabbitmqctl await_startup; then
+    echo "RabbitMQ appears to be online"
+else
+    echo "RabbitMQ is not online"
+    exit 1
+fi
 echo "Adding virtual host ${MY_RABBITMQ_VHOST}"
 rabbitmqctl add_vhost "${MY_RABBITMQ_VHOST}"
 echo "Adding user federator"
-federator_pw="$(pwgen -B 16 -n 1)"
+federator_pw="$(pwgen -Bcn 16 -n 1)"
 set +o errexit
 rabbitmqctl add_user federator "${federator_pw}"
 set -o errexit
@@ -28,7 +27,7 @@ federator_read_regexp=".*"
 rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}"
 federator "${federator_configure_regexp}" "${federator_write_regexp}" "${federator_read_regexp}"
 echo "Adding user bugs"
-bugs_pw="$(pwgen -B 16 -n 1)"
+bugs_pw="$(pwgen -Bcn 16 -n 1)"
 set +o errexit
 rabbitmqctl add_user bugs "${bugs_pw}"
 set -o errexit
@@ -46,5 +45,14 @@ echo "Listing users"
 rabbitmqctl list_users
 echo "Deleting virtual host /"
 rabbitmqctl delete_vhost /
+## Policy
+#echo "Setting policy for federated exchanges"
+#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
+#    --priority 10 --apply-to exchanges \
+#    federate-exchanges "^federated\." '{"federation-upstream-set" : "all"}'
+#echo "Setting policy for federated queues"
+#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
+#    --priority 10 --apply-to queues \
+#    federate-queues "^federated\." '{"federation-upstream-set" : "all"}'
 
 exit 0

@@ -20,6 +20,8 @@ else
 fi
 
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
+  ash -c "rabbitmqctl await_startup && echo 'RabbitMQ appers to be online'"
+docker-compose -p ${PROJECT_NAME} exec rabbitmq \
     rabbitmqctl change_password \
     federator "${FEDERATOR_PASSWORD}"
 if [[ "${tld}" != "local" ]]; then

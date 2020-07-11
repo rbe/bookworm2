@@ -13,6 +13,14 @@ if [[ $# != 1 ]]; then
     exit 1
 fi
 
+echo "Checking if RabbitMQ is online"
+if rabbitmqctl await_startup; then
+  echo "RabbitMQ appears to be online"
+else
+  echo "RabbitMQ is not online"
+  exit 1
+fi
+
 credentials="$1"
 shift
 username=${credentials/:*/}
@@ -47,15 +55,5 @@ for idx in $(seq 0 ${last_idx}); do
             "${upstream_name}" "{\"uri\":\"${upstream_uri}\"}"
     fi
 done
-
-## Policy
-#echo "Setting policy for federated exchanges"
-#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
-#    --priority 10 --apply-to exchanges \
-#    federate-exchanges "^federated\." '{"federation-upstream-set" : "all"}'
-#echo "Setting policy for federated queues"
-#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
-#    --priority 10 --apply-to queues \
-#    federate-queues "^federated\." '{"federation-upstream-set" : "all"}'
 
 exit 0

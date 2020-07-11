@@ -28,6 +28,13 @@ shift
 queue_durable="$1"
 shift
 
+echo "Checking if RabbitMQ is online"
+if rabbitmqctl await_startup; then
+  echo "RabbitMQ appears to be online"
+else
+  echo "RabbitMQ is not online"
+  exit 1
+fi
 echo "Declaring exchange ${exchange_name}"
 rabbitmqadmin -s --host "${my_name}" --port 15671 \
   --username="${username}" --password="${password}" \
