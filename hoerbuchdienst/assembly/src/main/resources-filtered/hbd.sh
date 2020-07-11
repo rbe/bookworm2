@@ -77,6 +77,17 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
+    echo "Waiting for services to come up"
+    ${dc} up -d
+    sleep 10
+    echo "done"
+    echo "Setting up shard (MinIO, reverse proxy)"
+    ${dc} exec mc provision.sh
+    ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
+    echo "done"
+    echo "Stopping all containers"
+    ${dc} down
+    echo "done"
     echo "Removing MinIO _OLD keys"
     rm -f "${execdir}/.env"
     #sed -i'' \
@@ -90,19 +101,6 @@ case "${mode}" in
     sed -i'' \
       -e "s#MINIO_KMS_AUTO_ENCRYPTION=.*#MINIO_KMS_AUTO_ENCRYPTION=on#" \
       "${execdir}/docker-compose.yml"
-    echo "done"
-    echo "Waiting for services to come up"
-    ${dc} up -d
-    sleep 10
-    echo "done"
-    echo "Setting up shard (RabbitMQ, MinIO, reverse proxy)"
-    chmod +x wbh/*.sh
-    wbh/provision-rabbitmq.sh
-    wbh/provision-minio.sh
-    wbh/provision-rproxy.sh minio rabbitmq hoerbuchdienst
-    echo "done"
-    echo "Stopping all containers"
-    ${dc} down
     echo "done"
     ;;
   start)
