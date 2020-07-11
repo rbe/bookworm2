@@ -5,19 +5,18 @@ set -o nounset
 set -o errexit
 
 if [[ $# -lt 1 ]]; then
-  echo "usage: $0 <project> <server1[ server2 serverN]>"
-  echo "    project    hbk | hbd"
+  echo "usage: $0 <server1[ server2 serverN]>"
   exit 1
 fi
 
 PROJECT_NAME="${docker.project.name}"
-project="$1"
 
 function enable_nginx_conf {
   local server="$1"
-  echo "Enabling reverse proxy server ${server}"
-  docker-compose -p "${PROJECT_NAME}" exec "${project}-rproxy" \
-      mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
+  echo "Enabling reverse proxy server ${server}-rproxy"
+  docker-compose -p "${PROJECT_NAME}" \
+    exec hbd-rproxy \
+    mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
   echo "done"
 }
 

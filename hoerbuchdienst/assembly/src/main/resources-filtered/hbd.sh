@@ -104,7 +104,7 @@ case "${mode}" in
     chmod +x wbh/*.sh
     wbh/provision-rabbitmq.sh
     wbh/provision-minio.sh
-    wbh/provision-rproxy.sh "${project}" minio hoerbuchdienst
+    wbh/provision-rproxy.sh minio rabbitmq hoerbuchdienst
     echo "done"
     echo "Stopping all containers"
     ${dc} down
