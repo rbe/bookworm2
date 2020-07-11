@@ -131,39 +131,39 @@ services:
     networks:
       backend:
         aliases:
-            - ${rabbitmq.hostname}
+          - ${rabbitmq.hostname}
       frontend:
     expose:
-        - 5671
-        - 5672
-        - 15671
-        - 15672
+      - 5671
+      - 5672
+      - 15671
+      - 15672
     ports:
-        - "5671:5671"
-        - "15671:15671"
+      - "5671:5671"
+      - "15671:15671"
   virenscanner:
-      image: wbh-hbd/virenscanner:${hbd.release}
-      restart: unless-stopped
-      volumes:
-          - virenscannerdata:/data
-      environment:
-          - TZ=Europe/Berlin
-          - LANG=en_US.UTF-8
-      networks:
-          - backend
-          - frontend
-      expose:
-          - 3310
-    #elasticsearch:
-    #  image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
-    #  #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
-    #  container_name: es01
-    #  environment:
-    #    - node.name=es01
-    #    - cluster.name=es-docker-cluster
-    #    - discovery.type=single-node
-    #    - bootstrap.memory_lock=true
-    #    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    image: wbh-hbd/virenscanner:${hbd.release}
+    restart: unless-stopped
+    volumes:
+      - virenscannerdata:/data
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    networks:
+      - backend
+      - frontend
+    expose:
+      - 3310
+  #elasticsearch:
+  #  image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
+  #  #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+  #  container_name: es01
+  #  environment:
+  #    - node.name=es01
+  #    - cluster.name=es-docker-cluster
+  #    - discovery.type=single-node
+  #    - bootstrap.memory_lock=true
+  #    - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
   #  ulimits:
   #    memlock:
   #      soft: -1
@@ -280,20 +280,20 @@ volumes:
   miniolocal:
     driver: local
   miniodata:
-      driver: local
+    driver: local
   mcrootconfig:
-      driver: local
+    driver: local
   mclocal:
-      driver: local
+    driver: local
   rabbitmqconf:
-      driver: local
+    driver: local
   rabbitmqdata:
-      driver: local
+    driver: local
   virenscannerdata:
-      driver: local
+    driver: local
     #esdata01:
     #  driver: local
   rproxyconf:
-      driver: local
+    driver: local
   rproxycerts:
-      driver: local
+    driver: local
