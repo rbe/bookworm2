@@ -46,6 +46,9 @@ services:
     ports:
       - "5671:5671"
       - "15671:15671"
+  virenscanner:
+    image: wbh-hbd/virenscanner:${HBD_RELEASE}
+    restart: "no"
   hoerbuchdienst:
     image: wbh-hbd/hoerbuchdienst:${HBD_RELEASE}
     restart: "no"
