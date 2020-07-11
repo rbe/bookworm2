@@ -4,8 +4,8 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 1 ]]; then
-  echo "usage: $0 <project>"
+if [[ $# -lt 1 ]]; then
+  echo "usage: $0 <project> <server1[ server2 serverN]>"
   echo "    project    hbk | hbd"
   exit 1
 fi
