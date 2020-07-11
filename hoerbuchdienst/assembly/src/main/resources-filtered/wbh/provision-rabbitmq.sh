@@ -16,7 +16,7 @@ else
   else
     FEDERATOR_PASSWORD="$(docker run --rm alpine:latest ash -c "apk add -q pwgen && pwgen -BCn 16 1")"
   fi
-  echo "Password is ${FEDERATOR_PASSWORD}"
+  echo "RabbitMQ federator password is ${FEDERATOR_PASSWORD}"
 fi
 
 docker-compose -p ${PROJECT_NAME} exec rabbitmq \
