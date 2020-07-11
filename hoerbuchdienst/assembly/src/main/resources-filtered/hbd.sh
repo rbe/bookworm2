@@ -36,29 +36,24 @@ case "${mode}" in
     docker-compose -p "${project}" down
     set +o errexit
     docker system prune -f
-    # TODO Daten nicht zerstören! Vorher: Master Key aus Vault sichern!
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_miniodata"
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_miniolocal"
-    docker volume rm "${project}_mcrootconfig"
-    docker volume rm "${project}_mclocal"
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_keslocal"
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_vaultconfig"
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_vaultfile"
-    [[ "${all}" == "all" ]] && docker volume rm "${env}-${project}_vaultlogs"
-    docker volume rm "${project}_rabbitmqconf"
-    docker volume rm "${project}_rabbitmqdata"
-    docker volume rm "${project}_virenscannerdata"
-    [[ "${all}" == "all" ]] && docker volume rm storage_rproxycerts
+    if [[ "${all}" == "all" ]]; then
+      docker volume ls |
+        grep hbd |
+        awk '{print $2}' |
+        xargs docker volume rm
+    else
+      docker volume ls |
+        grep hbd |
+        grep -vE "(rproxycerts|vault|kes|minio)" |
+        awk '{print $2}' |
+        xargs docker volume rm
+    fi
     docker volume rm "${project}"_rproxyconf
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/rproxy:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/vault:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/kes:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/minio:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/mc:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/rabbitmq:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/virenscanner:${HBD_RELEASE}"
-    [[ "${all}" == "all" ]] && docker image rm "wbh-${project}/hoerbuchdienst:${HBD_RELEASE}"
-    docker image prune -f
+    docker image ls |
+      grep wbh- |
+      grep "${HBD_RELEASE}" |
+      awk '{print $1":"$2}' |
+      xargs docker image rm
     set -o errexit
     popd >/dev/null
     ;;
