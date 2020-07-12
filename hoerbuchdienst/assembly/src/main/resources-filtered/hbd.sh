@@ -28,6 +28,7 @@ function wait_for_container {
     timeout=$((timeout - 1))
     if [[ ${timeout} == 0 ]]; then
       echo "Timeout of ${timeout} seconds reached waiting for container ${cnt}"
+      break
     fi
   done
 }
@@ -77,6 +78,7 @@ case "${mode}" in
     [[ "${tld}" == "local" ]] && wait_for_nginx=5 || wait_for_nginx=60
     echo "Waiting ${wait_for_nginx} seconds for TLS certificate generation"
     sleep ${wait_for_nginx}
+    ${dc} stop hbd-rproxy
     echo "done"
     echo "Starting Vault"
     ${dc} up -d vault
@@ -90,13 +92,16 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
+    echo "Starting Hörbuchdienst"
+    ${dc} up -d hoerbuchdienst
+    sleep 10
+    echo "done"
     echo "Starting all services"
     ${dc} up -d
     echo "done"
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
-    wait_for_container "${env}-${project}_hbd-rproxy_1" 60
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
     echo "done"
     echo "!!! ATTENTION"
