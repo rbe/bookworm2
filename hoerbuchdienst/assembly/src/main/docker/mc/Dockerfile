@@ -5,7 +5,7 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN apk add pwgen
+RUN apk add --no-cache bash pwgen
 RUN mkdir -p /var/local/mc/policy
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
