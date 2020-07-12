@@ -6,7 +6,10 @@ set -o errexit
 
 function recreate_user_readwrite() {
   local admin_conn="$1"
+  shift
   local alias="$1"
+  shift
+  local roles=("$@")
   local aliasfile="/var/local/mc/user_${alias}"
   local access_key=""
   local secret_key=""
@@ -22,7 +25,11 @@ function recreate_user_readwrite() {
   fi
   echo -e "${access_key}\n${secret_key}" >"${aliasfile}"
   mc admin user add "${admin_conn}" "${access_key}" "${secret_key}"
-  mc admin policy set minio readwrite user="${access_key}"
+  echo "Access key=${access_key}"
+  echo "Secret key=${secret_key}"
+  for role in "${roles[@]}"; do
+    mc admin policy set "${admin_conn}" "${role}" user="${access_key}"
+  done
 }
 
 MINIO_URL="http://minio:9000"
@@ -41,27 +48,21 @@ mc admin policy add minio userManager /var/local/mc/policy/userManager.json
 echo "done"
 
 echo "Creating admin user"
-ADMIN_ACCESS_KEY="$(pwgen -BCn 20 1)"
-ADMIN_SECRET_KEY="$(pwgen -BCn 40 1)"
-mc admin user add minio "${ADMIN_ACCESS_KEY}" "${ADMIN_SECRET_KEY}"
-echo "Secret key=${ADMIN_SECRET_KEY}"
-echo "done"
-echo "Assigning user manager role to admin user"
-mc admin policy set minio userManager user="${ADMIN_ACCESS_KEY}"
+recreate_user_readwrite minio admin userManager
 echo "done"
 echo "Adding host 'minio-admin'"
 mc config host add minio-admin "${MINIO_URL}" "${ADMIN_ACCESS_KEY}" "${ADMIN_SECRET_KEY}" --api S3v4
 echo "done"
 
 echo "Creating WBH user"
-recreate_user_readwrite minio-admin wbh
+recreate_user_readwrite minio-admin wbh readwrite
 echo "done"
 echo "Creating WBH buckets"
 set +o errexit
-mc mb minio/rogers
-mc mb minio/buckrogers
-mc mb minio/hoerbuchdienst
-mc mb minio/anlieferung
+mc mb minio-admin/rogers
+mc mb minio-admin/buckrogers
+mc mb minio-admin/hoerbuchdienst
+mc mb minio-admin/anlieferung
 set -o errexit
 echo "done"
 
