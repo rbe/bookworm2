@@ -96,7 +96,7 @@ case "${mode}" in
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
-    wait_for_container "${env}-${project}_hoerbuchdienst_1" 60
+    wait_for_container "${env}-${project}_hbd-rproxy_1" 60
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
     echo "done"
     echo "!!! ATTENTION"
