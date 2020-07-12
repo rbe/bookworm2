@@ -6,19 +6,21 @@ set -o errexit
 
 function recreate_user_readwrite() {
   local admin_conn="$1"
-  shift
   local alias="$1"
-  local access_key
-  access_key="$(head -1 /var/local/minio/user_"${alias}" 2>/dev/null)"
+  local aliasfile="/var/local/mc/user_${alias}"
+  local access_key=""
+  local secret_key=""
+  if [[ -f /var/local/mc/user_"${alias}" ]]; then
+    access_key="$(head -1 "${aliasfile}")"
+    secret_key="$(tail -1 "${aliasfile}")"
+  fi
   if [[ -z "${access_key}" ]]; then
     access_key="$(pwgen -BCn 20 1)"
   fi
-  local secret_key
-  secret_key="$(tail -1 /var/local/minio/user_"${alias}" 2>/dev/null)"
   if [[ -z "${secret_key}" ]]; then
     secret_key="$(pwgen -BCn 40 1)"
   fi
-  echo -e "${access_key}\n${secret_key}" >/var/local/minio/user_"${alias}"
+  echo -e "${access_key}\n${secret_key}" >"${aliasfile}"
   mc admin user add "${admin_conn}" "${access_key}" "${secret_key}"
   mc admin policy set minio readwrite user="${access_key}"
 }
@@ -42,7 +44,6 @@ echo "Creating admin user"
 ADMIN_ACCESS_KEY="$(pwgen -BCn 20 1)"
 ADMIN_SECRET_KEY="$(pwgen -BCn 40 1)"
 mc admin user add minio "${ADMIN_ACCESS_KEY}" "${ADMIN_SECRET_KEY}"
-echo "Access key=${ADMIN_ACCESS_KEY}"
 echo "Secret key=${ADMIN_SECRET_KEY}"
 echo "done"
 echo "Assigning user manager role to admin user"
