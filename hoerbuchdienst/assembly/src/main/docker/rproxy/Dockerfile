@@ -12,7 +12,6 @@ RUN apk --no-cache add tzdata \
 RUN apk --no-cache add \
         bash \
         curl \
-        git \
         openssl \
         certbot-nginx \
     && rm /etc/nginx/conf.d/default.conf* \
@@ -25,8 +24,7 @@ RUN apk update \
     && apk add python3 \
     && apk add pwgen
 RUN git clone https://github.com/michaelklishin/tls-gen /usr/local/tls-gen
-COPY selfsigned-*.sh /usr/local/bin/
-COPY docker-entrypoint.sh /usr/local/bin/
+COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
 RUN mkdir /var/local/rproxy
 VOLUME ["/etc/nginx", "/etc/letsencrypt", "/var/local/rproxy"]
