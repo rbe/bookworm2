@@ -11,9 +11,12 @@ fi
 
 function enable_nginx_conf() {
   local server="$1"
-  echo "Enabling reverse proxy server ${server}"
-  mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
-  echo "done"
+  if [[ -f "/etc/nginx/conf.d/${server}.conf.disabled" ]]; then
+    mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
+    echo "Enabled reverse proxy server ${server}"
+  else
+    echo "Reverse proxy server ${server} enabled already"
+  fi
 }
 
 for server in "$@"; do
