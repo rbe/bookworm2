@@ -34,13 +34,14 @@ fi
 
 echo "Starting MinIO KES in background"
 cat ${local}/server-config.yml
+root_identity="$(kes tool identity of ${local}/root.cert)"
 kes server \
     --mlock \
     --config=${local}/server-config.yml \
     --root "${root_identity}" \
     --auth=off \
-    --key=${tls.path}/${kes.hostname}/privkey.pem \
-    --cert=${tls.path}/${kes.hostname}/cert.pem &
+    --key="${tls.path}/${kes.hostname}/privkey.pem" \
+    --cert="${tls.path}/${kes.hostname}/cert.pem" &
 
 if [ ! -f ${local}/is_initialized ]
 then
