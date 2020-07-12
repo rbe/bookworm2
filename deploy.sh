@@ -82,7 +82,7 @@ case "${project}" in
     chmod +x hbd.sh
     if ! docker volume ls | grep -c "${env}_minio" >/dev/null; then
       echo "Provisioning ${project_name}, environment ${env}"
-      ./hbd.sh provision "${env}" "${project}"
+      ./hbd.sh provision
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"

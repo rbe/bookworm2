@@ -49,7 +49,8 @@
         <profile>
             <id>bookworm.docker.local</id>
             <properties>
-                <docker.project.name>dev-hbd</docker.project.name>
+                <docker.project.env>dev</docker.project.env>
+                <docker.project.name>hbd</docker.project.name>
                 <domain>shard1.local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
                 <nginx.enable.servers>
@@ -72,10 +73,12 @@
         <profile>
             <id>bookworm.docker.prod</id>
             <properties>
-                <docker.project.name>prod-hbd</docker.project.name>
+                <docker.project.env>prod</docker.project.env>
+                <docker.project.name>hbd</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
-                <nginx.enable.servers>minio rabbitmq hoerbuchdienst</nginx.enable.servers>
+                <!-- No servers should be enabled during provisioning phase -->
+                <nginx.enable.servers/>
             </properties>
             <build>
                 <plugins>

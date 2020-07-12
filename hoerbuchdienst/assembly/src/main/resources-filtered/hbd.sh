@@ -11,9 +11,7 @@ execdir="$(
 )"
 
 usage() {
-  echo "usage: $0 <destroy | provision | start | stop> <env> <project>"
-  echo "    env        dev | prod"
-  echo "    project    hbk | hbd"
+  echo "usage: $0 <destroy | provision | start | stop>"
   exit 1
 }
 
@@ -33,12 +31,10 @@ function wait_for_container {
   done
 }
 
-mode=$1
+mode="$1"
 shift
-env=$1
-shift
-project="$1"
-shift
+env="${docker.project.env}"
+project="${docker.project.name}"
 
 domain_name="${domain}"
 tld="${domain_name/*./}"
@@ -62,7 +58,6 @@ case "${mode}" in
         awk '{print $2}' |
         xargs docker volume rm
     fi
-    docker volume rm "${project}"_rproxyconf
     docker image ls |
       grep wbh- |
       grep "${HBD_RELEASE}" |
@@ -92,17 +87,13 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
-    echo "Starting Hörbuchdienst"
-    ${dc} up -d hoerbuchdienst
-    sleep 10
-    echo "done"
     echo "Starting all services"
     ${dc} up -d
     echo "done"
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
-    ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
+    ${dc} exec hbd-rproxy provision.sh minio rabbitmq hoerbuchdienst
     echo "done"
     echo "!!! ATTENTION"
     echo "!!! ATTENTION: Don't forget to provision RabbitMQ"
