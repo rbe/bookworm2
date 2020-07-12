@@ -50,8 +50,12 @@ echo "done"
 echo "Creating admin user"
 recreate_user_readwrite minio admin userManager
 echo "done"
-echo "Adding host 'minio-admin'"
-mc config host add minio-admin "${MINIO_URL}" "${ADMIN_ACCESS_KEY}" "${ADMIN_SECRET_KEY}" --api S3v4
+if [[ -f /var/local/mc/user_admin ]]; then
+  echo "Adding host 'minio-admin'"
+  ADMIN_ACCESS_KEY="$(head -1 /var/local/mc/user_admin)"
+  ADMIN_SECRET_KEY="$(tail -1 /var/local/mc/user_admin)"
+  mc config host add minio-admin "${MINIO_URL}" "${ADMIN_ACCESS_KEY}" "${ADMIN_SECRET_KEY}" --api S3v4
+fi
 echo "done"
 
 echo "Creating WBH user"
