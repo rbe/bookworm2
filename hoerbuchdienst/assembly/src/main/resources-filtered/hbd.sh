@@ -77,12 +77,13 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
-    echo "Waiting for services to come up"
+    echo "Waiting for all services to come up"
     ${dc} up -d
-    sleep 10
+    sleep 20
     echo "done"
-    echo "Setting up shard (MinIO, reverse proxy)"
+    echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
+    echo "Setting up shard: reverse proxy"
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
     echo "done"
     echo "Stopping all containers"
