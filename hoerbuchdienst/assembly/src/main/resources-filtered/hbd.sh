@@ -77,15 +77,18 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
-    wait_for_all=30
-    echo "Waiting ${wait_for_all} seconds for all services to come up"
+    echo "Starting all services"
     ${dc} up -d
-    sleep ${wait_for_all}
     echo "done"
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
+    echo "Waiting for container hoerbuchdienst"
+    while ! docker ps | grep -c "${env}-${project}_hoerbuchdienst_1" >/dev/null; do
+      sleep 1
+    done
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
+    echo "done"
     echo "!!! ATTENTION"
     echo "!!! ATTENTION: Don't forget to provision RabbitMQ"
     echo "!!! ATTENTION"
