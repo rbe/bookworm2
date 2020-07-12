@@ -41,7 +41,7 @@ shift
 
 domain_name="${domain}"
 tld="${domain_name/*./}"
-dc="docker-compose -p ${project} -f docker-compose.yml -f docker-compose.${env}.yml"
+dc="docker-compose -p ${env}-${project} -f docker-compose.yml -f docker-compose.${env}.yml"
 case "${mode}" in
   destroy)
     [[ $# -eq 1 ]] && all="$1" || all="no"
