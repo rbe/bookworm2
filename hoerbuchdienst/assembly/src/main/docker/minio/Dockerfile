@@ -8,7 +8,7 @@ ENV LANG en_US.UTF-8
 
 FROM base
 RUN mkdir /var/local/minio
-RUN apk add pwgen \
+RUN apk add --no-cache pwgen \
     && pwgen -BCn 20 1 >/var/local/minio/access_key \
     && pwgen -BCn 40 1 >/var/local/minio/secret_key
 VOLUME ["/var/local/minio", "/miniodata"]

@@ -18,11 +18,11 @@ RUN apk --no-cache add \
     && adduser -u 82 -D -S -G www-data www-data \
     && echo "0 0 * * WED,SUN certbot renew" | crontab -
 RUN apk update \
-    && apk add git \
-    && apk add make \
-    && apk add openssl \
-    && apk add python3 \
-    && apk add pwgen
+    && apk add --no-cache git \
+    && apk add --no-cache make \
+    && apk add --no-cache openssl \
+    && apk add --no-cache python3 \
+    && apk add --no-cache pwgen
 RUN git clone https://github.com/michaelklishin/tls-gen /usr/local/tls-gen
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
@@ -32,7 +32,6 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 FROM base
 COPY nginx.conf /etc/nginx/
-COPY default_tls_server.conf.disabled /etc/nginx/conf.d/
 COPY tlsredirect.conf /etc/nginx/conf.d/
 COPY *.conf.disabled /etc/nginx/conf.d/
 COPY index.html /var/local/rproxy/

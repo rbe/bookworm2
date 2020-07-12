@@ -5,7 +5,7 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN apk add jq
+RUN apk add --no-cache jq
 
 FROM base
 RUN mkdir /var/local/kes
