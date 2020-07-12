@@ -47,7 +47,7 @@ fi
 function deploy_artifacts() {
   local artifacts=("$@")
   echo "Deploying artifacts ${artifacts[*]}"
-  for artifact in   "${artifacts[@]}"; do
+  for artifact in "${artifacts[@]}"; do
     echo "Deploying WBH Bookworm ${env} ${artifact}"
     file="${assemblydir}/${artifact}-${timestamp}"
     if [[ ! -d "${project_dir}/${artifact}" ]]; then
@@ -71,9 +71,7 @@ case "${project}" in
       docker-compose \
         -p "${project_name}" \
         -f docker-compose.yml -f docker-compose.${env}.yml \
-        up \
-        -d \
-        --no-build
+        up -d --no-build
       popd >/dev/null
       echo "done"
     done
@@ -82,9 +80,9 @@ case "${project}" in
     deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
     pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
     chmod +x hbd.sh
-    if [[ $(docker volume ls | grep -c "${env}-minio") == 0 ]]; then
-      echo "Provisioning ${project_name}"
-      ./hbd.sh provision "${env}" "${project_name}"
+    if ! docker volume ls | grep -c "${env}_minio" >/dev/null; then
+      echo "Provisioning ${project_name}, environment ${env}"
+      ./hbd.sh provision "${env}" "${project}"
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"

@@ -19,6 +19,19 @@ usage() {
 
 [[ $# != 3 ]] && usage
 
+function wait_for_container {
+  local cnt="$1"
+  local timeout="$2"
+  while ! docker ps | grep -c "${cnt}" >/dev/null; do
+    echo "Waiting ${timeout} seconds maximum for container ${cnt}"
+    sleep 1
+    timeout=$((timeout - 1))
+    if [[ ${timeout} == 0 ]]; then
+      echo "Timeout of ${timeout} seconds reached waiting for container ${cnt}"
+    fi
+  done
+}
+
 mode=$1
 shift
 env=$1
@@ -83,10 +96,7 @@ case "${mode}" in
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
-    echo "Waiting for container hoerbuchdienst"
-    while ! docker ps | grep -c "${env}-${project}_hoerbuchdienst_1" >/dev/null; do
-      sleep 1
-    done
+    wait_for_container "${env}-${project}_hoerbuchdienst_1" 60
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
     echo "done"
     echo "!!! ATTENTION"
