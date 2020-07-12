@@ -77,14 +77,18 @@ case "${mode}" in
     ${dc} up -d minio
     sleep 10
     echo "done"
-    echo "Waiting for all services to come up"
+    wait_for_all=30
+    echo "Waiting ${wait_for_all} seconds for all services to come up"
     ${dc} up -d
-    sleep 20
+    sleep ${wait_for_all}
     echo "done"
     echo "Setting up shard: MinIO"
     ${dc} exec mc provision.sh
     echo "Setting up shard: reverse proxy"
     ${dc} exec hbd-rproxy provision.sh ${nginx.enable.servers}
+    echo "!!! ATTENTION"
+    echo "!!! ATTENTION: Don't forget to provision RabbitMQ"
+    echo "!!! ATTENTION"
     echo "done"
     echo "Stopping all containers"
     ${dc} down
