@@ -10,12 +10,12 @@ execdir="$(
   popd >/dev/null
 )"
 
-usage() {
+function show_usage {
   echo "usage: $0 <destroy | provision | start | stop>"
   exit 1
 }
 
-[[ $# != 3 ]] && usage
+[[ $# != 1 ]] && show_usage
 
 function wait_for_container {
   local cnt="$1"
@@ -128,7 +128,7 @@ case "${mode}" in
     popd >/dev/null
     ;;
   *)
-    usage
+    show_usage
     ;;
 esac
 
