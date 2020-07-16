@@ -35,6 +35,17 @@ while [[ ${correct} != 1 ]]; do
   fi
 done
 
+if [[ ! -d ~/.ssh && ! -f ~/.ssh/id_rsa ]]; then
+  echo "Generating SSH key"
+  ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ""
+  echo "done"
+  echo ""
+  echo "Please add SSH public key to Access Keys"
+  echo ""
+  cat ~/.ssh/id_rsa.pub
+  exit 1
+fi
+
 echo "Updating ArchLinux keyring"
 pacman --noconfirm -Sy archlinux-keyring
 echo "Updating installed packages"
@@ -48,7 +59,6 @@ echo "Enable paccache timer"
 systemctl enable paccache.timer
 echo "done"
 pacinstall ca-certificates ca-certificates-mozilla ca-certificates-utils
-pacinstall lvm2
 pacinstall vi vim
 pacinstall git
 
@@ -74,7 +84,7 @@ systemctl enable docker
 pacinstall docker-compose
 
 echo "Cleaning package cache"
-pacman -Scc
+pacman --noconfirm -Scc
 echo "done"
 
 echo "Setting timezone"
@@ -93,35 +103,8 @@ if [[ ! -f /dev/sda4 ]]; then
   echo "Cannot find device /dev/sda4"
   exit 1
 fi
-echo "Setting up physical volume and volume group 'tank'"
-pvcreate /dev/sda4
-vgcreate tank /dev/sda4
-echo "done"
 
-echo "Creating volume group 'docker' and filesystem"
-lvcreate -L8G -n docker tank
-mkfs.ext4 /dev/tank/docker
-echo "done"
-echo "Mounting filesystem /var/lib/docker"
-mkdir /var/lib/docker
-export $(blkid -o export /dev/tank/docker)
-cat >>/etc/fstab <<EOF
-UUID=$UUID  /var/lib/docker  ext4  rw,noatime,noexec,nodev,nosuid  0  0
-EOF
-unset UUID
-echo "done"
-
-echo "Creating volume group 'dockervolumes' and filesystem"
-lvcreate -L4.5T -n dockervolumes tank
-mkfs.ext4 /dev/tank/dockervolumes
-echo "done"
-echo "Mounting filesystem /var/lib/dockervolumes"
-export $(blkid -o export /dev/tank/dockervolumes)
-cat >>/etc/fstab <<EOF
-UUID=$UUID  /var/lib/docker/volumes  ext4  rw,noatime,noexec,nodev,nosuid  0  0
-EOF
-unset UUID
-echo "done"
+pacinstall lvm2
 
 echo "!!!"
 echo "!!!"
