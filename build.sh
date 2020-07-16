@@ -30,6 +30,12 @@ MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Xshare:on -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-s .mvn/settings.xml --batch-mode --fail-fast"
 
+ssh-keygen -R github.com
+ssh-keyscan github.com 2>/dev/null 1>>~/.ssh/known_hosts
+ssh-keygen -R bitbucket.org
+ssh-keyscan bitbucket.org 2>/dev/null 1>>~/.ssh/known_hosts
+ssh-keygen -H
+
 echo "Building Docker Image 'Java/Maven/Docker builder'"
 pushd "${execdir}"/builder/openjdk11-maven-docker >/dev/null
 docker build -t wbh-bookworm/builder:1 .
