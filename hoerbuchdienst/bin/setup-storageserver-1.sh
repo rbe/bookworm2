@@ -35,17 +35,6 @@ while [[ ${correct} != 1 ]]; do
   fi
 done
 
-if [[ ! -d ~/.ssh && ! -f ~/.ssh/id_rsa ]]; then
-  echo "Generating SSH key"
-  ssh-keygen -t rsa -f ~/.ssh/id_rsa -N ""
-  echo "done"
-  echo ""
-  echo "Please add SSH public key to Access Keys"
-  echo ""
-  cat ~/.ssh/id_rsa.pub
-  exit 1
-fi
-
 echo "Updating ArchLinux keyring"
 pacman --noconfirm -Sy archlinux-keyring
 echo "Updating installed packages"
@@ -95,10 +84,6 @@ sfdisk --dump /dev/sda >sda.dump.1
 echo ",,30" | sfdisk --force -a /dev/sda
 sfdisk --dump /dev/sda >sda.dump.2
 echo "done"
-if [[ ! -f /dev/sda4 ]]; then
-  echo "Cannot find device /dev/sda4"
-  exit 1
-fi
 
 pacinstall lvm2
 
