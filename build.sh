@@ -43,17 +43,27 @@ popd >/dev/null
 echo "done"
 
 echo "Updating Mikrokosmos"
-pushd "${execdir}"/../mikrokosmos >/dev/null
-git reset --hard && git pull
+if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
+  mkdir -p "${execdir}"/../mikrokosmos
+  pushd "${execdir}"/../mikrokosmos >/dev/null
+  git clone git@github.com:rbe/mikrokosmos.git .
+  git checkout develop
+  popd >/dev/null
+else
+  pushd "${execdir}"/../mikrokosmos >/dev/null
+  git reset --hard && git pull
+  popd >/dev/null
+fi
 echo "done"
 echo "Building Mikrokosmos"
 rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
+pushd "${execdir}"/../mikrokosmos >/dev/null
 docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
-  --mount type=bind,source=$(pwd),destination=/var/local/source \
+  --mount type=bind,source="${MAVEN_REPO}",destination="${MAVEN_REPO_CNT}" \
+  --mount type=bind,source="$(pwd)",destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   wbh-bookworm/builder:1 \
   ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} clean verify && mvn clean install" |
@@ -72,8 +82,8 @@ docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
-  --mount type=bind,source=${MAVEN_REPO},destination=${MAVEN_REPO_CNT} \
-  --mount type=bind,source=$(pwd),destination=/var/local/source \
+  --mount type=bind,source="${MAVEN_REPO}",destination="${MAVEN_REPO_CNT}" \
+  --mount type=bind,source="$(pwd)",destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
   ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
