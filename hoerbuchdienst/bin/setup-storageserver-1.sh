@@ -79,10 +79,6 @@ cat >/etc/logrotate.d/docker <<EOF
 EOF
 echo "done"
 
-pacinstall docker
-systemctl enable docker
-pacinstall docker-compose
-
 echo "Cleaning package cache"
 pacman --noconfirm -Scc
 echo "done"

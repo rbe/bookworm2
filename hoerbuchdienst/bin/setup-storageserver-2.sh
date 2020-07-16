@@ -14,7 +14,7 @@ lvcreate -L8G -n docker tank
 mkfs.ext4 /dev/tank/docker
 echo "done"
 echo "Mounting filesystem /var/lib/docker"
-mkdir /var/lib/docker
+mkdir -p /var/lib/docker
 export $(blkid -o export /dev/tank/docker)
 cat >>/etc/fstab <<EOF
 UUID=$UUID  /var/lib/docker  ext4  rw,noatime,noexec,nodev,nosuid  0  0
@@ -27,11 +27,20 @@ lvcreate -L4.5T -n dockervolumes tank
 mkfs.ext4 /dev/tank/dockervolumes
 echo "done"
 echo "Mounting filesystem /var/lib/dockervolumes"
+mkdir -p /var/lib/docker/volumes
 export $(blkid -o export /dev/tank/dockervolumes)
 cat >>/etc/fstab <<EOF
 UUID=$UUID  /var/lib/docker/volumes  ext4  rw,noatime,noexec,nodev,nosuid  0  0
 EOF
 unset UUID
+echo "done"
+
+pacinstall docker
+systemctl enable docker
+pacinstall docker-compose
+
+echo "Cleaning package cache"
+pacman --noconfirm -Scc
 echo "done"
 
 echo "!!!"
