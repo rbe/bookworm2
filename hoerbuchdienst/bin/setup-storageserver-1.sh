@@ -4,16 +4,8 @@
 set -o nounset
 set -o errexit
 
-function pacinstall() {
-  local packages="$*"
-  shift
-  echo "Installing ${packages}"
-  if pacman --noconfirm -S "${packages}"; then
-    echo "${packages} installed successfully"
-  else
-    echo "${packages} installation failed"
-  fi
-}
+execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
+. "${execdir}/lib.sh"
 
 correct=0
 while [[ ${correct} != 1 ]]; do

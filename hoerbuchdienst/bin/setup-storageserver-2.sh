@@ -4,6 +4,9 @@
 set -o nounset
 set -o errexit
 
+execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
+. "${execdir}/lib.sh"
+
 echo "Setting up physical volume and volume group 'tank'"
 pvcreate /dev/sda4
 vgcreate tank /dev/sda4
