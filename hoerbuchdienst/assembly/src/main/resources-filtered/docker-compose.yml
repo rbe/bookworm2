@@ -140,9 +140,6 @@ services:
       - 5672
       - 15671
       - 15672
-    ports:
-      - "5671:5671"
-      - "15671:15671"
   virenscanner:
     image: wbh-hbd/virenscanner:${hbd.release}
     restart: unless-stopped

@@ -8,7 +8,10 @@ services:
   rabbitmq:
     ports:
       - "5671:5671"
+      - "15671:15671"
   virenscanner:
+    ports:
+      - "3310:3310"
   #keycloakpostgres:
   #keycloak:
   hoerbuchdienst:
