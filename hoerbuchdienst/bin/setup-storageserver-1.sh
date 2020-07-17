@@ -42,6 +42,7 @@ echo "done"
 pacinstall ca-certificates ca-certificates-mozilla ca-certificates-utils
 pacinstall vi vim
 pacinstall git
+pacinstall unzip
 
 pacinstall logrotate
 echo "Enabling logrotate timer"
