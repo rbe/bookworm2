@@ -1,4 +1,4 @@
-version: '3'
+version: '3.7'
 
 services:
   # cms
@@ -49,6 +49,8 @@ services:
   virenscanner:
     image: wbh-hbd/virenscanner:${HBD_RELEASE}
     restart: "no"
+    ports:
+      - "3310:3310"
   hoerbuchdienst:
     image: wbh-hbd/hoerbuchdienst:${HBD_RELEASE}
     restart: "no"
