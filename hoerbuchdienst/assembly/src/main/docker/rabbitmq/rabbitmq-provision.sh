@@ -16,8 +16,8 @@ federator_password="$(pwgen -BCn 16 1)"
 rabbitmqctl change_password federator "${federator_password}"
 echo "RabbitMQ federator password is ${federator_password}"
 
-if [[ -z "${RABBITMQ_SHARDS}" ]]; then
-  rabbitmq-setup-federation.sh "${RABBITMQ_SHARDS}"
+if [[ -z "${MY_RABBITMQ_SHARDS}" ]]; then
+  rabbitmq-setup-federation.sh "${MY_RABBITMQ_SHARDS}"
 elif [[ $# -gt 0 ]]; then
   rabbitmq-setup-federation.sh "$@"
 else
