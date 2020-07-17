@@ -12,17 +12,17 @@ else
   exit 1
 fi
 
-federator_password="$(pwgen -BCn 16 1)"
-rabbitmqctl change_password federator "${federator_password}"
-echo "RabbitMQ federator password is ${federator_password}"
-
-if [[ -z "${MY_RABBITMQ_SHARDS}" ]]; then
-  rabbitmq-setup-federation.sh "${MY_RABBITMQ_SHARDS}"
-elif [[ $# -gt 0 ]]; then
-  rabbitmq-setup-federation.sh "$@"
+echo "Setting password for RabbitMQ federator"
+if [[ $# == 1 ]]; then
+  federator_password="$1"
 else
-  echo "usage: $0 <server1:user:pwd[ server2:user:pwd .. serverN:user:pwd]>"
-  echo "or set environment variable RABBITMQ_SHARDS"
+  federator_password="$(pwgen -BCn 16 1)"
+  echo "Generated RabbitMQ federator password: ${federator_password}"
+fi
+if rabbitmqctl change_password federator "${federator_password}"; then
+  echo "done"
+else
+  echo "failed"
 fi
 
 exit 0
