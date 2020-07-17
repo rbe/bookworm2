@@ -27,6 +27,7 @@ RUN git clone https://github.com/michaelklishin/tls-gen /usr/local/tls-gen
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
 RUN mkdir /var/local/rproxy
+EXPOSE 80/tcp 443/tcp
 VOLUME ["/etc/nginx", "/etc/letsencrypt", "/var/local/rproxy"]
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 

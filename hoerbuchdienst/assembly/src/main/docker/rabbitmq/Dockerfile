@@ -14,6 +14,7 @@ RUN rabbitmq-plugins enable --offline rabbitmq_federation
 RUN rabbitmq-plugins enable --offline rabbitmq_federation_management
 COPY rabbitmq-*.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
+EXPOSE 4369/tcp 5671/tcp 5672/tcp 15672/tcp 25672/tcp 15671/tcp
 
 FROM base
 COPY rabbitmq.conf /etc/rabbitmq/rabbitmq.conf.disabled
