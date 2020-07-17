@@ -1,6 +1,15 @@
 version: '3.7'
 
 services:
+  portainer:
+    image: portainer/portainer:latest
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - portainerdata:/data
+    expose:
+      #- "8000"
+      - "9000"
   vault:
     image: wbh-hbd/vault:${hbd.release}
     restart: unless-stopped
