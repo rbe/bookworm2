@@ -70,7 +70,7 @@ case "${project}" in
       echo "Starting ${artifact}"
       docker-compose \
         -p "${project_name}" \
-        -f docker-compose.yml -f docker-compose.${env}.yml \
+        -f docker-compose.yml -f docker-compose."${env}".yml \
         up -d --no-build
       popd >/dev/null
       echo "done"
@@ -80,13 +80,13 @@ case "${project}" in
     deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
     pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
     chmod +x lifecycle.sh
-    if ! docker volume ls | grep -c "${env}_minio" >/dev/null; then
-      echo "Provisioning ${project_name}, environment ${env}"
+    if ! docker volume ls | grep -c "${project_name}_minio" >/dev/null; then
+      echo "Provisioning ${project}, environment ${env} (${project_name})"
       ./lifecycle.sh provision
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"
-      echo "Execute $(pwd)/lifecycle.sh at your own risk"
+      echo "Execute $(pwd)/lifecycle.sh at your own (risk)"
     fi
     popd >/dev/null
     ;;
