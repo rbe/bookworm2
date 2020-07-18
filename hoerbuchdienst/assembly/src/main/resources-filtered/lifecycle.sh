@@ -111,11 +111,12 @@ case "${mode}" in
     #    -e "/MINIO_SECRET_KEY_OLD=\(.*\)/d" \
     #    "${execdir}/docker-compose*.yml"
     echo "done"
-    echo "Enabling MinIO KMS auto encryption"
-    sed -i'' \
-      -e "s#MINIO_KMS_AUTO_ENCRYPTION=.*#MINIO_KMS_AUTO_ENCRYPTION=on#" \
-      "${execdir}/docker-compose.yml"
-    echo "done"
+    #echo "Enabling MinIO KMS auto encryption"
+    #sed -i'' \
+    #  -e "s#MINIO_KMS_AUTO_ENCRYPTION=.*#MINIO_KMS_AUTO_ENCRYPTION=on#" \
+    #  "${execdir}/docker-compose.yml"
+    #echo "done"
+    popd >/dev/null
     ;;
   start)
     pushd "${execdir}" >/dev/null

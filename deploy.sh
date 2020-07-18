@@ -52,7 +52,7 @@ function deploy_artifacts() {
     file="${assemblydir}/${artifact}-${timestamp}"
     if [[ ! -d "${project_dir}/${artifact}" ]]; then
       unzip "${file}.zip" \
-        docker-compose.yml docker-compose.${env}.yml .env \*.sh \
+        docker-compose.yml docker-compose.${env}.yml .env lifecycle.sh \
         -d "${project_dir}/${artifact}"
     else
       echo "Artifact ${artifact} already exists hoerbuchkatalog ${project_dir}/${artifact}"
@@ -79,14 +79,14 @@ case "${project}" in
   hbd)
     deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
     pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
-    chmod +x hbd.sh
+    chmod +x lifecycle.sh
     if ! docker volume ls | grep -c "${env}_minio" >/dev/null; then
       echo "Provisioning ${project_name}, environment ${env}"
-      ./hbd.sh provision
+      ./lifecycle.sh provision
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"
-      echo "Execute $(pwd)/hbd.sh at your own risk"
+      echo "Execute $(pwd)/lifecycle.sh at your own risk"
     fi
     popd >/dev/null
     ;;

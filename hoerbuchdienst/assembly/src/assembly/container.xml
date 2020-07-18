@@ -17,7 +17,7 @@
             <directory>target/classes</directory>
             <excludes>
                 <exclude>dot_env</exclude>
-                <exclude>hbd.sh</exclude>
+                <exclude>lifecycle.sh</exclude>
             </excludes>
             <outputDirectory>.</outputDirectory>
             <directoryMode>755</directoryMode>
@@ -32,8 +32,8 @@
             <fileMode>644</fileMode>
         </file>
         <file>
-            <source>target/classes/hbd.sh</source>
-            <destName>hbd.sh</destName>
+            <source>target/classes/lifecycle.sh</source>
+            <destName>lifecycle.sh</destName>
             <outputDirectory>.</outputDirectory>
             <fileMode>755</fileMode>
         </file>
