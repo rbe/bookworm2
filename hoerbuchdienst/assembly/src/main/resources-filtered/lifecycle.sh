@@ -84,6 +84,10 @@ case "${mode}" in
     sleep 5
     echo "done"
     echo "Starting MinIO to exchange keys"
+    cat >"${execdir}/.env" <<EOF
+MINIO_ACCESS_KEY_OLD=AKIAIOSFODNN7EXAMPLE
+MINIO_SECRET_KEY_OLD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+EOF
     ${dc} up -d minio
     sleep 10
     echo "done"
@@ -96,7 +100,7 @@ case "${mode}" in
     ${dc} exec hbd-rproxy provision.sh minio rabbitmq hoerbuchdienst
     echo "done"
     echo "!!! ATTENTION"
-    echo "!!! ATTENTION: Don't forget to provision RabbitMQ"
+    echo "!!! ATTENTION: Don't forget to provision RabbitMQ on your own"
     echo "!!! ATTENTION"
     echo "done"
     echo "Stopping all containers"
@@ -104,18 +108,7 @@ case "${mode}" in
     echo "done"
     echo "Removing MinIO _OLD keys"
     rm -f "${execdir}/.env"
-    #sed -i'' \
-    #    -e "/MINIO_ACCESS_KEY_OLD=\(.*\)/d" \
-    #    "${execdir}/docker-compose*.yml"
-    #sed -i'' \
-    #    -e "/MINIO_SECRET_KEY_OLD=\(.*\)/d" \
-    #    "${execdir}/docker-compose*.yml"
     echo "done"
-    #echo "Enabling MinIO KMS auto encryption"
-    #sed -i'' \
-    #  -e "s#MINIO_KMS_AUTO_ENCRYPTION=.*#MINIO_KMS_AUTO_ENCRYPTION=on#" \
-    #  "${execdir}/docker-compose.yml"
-    #echo "done"
     popd >/dev/null
     ;;
   start)
