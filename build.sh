@@ -29,6 +29,8 @@ MAVEN_REPO="$(
 MAVEN_REPO_CNT="/var/local/maven-repository"
 MAVEN_OPTS="-Xshare:on -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UseParallelGC -Dmaven.repo.local=${MAVEN_REPO_CNT} -DlocalRepository=${MAVEN_REPO_CNT} -Dmaven.artifact.threads=10"
 MAVEN_CMD_LINE_ARGS="-s .mvn/settings.xml --batch-mode --fail-fast"
+MAVEN_INIT="cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump"
+MAVEN_BUILD="mvn ${MAVEN_CMD_LINE_ARGS} clean verify && mvn install"
 
 ssh-keygen -R github.com
 ssh-keyscan github.com 2>/dev/null 1>>~/.ssh/known_hosts
@@ -66,7 +68,7 @@ docker run \
   --mount type=bind,source="$(pwd)",destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} clean verify && mvn clean install" |
+  ash -c "${MAVEN_INIT} && ${MAVEN_BUILD}" |
   tee build-mikrokosmos.bookworm.log
 popd >/dev/null
 echo "done"
@@ -86,7 +88,7 @@ docker run \
   --mount type=bind,source="$(pwd)",destination=/var/local/source \
   -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
-  ash -c "cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
+  ash -c "${MAVEN_INIT} && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
   tee build-wbh.bookworm.log
 popd >/dev/null
 echo "done"
