@@ -275,6 +275,8 @@ networks:
     external: false
 
 volumes:
+  portainerdata:
+    driver: local
   #keycloakpostgresdata:
   #  driver: local
   vaultconfig:
