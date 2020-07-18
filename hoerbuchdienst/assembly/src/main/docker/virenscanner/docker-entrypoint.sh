@@ -2,8 +2,8 @@
 # Copyright (C) 2020 art of coding UG, Hamburg
 
 if [[ ! -f "/data/main.cvd" ]]; then
-  echo   "Initial download of virus databases"
-  freshclam   -v
+  echo "Initial download of virus databases"
+  freshclam -v
 fi
 
 echo "Starting the update daemon"
