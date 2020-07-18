@@ -1,9 +1,16 @@
 version: '3.7'
 
 services:
+  portainer:
+    ports:
+      - "9090:9000"
   vault:
+    ports:
+      - "8200:8200"
   kes:
   minio:
+    ports:
+      - "9000:9000"
   mc:
   rabbitmq:
     ports:
@@ -15,6 +22,8 @@ services:
   #keycloakpostgres:
   #keycloak:
   hoerbuchdienst:
+    ports:
+      - "8080:8080"
   hbd-rproxy:
     ports:
       - "80:80"

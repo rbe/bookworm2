@@ -8,8 +8,8 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
     expose:
-      #- "8000"
-      - "9000"
+      #- 8000
+      - 9000
   vault:
     image: wbh-hbd/vault:${hbd.release}
     restart: unless-stopped
