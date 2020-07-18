@@ -75,7 +75,7 @@ services:
       - MINIO_KMS_KES_CERT_FILE=${kes.minio.tls.cert.file}
       - MINIO_KMS_KES_CA_PATH=${tls.path}/${kes.hostname}/cert.pem
       - MINIO_KMS_KES_KEY_NAME=minio-masterkey-1
-      - MINIO_KMS_AUTO_ENCRYPTION=off
+      - MINIO_KMS_AUTO_ENCRYPTION=on
       - MINIO_KMS_MASTER_KEY_FILE=
       - MINIO_SSE_MASTER_KEY_FILE=
       - MINIO_ACCESS_KEY_FILE=/var/local/minio/access_key
@@ -177,7 +177,7 @@ services:
   #      soft: -1
   #      hard: -1
   #  volumes:
-  #    - esdata01:/usr/share/elasticsearch/data
+  #    - elasticsearchdata:/usr/share/elasticsearch/data
   #  networks:
   #    - backend
   #  ports:
@@ -299,8 +299,8 @@ volumes:
     driver: local
   virenscannerdata:
     driver: local
-    #esdata01:
-    #  driver: local
+  #elasticsearchdata:
+  #  driver: local
   rproxyconf:
     driver: local
   rproxycerts:
