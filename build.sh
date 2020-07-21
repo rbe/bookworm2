@@ -49,6 +49,7 @@ if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
   mkdir -p "${execdir}"/../mikrokosmos
   pushd "${execdir}"/../mikrokosmos >/dev/null
   git clone git@github.com:rbe/mikrokosmos.git .
+  git config pull.rebase false
   git checkout develop
   popd >/dev/null
 else

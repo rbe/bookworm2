@@ -19,4 +19,5 @@ COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/myservice/myserv
 COPY --chown=myservice application-shard.yml /var/local/
 VOLUME ["/var/local"]
 WORKDIR /var/local
-ENTRYPOINT ["java", "-Dmicronaut.config.files=\"/var/local/application-shard.yml\"", "-jar", "/usr/local/myservice/myservice.jar"]
+ENV MICRONAUT_CONFIG_FILES ""
+ENTRYPOINT ["java", "-Dmicronaut.config.files=/var/local/application-shard.yml", "-jar", "/usr/local/myservice/myservice.jar"]
