@@ -233,6 +233,7 @@ services:
     depends_on:
       - rabbitmq
       - minio
+    hostname: ${hbd.hostname}
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
