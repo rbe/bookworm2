@@ -77,7 +77,9 @@ public final class DataHeartbeat implements Serializable {
     }
 
     public List<ShardObject> getShardObjects() {
-        return Collections.unmodifiableList(shardObjects);
+        return null != shardObjects
+                ? Collections.unmodifiableList(shardObjects)
+                : Collections.emptyList();
     }
 
     @Override
