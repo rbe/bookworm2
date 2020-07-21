@@ -11,7 +11,8 @@
     <root level="INFO">
         <appender-ref ref="STDOUT"/>
     </root>
-    <logger name="io.micronaut.context.condition" level="TRACE"/>
-    <logger name="io.micronaut" level="TRACE"/>
-    <logger name="wbh" level="TRACE"/>
+    <logger name="io.micronaut.context.condition" level="${io.micronaut.context.condition.loglevel:-INFO}"/>
+    <logger name="io.micronaut.context" level="${io.micronaut.context.loglevel:-INFO}"/>
+    <logger name="io.micronaut" level="${io.micronaut.loglevel:-INFO}"/>
+    <logger name="wbh" level="${wbh.loglevel:-INFO}"/>
 </configuration>
