@@ -25,4 +25,10 @@ else
   echo "failed"
 fi
 
+if [[ -f /etc/rabbitmq/definitions.json ]]; then
+  echo "Removing definitions.json"
+  rm /etc/rabbitmq/definitions.json
+  echo "done"
+fi
+
 exit 0
