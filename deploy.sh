@@ -9,28 +9,28 @@ set -o nounset
 set -o errexit
 
 if [[ $# != 3 ]]; then
-  echo "usage: $0 <env> <project> <timestamp>"
+  echo "usage: $0 <env> <project>"
   echo "  env        dev | prod"
   echo "  project    hbk | hbd"
-  echo "  timestamp  yyyy-mm-ddThh-mm-ssZ"
   exit 1
 fi
 env=$1
 shift
 project=$1
-shift
-timestamp=$1
 
 execdir="$(
-  pushd   "$(dirname "$0")" >/dev/null
+  pushd "$(dirname "$0")" >/dev/null
   pwd
-  popd   >/dev/null
+  popd >/dev/null
 )"
 assemblydir="$(
-  pushd   "${execdir}/assembly/target/dependency" >/dev/null
+  pushd "${execdir}/assembly/target/dependency" >/dev/null
   pwd
-  popd   >/dev/null
+  popd >/dev/null
 )"
+timestamp="$(find assembly/target/dependency -name \*.zip |
+  head -1 |
+  sed -E 's/.*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z).*/\1/')"
 releasedir="${execdir}/../releases"
 [[ ! -d "${releasedir}" ]] && mkdir "${releasedir}"
 releasedir="$(
@@ -77,7 +77,8 @@ case "${project}" in
     done
     ;;
   hbd)
-    deploy_artifacts "wbh.bookworm.hoerbuchdienst.assembly"
+    artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
+    deploy_artifacts "${artifacts[@]}"
     pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
     chmod +x lifecycle.sh
     if ! docker volume ls | grep -c "${project_name}_minio" >/dev/null; then
