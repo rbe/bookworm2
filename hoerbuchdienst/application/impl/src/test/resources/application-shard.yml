@@ -1,9 +1,9 @@
 shard:
-  name: shard1
+  name:
 rabbitmq:
-  username: bugs
-  password: ab4pooVee4Eichah
+  username:
+  password:
 objectstorage:
   minio:
-    accessKey: feephaevee4aecie4eig
-    secureKey: eiz9aoChuu4eo7reiTuchie7Mothoo7uibee9ohg
+    accessKey:
+    secureKey:

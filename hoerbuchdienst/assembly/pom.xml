@@ -97,6 +97,10 @@
     <build>
         <resources>
             <resource>
+                <directory>src/main/docker</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
                 <directory>src/main/resources-filtered</directory>
                 <filtering>true</filtering>
             </resource>
@@ -295,6 +299,36 @@
                     </execution>
                 </executions>
             </plugin>
+            <!--<plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>0.33.0</version>
+                <executions>
+                    <execution>
+                        <id>provision-rproxy</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>start</goal>
+                        </goals>
+                        <configuration>
+                            <verbose>true</verbose>
+                            <images>
+                                <image>
+                                    <name>${docker.project.env}-hbd/hbd-rproxy:%v</name>
+                                    <run>
+                                        <ports>
+                                            <port>80:80</port>
+                                        </ports>
+                                        <wait>
+                                            <time>60000</time>
+                                        </wait>
+                                    </run>
+                                </image>
+                            </images>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>-->
         </plugins>
     </build>
 </project>

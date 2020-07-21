@@ -16,6 +16,12 @@
         <hbd.release>${maven.build.timestamp}</hbd.release>
     </properties>
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/docker</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -53,6 +59,8 @@
                         <configuration>
                             <repository>wbh-hbd/hoerbuchdienst</repository>
                             <tag>${hbd.release}</tag>
+                            <contextDirectory>${project.basedir}</contextDirectory>
+                            <dockerfile>src/main/docker/Dockerfile</dockerfile>
                             <buildArgs>
                                 <!--<JAR_FILE>${project.build.finalName}.jar</JAR_FILE>-->
                                 <JAR_FILE>wbh.bookworm.hoerbuchdienst.application.impl-${project.version}.jar</JAR_FILE>
