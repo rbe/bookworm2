@@ -4,6 +4,11 @@
 set -o nounset
 set -o errexit
 
+if [[ $# -lt 1 ]]; then
+  echo "usage: $0 <username> [<password>]"
+  exit 1
+fi
+
 echo "Checking if RabbitMQ is online"
 if rabbitmqctl await_startup; then
   echo "RabbitMQ appears to be online"
@@ -12,14 +17,15 @@ else
   exit 1
 fi
 
-echo "Setting password for RabbitMQ federator"
-if [[ $# == 1 ]]; then
-  federator_password="$1"
+username="$1"
+echo "Setting password for RabbitMQ user ${username}"
+if [[ $# == 2 ]]; then
+  password="$1"
 else
-  federator_password="$(pwgen -BCn 16 1)"
-  echo "Generated RabbitMQ federator password: ${federator_password}"
+  password="$(pwgen -BCn 16 1)"
+  echo "Generated RabbitMQ ${user} password: ${password}"
 fi
-if rabbitmqctl change_password federator "${federator_password}"; then
+if rabbitmqctl change_password federator "${password}"; then
   echo "done"
 else
   echo "failed"

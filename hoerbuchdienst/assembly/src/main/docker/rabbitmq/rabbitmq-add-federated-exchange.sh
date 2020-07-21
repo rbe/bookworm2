@@ -57,4 +57,8 @@ rabbitmqadmin -s --host "${my_name}" --port 15671 \
   declare binding source="${exchange_name}" destination_type="queue" destination="${queue_name}" routing_key=""
 echo "done"
 
+echo "Exporting RabbitMQ definitions"
+rabbitmqadmin export /etc/rabbitmq/definitions.json
+echo "done"
+
 exit 0
