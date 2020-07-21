@@ -18,6 +18,12 @@
     </properties>
     <build>
         <sourceDirectory>src/docs/asciidoc</sourceDirectory>
+        <resources>
+            <resource>
+                <directory>src/main/docker</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
         <defaultGoal>process-resources</defaultGoal>
         <plugins>
             <plugin>

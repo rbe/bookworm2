@@ -84,11 +84,6 @@ mv /tmp/docker-volumes/* /var/lib/docker/volumes
 systemctl start docker
 ----
 
-----
-cd ~/rootaid-archroot/storage
-./archroot-storage.sh init
-----
-
 === Verschlüsselung
 
 ----

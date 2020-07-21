@@ -1,8 +1,7 @@
 RabbitMQ + TLS
 
-aCeir4ooJapu
-amqps://federator:aCeir4ooJapu@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&verify=verify_peer&heartbeat=10&connection_timeout=10000
-amqps://federator:aCeir4ooJapu@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&cacertfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/fullchain.pem&certfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/cert.pem&keyfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/privkey.pem&verify=verify_peer&heartbeat=10&connection_timeout=10000
+amqps://federator:@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&verify=verify_peer&heartbeat=10&connection_timeout=10000
+amqps://federator:@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&cacertfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/fullchain.pem&certfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/cert.pem&keyfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/privkey.pem&verify=verify_peer&heartbeat=10&connection_timeout=10000
 
 
 openssl verify rootaid-archroot/storage/isrgrootx1.pem.txt  
