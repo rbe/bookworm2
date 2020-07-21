@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookServiceException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -55,8 +56,9 @@ final class AudiobookServiceImpl implements AudiobookService {
     }
 
     @Override
-    public int shardLocation(final String titelnummer) {
-        return audiobookRepository.lookupShard(titelnummer).intValue();
+    public String shardLocation(final String titelnummer) {
+        final ShardName shardName = audiobookRepository.lookupShard(titelnummer);
+        return shardName.toString();
     }
 
     @Override

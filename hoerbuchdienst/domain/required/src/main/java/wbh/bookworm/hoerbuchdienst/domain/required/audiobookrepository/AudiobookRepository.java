@@ -14,7 +14,7 @@ import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 public interface AudiobookRepository {
 
-    ShardNumber lookupShard(/* TODO AghNummer */String titelnummer);
+    ShardName lookupShard(/* TODO AghNummer */String titelnummer);
 
     void maybeReshard(DataHeartbeats dataHeartbeats);
 

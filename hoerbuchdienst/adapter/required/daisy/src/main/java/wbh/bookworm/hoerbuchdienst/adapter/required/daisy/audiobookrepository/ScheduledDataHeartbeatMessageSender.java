@@ -8,14 +8,14 @@ import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.micronaut.context.annotation.Property;
+import io.micronaut.configuration.rabbitmq.exception.RabbitClientException;
 import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -28,20 +28,16 @@ final class ScheduledDataHeartbeatMessageSender {
 
     private static final long TOTAL_4TB = 4L * 1024L * 1024L * 1024L * 1024L;
 
-    private final MyHostname myHostname;
+    private final ShardName shardName;
 
     private final AudiobookStreamResolver audiobookStreamResolver;
 
     private final DataHeartbeatMessageSender dataHeartbeatMessageSender;
 
-    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_SHARD_NUMBER)
-    private Integer myShardNumber;
-
     @Inject
-    ScheduledDataHeartbeatMessageSender(final MyHostname myHostname,
-                                        final AudiobookStreamResolver audiobookStreamResolver,
+    ScheduledDataHeartbeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
                                         final DataHeartbeatMessageSender dataHeartbeatMessageSender) {
-        this.myHostname = myHostname;
+        this.shardName = new ShardName();
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.dataHeartbeatMessageSender = dataHeartbeatMessageSender;
     }
@@ -60,13 +56,17 @@ final class ScheduledDataHeartbeatMessageSender {
                 .stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().getSum()))
                 .map(entry -> Map.entry(entry.getKey(), new ShardObject(entry.getKey().getValue(),
-                        entry.getValue(), "", myShardNumber)))
+                        entry.getValue(), "", shardName)))
                 .map(Map.Entry::getValue)
                 .collect(Collectors.toUnmodifiableList());
-        final DataHeartbeat dataHeartbeat = new DataHeartbeat(ZonedDateTime.now().toInstant(), myHostname.myHostname(),
-                TOTAL_4TB, usedBytes, ShardNumber.of(myShardNumber), shardObjects);
+        final DataHeartbeat dataHeartbeat = new DataHeartbeat(ZonedDateTime.now().toInstant(), shardName,
+                TOTAL_4TB, usedBytes, shardObjects);
         LOGGER.trace("Sending data heartbeat {}", dataHeartbeat);
-        dataHeartbeatMessageSender.send(myHostname.myHostname(), dataHeartbeat);
+        try {
+            dataHeartbeatMessageSender.send(shardName.toString(), dataHeartbeat);
+        } catch (RabbitClientException e) {
+            LOGGER.warn("{}", e.getMessage());
+        }
     }
 
     private Titelnummer fromObjectName(final String objectName) {
@@ -87,7 +87,7 @@ final class ScheduledDataHeartbeatMessageSender {
         @Mapping(source = "objectMetaInfos.objectName", target = "id")
         @Mapping(source = "objectMetaInfos.length", target = "size")
         @Mapping(source = "shardNumber", target = "shardNumber")
-        ShardObject convert(ObjectMetaInfo objectMetaInfos, ShardNumber shardNumber);
+        ShardObject convert(ObjectMetaInfo objectMetaInfos, ShardName shardNumber);
 
     }
     */

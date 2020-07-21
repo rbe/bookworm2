@@ -10,7 +10,7 @@ import java.io.InputStream;
 
 public interface AudiobookService {
 
-    int shardLocation(/* TODO AghNummer */String titelnummer);
+    String shardLocation(/* TODO AghNummer */String titelnummer);
 
     InputStream trackAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer, String ident);
 

@@ -8,6 +8,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeart
 @RabbitClient(RepositoryQueues.EXCH_FEDERATED_DATAHEARTBEAT)
 interface DataHeartbeatMessageSender {
 
-    void send(@Header("x-hostname") String hostname, DataHeartbeat dataHeartbeat);
+    void send(@Header("x-shardname") String shardname, DataHeartbeat dataHeartbeat);
 
 }

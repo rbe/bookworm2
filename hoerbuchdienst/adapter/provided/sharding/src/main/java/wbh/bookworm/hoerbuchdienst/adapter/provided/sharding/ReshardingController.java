@@ -33,7 +33,9 @@ public class ReshardingController {
     }
 
     // shard receives object (push, by REST endpoint)
-    @Post(uri = "zip/{titelnummer}/{hash}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_OCTET_STREAM)
+    @Post(uri = "zip/{titelnummer}/{hash}",
+            consumes = MediaType.APPLICATION_OCTET_STREAM,
+            produces = MediaType.APPLICATION_OCTET_STREAM)
     public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
                                            @PathVariable final String hash,
                                            @Body final InputStream inputStream) {

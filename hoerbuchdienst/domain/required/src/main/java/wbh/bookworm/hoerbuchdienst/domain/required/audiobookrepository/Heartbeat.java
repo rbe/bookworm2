@@ -17,17 +17,13 @@ public final class Heartbeat implements Serializable {
 
     private final Instant pointInTime;
 
-    private final ShardNumber shardNumber;
-
-    private final String shardname;
+    private final ShardName shardName;
 
     @JsonCreator
     public Heartbeat(@JsonProperty("pointInTime") final Instant pointInTime,
-                     @JsonProperty("shardname") final String shardname,
-                     @JsonProperty("shardNumber") final ShardNumber shardNumber) {
+                     @JsonProperty("shardName") final ShardName shardName) {
         this.pointInTime = pointInTime;
-        this.shardname = shardname;
-        this.shardNumber = shardNumber;
+        this.shardName = shardName;
     }
 
     public Instant getPointInTime() {
@@ -39,17 +35,13 @@ public final class Heartbeat implements Serializable {
         return pointInTime.atZone(ZoneId.systemDefault());
     }
 
-    public ShardNumber getShardNumber() {
-        return shardNumber;
-    }
-
-    public String getShardname() {
-        return shardname;
+    public ShardName getShardName() {
+        return shardName;
     }
 
     @Override
     public String toString() {
-        return String.format("Heartbeat{pointInTime='%s', shardname='%s'}", pointInTime, shardname);
+        return String.format("Heartbeat{pointInTime='%s', shardname='%s'}", pointInTime, shardName);
     }
 
 }

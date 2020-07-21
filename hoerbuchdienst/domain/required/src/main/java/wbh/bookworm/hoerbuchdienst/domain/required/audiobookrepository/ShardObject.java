@@ -10,40 +10,40 @@ public final class ShardObject implements Serializable {
 
     private static final long serialVersionUID = -1698948107854015839L;
 
-    private String id;
+    private String objectId;
 
     private long size;
 
     private String hashValue;
 
-    private ShardNumber shardNumber;
+    private ShardName shardName;
 
     public ShardObject() {
     }
 
-    public ShardObject(final String id,
+    public ShardObject(final String objectId,
                        final long size,
                        final String hashValue,
-                       final int shardNumber) {
-        this.id = id;
+                       final ShardName shardName) {
+        this.objectId = objectId;
         this.size = size;
         this.hashValue = hashValue;
-        this.shardNumber = ShardNumber.of(shardNumber);
+        this.shardName = shardName;
     }
 
-    public static ShardObject of(final ShardObject shardObject, final ShardNumber shardNumber) {
-        return new ShardObject(shardObject.getId(),
-                shardObject.getSize(),
-                shardObject.getHashValue(),
-                shardNumber.intValue());
+    public static ShardObject of(final ShardObject shardObject, final ShardName shardName) {
+        return new ShardObject(shardObject.objectId,
+                shardObject.size,
+                shardObject.hashValue,
+                shardName);
     }
 
-    public String getId() {
-        return id;
+    public String getObjectId() {
+        return objectId;
     }
 
-    public void setId(final String id) {
-        this.id = id;
+    public void setObjectId(final String objectId) {
+        this.objectId = objectId;
     }
 
     public long getSize() {
@@ -62,17 +62,17 @@ public final class ShardObject implements Serializable {
         this.hashValue = hashValue;
     }
 
-    public ShardNumber getShardNumber() {
-        return shardNumber;
+    public ShardName getShardName() {
+        return shardName;
     }
 
-    public void setShardNumber(final ShardNumber shardNumber) {
-        this.shardNumber = shardNumber;
+    public void setShardName(final ShardName shardName) {
+        this.shardName = shardName;
     }
 
     /* TODO unnötig */
-    public void reshard(final ShardNumber shardNumber) {
-        this.shardNumber = shardNumber;
+    public void reshard(final ShardName shardName) {
+        this.shardName = shardName;
     }
 
     @Override
@@ -80,19 +80,19 @@ public final class ShardObject implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ShardObject that = (ShardObject) o;
-        return shardNumber == that.shardNumber &&
+        return shardName == that.shardName &&
                 size == that.size &&
-                id.equals(that.id);
+                objectId.equals(that.objectId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shardNumber, id, size);
+        return Objects.hash(shardName, objectId, size);
     }
 
     @Override
     public String toString() {
-        return String.format("ShardObject{shardNumber='%s', id='%s'}", shardNumber, id);
+        return String.format("ShardObject{objectId='%s', shardName='%s'}", objectId, shardName);
     }
 
 }

@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Collections;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -20,9 +21,7 @@ public final class DataHeartbeat implements Serializable {
 
     private final Instant pointInTime;
 
-    private final ShardNumber shardNumber;
-
-    private final String shardname;
+    private final ShardName shardName;
 
     private final long totalBytes;
 
@@ -34,19 +33,17 @@ public final class DataHeartbeat implements Serializable {
 
     @JsonCreator
     public DataHeartbeat(@JsonProperty("pointInTime") final Instant pointInTime,
-                         @JsonProperty("shardname") final String shardname,
+                         @JsonProperty("shardname") final ShardName shardName,
                          @JsonProperty("totalBytes") final long totalBytes,
                          @JsonProperty("usedBytes") final long usedBytes,
-                         @JsonProperty("shardNumber") final ShardNumber shardNumber,
                          @JsonProperty("shardObjects") final List<ShardObject> shardObjects) {
         this.pointInTime = pointInTime;
-        this.shardname = shardname;
+        this.shardName = shardName;
         this.totalBytes = totalBytes;
         this.usedBytes = usedBytes;
         usageInPercent = BigDecimal.valueOf(((double) usedBytes / (double) totalBytes) * 100.0d)
                 .setScale(2, RoundingMode.CEILING)
                 .doubleValue();
-        this.shardNumber = shardNumber;
         this.shardObjects = shardObjects;
     }
 
@@ -59,12 +56,12 @@ public final class DataHeartbeat implements Serializable {
         return pointInTime.atZone(ZoneId.systemDefault());
     }
 
-    public ShardNumber getShardNumber() {
-        return shardNumber;
+    public ShardName getShardName() {
+        return shardName;
     }
 
     public String getShardname() {
-        return shardname;
+        return shardName.getHostName();
     }
 
     public long getTotalBytes() {
@@ -80,13 +77,13 @@ public final class DataHeartbeat implements Serializable {
     }
 
     public List<ShardObject> getShardObjects() {
-        return shardObjects;
+        return Collections.unmodifiableList(shardObjects);
     }
 
     @Override
     public String toString() {
         return String.format("DataHeartbeat{pointInTime='%s', shardname='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardObjects='%s'}",
-                pointInTime, shardname, totalBytes, usedBytes, usageInPercent, shardObjects);
+                pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardObjects);
     }
 
 }

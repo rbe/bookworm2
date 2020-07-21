@@ -32,12 +32,16 @@ class DataHeartbeatMessageReceiver {
     }
 
     @Queue(RepositoryQueues.QUEUE_DATAHEARTBEAT)
-    public void receiveHeartbeat(@Header("x-hostname") final String hostname, final DataHeartbeat dataHeartbeat) {
-        final List<ShardObject> shardObjects = dataHeartbeat.getShardObjects();
-        LOGGER.debug("Received {}", dataHeartbeat);
-        dataHeartbeats.remember(hostname, dataHeartbeat);
-        LOGGER.info("Received {} entries from {}", shardObjects.size(), hostname);
-        audiobookRepository.maybeReshard(dataHeartbeats);
+    public void receiveHeartbeat(@Header("x-shardname") final String hostname, final DataHeartbeat dataHeartbeat) {
+        if (null != dataHeartbeat.getShardObjects()) {
+            final List<ShardObject> shardObjects = dataHeartbeat.getShardObjects();
+            LOGGER.debug("Received {}", dataHeartbeat);
+            dataHeartbeats.remember(hostname, dataHeartbeat);
+            LOGGER.info("Received {} entries from {}", shardObjects.size(), hostname);
+            audiobookRepository.maybeReshard(dataHeartbeats);
+        } else {
+            LOGGER.warn("List with shard objects is empty");
+        }
     }
 
     @EventListener

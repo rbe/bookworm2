@@ -44,27 +44,33 @@ class HeartbeatMessageReceiver {
         final boolean heartbeatNotInTime = heartbeat.getPointInTime().isBefore(Instant.now().minusSeconds(2L))
                 || heartbeat.getPointInTime().isAfter(Instant.now().plusSeconds(2L));
         if (heartbeatNotInTime) {
-            LOGGER.debug("Discarding heartbeat {} as its too old or in the future", heartbeat);
+            LOGGER.warn("Discarding heartbeat {} as its timestamp is too old or in the future", heartbeat);
         } else {
             if (heartbeats.isLost(hostname)) {
                 LOGGER.info("Welcome back, shard {}!", hostname);
+                heartbeats.remember(hostname, heartbeat);
                 eventPublisher.publishEvent(new ShardReappearedEvent(hostname));
+            } else {
+                final boolean shardIsNew = null == heartbeats.remember(hostname, heartbeat);
+                if (shardIsNew) {
+                    LOGGER.info("Welcome to our farm, shard {}!", hostname);
+                    heartbeats.remember(hostname, heartbeat);
+                    highWaterMark();
+                    eventPublisher.publishEvent(new ShardAppearedEvent(hostname));
+                }
             }
-            final boolean shardNew = null == heartbeats.remember(hostname, heartbeat);
-            if (shardNew) {
-                LOGGER.info("Welcome to our farm, shard {}!", hostname);
-                eventPublisher.publishEvent(new ShardAppearedEvent(hostname));
-            }
-            maybeAddedShard();
         }
     }
 
-    private void maybeAddedShard() {
+    private void highWaterMark() {
         // increase high water mark?
-        if (heartbeats.count() > numShardsHwm.get()) {
-            // shard was added
-            numShardsHwm.incrementAndGet();
-            LOGGER.info("New high watermark: {} shards total", numShardsHwm);
+        synchronized (numShardsHwm) { // TODO alle zugriffe müssen sync sein! -> In Hearbeats implementieren
+            if (heartbeats.count() > numShardsHwm.get()) {
+                // shard was added
+                //numShardsHwm.incrementAndGet(); -> set(count())
+                numShardsHwm.getAndSet(heartbeats.count());
+                LOGGER.info("New high watermark: {} shard(s) total", numShardsHwm);
+            }
         }
     }
 

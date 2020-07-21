@@ -33,7 +33,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
@@ -53,9 +53,6 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private List<ShardObject> shardObjects;
 
-    @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_SHARD_NUMBER)
-    private int myShardNumber;
-
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
 
@@ -69,11 +66,11 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public ShardNumber lookupShard(final String titelnummer) {
+    public ShardName lookupShard(final String titelnummer) {
         final Optional<ShardObject> first = shardObjects.stream()
-                .filter(shardObject -> shardObject.getId().equals(titelnummer))
+                .filter(shardObject -> shardObject.getObjectId().equals(titelnummer))
                 .findFirst();
-        return first.map(ShardObject::getShardNumber).orElse(null);
+        return first.map(ShardObject::getShardName).orElse(null);
     }
 
     @EventListener
@@ -96,12 +93,12 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     public void maybeReshard(final DataHeartbeats dataHeartbeats) {
         shardObjects = shardDistributionStrategy.calculate(dataHeartbeats);
         // filter all objects not belonging to this shard (anymore)
-        final ShardNumber itsme = ShardNumber.of(myShardNumber);
+        final ShardName itsme = new ShardName();
         final List<ShardObject> foreignObjects = shardObjects.stream()
-                .filter(shardObject -> !itsme.equals(shardObject.getShardNumber()))
+                .filter(shardObject -> !itsme.equals(shardObject.getShardName()))
                 .collect(Collectors.toUnmodifiableList());
         if (!foreignObjects.isEmpty()) {
-            LOGGER.info("Moving {} to other shards", foreignObjects);
+            LOGGER.info("Moving {} to other shard(s)", foreignObjects);
             // TODO move all objects now belonging to another/recently added shard
             // TODO invalidate cache
             // TODO remove objects from object storage

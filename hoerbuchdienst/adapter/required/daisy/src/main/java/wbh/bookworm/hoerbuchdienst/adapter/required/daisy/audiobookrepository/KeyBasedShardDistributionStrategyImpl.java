@@ -5,18 +5,18 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardNumber;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @Singleton
 class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy {
 
-    private static ShardNumber calculate(final ShardObject shardObject, final DataHeartbeats dataHeartbeats) {
-        final Titelnummer titelnummer = new Titelnummer(shardObject.getId());
+    private static ShardName calculate(final ShardObject shardObject, final DataHeartbeats dataHeartbeats) {
+        final Titelnummer titelnummer = new Titelnummer(shardObject.getObjectId());
         final int hashCode = MyHashCodeImpl.hashCode(titelnummer.getBytesUTF8());
         final int shardIndex = hashCode % dataHeartbeats.count();
-        return ShardNumber.of(shardIndex + 1);
+        return new ShardName(); // TODO ShardName.of(shardIndex + 1);
     }
 
     @Override
