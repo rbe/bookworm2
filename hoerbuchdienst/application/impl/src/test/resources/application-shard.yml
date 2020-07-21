@@ -1,0 +1,9 @@
+shard:
+  name: shard1
+rabbitmq:
+  username: bugs
+  password: ab4pooVee4Eichah
+objectstorage:
+  minio:
+    accessKey: feephaevee4aecie4eig
+    secureKey: eiz9aoChuu4eo7reiTuchie7Mothoo7uibee9ohg

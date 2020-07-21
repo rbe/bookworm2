@@ -54,7 +54,7 @@ case "${mode}" in
     else
       docker volume ls |
         grep hbd |
-        grep -vE "(rproxycerts|vault|kes|minio)" |
+        grep -vE "(rproxycerts)" |
         awk '{print $2}' |
         xargs docker volume rm
     fi
@@ -67,53 +67,7 @@ case "${mode}" in
     popd >/dev/null
     ;;
   provision)
-    pushd "${execdir}" >/dev/null
-    echo "Starting nginx"
-    ${dc} up -d hbd-rproxy
-    [[ "${tld}" == "local" ]] && wait_for_nginx=5 || wait_for_nginx=60
-    echo "Waiting ${wait_for_nginx} seconds for TLS certificate generation"
-    sleep ${wait_for_nginx}
-    ${dc} stop hbd-rproxy
-    echo "done"
-    echo "Starting Vault"
-    ${dc} up -d vault
-    sleep 5
-    echo "done"
-    echo "Starting MinIO KES"
-    ${dc} up -d kes
-    sleep 5
-    echo "done"
-    if [[ "${tld}" != "local" ]]; then
-      echo "Starting MinIO to exchange keys"
-      cat >"${execdir}/.env" <<EOF
-MINIO_ACCESS_KEY_OLD=AKIAIOSFODNN7EXAMPLE
-MINIO_SECRET_KEY_OLD=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
-EOF
-      ${dc} up -d minio
-      sleep 10
-      echo "done"
-    fi
-    echo "Starting all services"
-    ${dc} up -d
-    echo "done"
-    echo "Setting up shard: MinIO"
-    ${dc} exec mc provision.sh
-    echo "Setting up shard: reverse proxy"
-    ${dc} exec hbd-rproxy provision.sh minio rabbitmq hoerbuchdienst
-    echo "done"
-    echo "!!! ATTENTION"
-    echo "!!! ATTENTION: Don't forget to provision RabbitMQ on your own"
-    echo "!!! ATTENTION"
-    echo "done"
-    echo "Stopping all containers"
-    ${dc} down
-    echo "done"
-    if [[ "${tld}" != "local" ]]; then
-      echo "Removing MinIO _OLD keys"
-      rm -f "${execdir}/.env"
-      echo "done"
-    fi
-    popd >/dev/null
+    echo "Nothing to do"
     ;;
   start)
     pushd "${execdir}" >/dev/null

@@ -5,7 +5,6 @@ LABEL project="wbhonline"
 
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-
 RUN echo "Europe/Berlin" >/etc/timezone \
     && rm /etc/localtime \
     && ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
@@ -15,9 +14,9 @@ FROM base
 RUN groupadd myservice \
     && useradd -g myservice myservice
 USER myservice
-#ADD target/lib /usr/local/myservice/lib
 ARG JAR_FILE
-ADD target/dependency/${JAR_FILE} /usr/local/myservice/myservice.jar
-VOLUME ["/var/local/data"]
-WORKDIR /var/local/data
-ENTRYPOINT ["java", "-jar", "/usr/local/myservice/myservice.jar"]
+COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/myservice/myservice.jar
+COPY --chown=myservice application-shard.yml /var/local/
+VOLUME ["/var/local"]
+WORKDIR /var/local
+ENTRYPOINT ["java", "-Dmicronaut.config.files=\"/var/local/application-shard.yml\"", "-jar", "/usr/local/myservice/myservice.jar"]

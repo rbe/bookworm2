@@ -62,7 +62,7 @@ EOF
 echo "done"
 
 echo "Cleaning package cache"
-pacman --noconfirm -Scc
+echo "y" | pacman -Scc
 echo "done"
 
 echo "Setting timezone"

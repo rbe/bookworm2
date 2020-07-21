@@ -32,16 +32,16 @@ hoerbuchdienst:
 
 objectstorage:
   minio:
-    url: https://s3.${shard.name}.audiobook.wbh-online.de
-    accessKey:
-    secureKey:
+    url: https://minio.${shard.name}.local
+    accessKey: AKIAIOSFODNN7EXAMPLE
+    secureKey: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     bucketName: hoerbuchdienst
     serversideencryption: atRest
 
 rabbitmq:
   servers:
     default:
-      uri: amqps://${rabbitmq.username}:${rabbitmq.password}@rabbitmq.${shard.name}.audiobook.wbh-online.de/hoerbuchdienst
+      uri: amqps://${rabbitmq.username:bugs}:${rabbitmq.password:bunny}@rabbitmq.${shard.name}.local/hoerbuchdienst
       automatic-recovery-enabled: true
 
 elasticsearch:

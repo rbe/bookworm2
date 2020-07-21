@@ -236,13 +236,14 @@ services:
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
+    volumes:
+      - hoerbuchdienstlocal:/var/local
     networks:
       backend:
         aliases:
           - ${hbd.hostname}
     expose:
       - 8080
-    entrypoint: tail -f /dev/null
   hbd-rproxy:
     image: wbh-hbd/rproxy:${hbd.release}
     restart: unless-stopped
@@ -303,6 +304,8 @@ volumes:
     driver: local
   #elasticsearchdata:
   #  driver: local
+  hoerbuchdienstlocal:
+    driver: local
   rproxyconf:
     driver: local
   rproxycerts:

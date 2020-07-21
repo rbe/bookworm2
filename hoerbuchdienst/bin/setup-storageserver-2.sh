@@ -43,7 +43,7 @@ systemctl enable docker
 pacinstall docker-compose
 
 echo "Cleaning package cache"
-pacman --noconfirm -Scc
+echo "y" | pacman -Scc
 echo "done"
 
 echo "!!!"
