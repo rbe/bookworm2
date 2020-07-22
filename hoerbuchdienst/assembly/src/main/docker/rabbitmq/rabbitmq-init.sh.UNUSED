@@ -14,7 +14,7 @@ fi
 echo "Adding virtual host ${MY_RABBITMQ_VHOST}"
 rabbitmqctl add_vhost "${MY_RABBITMQ_VHOST}"
 echo "Adding user federator"
-federator_pw="$(pwgen -Bcn 16 -n 1)"
+federator_pw="$(pwgen -Bcn 32 -n 1)"
 set +o errexit
 rabbitmqctl add_user federator "${federator_pw}"
 set -o errexit
@@ -24,10 +24,9 @@ rabbitmqctl set_user_tags federator administrator
 federator_configure_regexp=".*"
 federator_write_regexp=".*"
 federator_read_regexp=".*"
-rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}"
-federator "${federator_configure_regexp}" "${federator_write_regexp}" "${federator_read_regexp}"
+rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}" federator "${federator_configure_regexp}" "${federator_write_regexp}" "${federator_read_regexp}"
 echo "Adding user bugs"
-bugs_pw="$(pwgen -Bcn 16 -n 1)"
+bugs_pw="$(pwgen -Bcn 32 -n 1)"
 set +o errexit
 rabbitmqctl add_user bugs "${bugs_pw}"
 set -o errexit
@@ -35,8 +34,7 @@ echo "Password is ${bugs_pw}"
 bugs_configure_regexp=""
 bugs_write_regexp=".*"
 bugs_read_regexp=".*"
-rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}"
-bugs "${bugs_configure_regexp}" "${bugs_write_regexp}" "${bugs_read_regexp}"
+rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}" bugs "${bugs_configure_regexp}" "${bugs_write_regexp}" "${bugs_read_regexp}"
 echo "Deleting user guest"
 set +o errexit
 rabbitmqctl delete_user guest

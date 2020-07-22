@@ -25,8 +25,6 @@ else
   echo "failed"
 fi
 
-echo "Exporting RabbitMQ definitions"
-rabbitmqadmin export /etc/rabbitmq/definitions.json
-echo "done"
+rabbitmq-export.sh
 
 exit 0

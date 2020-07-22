@@ -53,8 +53,4 @@ for node in "${ALL_NODES[@]}"; do
   fi
 done
 
-echo "Exporting RabbitMQ definitions"
-rabbitmqadmin export /etc/rabbitmq/definitions.json
-echo "done"
-
 exit 0

@@ -22,7 +22,7 @@ echo "Setting password for RabbitMQ user ${username}"
 if [[ $# == 2 ]]; then
   password="$1"
 else
-  password="$(pwgen -BCn 16 1)"
+  password="$(pwgen -BCn 32 1)"
   echo "Generated RabbitMQ ${username} password: ${password}"
 fi
 if rabbitmqctl change_password "${username}" "${password}"; then
@@ -30,9 +30,5 @@ if rabbitmqctl change_password "${username}" "${password}"; then
 else
   echo "failed"
 fi
-
-echo "Exporting RabbitMQ definitions"
-rabbitmqadmin export /etc/rabbitmq/definitions.json
-echo "done"
 
 exit 0
