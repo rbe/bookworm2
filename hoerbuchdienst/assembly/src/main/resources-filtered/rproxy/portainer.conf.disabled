@@ -11,6 +11,14 @@ server {
     ssl_stapling_verify on;
     client_max_body_size 1m;
     location / {
-        proxy_pass http://127.0.0.1:9000/;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        proxy_pass http://portainer:9000/;
+    }
+    location /api/websocket/ {
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "upgrade";
+        proxy_http_version 1.1;
+        proxy_pass http://portainer:9000/api/websocket/;
     }
 }

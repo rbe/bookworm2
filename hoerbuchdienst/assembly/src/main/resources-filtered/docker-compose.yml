@@ -4,9 +4,14 @@ services:
   portainer:
     image: portainer/portainer:latest
     restart: unless-stopped
+    hostname: ${portainer.hostname}
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - portainerdata:/data
+    networks:
+      backend:
+        aliases:
+          - ${portainer.hostname}
     expose:
       #- 8000
       - 9000
