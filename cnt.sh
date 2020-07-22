@@ -8,29 +8,23 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 2 ]]; then
-  echo "usage: $0 <env> <project>"
+if [[ $# -lt 3 ]]; then
+  echo "usage: $0 <env> <project> <command>"
   echo "  env        dev | prod"
   echo "  project    hbk | hbd"
+  echo "  command    Docker Compose command"
   exit 1
 fi
 env=$1
 shift
 project=$1
+shift
 
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
   popd >/dev/null
 )"
-assemblydir="$(
-  pushd "${execdir}/assembly/target/dependency" >/dev/null
-  pwd
-  popd >/dev/null
-)"
-timestamp="$(find "${assemblydir}" -name \*.zip |
-  head -1 |
-  sed -E 's/.*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z).*/\1/')"
 releasedir="${execdir}/../releases"
 releasedir="$(
   pushd "${execdir}/../releases" >/dev/null
@@ -38,13 +32,12 @@ releasedir="$(
   popd >/dev/null
 )"
 project_name="${env}-${project}"
-new_project_dir="${releasedir}/${project_name}-${timestamp}"
 running_version="$(docker ps --format "{{.Image}}" --filter "name=${project_name}/*" |
   grep -Eow -e '([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z)' |
   uniq)"
-if [[ -n "${running_version}" ]]; then
-  current_project_dir="${releasedir}/${project_name}-${running_version}"
-fi
+current_project_dir="${releasedir}/${project_name}-${running_version}"
+
+dc="docker-compose -p ${env}-${project}"
 
 case "${project}" in
   hbk)
@@ -53,21 +46,11 @@ case "${project}" in
     ;;
   hbd)
     artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
-    if [[ -n "${current_project_dir}" ]]; then
-      pushd "${current_project_dir}" >/dev/null
-      for artifact in "${artifacts[@]}"; do
-        pushd "${artifact}" >/dev/null
-        echo "Stopping artifact ${artifact} in $(pwd)"
-        ./lifecycle.sh stop
-        popd >/dev/null
-      done
-      popd >/dev/null
-    fi
-    pushd "${new_project_dir}" >/dev/null
+    pushd "${current_project_dir}" >/dev/null
     for artifact in "${artifacts[@]}"; do
       pushd "${artifact}" >/dev/null
-      echo "Starting artifact ${artifact} in $(pwd)"
-      ./lifecycle.sh start
+      echo "Executing for version ${running_version}"
+      ${dc} "$@"
       popd >/dev/null
     done
     popd >/dev/null
