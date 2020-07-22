@@ -8,7 +8,7 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 3 ]]; then
+if [[ $# != 2 ]]; then
   echo "usage: $0 <env> <project>"
   echo "  env        dev | prod"
   echo "  project    hbk | hbd"
