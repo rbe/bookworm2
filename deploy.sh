@@ -28,7 +28,7 @@ assemblydir="$(
   pwd
   popd >/dev/null
 )"
-timestamp="$(find assembly/target/dependency -name \*.zip |
+timestamp="$(find "${assemblydir}" -name \*.zip |
   head -1 |
   sed -E 's/.*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z).*/\1/')"
 releasedir="${execdir}/../releases"
