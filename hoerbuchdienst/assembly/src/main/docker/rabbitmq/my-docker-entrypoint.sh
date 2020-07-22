@@ -6,4 +6,4 @@ echo "" | crontab -
 crond -b -S -l 8
 echo "done"
 
-exec docker-entrypoint.sh
+exec docker-entrypoint.sh "$@"
