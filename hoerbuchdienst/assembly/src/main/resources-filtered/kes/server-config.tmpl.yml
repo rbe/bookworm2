@@ -34,4 +34,4 @@ keys:
 
 log:
   error: on
-  audit: on
+  audit: off
