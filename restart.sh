@@ -53,16 +53,16 @@ case "${project}" in
     artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
     pushd "${current_project_dir}" >/dev/null
     for artifact in "${artifacts[@]}"; do
-      echo "Stopping artifact ${artifact}"
       pushd "${artifact}" >/dev/null
+      echo "Stopping artifact ${artifact} in $(pwd)"
       ./lifecycle.sh stop
       popd >/dev/null
     done
     popd >/dev/null
     pushd "${new_project_dir}" >/dev/null
     for artifact in "${artifacts[@]}"; do
-      echo "Starting artifact ${artifact}"
       pushd "${artifact}" >/dev/null
+      echo "Starting artifact ${artifact} in $(pwd)"
       ./lifecycle.sh start
       popd >/dev/null
     done
