@@ -44,6 +44,8 @@ running_version="$(docker ps --format "{{.Image}}" --filter "name=${project_name
   uniq)"
 if [[ -n "${running_version}" ]]; then
   current_project_dir="${releasedir}/${project_name}-${running_version}"
+else
+  current_project_dir=""
 fi
 
 case "${project}" in
