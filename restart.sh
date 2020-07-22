@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+#
+# Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
+# Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
+# All rights reserved. Use is subject to license terms.
+#
+
+set -o nounset
+set -o errexit
+
+if [[ $# != 2 ]]; then
+  echo "usage: $0 <env> <project>"
+  echo "  env        dev | prod"
+  echo "  project    hbk | hbd"
+  exit 1
+fi
+env=$1
+shift
+project=$1
+
+execdir="$(
+  pushd "$(dirname "$0")" >/dev/null
+  pwd
+  popd >/dev/null
+)"
+assemblydir="$(
+  pushd "${execdir}/assembly/target/dependency" >/dev/null
+  pwd
+  popd >/dev/null
+)"
+timestamp="$(find "${assemblydir}" -name \*.zip |
+  head -1 |
+  sed -E 's/.*([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z).*/\1/')"
+releasedir="${execdir}/../releases"
+releasedir="$(
+  pushd "${execdir}/../releases" >/dev/null
+  pwd
+  popd >/dev/null
+)"
+project_name="${env}-${project}"
+new_project_dir="${releasedir}/${project_name}-${timestamp}"
+running_version="$(docker ps --format "{{.Image}}" --filter "name=${project_name}/*" |
+  grep -Eow -e '([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z)' |
+  uniq)"
+current_project_dir="${releasedir}/${project_name}-${running_version}"
+
+case "${project}" in
+  hbk)
+    echo "Not implemented"
+    exit 1
+    ;;
+  hbd)
+    artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
+    pushd "${current_project_dir}" >/dev/null
+    for artifact in "${artifacts[@]}"; do
+      echo "Stopping artifact ${artifact}"
+      pushd "${artifact}" >/dev/null
+      ./lifecycle.sh stop
+      popd >/dev/null
+    done
+    popd >/dev/null
+    pushd "${new_project_dir}" >/dev/null
+    for artifact in "${artifacts[@]}"; do
+      echo "Starting artifact ${artifact}"
+      pushd "${artifact}" >/dev/null
+      ./lifecycle.sh start
+      popd >/dev/null
+    done
+    popd >/dev/null
+    ;;
+  *)
+    echo "Unknown project: ${project}"
+    exit 1
+    ;;
+esac
+
+exit 0
