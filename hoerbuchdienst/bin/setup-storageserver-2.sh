@@ -12,6 +12,21 @@ pvcreate /dev/sda4
 vgcreate tank /dev/sda4
 echo "done"
 
+echo "Creating volume group 'swap' and filesystem"
+lvcreate -L16G -n swap tank
+mkswap /dev/tank/swap
+echo "done"
+echo "Adding swap space"
+export $(blkid -o export /dev/tank/swap)
+cat >>/etc/fstab <<EOF
+UUID=$UUID  none  swap  defaults  0  0
+EOF
+unset UUID
+echo "done"
+echo "Activating swap space"
+swapon /dev/tank/swap
+echo "done"
+
 echo "Creating volume group 'docker' and filesystem"
 lvcreate -L8G -n docker tank
 mkfs.ext4 /dev/tank/docker
