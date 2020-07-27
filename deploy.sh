@@ -17,6 +17,7 @@ fi
 env=$1
 shift
 project=$1
+project_name="${env}-${project}"
 
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
@@ -38,7 +39,6 @@ releasedir="$(
   pwd
   popd >/dev/null
 )"
-project_name="${env}-${project}"
 project_dir="${releasedir}/${project_name}-${timestamp}"
 if [[ ! -d "${project_dir}" ]]; then
   mkdir "${project_dir}"
@@ -52,7 +52,8 @@ function deploy_artifacts() {
     file="${assemblydir}/${artifact}-${timestamp}"
     if [[ ! -d "${project_dir}/${artifact}" ]]; then
       unzip "${file}.zip" \
-        docker-compose.yml docker-compose.${env}.yml .env lifecycle.sh \
+        docker-compose.yml docker-compose.${env}.yml .env \
+        lifecycle.sh \
         -d "${project_dir}/${artifact}"
     else
       echo "Artifact ${artifact} already exists hoerbuchkatalog ${project_dir}/${artifact}"

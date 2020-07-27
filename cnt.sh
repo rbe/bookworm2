@@ -19,6 +19,7 @@ env=$1
 shift
 project=$1
 shift
+project_name="${env}-${project}"
 
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
@@ -31,7 +32,6 @@ releasedir="$(
   pwd
   popd >/dev/null
 )"
-project_name="${env}-${project}"
 running_version="$(docker ps --format "{{.Image}}" --filter "name=${project_name}/*" |
   grep -Eow -e '([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z)' |
   uniq)"
