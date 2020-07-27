@@ -14,11 +14,13 @@ if [[ $# != 1 ]]; then
   exit 1
 fi
 env=$1
+
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
   popd >/dev/null
 )"
+
 MAVEN_REPO="${execdir}/../maven-repository"
 [[ ! -d ${MAVEN_REPO} ]] && mkdir -p "${MAVEN_REPO}"
 MAVEN_REPO="$(
@@ -44,20 +46,6 @@ docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
 
-echo "Updating Mikrokosmos"
-if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
-  mkdir -p "${execdir}"/../mikrokosmos
-  pushd "${execdir}"/../mikrokosmos >/dev/null
-  git clone git@github.com:rbe/mikrokosmos.git .
-  git config pull.rebase false
-  git checkout master
-  popd >/dev/null
-else
-  pushd "${execdir}"/../mikrokosmos >/dev/null
-  git reset --hard && git pull
-  popd >/dev/null
-fi
-echo "done"
 echo "Building Mikrokosmos"
 rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
@@ -74,11 +62,6 @@ docker run \
 popd >/dev/null
 echo "done"
 
-echo "Updating WBH Bookworm"
-pushd "${execdir}" >/dev/null
-git reset --hard && git pull
-git checkout master
-echo "done"
 HOSTNAME="$(hostname -f)"
 echo "Building WBH Bookworm for ${HOSTNAME}"
 rm -rf "${MAVEN_REPO}/wbh"

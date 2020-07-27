@@ -18,12 +18,37 @@ env=$1
 shift
 project=$1
 
+execdir="$(
+  pushd "$(dirname "$0")" >/dev/null
+  pwd
+  popd >/dev/null
+)"
+
 echo "$(date) Starting update"
 
 pushd ~/bookworm2 >/dev/null
 
-echo "Fetching changes from origin"
-git fetch origin
+if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
+  echo "Cloning Mikrokosmos"
+  mkdir -p "${execdir}"/../mikrokosmos
+  pushd "${execdir}"/../mikrokosmos >/dev/null
+  git clone git@github.com:rbe/mikrokosmos.git .
+  git config pull.rebase false
+  git checkout master
+  popd >/dev/null
+else
+  echo "Updating Mikrokosmos, fetching changes from origin"
+  pushd "${execdir}"/../mikrokosmos >/dev/null
+  git reset --hard && git fetch origin
+  git checkout master
+  popd >/dev/null
+fi
+echo "done"
+
+echo "Updating WBH Bookworm, fetching changes from origin"
+pushd "${execdir}" >/dev/null
+git reset --hard && git fetch origin
+git checkout master
 echo "done"
 
 current_branch="$(git branch --show-current)"
