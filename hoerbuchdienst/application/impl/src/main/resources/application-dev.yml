@@ -16,7 +16,7 @@ micronaut:
       enabled: true
   caches:
     audiobookRepository:
-      maximumSize: 20
+      maximumSize: 2
   jcache:
     enabled: true
 
