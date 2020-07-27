@@ -48,14 +48,14 @@ case "${project}" in
     docker image rm "$(
       docker images "wbh-cms/*" |
         ${grep_running_version} |
-        grep -v "REPOSITORY"
-      awk '{print $1":"$2}'
+        grep -v "REPOSITORY" |
+        awk '{print $1":"$2}'
     )"
     docker image rm "$(
       docker images "${project_name}/*" |
         ${grep_running_version} |
-        grep -v "REPOSITORY"
-      awk '{print $1":"$2}'
+        grep -v "REPOSITORY" |
+        awk '{print $1":"$2}'
     )"
     echo "done"
     clean_old_releases "wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly"
@@ -65,8 +65,8 @@ case "${project}" in
     docker image rm "$(
       docker images "${project_name}/*" |
         ${grep_running_version} |
-        grep -v "REPOSITORY"
-      awk '{print $1":"$2}'
+        grep -v "REPOSITORY" |
+        awk '{print $1":"$2}'
     )"
     echo "done"
     clean_old_releases "wbh.bookworm.hoerbuchdienst.assembly"
