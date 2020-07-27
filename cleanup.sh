@@ -32,9 +32,10 @@ fi
 function clean_old_releases() {
   local artifact="$1"
   echo "Cleaning old ~/releases"
-  old_releases=("$(find ~/releases -maxdepth 1 -name "${env}-${project}*" -type d |
-    "${grep_running_version}" |
-    sort)")
+  # shellcheck disable=SC2207
+  old_releases=($(find ~/releases -maxdepth 1 -name "${env}-${project}*" -type d |
+    ${grep_running_version} |
+    sort))
   for old_release in ${old_releases[*]}; do
     echo "Removing ${old_release}"
     rm -rf "${old_release:?}/${artifact}"
@@ -45,29 +46,41 @@ function clean_old_releases() {
 case "${project}" in
   hbk)
     echo "Cleaning unused Docker images"
-    docker image rm "$(
-      docker images "wbh-cms/*" |
-        ${grep_running_version} |
-        grep -v "REPOSITORY" |
-        awk '{print $1":"$2}'
-    )"
-    docker image rm "$(
-      docker images "${project_name}/*" |
-        ${grep_running_version} |
-        grep -v "REPOSITORY" |
-        awk '{print $1":"$2}'
-    )"
+    # shellcheck disable=SC2207
+    unused_images=($(docker images "wbh-cms/*" |
+      ${grep_running_version} |
+      grep -v "REPOSITORY" |
+      awk '{print $1":"$2}'))
+    if [[ ${#unused_images[@]} -gt 0 ]]; then
+      for image in ${unused_images[*]}; do
+        docker image rm "${image}"
+      done
+    fi
+    # shellcheck disable=SC2207
+    unused_images=($(docker images "wbh-hbk/*" |
+      ${grep_running_version} |
+      grep -v "REPOSITORY" |
+      awk '{print $1":"$2}'))
+    if [[ ${#unused_images[@]} -gt 0 ]]; then
+      for image in ${unused_images[*]}; do
+        docker image rm "${image}"
+      done
+    fi
     echo "done"
     clean_old_releases "wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly"
     ;;
   hbd)
     echo "Cleaning unused Docker images"
-    docker image rm "$(
-      docker images "${project_name}/*" |
-        ${grep_running_version} |
-        grep -v "REPOSITORY" |
-        awk '{print $1":"$2}'
-    )"
+    # shellcheck disable=SC2207
+    unused_images=($(docker images "wbh-hbd/*" |
+      ${grep_running_version} |
+      grep -v "REPOSITORY" |
+      awk '{print $1":"$2}'))
+    if [[ ${#unused_images[@]} -gt 0 ]]; then
+      for image in ${unused_images[*]}; do
+        docker image rm "${image}"
+      done
+    fi
     echo "done"
     clean_old_releases "wbh.bookworm.hoerbuchdienst.assembly"
     ;;
