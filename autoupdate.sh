@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 #
-# Copyright (C) 2018-2019 art of coding UG, https://www.art-of-coding.eu
+# Copyright (C) 2020 art of coding UG, https://www.art-of-coding.eu
 # Alle Rechte vorbehalten. Nutzung unterliegt Lizenzbedingungen.
 # All rights reserved. Use is subject to license terms.
 #
@@ -18,7 +18,7 @@ env=$1
 shift
 project=$1
 
-echo "$(time) Starting update"
+echo "$(date) Starting update"
 
 pushd ~/bookworm2 >/dev/null
 
@@ -66,6 +66,6 @@ fi
 
 popd >/dev/null
 
-echo "$(time) Update ended successfully"
+echo "$(date) Update ended successfully"
 
 exit 0
