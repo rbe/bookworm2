@@ -92,7 +92,6 @@ bookworm2 $ bash hoerbuchdienst/bin/setup-storageserver-2.sh
 
 .Lokale Namensauflösung
 Alle Shards müssen dem einzurichtenden Shard bekannt sein.
-
 ----
 cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.

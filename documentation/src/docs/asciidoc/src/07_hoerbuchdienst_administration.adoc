@@ -89,7 +89,6 @@ Während eines Neustarts wird im Log angezeigt, dass der Shard nicht mehr aktiv 
 ----
 cnt.sh prod hbd logs -f hbd-rproxy
 ----
-
 Abbruch mit Strg-C.
 
 .Beispiel Shell im Reverse Proxy öffnen:
