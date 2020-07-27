@@ -65,8 +65,7 @@ if [[ ${revlist_count} -gt 0 ]]; then
   echo "***"
   echo "*** Building ${env}-${project}"
   echo "***"
-  ./build.sh "${env}"
-  if [[ $? -gt 0 ]]; then
+  if ! ./build.sh "${env}"; then
     echo "!!!"
     echo "!!! Error building project, exiting"
     echo "!!!"
@@ -75,7 +74,12 @@ if [[ ${revlist_count} -gt 0 ]]; then
   echo "***"
   echo "*** Deploying ${env}-${project}"
   echo "***"
-  ./deploy.sh "${env}" "${project}"
+  if ! ./deploy.sh "${env}" "${project}"; then
+    echo "!!!"
+    echo "!!! Error deploying project, exiting"
+    echo "!!!"
+    exit 1
+  fi
   echo "***"
   echo "*** Restarting ${env}-${project}"
   echo "***"
