@@ -48,9 +48,7 @@ echo "done"
 echo "Updating WBH Bookworm, fetching changes from origin"
 pushd "${execdir}" >/dev/null
 git reset --hard && git fetch origin
-git checkout master
 echo "done"
-
 current_branch="$(git branch --show-current)"
 if [[ "${current_branch}" != "master" ]]; then
   echo "Switching branch to master"
