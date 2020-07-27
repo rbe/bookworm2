@@ -50,7 +50,7 @@ if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
   pushd "${execdir}"/../mikrokosmos >/dev/null
   git clone git@github.com:rbe/mikrokosmos.git .
   git config pull.rebase false
-  git checkout develop
+  git checkout master
   popd >/dev/null
 else
   pushd "${execdir}"/../mikrokosmos >/dev/null
@@ -77,6 +77,7 @@ echo "done"
 echo "Updating WBH Bookworm"
 pushd "${execdir}" >/dev/null
 git reset --hard && git pull
+git checkout master
 echo "done"
 HOSTNAME="$(hostname -f)"
 echo "Building WBH Bookworm for ${HOSTNAME}"
