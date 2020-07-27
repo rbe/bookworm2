@@ -26,9 +26,16 @@ echo "Fetching changes from origin"
 git fetch origin
 echo "done"
 
-revlist_count=$(git rev-list --pretty=oneline develop..origin/develop | wc -l)
-#log_count=$(git log --pretty=oneline develop..origin/develop | wc -l)
-#diff_count=$(git diff --stat origin/develop.. | wc -l)
+current_branch="$(git branch --show-current)"
+if [[ "${current_branch}" != "master" ]]; then
+  echo "Switching branch to master"
+  git checkout master
+  echo "done"
+fi
+
+revlist_count=$(git rev-list --pretty=oneline master..origin/master | wc -l)
+#log_count=$(git log --pretty=oneline master..origin/master | wc -l)
+#diff_count=$(git diff --stat origin/master.. | wc -l)
 echo "Found ${revlist_count} changes"
 
 if [[ ${revlist_count} -gt 0 ]]; then
