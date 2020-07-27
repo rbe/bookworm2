@@ -72,7 +72,11 @@ _<Diagramm + Erläuterungen>_
 _<Diagramm + Erläuterungen>_
 
 ...
-
 ==== _<Infrastrukturelement n>_
 
 _<Diagramm + Erläuterungen>_
+
+include::07_hoerbuchdienst_inbetriebnahme.adoc[leveloffset=+1]
+include::07_hoerbuchdienst_administration.adoc[leveloffset=+1]
+include::07_minio.adoc[leveloffset=+1]
+include::07_rabbitmq.adoc[leveloffset=+1]

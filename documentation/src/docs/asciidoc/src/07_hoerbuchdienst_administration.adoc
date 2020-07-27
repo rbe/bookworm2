@@ -1,0 +1,105 @@
+== Administration
+
+=== Grundsätzliches
+
+Alle Skripte nutzen das Home-Verzeichnis des Benutzers, der sie ausführt.
+
+[cols="20%a,80%a",opts="header"]
+|====
+| Skript
+| Beschreibung
+
+| backup.sh
+|
+
+| build.sh
+|
+
+| cnt.sh
+|
+
+| deploy.sh
+|
+
+| release.sh
+|
+
+| restart.sh
+|
+
+| total-destroy.sh
+|
+|====
+
+Folgende Verzeichnisse werden angelegt:
+
+[cols="20%a,80%a",opts="header"]
+|====
+| Verzeichnis
+| Beschreibung
+
+| bookworm2
+|
+
+| mikrokosmos
+|
+
+| releases
+|
+
+| maven-repository
+|
+|====
+
+=== Container
+
+[source,shell,linenum]
+----
+cnt.sh <environment> <project> exec <service> <Docker Compose command>
+----
+
+TIP: Einen Alias in der Shell anlegen: `alias prodhbd="cnt.sh prod hbd"`
+
+.Beispiel Alle Dienste auflisten:
+[source,shell,linenum]
+----
+cnt.sh prod hbd ps
+----
+
+.Beispiel Den Hörbuchdienst neu starten:
+[source,shell,linenum]
+----
+cnt.sh prod hbd restart hoerbuchdienst
+----
+
+Während eines Neustarts wird im Log angezeigt, dass der Shard nicht mehr aktiv ist und dann wieder zurückkehrt:
+
+[source,shell,linenum,subs="verbatim,quotes"]
+----
+14:12:52.978 ERROR w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Current number of heartbeats (1)* within 5 secs *lower than high water mark (2)*
+14:12:52.978 ERROR w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Shard hoerbuchdienst.shard1.audiobook.wbh-online.de disappeared!* <1>
+14:12:52.978 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - *Removed hoerbuchdienst.shard1.audiobook.wbh-online.de's data from cache as it disappeared*
+14:13:22.537 INFO  w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Welcome back, shard hoerbuchdienst.shard1.audiobook.wbh-online.de!* <2>
+----
+<1> Shard ist nicht mehr aktiv
+<2> Shard kehr wieder zurück
+
+.Beispiel Logs dauerhaft des Reverse Proxy anschauen:
+[source,shell,linenum]
+----
+cnt.sh prod hbd logs -f hbd-rproxy
+----
+
+Abbruch mit Strg-C.
+
+.Beispiel Shell im Reverse Proxy öffnen:
+[source,shell,linenum]
+----
+cnt.sh prod hbd exec hbd-rproxy ash
+----
+
+.Beispiel Konfiguration Reverse Proxy neu laden:
+[source,shell,linenum]
+----
+cnt.sh prod hbd exec hbd-rproxy nginx -s reload
+----

@@ -190,3 +190,6 @@ _<Whitebox-Template>_
 ==== Whitebox <_Baustein y.1_>
 
 _<Whitebox-Template>_
+
+include::05_hoerbuchkatalog.adoc[leveloffset=+1]
+include::05_hoerbuchdienst.adoc[leveloffset=+1]

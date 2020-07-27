@@ -1,0 +1,18 @@
+== Hörbuchdienst
+
+[source,text,linenum,subs="quotes"]
+----
+13:30:55.828 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 1 entries from hoerbuchdienst.shard1.audiobook.wbh-online.de
+13:31:01.419 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 6 entries from hoerbuchdienst.shard2.audiobook.wbh-online.de
+13:31:18.349 INFO  w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Welcome to our farm, shard rbembp2.fritz.box!*
+13:31:18.349 INFO  w.b.h.a.r.d.a.HeartbeatMessageReceiver - *New high watermark: 3 shard(s) total*
+13:31:19.225 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - *Received 0 entries from rbembp2.fritz.box*
+
+Hearbeats werden von allen Shards gesendet, mit Ausnahme von rbembp2.fritz.box
+
+13:31:50.638 ERROR w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Current number of heartbeats (2) within 5 secs lower than high water mark (3)*
+13:31:50.639 ERROR w.b.h.a.r.d.a.HeartbeatMessageReceiver - *Shard rbembp2.fritz.box disappeared!*
+13:31:50.640 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - *Removed rbembp2.fritz.box's data from cache as it disappeared*
+13:31:55.935 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 1 entries from hoerbuchdienst.shard1.audiobook.wbh-online.de
+13:32:02.627 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 6 entries from hoerbuchdienst.shard2.audiobook.wbh-online.de
+----

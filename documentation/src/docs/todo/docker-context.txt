@@ -27,5 +27,3 @@ docker context create my-context \
     --docker "host=unix:///run/docker.sock"
 
 docker context update default --docker "host=unix:///run/docker.sock"
-
-Error response from daemon: OCI runtime create failed: container with id exists: unknown Error: failed to start containers:

@@ -1,5 +1,10 @@
 == MinIO S3
 
+=== Inbetriebnahme eines Servers
+
+NOTE: Wird von Installationsskripten übernommen; Abschnitt müsste aktualisiert werden.
+Siehe link:{project-hoerbuchdienst}/bin/setup-storageserver-1.sh[setup-storageserver-1.sh]
+
 ----
 cat >/etc/hostname <<EOF
 shard1.audiobook.wbh-online.de
@@ -107,7 +112,7 @@ cat /data1/.minio.sys/buckets/buck/TicketTemplate.txt/fs.json
 }
 ----
 
-Read:
+=== Ressourcen
 
 * https://docs.min.io/docs/minio-kms-quickstart-guide.html
 * https://github.com/minio/kes/blob/master/server-config.yaml

@@ -1,0 +1,27 @@
+== Network
+
+=== Domain Name Service
+
+[cols="a,a,a",opts="header"]
+|====
+| Name | Type | Destination
+3+| *shard<N>* wobei N = 1 .. *
+| shard<N>.audiobook.wbh-online.de | A | 1.2.3.4
+| portainer.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+| vault.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+| kes.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+| s3.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+| rabbitmq.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+| hoerbuchdienst.shard<N>.audiobook.wbh-online.de | CNAME | shard<N>audiobook.wbh-online.de
+|====
+
+=== Firewall
+
+https://wiki.ubuntu.com/UncomplicatedFirewall
+https://help.ubuntu.com/community/UFW
+https://wiki.ubuntu.com/UbuntuFirewallSpec
+http://manpages.ubuntu.com/manpages/bionic/man8/ufw.8.html
+
+https://wiki.archlinux.org/index.php/Uncomplicated_Firewall
+https://www.digitalocean.com/community/tutorials/ufw-essentials-common-firewall-rules-and-commands
+https://www.digitalocean.com/community/tutorials/how-to-set-up-a-firewall-with-ufw-on-ubuntu-18-04

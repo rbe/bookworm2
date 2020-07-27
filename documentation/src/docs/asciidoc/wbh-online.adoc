@@ -6,6 +6,7 @@
 = image:arc42-logo.png[arc42] Template
 // toc-title definition MUST follow document title without blank line!
 :toc-title: Inhaltsverzeichnis
+:toclevels: 4
 
 //additional style for arc42 help callouts
 ifdef::basebackend-html[]

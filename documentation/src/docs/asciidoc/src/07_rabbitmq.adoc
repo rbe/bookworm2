@@ -3,13 +3,13 @@
 === Setup
 
 .Generate password for user federator
-[source,bash,linenum]
+[source,shell,linenum]
 ----
 pwgen -Bcn 16
 ----
 
 .Setup federation on all nodes
-[source,bash,linenum]
+[source,shell,linenum]
 ----
 docker-compose exec rabbitmq rabbitmqctl change_password federator <generated password>
 docker-compose exec rabbitmq rabbitmq-setup-federation.sh federator:<generated password>
@@ -19,6 +19,7 @@ docker-compose exec rabbitmq rabbitmq-add-federation.sh federator:<generated pas
 .Test federated exchange
 On node1:
 
+[source,shell,linenum]
 ----
 docker-compose exec rabbitmq rabbitmqadmin \
     -s --host="rabbitmq.shard1.audiobook.wbh-online.de" --port=15671 \
@@ -29,12 +30,58 @@ docker-compose exec rabbitmq rabbitmqadmin \
 
 On node2:
 
+[source,shell,linenum]
 ----
 docker-compose exec rabbitmq rabbitmqadmin \
     -s --host="rabbitmq.shard2.audiobook.wbh-online.de" --port=15671 \
     --username=federator --password=Lo3ciishaiha \
     --vhost=hoerbuchdienst \
     get queue="heartbeat" ackmode=ack_requeue_false
+----
+
+=== TLS
+
+.AMQPS URLs
+----
+amqps://federator:@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&verify=verify_peer&heartbeat=10&connection_timeout=10000
+amqps://federator:@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&cacertfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/fullchain.pem&certfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/cert.pem&keyfile=/etc/letsencrypt/live/rabbitmq.shard1.audiobook.wbh-online.de/privkey.pem&verify=verify_peer&heartbeat=10&connection_timeout=10000
+----
+
+[source,shell,linenum]
+----
+$ openssl verify rootaid-archroot/storage/isrgrootx1.pem.txt
+rootaid-archroot/storage/isrgrootx1.pem.txt: OK
+----
+
+[source,shell,linenum]
+----
+$ openssl x509 -noout -subject -in rootaid-archroot/storage/isrgrootx1.pem.txt
+subject= /C=US/O=Internet Security Research Group/CN=ISRG Root X1
+----
+
+[source,shell,linenum]
+----
+$ openssl x509 -noout -subject -in rootaid-archroot/storage/lets-encrypt-x3-cross-signed.pem.txt
+subject= /C=US/O=Let's Encrypt/CN=Let's Encrypt Authority X3
+----
+
+[source,shell,linenum]
+----
+$ openssl verify /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem
+CN = rabbitmq.shard1.audiobook.wbh-online.de
+error 20 at 0 depth lookup: unable to get local issuer certificate
+error /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem: verification failed
+----
+
+[source,shell,linenum]
+----
+$ openssl x509 -in /var/lib/docker/volumes/storage_rproxycerts/_data/archive/rabbitmq.shard1.audiobook.wbh-online.de/fullchain1.pem -noout -issuer
+issuer=C = US, O = Let's Encrypt, CN = Let's Encrypt Authority X3
+----
+
+[source,shell,linenum]
+----
+openssl s_client -connect rabbitmq.shard1.audiobook.wbh-online.de:5671 -cert cert1.pem -key privkey1.pem -CAfile chain1.pem
 ----
 
 === Ressources

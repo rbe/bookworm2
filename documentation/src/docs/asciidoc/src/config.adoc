@@ -4,7 +4,7 @@
 :toc-title: Inhaltsverzeichnis
 
 // enable table-of-contents
-:toc:
+:toc: left
 
 :caution-caption: Achtung
 :important-caption: Wichtig
@@ -19,3 +19,9 @@
 
 // where are images located?
 :imagesdir: ./images
+
+:source-highlighter: rouge
+:rouge-style: base16.solarized.dark
+
+:project-base: ../..
+:project-hoerbuchdienst: {project-base}/hoerbuchdienst

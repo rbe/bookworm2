@@ -21,3 +21,6 @@ Verschiedene Möglichkeiten:
 * ausführlicher in Form einzelner Unterkapitel je Entscheidung
 * ADR (http://thinkrelevance.com/blog/2011/11/15/documenting-architecture-decisions[Architecture Decision Record]) für jede wichtige Entscheidung
 ****
+
+include::09_security.adoc[leveloffset=+1]
+include::09_java_zip.adoc[leveloffset=+1]
