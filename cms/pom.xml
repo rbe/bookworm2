@@ -9,7 +9,7 @@
         <version>LocalBuild</version>
     </parent>
     <artifactId>wbh.bookworm.cms</artifactId>
-    <name>wbhonline.de CMS</name>
+    <name>wbh-online.de CMS</name>
     <packaging>pom</packaging>
     <modules>
         <module>approxy</module>
