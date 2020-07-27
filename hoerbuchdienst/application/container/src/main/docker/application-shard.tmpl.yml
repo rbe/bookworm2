@@ -5,5 +5,5 @@ rabbitmq:
   password:
 objectstorage:
   minio:
-    accessKey:
-    secureKey:
+    access_key:
+    secure_key:
