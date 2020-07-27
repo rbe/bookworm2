@@ -39,25 +39,31 @@ revlist_count=$(git rev-list --pretty=oneline master..origin/master | wc -l)
 echo "Found ${revlist_count} changes"
 
 if [[ ${revlist_count} -gt 0 ]]; then
-  echo "!!!"
-  echo "!!! Building ${env}-${project}"
-  echo "!!!"
+  echo "***"
+  echo "*** Building ${env}-${project}"
+  echo "***"
   ./build.sh "${env}"
-  echo "!!!"
-  echo "!!! Deploying ${env}-${project}"
-  echo "!!!"
+  if [[ $? -gt 0 ]]; then
+    echo "!!!"
+    echo "!!! Error building project, exiting"
+    echo "!!!"
+    exit 1
+  fi
+  echo "***"
+  echo "*** Deploying ${env}-${project}"
+  echo "***"
   ./deploy.sh "${env}" "${project}"
-  echo "!!!"
-  echo "!!! Restarting ${env}-${project}"
-  echo "!!!"
+  echo "***"
+  echo "*** Restarting ${env}-${project}"
+  echo "***"
   ./restart.sh "${env}" "${project}"
-  echo "!!!"
-  echo "!!! Cleaning up ${env} hbk"
-  echo "!!!"
+  echo "***"
+  echo "*** Cleaning up ${env} hbk"
+  echo "***"
   ./cleanup.sh "${env}" hbk
-  echo "!!!"
-  echo "!!! Cleaning up ${env} hbd"
-  echo "!!!"
+  echo "***"
+  echo "*** Cleaning up ${env} hbd"
+  echo "***"
   ./cleanup.sh "${env}" hbd
   echo "done"
 else
