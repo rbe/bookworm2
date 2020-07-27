@@ -88,7 +88,7 @@ if [[ "${PUSH_TO_ORIGIN}" == "true" ]]; then
   echo -n "Pushing to origin/master..."
   git push origin master
   done_or_failed $?
-  echo -n "Puhsing tags to origin HEAD..."
+  echo -n "Pushing tags to origin HEAD..."
   git push --tags origin HEAD
   done_or_failed $?
 fi
