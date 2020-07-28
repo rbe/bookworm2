@@ -46,8 +46,10 @@ docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
 
-echo "Building Mikrokosmos"
+echo "Removing Mikrokosmos artifacts from local Maven cache"
 rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
+echo "done"
+echo "Building Mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
 docker run \
   --rm \
@@ -62,9 +64,12 @@ docker run \
 popd >/dev/null
 echo "done"
 
+echo "Removing WBH Bookworm artifacts from local Maven cache"
+rm -rf "${MAVEN_REPO}/wbh"
+echo "done"
 HOSTNAME="$(hostname -f)"
 echo "Building WBH Bookworm for ${HOSTNAME}"
-rm -rf "${MAVEN_REPO}/wbh"
+pushd "${execdir}" >/dev/null
 docker run \
   --rm \
   --name maven \
