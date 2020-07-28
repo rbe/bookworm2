@@ -16,7 +16,7 @@ class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy
         final Titelnummer titelnummer = new Titelnummer(shardObject.getObjectId());
         final int hashCode = MyHashCodeImpl.hashCode(titelnummer.getBytesUTF8());
         final int shardIndex = hashCode % dataHeartbeats.count();
-        return new ShardName(); // TODO ShardName.of(shardIndex + 1);
+        return shardObject.getShardName(); // TODO ShardName.of(shardIndex + 1);
     }
 
     @Override
