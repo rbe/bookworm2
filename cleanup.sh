@@ -37,9 +37,10 @@ function clean_old_releases() {
     ${grep_running_version} |
     sort))
   for old_release in ${old_releases[*]}; do
-    echo "Removing ${old_release}"
+    echo "Removing ${old_release}/${artifact}"
     rm -rf "${old_release:?}/${artifact}"
   done
+  find ~/releases -empty -type d -print0 | xargs -0 -r rmdir
   echo "done"
 }
 
