@@ -16,3 +16,5 @@ Hearbeats werden von allen Shards gesendet, mit Ausnahme von rbembp2.fritz.box
 13:31:55.935 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 1 entries from hoerbuchdienst.shard1.audiobook.wbh-online.de
 13:32:02.627 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 6 entries from hoerbuchdienst.shard2.audiobook.wbh-online.de
 ----
+
+include::05_hoerbuchdienst_ressourcen.adoc[leveloffset=+1]

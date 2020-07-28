@@ -1,4 +1,4 @@
-== Hörbuchdienst
+== Ressourcen
 
 === Web Audio Player
 
@@ -68,6 +68,7 @@
 === Barrierefreiheit
 
 * https://www.barrierefrei-kommunizieren.de/datenbank/
+* https://www.a11yproject.com
 
 === MP3
 

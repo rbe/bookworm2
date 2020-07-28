@@ -63,7 +63,7 @@ ssh-keyscan bitbucket.org 2>/dev/null >>~/.ssh/known_hosts
 git clone git@bitbucket.org:artofcoding/bookworm2 ~/bookworm2
 cd ~/bookworm2
 git config pull.rebase false
-git checkout develop
+git checkout master
 ----
 
 .Installation Teil 1 -- Die Installation starten:
@@ -92,6 +92,7 @@ bookworm2 $ bash hoerbuchdienst/bin/setup-storageserver-2.sh
 
 .Lokale Namensauflösung
 Alle Shards müssen dem einzurichtenden Shard bekannt sein.
+
 ----
 cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.
@@ -245,7 +246,9 @@ IMPORTANT: Die durch die Erstinstallation und den ersten Start erzeugten Volumes
 [source,shell,linenum]
 ----
 cd ~/bookworm2
-./build.sh prod
+git fetch origin
+git checkout origin/master -- autoupdate.sh
+./autoupdate.sh prod hbd
 ----
 
 .Stop
@@ -258,12 +261,11 @@ releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly $ ./
 ----
 
 .Start
-In das *neue Release-Verzeichnis* wechseln:
+Die `restart.sh` mit Umgebung und Projekt aufrufen:
 
-[source,shell script,linenum]
+[source,shell,linenum]
 ----
-bookworm2 $ cd ~/releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly
-releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly $ ./lifecycle.sh start
+$ restart.sh prod hbd
 ----
 
 === Backup
