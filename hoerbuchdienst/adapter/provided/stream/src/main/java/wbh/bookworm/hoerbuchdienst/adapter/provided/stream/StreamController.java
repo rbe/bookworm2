@@ -47,7 +47,7 @@ public class StreamController {
     }
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
-    public HttpResponse<byte[]> audiobook(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<byte[]> audiobookAsZip(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Hörbuch mit Wasserzeichen als ZIP ab",
                 audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
         try (final InputStream audiobook = audiobookService.zipAsStream(audiobookAnfrageDTO.getHoerernummer(),
@@ -59,7 +59,7 @@ public class StreamController {
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
-    public HttpResponse<byte[]> track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
+    public HttpResponse<byte[]> trackAsStream(@Body final TrackAnfrageDTO trackAnfrageDTO) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab",
                 trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
                 trackAnfrageDTO.getIdent());

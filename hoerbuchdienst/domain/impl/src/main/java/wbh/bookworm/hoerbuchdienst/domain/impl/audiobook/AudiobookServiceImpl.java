@@ -40,6 +40,8 @@ final class AudiobookServiceImpl implements AudiobookService {
     // TODO Konfiguration pro Mandant
     private static final String PIRACY_INQUIRY_URL_PREFIX = "https://wbh-online.de/ausleihe-anfragen";
 
+    public static final String UNKNOWN = "unknown";
+
     private final AudiobookRepository audiobookRepository;
 
     private final Watermarker watermarker;
@@ -58,7 +60,10 @@ final class AudiobookServiceImpl implements AudiobookService {
     @Override
     public String shardLocation(final String titelnummer) {
         final ShardName shardName = audiobookRepository.lookupShard(titelnummer);
-        return shardName.toString();
+        LOGGER.debug("Looked up shard '{}' for '{}'", shardName, titelnummer);
+        return null != shardName
+                ? shardName.toString()
+                : UNKNOWN;
     }
 
     @Override
@@ -77,13 +82,13 @@ final class AudiobookServiceImpl implements AudiobookService {
     }
 
     // TODO Lasttest mit n Hörbüchern und n Threads, wobei n=1,2,4,6,8,...
-    // TODO Wasserzeichen anbringen mit 1 Thread pro MP3
     // TODO Bis zu wie vielen Threads steigert sich die Anzahl personalisierter Hörbücher?
     @Override
     public InputStream zipAsStream(final String hoerernummer, final String titelnummer) {
         // TODO Konfiguration
         final String javaIoTmpdir = System.getProperty("java.io.tmpdir");
-        final Path audiobookDirectory = Path.of(String.format("%s%s", javaIoTmpdir, titelnummer));
+        final Path audiobookDirectory = Path.of(String.format("%s/%s", javaIoTmpdir, titelnummer)
+                .replace("//", "/"));
         // ZIP auf tmpfs auspacken
         try (final ZipInputStream sourceZipStream = new ZipInputStream(audiobookRepository.zipAsStream(titelnummer))) {
             LOGGER.info("Entpacke Hörbuch {} auf tmpfs {}", titelnummer, javaIoTmpdir);
@@ -95,11 +100,11 @@ final class AudiobookServiceImpl implements AudiobookService {
         }
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         // Wasserzeichen an MP3s anbringen
-        // TODO "Kapitel" ist mandantenspezifisch
-        final Path kapitelDirectory = audiobookDirectory.resolve(String.format("%sKapitel", titelnummer));
+        final Path kapitelDirectory = audiobookDirectory.resolve(/* TODO "Kapitel" ist mandantenspezifisch */String.format("%sKapitel", titelnummer));
         try (final Stream<Path> paths = Files.list(kapitelDirectory)
                 .filter(path -> path.getFileName().toString().endsWith(".mp3"))) {
             paths.collect(Collectors.toUnmodifiableList())
+                    // Wasserzeichen anbringen mit 1 Thread pro MP3
                     .parallelStream()
                     .forEach(mp3File -> {
                         LOGGER.info("Bringe Wasserzeichen {} in {} an", watermark, mp3File.getFileName());
