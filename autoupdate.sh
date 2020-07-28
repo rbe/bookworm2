@@ -26,7 +26,9 @@ execdir="$(
 
 echo "$(date) Starting update"
 
-pushd ~/bookworm2 >/dev/null
+#
+# Mikrokosmos
+#
 
 if [[ ! -d "${execdir}"/../mikrokosmos ]]; then
   echo "Cloning Mikrokosmos"
@@ -45,8 +47,13 @@ else
 fi
 echo "done"
 
-echo "Updating WBH Bookworm, fetching changes from origin"
+#
+# WBH Bookworm
+#
+
 pushd "${execdir}" >/dev/null
+
+echo "Updating WBH Bookworm, fetching changes from origin"
 git reset --hard && git fetch origin
 echo "done"
 current_branch="$(git branch --show-current)"
@@ -62,6 +69,16 @@ revlist_count=$(git rev-list --pretty=oneline master..origin/master | wc -l)
 echo "Found ${revlist_count} changes"
 
 if [[ ${revlist_count} -gt 0 ]]; then
+  echo "***"
+  echo "*** Pulling changes"
+  echo "***"
+  if ! git pull origin; then
+    echo "!!!"
+    echo "!!! Error pulling changes, exiting"
+    echo "!!!"
+    exit 1
+  fi
+  echo "done"
   echo "***"
   echo "*** Building ${env}-${project}"
   echo "***"
