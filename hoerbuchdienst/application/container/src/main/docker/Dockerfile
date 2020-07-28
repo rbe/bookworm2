@@ -17,13 +17,13 @@ USER myservice
 ARG JAR_FILE
 COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/hoerbuchdienst/hoerbuchdienst.jar
 COPY --chown=myservice src/main/docker/application-shard.tmpl.yml /var/local/
+COPY --chown=myservice src/main/docker/logback.xml /var/local/
 VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
-#-Dlogback.configurationFile=/path/to/config.xml
 ENTRYPOINT ["java",\
     "-Xms2G", "-Xmx2G",\
+    "-Dlogback.configurationFile=/var/local/logback.xml",\
     "-Dmicronaut.environments=prod",\
     "-Dmicronaut.config.files=/var/local/application-shard.yml",\
-    "-Dio.micronaut.context.env.loglevel=DEBUG",\
     "-jar", "/usr/local/hoerbuchdienst/hoerbuchdienst.jar"]
