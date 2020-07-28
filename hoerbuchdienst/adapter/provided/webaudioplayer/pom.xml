@@ -11,4 +11,12 @@
     <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.webaudioplayer</artifactId>
     <name>wbh-online.de Hörbuchdienst Provided Adapter Web Audio Player</name>
     <packaging>jar</packaging>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+        </resources>
+    </build>
 </project>
