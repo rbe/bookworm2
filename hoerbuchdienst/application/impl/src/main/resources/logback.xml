@@ -4,7 +4,8 @@
         <!-- encoders are assigned the type
              ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
         <encoder>
-            <pattern>%cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n
+            <pattern>
+                %cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}#%M) - %msg%n
             </pattern>
         </encoder>
     </appender>
@@ -12,6 +13,7 @@
         <appender-ref ref="STDOUT"/>
     </root>
     <logger name="io.micronaut.context.condition" level="${io.micronaut.context.condition.loglevel:-INFO}"/>
+    <logger name="io.micronaut.context.env" level="${io.micronaut.context.env.loglevel:-INFO}"/>
     <logger name="io.micronaut.context" level="${io.micronaut.context.loglevel:-INFO}"/>
     <logger name="io.micronaut" level="${io.micronaut.loglevel:-INFO}"/>
     <logger name="wbh" level="${wbh.loglevel:-INFO}"/>

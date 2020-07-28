@@ -1,48 +1,11 @@
 micronaut:
-  application:
-    name: hoerbuchdienst
   server:
     host: 0.0.0.0
-    port: 8080
-    context-path: /
-  router:
-    static-resources:
-      default:
-        enabled: true
-        mapping: "/**"
-        paths: "classpath:static"
-  views:
-    csp:
-      enabled: true
-  caches:
-    audiobookRepository:
-      maximumSize: 5
-  jcache:
-    enabled: true
 
 hoerbuchdienst:
   repository:
-    type: objectstorage
     localdisk:
       uri: /var/local/Buecher-WBH
-    objectstorage:
-      name: minio
-  temporary:
-    path: /tmp/hoerbuchdienst
-
-objectstorage:
-  minio:
-    url: http://minio:9000
-    accessKey:
-    secureKey:
-    bucketName: hoerbuchdienst
-    serversideencryption: atRest
-
-rabbitmq:
-  servers:
-    default:
-      uri: amqps://${rabbitmq.username}:${rabbitmq.password}@rabbitmq.${shard.name}.audiobook.wbh-online.de/hoerbuchdienst
-      automatic-recovery-enabled: true
 
 elasticsearch:
   httpHosts: "http://elasticsearch:9200"

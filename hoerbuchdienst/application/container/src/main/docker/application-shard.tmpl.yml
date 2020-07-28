@@ -1,9 +1,13 @@
 shard:
-  name:
+  name: shardN
+
 rabbitmq:
-  username:
-  password:
+  servers:
+    default:
+      uri: amqps://username:password@rabbitmq.${shard.name}.audiobook.wbh-online.de/hoerbuchdienst
+
 objectstorage:
   minio:
+    url: http://minio:9000
     access_key:
     secure_key:

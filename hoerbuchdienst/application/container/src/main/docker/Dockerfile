@@ -21,6 +21,8 @@ VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
 #-Dlogback.configurationFile=/path/to/config.xml
-ENTRYPOINT ["java", "-Xms2G", "-Xmx2G",\
-    "-Dmicronaut.environments=prod", "-Dmicronaut.config.files=/var/local/application-shard.yml",\
-     "-jar", "/usr/local/hoerbuchdienst/hoerbuchdienst.jar"]
+ENTRYPOINT ["java",\
+    "-Xms2G", "-Xmx2G",\
+    "-Dmicronaut.environments=prod",\
+    "-Dmicronaut.config.files=/var/local/application-shard.yml",\
+    "-jar", "/usr/local/hoerbuchdienst/hoerbuchdienst.jar"]
