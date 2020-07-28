@@ -43,6 +43,19 @@ else
   pushd "${execdir}"/../mikrokosmos >/dev/null
   git reset --hard && git fetch origin
   git checkout master
+  revlist_count=$(git rev-list --pretty=oneline master..origin/master | wc -l)
+  echo "Found ${revlist_count} changes"
+  if [[ ${revlist_count} -gt 0 ]]; then
+    echo "***"
+    echo "*** Pulling changes"
+    echo "***"
+    if ! git pull origin; then
+      echo "!!!"
+      echo "!!! Error pulling changes, exiting"
+      echo "!!!"
+      exit 1
+    fi
+  fi
   popd >/dev/null
 fi
 echo "done"
