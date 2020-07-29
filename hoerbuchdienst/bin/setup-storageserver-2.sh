@@ -61,6 +61,11 @@ echo "Cleaning package cache"
 echo "y" | pacman -Scc
 echo "done"
 
+echo "Generating SSH key for user $(id -un)"
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+cat ~/.ssh/id_rsa.pub
+echo "done"
+
 echo "!!!"
 echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
