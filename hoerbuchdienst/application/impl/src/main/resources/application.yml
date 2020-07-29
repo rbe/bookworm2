@@ -28,6 +28,9 @@ hoerbuchdienst:
       name: minio
   temporary:
     path: ${java.io.tmpdir}/hoerbuchdienst
+  piracy:
+    inquiry:
+      urlprefix: https://wbh-online.de/ausleihe-anfragen
 
 objectstorage:
   minio:
