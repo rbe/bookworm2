@@ -41,17 +41,17 @@ public class StreamController {
     @Head(uri = "location/{titelnummer}")
     public HttpResponse<Object> location(@PathVariable final /* TODO AghNummer */String titelnummer) {
         final String shardNumber = audiobookService.shardLocation(titelnummer);
-        /*final URI location = URI.create(String.format("", shardNumber));
-        return HttpResponse.redirect(location).header("X-Shard-Location", String.format("%s", shardNumber));*/
         return HttpResponse.ok().header("X-Shard-Location", String.format("%s", shardNumber));
     }
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
-    public HttpResponse<byte[]> audiobookAsZip(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Hörbuch mit Wasserzeichen als ZIP ab",
+    public HttpResponse<byte[]> zippedAudiobookAsStream(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
                 audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
         try (final InputStream audiobook = audiobookService.zipAsStream(audiobookAnfrageDTO.getHoerernummer(),
                 audiobookAnfrageDTO.getTitelnummer())) {
+            LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
+                    audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
             return HttpResponse.ok(audiobook.readAllBytes());
         } catch (Exception e) {
             throw new BusinessException("", e);
@@ -60,11 +60,14 @@ public class StreamController {
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     public HttpResponse<byte[]> trackAsStream(@Body final TrackAnfrageDTO trackAnfrageDTO) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track '{}' mit Wasserzeichen ab",
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Track '{}' mit Wasserzeichen",
                 trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
                 trackAnfrageDTO.getIdent());
         try (final InputStream track = audiobookService.trackAsStream(trackAnfrageDTO.getHoerernummer(),
                 trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent())) {
+            LOGGER.info("Hörer '{}' Hörbuch '{}': Track '{}' mit Wasserzeichen erstellt",
+                    trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
+                    trackAnfrageDTO.getIdent());
             return HttpResponse.ok(track.readAllBytes())
                     .header("Accept-Ranges", "bytes");
         } catch (Exception e) {
