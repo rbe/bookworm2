@@ -90,6 +90,10 @@
     <build>
         <resources>
             <resource>
+                <directory>src/main/resources</directory>
+                <filtering>false</filtering>
+            </resource>
+            <resource>
                 <directory>bin</directory>
                 <filtering>false</filtering>
             </resource>
