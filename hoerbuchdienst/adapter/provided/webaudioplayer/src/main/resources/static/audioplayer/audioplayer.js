@@ -271,7 +271,7 @@ export class Audioplayer {
                 'Content-Type': 'application/json'
             },
             'body': JSON.stringify({
-                'mandant': 'WBH',
+                'mandant': /* TODO Mandant */'WBH',
                 'hoerernummer': this.hoerernummer,
                 'titelnummer': this.titelnummer
             })
