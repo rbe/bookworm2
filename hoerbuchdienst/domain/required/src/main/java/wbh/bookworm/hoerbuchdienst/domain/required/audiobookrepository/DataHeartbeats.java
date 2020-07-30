@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
@@ -17,41 +18,59 @@ public final class DataHeartbeats implements Serializable {
     /**
      * hostname -> Heartbeat
      */
-    private final Map<String, DataHeartbeat> heartbeats;
+    private final Map<String, DataHeartbeat> dataHeartbeatMap;
 
     public DataHeartbeats() {
-        heartbeats = new ConcurrentHashMap<>(5);
+        dataHeartbeatMap = new ConcurrentHashMap<>(5);
     }
 
     public void remember(final String hostname, final DataHeartbeat dataHeartbeat) {
-        heartbeats.put(hostname, dataHeartbeat);
+        dataHeartbeatMap.put(hostname, dataHeartbeat);
     }
 
     public void forget(final String hostname) {
-        heartbeats.remove(hostname);
+        dataHeartbeatMap.remove(hostname);
     }
 
     public boolean someReceived() {
-        return !heartbeats.isEmpty();
+        return !dataHeartbeatMap.isEmpty();
     }
 
+    /**
+     * Number of received heartbeats
+     */
     public int count() {
-        return heartbeats.size();
+        return dataHeartbeatMap.size();
     }
 
-    public List<ShardObject> allShardObjects() {
-        return heartbeats.values()
+    public List<ShardAudiobook> allShardAudiobooks() {
+        return dataHeartbeatMap.values()
                 .stream()
-                .map(DataHeartbeat::getShardObjects)
+                .map(DataHeartbeat::getShardAudiobooks)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Map<String, List<ShardObject>> allShardObjectsByHostname() {
-        return heartbeats.entrySet()
+    public Map<String, List<ShardAudiobook>> allShardAudiobooksByHostname() {
+        return dataHeartbeatMap.entrySet()
                 .stream()
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().getShardObjects()))
+                .map(entry -> Map.entry(entry.getKey(), entry.getValue().getShardAudiobooks()))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+
+    /**
+     * Summarize sizes of all shard objects
+     */
+    public Optional<Long> totalSize() {
+        return allShardAudiobooks()
+                .stream()
+                .map(ShardAudiobook::size)
+                .reduce(Long::sum);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("DataHeartbeats{dataHeartbeatMap=%s}", dataHeartbeatMap.size());
     }
 
 }

@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.ZonedDateTime;
 import java.util.List;
-import java.util.LongSummaryStatistics;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -15,10 +14,12 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
+import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 
 @Singleton
@@ -26,7 +27,7 @@ final class ScheduledDataHeartbeatMessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledDataHeartbeatMessageSender.class);
 
-    private static final long TOTAL_4TB = 4L * 1024L * 1024L * 1024L * 1024L;
+    private static final long AVAILABLE_BYTES_4TB = (long) (4.5d * 1024.0 * 1024.0 * 1024.0 * 1024.0);
 
     private final ShardName shardName;
 
@@ -48,19 +49,17 @@ final class ScheduledDataHeartbeatMessageSender {
         final Long usedBytes = objectMetaInfos.stream()
                 .map(ObjectMetaInfo::getLength)
                 .reduce(0L, Long::sum);
-        final Map<Titelnummer, LongSummaryStatistics> statistics = objectMetaInfos.stream()
+        final Map<Titelnummer, List<ShardObject>> audiobookShardObjects = objectMetaInfos.stream()
                 /* TODO Mandantenspezifisch */.filter(objectMetaInfo -> objectMetaInfo.getObjectName().contains("Kapitel/"))
-                .collect(Collectors.groupingBy(objectMetaInfo -> fromObjectName(objectMetaInfo.getObjectName()),
-                        Collectors.summarizingLong(ObjectMetaInfo::getLength)));
-        final List<ShardObject> shardObjects = statistics.entrySet()
+                .map(omi -> new ShardObject(omi.getObjectName(), omi.getLength(), omi.getEtag()))
+                .collect(Collectors.groupingBy(shardObject -> fromObjectName(shardObject.getObjectId()),
+                        Collectors.toList()));
+        final List<ShardAudiobook> shardAudiobooks = audiobookShardObjects.entrySet()
                 .stream()
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().getSum()))
-                .map(entry -> Map.entry(entry.getKey(), new ShardObject(entry.getKey().getValue(),
-                        entry.getValue(), "", shardName)))
-                .map(Map.Entry::getValue)
+                .map(entry -> ShardAudiobook.local(entry.getKey().toString(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableList());
         final DataHeartbeat dataHeartbeat = new DataHeartbeat(ZonedDateTime.now().toInstant(), shardName,
-                TOTAL_4TB, usedBytes, shardObjects);
+                AVAILABLE_BYTES_4TB, usedBytes, shardAudiobooks);
         LOGGER.trace("Sending data heartbeat {}", dataHeartbeat);
         try {
             dataHeartbeatMessageSender.send(shardName.toString(), dataHeartbeat);
@@ -69,6 +68,18 @@ final class ScheduledDataHeartbeatMessageSender {
         }
     }
 
+    private String audiobookHash(final Map<String, String> allShardObjectsHashes, final Titelnummer titelnummer) {
+        final List<String> allEtags = allShardObjectsHashes.entrySet()
+                .stream()
+                .filter(entry -> entry.getKey().startsWith(titelnummer.getValue()))
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toUnmodifiableList());
+        return MessageDigester.ofUTF8(allEtags);
+    }
+
+    /**
+     * Titelnummer aus Objektnamen ableiten
+     */
     private Titelnummer fromObjectName(final String objectName) {
         try {
             final int idx = objectName.indexOf('/');

@@ -5,6 +5,9 @@ import java.util.Objects;
 
 import io.micronaut.core.annotation.Introspected;
 
+/**
+ * A single object in shard's storage
+ */
 @Introspected
 public final class ShardObject implements Serializable {
 
@@ -16,26 +19,21 @@ public final class ShardObject implements Serializable {
 
     private String hashValue;
 
-    private ShardName shardName;
-
     public ShardObject() {
     }
 
     public ShardObject(final String objectId,
                        final long size,
-                       final String hashValue,
-                       final ShardName shardName) {
+                       final String hashValue) {
         this.objectId = objectId;
         this.size = size;
         this.hashValue = hashValue;
-        this.shardName = shardName;
     }
 
-    public static ShardObject of(final ShardObject shardObject, final ShardName shardName) {
+    public static ShardObject of(final ShardObject shardObject) {
         return new ShardObject(shardObject.objectId,
                 shardObject.size,
-                shardObject.hashValue,
-                shardName);
+                shardObject.hashValue);
     }
 
     public String getObjectId() {
@@ -62,37 +60,23 @@ public final class ShardObject implements Serializable {
         this.hashValue = hashValue;
     }
 
-    public ShardName getShardName() {
-        return shardName;
-    }
-
-    public void setShardName(final ShardName shardName) {
-        this.shardName = shardName;
-    }
-
-    /* TODO unnötig */
-    public void reshard(final ShardName shardName) {
-        this.shardName = shardName;
-    }
-
     @Override
     public boolean equals(final Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         final ShardObject that = (ShardObject) o;
-        return shardName == that.shardName &&
-                size == that.size &&
+        return size == that.size &&
                 objectId.equals(that.objectId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(shardName, objectId, size);
+        return Objects.hash(objectId, size);
     }
 
     @Override
     public String toString() {
-        return String.format("ShardObject{objectId='%s', shardName='%s'}", objectId, shardName);
+        return String.format("ShardObject{objectId='%s',  size=%d}", objectId, size);
     }
 
 }

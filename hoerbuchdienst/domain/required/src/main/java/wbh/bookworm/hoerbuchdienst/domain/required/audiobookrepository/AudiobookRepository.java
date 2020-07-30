@@ -9,12 +9,13 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 public interface AudiobookRepository {
 
-    ShardName lookupShard(/* TODO AghNummer */String titelnummer);
+    Optional<ShardName> lookupShard(/* TODO AghNummer */String titelnummer);
 
     void maybeReshard(DataHeartbeats dataHeartbeats);
 

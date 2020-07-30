@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
@@ -32,9 +33,9 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -51,7 +52,7 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private final ShardDistributionStrategy shardDistributionStrategy;
 
-    private List<ShardObject> shardObjects;
+    private List<ShardAudiobook> shardAudiobooks;
 
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
@@ -59,18 +60,25 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     @Inject
     AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
                             final AudiobookMapper audiobookMapper,
-                            final ShardDistributionStrategy shardDistributionStrategy) {
+                            @Named("sizeBasedShardDistributionStrategy") final ShardDistributionStrategy shardDistributionStrategy) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
         this.shardDistributionStrategy = shardDistributionStrategy;
     }
 
     @Override
-    public ShardName lookupShard(final String titelnummer) {
-        final Optional<ShardObject> first = shardObjects.stream()
-                .filter(shardObject -> shardObject.getObjectId().equals(titelnummer))
-                .findFirst();
-        return first.map(ShardObject::getShardName).orElse(null);
+    public Optional<ShardName> lookupShard(final String titelnummer) {
+        if (shardAudiobooks.isEmpty()) {
+            LOGGER.warn("Titelnummer {}: Keine Informationen über die Verteilung der Objekte auf Shards vorhanden",
+                    titelnummer);
+            return Optional.empty();
+        } else {
+            return shardAudiobooks.stream()
+                    .filter(shardAudiobook -> shardAudiobook.hasTitelnummer(titelnummer))
+                    .findFirst()
+                    .map(ShardAudiobook::getShardName)
+                    .or(Optional::empty);
+        }
     }
 
     @EventListener
@@ -91,10 +99,12 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
      */
     @Override
     public void maybeReshard(final DataHeartbeats dataHeartbeats) {
-        shardObjects = shardDistributionStrategy.calculate(dataHeartbeats);
-        // filter all objects not belonging to this shard (anymore)
+        shardAudiobooks = shardDistributionStrategy.calculate(dataHeartbeats);
+        // filter all objects in local object storage not belonging to this shard (anymore)
         final ShardName itsme = new ShardName();
-        final List<ShardObject> foreignObjects = shardObjects.stream()
+        final List<Titelnummer> myShardObjects = allEntriesByKey();
+        final List<ShardAudiobook> foreignObjects = shardAudiobooks.stream()
+                .filter(shardObject -> myShardObjects.contains(new Titelnummer(shardObject.getObjectId())))
                 .filter(shardObject -> !itsme.equals(shardObject.getShardName()))
                 .collect(Collectors.toUnmodifiableList());
         if (!foreignObjects.isEmpty()) {

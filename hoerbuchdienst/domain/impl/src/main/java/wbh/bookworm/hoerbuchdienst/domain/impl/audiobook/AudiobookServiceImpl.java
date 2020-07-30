@@ -15,6 +15,8 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
@@ -64,9 +66,9 @@ final class AudiobookServiceImpl implements AudiobookService {
 
     @Override
     public String shardLocation(final String titelnummer) {
-        final ShardName shardName = audiobookRepository.lookupShard(titelnummer);
+        final Optional<ShardName> shardName = audiobookRepository.lookupShard(titelnummer);
         LOGGER.debug("Looked up shard '{}' for '{}'", shardName, titelnummer);
-        return null != shardName
+        return shardName.isPresent()
                 ? shardName.toString()
                 : UNKNOWN;
     }
@@ -90,13 +92,18 @@ final class AudiobookServiceImpl implements AudiobookService {
     // TODO Bis zu wie vielen Threads steigert sich die Anzahl personalisierter Hörbücher?
     @Override
     public InputStream zipAsStream(final String hoerernummer, final String titelnummer) {
-        final Path audiobookDirectory = Path.of(String.format("%s/%s", temporaryDirectory, titelnummer)
+        final Path audiobookDirectory = Path.of(String.format("%s/%s-%s-%s", temporaryDirectory, hoerernummer, titelnummer, UUID.randomUUID())
                 .replace("//", "/"));
+        try {
+            Files.createDirectories(audiobookDirectory);
+        } catch (IOException e) {
+            throw new AudiobookServiceException("Cannot create temporary directory", e);
+        }
         // ZIP auf tmpfs auspacken
         try (final ZipInputStream sourceZipStream = new ZipInputStream(audiobookRepository.zipAsStream(titelnummer))) {
-            LOGGER.info("Entpacke Hörbuch {} unter {}", titelnummer, temporaryDirectory);
+            LOGGER.info("Hörer {} Entpacke Hörbuch {} unter {}", hoerernummer, titelnummer, temporaryDirectory);
             zip.unzip(sourceZipStream, audiobookDirectory);
-            LOGGER.info("Hörbuch {} unter {} entpackt", titelnummer, temporaryDirectory);
+            LOGGER.info("Hörer {} Hörbuch {} unter {} entpackt", hoerernummer, titelnummer, temporaryDirectory);
         } catch (IOException e) {
             FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
             throw new AudiobookServiceException("", e);
@@ -118,7 +125,7 @@ final class AudiobookServiceImpl implements AudiobookService {
             throw new AudiobookServiceException("", e);
         }
         // Wasserzeichen als Textdatei in ZIP legen
-        LOGGER.info("Lege Wasserzeichen {} als Textdatei in DAISY ZIP", watermark);
+        LOGGER.info("Hörer {} Lege Wasserzeichen {} als Textdatei in DAISY ZIP", hoerernummer, watermark);
         try {
             Files.write(kapitelDirectory.resolve("Urheberrecht.txt"), watermark.getBytes(StandardCharsets.UTF_8));
         } catch (IOException e) {
@@ -128,10 +135,10 @@ final class AudiobookServiceImpl implements AudiobookService {
         // Alle Dateien in DAISY ZIP packen
         final InputStream zipInputStream;
         try (final Stream<Path> paths = Files.list(kapitelDirectory)) {
-            final List<Path> files = paths.collect(Collectors.toUnmodifiableList());
-            LOGGER.debug("Erstelle DAISY Hörbuch {} mit folgenden Dateien: {}", titelnummer, files);
+            final List<Path> files = paths.sorted().collect(Collectors.toUnmodifiableList());
+            LOGGER.debug("Hörer {} Erstelle DAISY Hörbuch {} mit folgenden Dateien: {}", hoerernummer, titelnummer, files);
             zipInputStream = zip.zipAsStream(files);
-            LOGGER.info("DAISY Hörbuch {} mit folgenden Dateien: {} erstellt", titelnummer, files);
+            LOGGER.info("Hörer {} DAISY Hörbuch {} erstellt", hoerernummer, titelnummer);
             return zipInputStream;
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);

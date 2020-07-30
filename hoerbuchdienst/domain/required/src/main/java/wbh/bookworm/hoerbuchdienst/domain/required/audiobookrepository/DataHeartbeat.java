@@ -8,6 +8,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,22 +30,31 @@ public final class DataHeartbeat implements Serializable {
 
     private final double usageInPercent;
 
-    private final List<ShardObject> shardObjects;
+    private final List<ShardAudiobook> shardAudiobooks;
 
     @JsonCreator
     public DataHeartbeat(@JsonProperty("pointInTime") final Instant pointInTime,
                          @JsonProperty("shardname") final ShardName shardName,
                          @JsonProperty("totalBytes") final long totalBytes,
                          @JsonProperty("usedBytes") final long usedBytes,
-                         @JsonProperty("shardObjects") final List<ShardObject> shardObjects) {
+                         @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks) {
+        Objects.requireNonNull(pointInTime);
         this.pointInTime = pointInTime;
+        Objects.requireNonNull(shardName);
         this.shardName = shardName;
+        if (0L > totalBytes) {
+            throw new IllegalArgumentException("totalBytes must be >0");
+        }
         this.totalBytes = totalBytes;
+        if (0L > usedBytes) {
+            throw new IllegalArgumentException("usedBytes must be >=0");
+        }
         this.usedBytes = usedBytes;
         usageInPercent = BigDecimal.valueOf(((double) usedBytes / (double) totalBytes) * 100.0d)
                 .setScale(2, RoundingMode.CEILING)
                 .doubleValue();
-        this.shardObjects = shardObjects;
+        Objects.requireNonNull(shardAudiobooks);
+        this.shardAudiobooks = Collections.unmodifiableList(shardAudiobooks);
     }
 
     public Instant getPointInTime() {
@@ -76,16 +86,16 @@ public final class DataHeartbeat implements Serializable {
         return usageInPercent;
     }
 
-    public List<ShardObject> getShardObjects() {
-        return null != shardObjects
-                ? Collections.unmodifiableList(shardObjects)
+    public List<ShardAudiobook> getShardAudiobooks() {
+        return null != shardAudiobooks
+                ? Collections.unmodifiableList(shardAudiobooks)
                 : Collections.emptyList();
     }
 
     @Override
     public String toString() {
-        return String.format("DataHeartbeat{pointInTime='%s', shardname='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardObjects='%s'}",
-                pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardObjects);
+        return String.format("DataHeartbeat{pointInTime='%s', shardname='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s'}",
+                pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardAudiobooks);
     }
 
 }

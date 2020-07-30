@@ -20,6 +20,10 @@
         <!-- Mikrokosmos -->
         <dependency>
             <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.crypto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
             <artifactId>aoc.mikrokosmos.objectstorage.api</artifactId>
         </dependency>
         <dependency>

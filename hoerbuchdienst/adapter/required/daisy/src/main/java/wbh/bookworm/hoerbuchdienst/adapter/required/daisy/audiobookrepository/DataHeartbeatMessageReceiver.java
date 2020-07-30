@@ -13,8 +13,8 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 
 @RabbitListener
 @Singleton
@@ -33,8 +33,8 @@ class DataHeartbeatMessageReceiver {
 
     @Queue(RepositoryQueues.QUEUE_DATAHEARTBEAT)
     public void receiveHeartbeat(@Header("x-shardname") final String hostname, final DataHeartbeat dataHeartbeat) {
-        if (null != dataHeartbeat.getShardObjects()) {
-            final List<ShardObject> shardObjects = dataHeartbeat.getShardObjects();
+        if (null != dataHeartbeat.getShardAudiobooks()) {
+            final List<ShardAudiobook> shardObjects = dataHeartbeat.getShardAudiobooks();
             LOGGER.debug("Received {}", dataHeartbeat);
             dataHeartbeats.remember(hostname, dataHeartbeat);
             LOGGER.info("Received {} entries from {}", shardObjects.size(), hostname);

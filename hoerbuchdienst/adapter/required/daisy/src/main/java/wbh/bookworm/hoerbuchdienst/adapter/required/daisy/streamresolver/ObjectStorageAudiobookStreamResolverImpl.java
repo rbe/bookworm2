@@ -98,8 +98,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream zipAsStream(final String titelnummer) {
         try {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            return bucketObjectStorage.asZip(String.format("%sKapitel", titelnummer));
+            return bucketObjectStorage.asZip(/* TODO Mandantenspezifisch */String.format("%sKapitel", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }
