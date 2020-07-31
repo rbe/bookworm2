@@ -4,41 +4,38 @@ micronaut:
       maximumSize: 5
   jcache:
     enabled: true
-rabbitmq:
-  servers:
-    default:
-      uri: amqps://bugs:phaiR9Pho4ki@rabbitmq.shard1.audiobook.wbh-online.de/hoerbuchdienst
+
+shard:
+  name: shard0
 
 hoerbuchdienst:
   repository:
     type: objectstorage
-    shard:
-      id: 1
     localdisk:
       uri: ../../../Buecher-WBH
     objectstorage:
       name: minio
   temporary:
-    path: /tmp/hoerbuchdienst
+    path: ${java.io.tmpdir}/hoerbuchdienst
 
 objectstorage:
   minio:
-    url: https://s3.medienhof9.rootaid.de
-    accessKey: Nae3bahcexie9eifaihe
-    secureKey: eenieth9hoquohcooyeiRukoxopooPheew3caip7
+    url: http://minio.${shard.name}.local
+    access_key: AKIAIOSFODNN7EXAMPLE
+    secure_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
     bucketName: hoerbuchdienst
     serversideencryption: atRest
 
+rabbitmq:
+  servers:
+    default:
+      uri: amqps://bugs:bunny@rabbitmq.${shard.name}.local/hoerbuchdienst
+      nio-params:
+        enableHostnameVerification: true
+
 elasticsearch:
-  httpHosts: "http://localhost:9200,http://127.0.0.1:9200"
+  httpHosts: "http://localhost:9200"
 
-jackson:
-  serialization:
-    writeDatesAsTimestamps: false
-
-logger:
-  levels:
-    ROOT: INFO
-    wbh: DEBUG
-    io.micronaut.context.condition: TRACE
-    io.micronaut: INFO
+#jackson:
+#  serialization:
+#    writeDatesAsTimestamps: false

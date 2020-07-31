@@ -41,7 +41,7 @@ public final class Heartbeat implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Heartbeat{pointInTime='%s', shardname='%s'}", pointInTime, shardName);
+        return String.format("Heartbeat{pointInTime='%s', shardName='%s'}", pointInTime, shardName);
     }
 
 }

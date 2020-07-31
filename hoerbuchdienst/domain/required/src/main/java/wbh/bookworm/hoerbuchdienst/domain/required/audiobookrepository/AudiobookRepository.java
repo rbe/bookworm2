@@ -10,6 +10,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -17,7 +18,7 @@ public interface AudiobookRepository {
 
     Optional<ShardName> lookupShard(/* TODO AghNummer */String titelnummer);
 
-    void maybeReshard(Databeats databeats);
+    void maybeReshard(final AtomicInteger highWatermark, Databeats databeats);
 
     List</* TODO AghNummer */Titelnummer> allEntriesByKey();
 

@@ -15,59 +15,60 @@ public final class Heartbeats implements Serializable {
 
     private static final long serialVersionUID = 2579224237511506862L;
 
-    private final Object heartbeatLock = new Object();
+    private final transient Object heartbeatLock;
 
     /**
      * hostname -> Heartbeat
      */
-    private final Map<String, Heartbeat> heartbeats;
+    private final Map<ShardName, Heartbeat> heartbeatMap;
 
-    private final Set<String> lostHeartbeats;
+    private final Set<ShardName> lostHeartbeats;
 
     public Heartbeats() {
-        heartbeats = new ConcurrentHashMap<>(5);
+        heartbeatLock = new Object();
+        heartbeatMap = new ConcurrentHashMap<>(5);
         lostHeartbeats = new ConcurrentSkipListSet<>();
     }
 
-    public Heartbeat remember(final String hostname, final Heartbeat heartbeat) {
+    public Heartbeat remember(final ShardName shardname, final Heartbeat heartbeat) {
         synchronized (heartbeatLock) {
-            lostHeartbeats.remove(hostname);
-            return heartbeats.put(hostname, heartbeat);
+            lostHeartbeats.remove(shardname);
+            return heartbeatMap.put(shardname, heartbeat);
         }
     }
 
-    public void forget(final String hostname) {
+    public void forget(final ShardName shardName) {
         synchronized (heartbeatLock) {
-            heartbeats.remove(hostname);
+            heartbeatMap.remove(shardName);
         }
     }
 
-    public void forgetAll(final Set<String> hostnames) {
+    public void forgetAll(final Set<ShardName> shardNames) {
         synchronized (heartbeatLock) {
-            hostnames.forEach(hostname -> {
-                heartbeats.remove(hostname);
-                lostHeartbeats.add(hostname);
+            shardNames.forEach(shardname -> {
+                heartbeatMap.remove(shardname);
+                lostHeartbeats.add(shardname);
             });
         }
     }
 
     public boolean someReceived() {
-        return !heartbeats.isEmpty();
+        return !heartbeatMap.isEmpty();
     }
 
     public int count() {
-        return heartbeats.size();
+        return heartbeatMap.size();
     }
 
-    public Map<String, Instant> lastTimestamps() {
-        return heartbeats.entrySet()
+    public Map<ShardName, Instant> lastTimestamps() {
+        return heartbeatMap.entrySet()
                 .stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().getPointInTime()))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public boolean isLost(final String hostname) {
-        return lostHeartbeats.contains(hostname);
+    public boolean isLost(final ShardName shardname) {
+        return lostHeartbeats.contains(shardname);
     }
 
 }

@@ -2,7 +2,12 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.IOException;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.time.ZonedDateTime;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -23,11 +28,13 @@ import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 
 @Singleton
-final class ScheduledDataHeartbeatMessageSender {
+final class ScheduledDatabeatMessageSender {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledDataHeartbeatMessageSender.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledDatabeatMessageSender.class);
 
     private static final long AVAILABLE_BYTES_4TB = (long) (4.5d * 1024.0 * 1024.0 * 1024.0 * 1024.0);
+
+    private static final long SPACE_4GB = 4L * 1024L * 1024L * 1024L;
 
     private final ShardName shardName;
 
@@ -36,8 +43,8 @@ final class ScheduledDataHeartbeatMessageSender {
     private final DatabeatMessageSender databeatMessageSender;
 
     @Inject
-    ScheduledDataHeartbeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
-                                        final DatabeatMessageSender databeatMessageSender) {
+    ScheduledDatabeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
+                                   final DatabeatMessageSender databeatMessageSender) {
         this.shardName = new ShardName();
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.databeatMessageSender = databeatMessageSender;
@@ -54,12 +61,24 @@ final class ScheduledDataHeartbeatMessageSender {
                 .map(omi -> new ShardObject(omi.getObjectName(), omi.getLength(), omi.getEtag()))
                 .collect(Collectors.groupingBy(shardObject -> fromObjectName(shardObject.getObjectId()),
                         Collectors.toList()));
-        final List<ShardAudiobook> shardAudiobooks = audiobookShardObjects.entrySet()
-                .stream()
+        final List<ShardAudiobook> shardAudiobooks = audiobookShardObjects.entrySet().stream()
                 .map(entry -> ShardAudiobook.local(entry.getKey().toString(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableList());
+        long availableBytes;
+        try {
+            final FileSystem fileSystem = FileSystems.getDefault();
+            final Iterator<FileStore> fileStoreIterator = fileSystem.getFileStores().iterator();
+            final FileStore fileStore = fileStoreIterator.next();
+            availableBytes = fileStore.getTotalSpace() - SPACE_4GB;
+            LOGGER.info("Filesystem {} type {} has {} available bytes = {} MB = {} GB",
+                    fileStore.name(), fileStore.type(),
+                    availableBytes, availableBytes / 1024.0d / 1024.0d, availableBytes / 1024.0d / 1024.0d / 1024.0d);
+        } catch (IOException e) {
+            LOGGER.error("Cannot determine available space", e);
+            availableBytes = -1L;
+        }
         final Databeat databeat = new Databeat(ZonedDateTime.now().toInstant(), shardName,
-                AVAILABLE_BYTES_4TB, usedBytes, shardAudiobooks);
+                availableBytes, usedBytes, shardAudiobooks);
         LOGGER.trace("Sending databeat {}", databeat);
         try {
             databeatMessageSender.send(shardName.toString(), databeat);

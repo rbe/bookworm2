@@ -17,12 +17,12 @@ class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy
     private static ShardName calculate(final ShardAudiobook shardAudiobook, final Databeats databeats) {
         final Titelnummer titelnummer = new Titelnummer(shardAudiobook.getObjectId());
         final int hashCode = MyHashCodeImpl.hashCode(titelnummer.getBytesUTF8());
-        final int shardIndex = hashCode % databeats.count();
+        final int shardIndex = hashCode % databeats.numberOfDatabeats();
         return shardAudiobook.getShardName(); // TODO ShardName.of(shardIndex + 1);
     }
 
     @Override
-    public List<ShardAudiobook> calculate(final Databeats databeats) {
+    public List<ShardAudiobook> calculate(final int highWatermark, final Databeats databeats) {
         final List<ShardAudiobook> shardAudiobooks = databeats.allShardAudiobooks();
         return shardAudiobooks
                 .stream()

@@ -18,11 +18,13 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeat
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAppearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardHighWatermarkEvent;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
 
 @RabbitListener
 @Singleton
-class HeartbeatMessageReceiver {
+final class HeartbeatMessageReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatMessageReceiver.class);
 
@@ -39,47 +41,48 @@ class HeartbeatMessageReceiver {
     }
 
     @Queue(RepositoryQueues.QUEUE_HEARTBEAT)
-    public void receiveHeartbeat(@Header("x-shardname") final String hostname, final Heartbeat heartbeat) {
-        LOGGER.trace("Received {} from {}", heartbeat, hostname);
+    void receiveHeartbeat(@Header("x-shardname") final String xShardName, final Heartbeat heartbeat) {
+        LOGGER.trace("Received {} from {}", heartbeat, xShardName);
+        final ShardName shardName = new ShardName(xShardName);
         final boolean heartbeatNotInTime = heartbeat.getPointInTime().isBefore(Instant.now().minusSeconds(2L))
                 || heartbeat.getPointInTime().isAfter(Instant.now().plusSeconds(2L));
         if (heartbeatNotInTime) {
             LOGGER.warn("Discarding heartbeat {} as its timestamp is too old or in the future", heartbeat);
         } else {
-            if (heartbeats.isLost(hostname)) {
-                LOGGER.info("Welcome back, shard {}!", hostname);
-                heartbeats.remember(hostname, heartbeat);
-                eventPublisher.publishEvent(new ShardReappearedEvent(hostname));
+            if (heartbeats.isLost(shardName)) {
+                LOGGER.info("Welcome back, {}!", shardName);
+                heartbeats.remember(shardName, heartbeat);
+                eventPublisher.publishEvent(new ShardReappearedEvent(shardName));
             } else {
-                final boolean shardIsNew = null == heartbeats.remember(hostname, heartbeat);
+                final boolean shardIsNew = null == heartbeats.remember(shardName, heartbeat);
                 if (shardIsNew) {
-                    LOGGER.info("Welcome to our farm, shard {}!", hostname);
-                    heartbeats.remember(hostname, heartbeat);
-                    highWaterMark();
-                    eventPublisher.publishEvent(new ShardAppearedEvent(hostname));
+                    LOGGER.info("Welcome to our farm, {}!", shardName);
+                    heartbeats.remember(shardName, heartbeat);
+                    highWatermark();
+                    eventPublisher.publishEvent(new ShardAppearedEvent(xShardName));
                 }
             }
         }
     }
 
-    private void highWaterMark() {
+    private void highWatermark() {
         // increase high water mark?
         synchronized (numShardsHwm) { // TODO alle zugriffe müssen sync sein! -> In Hearbeats implementieren
-            if (heartbeats.count() > numShardsHwm.get()) {
-                // shard was added
-                //numShardsHwm.incrementAndGet(); -> set(count())
+            final boolean shardWasAdded = heartbeats.count() > numShardsHwm.get();
+            if (shardWasAdded) {
                 numShardsHwm.getAndSet(heartbeats.count());
+                eventPublisher.publishEvent(new ShardHighWatermarkEvent(numShardsHwm.get()));
                 LOGGER.info("New high watermark: {} shard(s) total", numShardsHwm);
             }
         }
     }
 
     @Scheduled(fixedDelay = "5s")
-    public void checkHeartbeats() {
+    void checkHeartbeats() {
         LOGGER.trace("Checking heartbeats");
         // check if a heartbeat is missing over some time
         final Instant heartbeatTooOld = Instant.now().minusSeconds(5L);
-        final Map<String, Instant> lostHeartbeats = heartbeats.lastTimestamps()
+        final Map<ShardName, Instant> lostHeartbeats = heartbeats.lastTimestamps()
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().isBefore(heartbeatTooOld))

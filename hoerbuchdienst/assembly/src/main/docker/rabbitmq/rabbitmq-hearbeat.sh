@@ -18,7 +18,7 @@ function send() {
     --username=federator --password="${FEDERATOR_PASSWORD}" \
     --vhost="${MY_RABBITMQ_VHOST}" \
     publish exchange="federated.heartbeat" routing_key="" \
-    payload="{\"pointInTime\":\"${timestamp}\", \"shardname\":\"${my_hostname}#N\"}" \
+    payload="{\"pointInTime\":\"${timestamp}\", \"shardName\":\"${my_hostname}#N\"}" \
     properties="{\"headers\":{\"x-hostname\":\"${my_hostname}\"}}"
 }
 

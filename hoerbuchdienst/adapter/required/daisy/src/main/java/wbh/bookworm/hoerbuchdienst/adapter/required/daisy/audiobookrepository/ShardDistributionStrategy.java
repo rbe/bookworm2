@@ -7,6 +7,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudi
 
 interface ShardDistributionStrategy {
 
-    List<ShardAudiobook> calculate(Databeats databeats);
+    List<ShardAudiobook> calculate(int highWatermark, Databeats databeats);
 
 }

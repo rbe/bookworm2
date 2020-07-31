@@ -1,0 +1,30 @@
+<configuration>
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <withJansi>true</withJansi>
+        <!-- encoders are assigned the type
+             ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+        <encoder>
+            <pattern>
+                %cyan(%d{HH:mm:ss.SSS}) %gray([%thread]) %highlight(%-5level) %magenta(%logger{36}#%M) - %msg%n
+            </pattern>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+    <logger name="wbh" level="${wbh.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut" level="${io.micronaut.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.web" level="${io.micronaut.web.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.web.router" level="${io.micronaut.web.router.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.http" level="${io.micronaut.http.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.http.server" level="${io.micronaut.http.server.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.scheduling" level="${io.micronaut.scheduling.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.configuration" level="${io.micronaut.configuration.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.configuration.rabbitmq" level="${io.micronaut.configuration.rabbitmq.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.context" level="${io.micronaut.context.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.context.condition" level="${io.micronaut.context.condition.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.context.env" level="${io.micronaut.context.env.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.core" level="${io.micronaut.core.loglevel:-DEBUG}"/>
+    <logger name="io.micronaut.core.reflect" level="${io.micronaut.core.reflect.loglevel:-DEBUG}"/>
+    <logger name="io.netty" level="${io.netty.loglevel:-DEBUG}"/>
+</configuration>

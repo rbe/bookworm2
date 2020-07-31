@@ -15,9 +15,11 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import io.micronaut.cache.annotation.CacheConfig;
@@ -58,12 +60,13 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     private Path temporaryDirectory;
 
     @Inject
-    AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
-                            final AudiobookMapper audiobookMapper,
-                            @Named("sizeBasedShardDistributionStrategy") final ShardDistributionStrategy shardDistributionStrategy) {
+    AudiobookRepositoryImpl(AudiobookStreamResolver audiobookStreamResolver,
+                            AudiobookMapper audiobookMapper,
+                            @Named("leastUsedShardDistributionStrategy") ShardDistributionStrategy shardDistributionStrategy) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
         this.shardDistributionStrategy = shardDistributionStrategy;
+        allShardAudiobooks = Collections.emptyList();
     }
 
     @Override
@@ -95,19 +98,20 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     /**
-     * shard receives object list (push, by message queue)
+     * Shard has received object list of all shards, calculates new distribution and
+     * moves own objects not belonging here anymore to another shard.
      */
     @Override
-    public void maybeReshard(final Databeats databeats) {
-        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(databeats);
+    public void maybeReshard(final AtomicInteger highWatermark, final Databeats databeats) {
+        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(highWatermark.get(), databeats);
         // filter all objects in local object storage not belonging to this shard (anymore)
-        final ShardName itsme = new ShardName();
+        final ShardName myShardName = new ShardName();
         final List<Titelnummer> myShardTitelnummern = allEntriesByKey();
         final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
-                .filter(shardObject -> myShardTitelnummern.contains(new Titelnummer(shardObject.getObjectId())))
-                .filter(shardObject -> !itsme.equals(shardObject.getShardName()))
+                .filter(shardAudiobook -> myShardTitelnummern.contains(new Titelnummer(shardAudiobook.getObjectId())))
+                .filter(shardAudiobook -> !myShardName.equals(shardAudiobook.getShardName()))
                 .collect(Collectors.toUnmodifiableList());
-        // TODO move all objects now belonging to another/recently added shard
+        // Move all my objects now belonging to another shard
         if (!objectsToTransfer.isEmpty()) {
             objectsToTransfer.forEach(shardAudiobook -> {
                 LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardAudiobook.getShardName());

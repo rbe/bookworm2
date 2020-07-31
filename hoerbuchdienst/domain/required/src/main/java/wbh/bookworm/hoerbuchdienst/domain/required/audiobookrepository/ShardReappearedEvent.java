@@ -8,14 +8,18 @@ public final class ShardReappearedEvent implements Serializable {
 
     private final ZonedDateTime occurdOn;
 
-    private final String shardName;
+    private final ShardName shardName;
 
-    public ShardReappearedEvent(final String shardName) {
+    public ShardReappearedEvent(final ShardName shardName) {
         this.shardName = shardName;
         occurdOn = ZonedDateTime.now();
     }
 
-    public String getShardName() {
+    public ZonedDateTime getOccurdOn() {
+        return occurdOn;
+    }
+
+    public ShardName getShardName() {
         return shardName;
     }
 

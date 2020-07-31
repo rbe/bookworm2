@@ -38,10 +38,14 @@ public final class Databeats implements Serializable {
     }
 
     /**
-     * Number of received heartbeats
+     * Number of received databeats
      */
-    public int count() {
+    public int numberOfDatabeats() {
         return dataHeartbeatMap.size();
+    }
+
+    public long numerOfObjects() {
+        return allShardAudiobooks().size();
     }
 
     public List<ShardAudiobook> allShardAudiobooks() {
@@ -52,7 +56,7 @@ public final class Databeats implements Serializable {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Map<ShardName, List<ShardAudiobook>> allShardAudiobooksByHostname() {
+    public Map<ShardName, List<ShardAudiobook>> allShardAudiobooksByShardName() {
         return dataHeartbeatMap.entrySet()
                 .stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().getShardAudiobooks()))
@@ -62,7 +66,7 @@ public final class Databeats implements Serializable {
     /**
      * Summarize sizes of all shard objects
      */
-    public Optional<Long> totalSize() {
+    public Optional<Long> totalSizeOfAllObjects() {
         return allShardAudiobooks()
                 .stream()
                 .map(ShardAudiobook::size)

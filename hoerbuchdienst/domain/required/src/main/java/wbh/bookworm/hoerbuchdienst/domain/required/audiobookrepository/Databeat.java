@@ -34,7 +34,7 @@ public final class Databeat implements Serializable {
 
     @JsonCreator
     public Databeat(@JsonProperty("pointInTime") final Instant pointInTime,
-                    @JsonProperty("shardname") final ShardName shardName,
+                    @JsonProperty("shardName") final ShardName shardName,
                     @JsonProperty("totalBytes") final long totalBytes,
                     @JsonProperty("usedBytes") final long usedBytes,
                     @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks) {
@@ -53,8 +53,11 @@ public final class Databeat implements Serializable {
         usageInPercent = BigDecimal.valueOf(((double) usedBytes / (double) totalBytes) * 100.0d)
                 .setScale(2, RoundingMode.CEILING)
                 .doubleValue();
-        Objects.requireNonNull(shardAudiobooks);
-        this.shardAudiobooks = Collections.unmodifiableList(shardAudiobooks);
+        if (null == shardAudiobooks) {
+            this.shardAudiobooks = Collections.emptyList();
+        } else {
+            this.shardAudiobooks = Collections.unmodifiableList(shardAudiobooks);
+        }
     }
 
     public Instant getPointInTime() {
@@ -68,10 +71,6 @@ public final class Databeat implements Serializable {
 
     public ShardName getShardName() {
         return shardName;
-    }
-
-    public String getShardname() {
-        return shardName.getHostName();
     }
 
     public long getTotalBytes() {
@@ -94,7 +93,7 @@ public final class Databeat implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("DataHeartbeat{pointInTime='%s', shardname='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s'}",
+        return String.format("Databeat{pointInTime='%s', shardName='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s'}",
                 pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardAudiobooks);
     }
 
