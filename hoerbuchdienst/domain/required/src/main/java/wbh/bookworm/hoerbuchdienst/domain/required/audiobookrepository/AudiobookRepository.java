@@ -17,7 +17,7 @@ public interface AudiobookRepository {
 
     Optional<ShardName> lookupShard(/* TODO AghNummer */String titelnummer);
 
-    void maybeReshard(DataHeartbeats dataHeartbeats);
+    void maybeReshard(Databeats databeats);
 
     List</* TODO AghNummer */Titelnummer> allEntriesByKey();
 

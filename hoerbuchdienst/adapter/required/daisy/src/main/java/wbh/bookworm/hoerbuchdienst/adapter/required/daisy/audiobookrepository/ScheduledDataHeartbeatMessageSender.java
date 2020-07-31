@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
@@ -33,14 +33,14 @@ final class ScheduledDataHeartbeatMessageSender {
 
     private final AudiobookStreamResolver audiobookStreamResolver;
 
-    private final DataHeartbeatMessageSender dataHeartbeatMessageSender;
+    private final DatabeatMessageSender databeatMessageSender;
 
     @Inject
     ScheduledDataHeartbeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
-                                        final DataHeartbeatMessageSender dataHeartbeatMessageSender) {
+                                        final DatabeatMessageSender databeatMessageSender) {
         this.shardName = new ShardName();
         this.audiobookStreamResolver = audiobookStreamResolver;
-        this.dataHeartbeatMessageSender = dataHeartbeatMessageSender;
+        this.databeatMessageSender = databeatMessageSender;
     }
 
     @Scheduled(fixedDelay = "1m")
@@ -58,11 +58,11 @@ final class ScheduledDataHeartbeatMessageSender {
                 .stream()
                 .map(entry -> ShardAudiobook.local(entry.getKey().toString(), entry.getValue()))
                 .collect(Collectors.toUnmodifiableList());
-        final DataHeartbeat dataHeartbeat = new DataHeartbeat(ZonedDateTime.now().toInstant(), shardName,
+        final Databeat databeat = new Databeat(ZonedDateTime.now().toInstant(), shardName,
                 AVAILABLE_BYTES_4TB, usedBytes, shardAudiobooks);
-        LOGGER.trace("Sending data heartbeat {}", dataHeartbeat);
+        LOGGER.trace("Sending databeat {}", databeat);
         try {
-            dataHeartbeatMessageSender.send(shardName.toString(), dataHeartbeat);
+            databeatMessageSender.send(shardName.toString(), databeat);
         } catch (RabbitClientException e) {
             LOGGER.warn("{}", e.getMessage());
         }

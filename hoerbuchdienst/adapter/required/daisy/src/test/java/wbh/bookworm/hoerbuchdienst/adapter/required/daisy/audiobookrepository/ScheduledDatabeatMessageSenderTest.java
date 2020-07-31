@@ -6,13 +6,12 @@ import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
 
 @MicronautTest
-class ScheduledDataHeartbeatMessageSenderTest {
+class ScheduledDatabeatMessageSenderTest {
 
     @Test
     void shouldSendHeartbeat() {
         try {
-            TimeUnit.SECONDS.sleep(65
-            );
+            TimeUnit.SECONDS.sleep(65);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }

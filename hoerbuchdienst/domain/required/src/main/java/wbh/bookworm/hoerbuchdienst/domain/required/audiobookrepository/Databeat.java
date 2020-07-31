@@ -16,7 +16,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
-public final class DataHeartbeat implements Serializable {
+public final class Databeat implements Serializable {
 
     private static final long serialVersionUID = 2963762098263689022L;
 
@@ -33,11 +33,11 @@ public final class DataHeartbeat implements Serializable {
     private final List<ShardAudiobook> shardAudiobooks;
 
     @JsonCreator
-    public DataHeartbeat(@JsonProperty("pointInTime") final Instant pointInTime,
-                         @JsonProperty("shardname") final ShardName shardName,
-                         @JsonProperty("totalBytes") final long totalBytes,
-                         @JsonProperty("usedBytes") final long usedBytes,
-                         @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks) {
+    public Databeat(@JsonProperty("pointInTime") final Instant pointInTime,
+                    @JsonProperty("shardname") final ShardName shardName,
+                    @JsonProperty("totalBytes") final long totalBytes,
+                    @JsonProperty("usedBytes") final long usedBytes,
+                    @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks) {
         Objects.requireNonNull(pointInTime);
         this.pointInTime = pointInTime;
         Objects.requireNonNull(shardName);

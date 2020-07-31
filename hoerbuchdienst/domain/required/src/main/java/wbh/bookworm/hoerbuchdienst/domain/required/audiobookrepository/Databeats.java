@@ -5,31 +5,32 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import io.micronaut.core.annotation.Introspected;
 
 @Introspected
-public final class DataHeartbeats implements Serializable {
+public final class Databeats implements Serializable {
 
     private static final long serialVersionUID = 2579224237511506862L;
 
     /**
      * hostname -> Heartbeat
      */
-    private final Map<String, DataHeartbeat> dataHeartbeatMap;
+    private final Map<ShardName, Databeat> dataHeartbeatMap;
 
-    public DataHeartbeats() {
+    public Databeats() {
         dataHeartbeatMap = new ConcurrentHashMap<>(5);
     }
 
-    public void remember(final String hostname, final DataHeartbeat dataHeartbeat) {
-        dataHeartbeatMap.put(hostname, dataHeartbeat);
+    public void remember(final ShardName shardName, final Databeat databeat) {
+        dataHeartbeatMap.put(shardName, databeat);
     }
 
-    public void forget(final String hostname) {
-        dataHeartbeatMap.remove(hostname);
+    public void forget(final ShardName shardName) {
+        dataHeartbeatMap.remove(shardName);
     }
 
     public boolean someReceived() {
@@ -46,12 +47,12 @@ public final class DataHeartbeats implements Serializable {
     public List<ShardAudiobook> allShardAudiobooks() {
         return dataHeartbeatMap.values()
                 .stream()
-                .map(DataHeartbeat::getShardAudiobooks)
+                .map(Databeat::getShardAudiobooks)
                 .flatMap(Collection::stream)
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    public Map<String, List<ShardAudiobook>> allShardAudiobooksByHostname() {
+    public Map<ShardName, List<ShardAudiobook>> allShardAudiobooksByHostname() {
         return dataHeartbeatMap.entrySet()
                 .stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().getShardAudiobooks()))
@@ -66,6 +67,10 @@ public final class DataHeartbeats implements Serializable {
                 .stream()
                 .map(ShardAudiobook::size)
                 .reduce(Long::sum);
+    }
+
+    public Set<ShardName> allShardNames() {
+        return dataHeartbeatMap.keySet();
     }
 
     @Override

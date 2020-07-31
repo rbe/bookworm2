@@ -6,13 +6,16 @@ set -o errexit
 
 echo "Checking if RabbitMQ is online"
 if rabbitmqctl await_startup; then
-    echo "RabbitMQ appears to be online"
+  echo   "RabbitMQ appears to be online"
 else
-    echo "RabbitMQ is not online"
-    exit 1
+  echo   "RabbitMQ is not online"
+  exit   1
 fi
+
 echo "Adding virtual host ${MY_RABBITMQ_VHOST}"
 rabbitmqctl add_vhost "${MY_RABBITMQ_VHOST}"
+echo "done"
+
 echo "Adding user federator"
 federator_pw="$(pwgen -Bcn 32 -n 1)"
 set +o errexit
@@ -25,6 +28,8 @@ federator_configure_regexp=".*"
 federator_write_regexp=".*"
 federator_read_regexp=".*"
 rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}" federator "${federator_configure_regexp}" "${federator_write_regexp}" "${federator_read_regexp}"
+echo "done"
+
 echo "Adding user bugs"
 bugs_pw="$(pwgen -Bcn 32 -n 1)"
 set +o errexit
@@ -35,22 +40,19 @@ bugs_configure_regexp=""
 bugs_write_regexp=".*"
 bugs_read_regexp=".*"
 rabbitmqctl set_permissions -p "${MY_RABBITMQ_VHOST}" bugs "${bugs_configure_regexp}" "${bugs_write_regexp}" "${bugs_read_regexp}"
+echo "done"
+
 echo "Deleting user guest"
 set +o errexit
 rabbitmqctl delete_user guest
 set -o errexit
+echo "done"
 echo "Listing users"
 rabbitmqctl list_users
+echo "done"
+
 echo "Deleting virtual host /"
 rabbitmqctl delete_vhost /
-## Policy
-#echo "Setting policy for federated exchanges"
-#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
-#    --priority 10 --apply-to exchanges \
-#    federate-exchanges "^federated\." '{"federation-upstream-set" : "all"}'
-#echo "Setting policy for federated queues"
-#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
-#    --priority 10 --apply-to queues \
-#    federate-queues "^federated\." '{"federation-upstream-set" : "all"}'
+echo "done"
 
 exit 0

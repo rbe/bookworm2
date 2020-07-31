@@ -32,7 +32,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
@@ -52,7 +52,7 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private final ShardDistributionStrategy shardDistributionStrategy;
 
-    private List<ShardAudiobook> shardAudiobooks;
+    private List<ShardAudiobook> allShardAudiobooks;
 
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
@@ -68,12 +68,12 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     @Override
     public Optional<ShardName> lookupShard(final String titelnummer) {
-        if (shardAudiobooks.isEmpty()) {
+        if (allShardAudiobooks.isEmpty()) {
             LOGGER.warn("Titelnummer {}: Keine Informationen über die Verteilung der Objekte auf Shards vorhanden",
                     titelnummer);
             return Optional.empty();
         } else {
-            return shardAudiobooks.stream()
+            return allShardAudiobooks.stream()
                     .filter(shardAudiobook -> shardAudiobook.hasTitelnummer(titelnummer))
                     .findFirst()
                     .map(ShardAudiobook::getShardName)
@@ -98,20 +98,24 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
      * shard receives object list (push, by message queue)
      */
     @Override
-    public void maybeReshard(final DataHeartbeats dataHeartbeats) {
-        shardAudiobooks = shardDistributionStrategy.calculate(dataHeartbeats);
+    public void maybeReshard(final Databeats databeats) {
+        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(databeats);
         // filter all objects in local object storage not belonging to this shard (anymore)
         final ShardName itsme = new ShardName();
-        final List<Titelnummer> myShardObjects = allEntriesByKey();
-        final List<ShardAudiobook> foreignObjects = shardAudiobooks.stream()
-                .filter(shardObject -> myShardObjects.contains(new Titelnummer(shardObject.getObjectId())))
+        final List<Titelnummer> myShardTitelnummern = allEntriesByKey();
+        final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
+                .filter(shardObject -> myShardTitelnummern.contains(new Titelnummer(shardObject.getObjectId())))
                 .filter(shardObject -> !itsme.equals(shardObject.getShardName()))
                 .collect(Collectors.toUnmodifiableList());
-        if (!foreignObjects.isEmpty()) {
-            LOGGER.info("Moving {} to other shard(s)", foreignObjects);
-            // TODO move all objects now belonging to another/recently added shard
-            // TODO invalidate cache
-            // TODO remove objects from object storage
+        // TODO move all objects now belonging to another/recently added shard
+        if (!objectsToTransfer.isEmpty()) {
+            objectsToTransfer.forEach(shardAudiobook -> {
+                LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardAudiobook.getShardName());
+                // TODO move object to another shard
+                // TODO invalidate cache
+                // TODO remove objects from object storage
+            });
+            allShardAudiobooks = desiredDistribution;
         }
     }
 
@@ -119,8 +123,8 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     public List<Titelnummer> allEntriesByKey() {
         return audiobookStreamResolver.listAll()
                 .stream()
-                // TODO "Kapitel" Suffix ist mandantenspezifisch
-                .map(path -> new Titelnummer(path.getFileName().toString().replace("Kapitel", "")))
+                .map(path -> new Titelnummer(path.getFileName().toString()
+                        .replace(/* TODO Mandantenspezifisch */"Kapitel", "")))
                 .collect(Collectors.toUnmodifiableList());
     }
 

@@ -8,7 +8,7 @@ my_name="$(hostname -f)"
 
 if [[ $# != 5 ]]; then
   echo "usage: $0 <credentials> <exchange name> <exchange type> <queue name> <queue durable?>"
-  echo "  credentials      user:password to use to connect to upstream"
+  echo "  credentials      user:password for RabbitMQ administration"
   echo "  exchange name    name of exchange without prefix for federation (${MY_RABBITMQ_FEDERATION_PREFIX})"
   echo "  exchange type    direct | fanout | topic"
   echo "  queue durable?   true | false"

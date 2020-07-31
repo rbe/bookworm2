@@ -72,8 +72,8 @@
     },
     {
       "vhost": "hoerbuchdienst",
-      "name": "dataheartbeat-message-ttl",
-      "pattern": "^dataheartbeat$",
+      "name": "databeat-message-ttl",
+      "pattern": "^databeat$",
       "apply-to": "queues",
       "definition": {
         "message-ttl": 30000
@@ -90,7 +90,7 @@
       "arguments": {}
     },
     {
-      "name": "dataheartbeat",
+      "name": "databeat",
       "vhost": "hoerbuchdienst",
       "durable": true,
       "auto_delete": false,
@@ -108,7 +108,7 @@
       "arguments": {}
     },
     {
-      "name": "federated.dataheartbeat",
+      "name": "federated.databeat",
       "vhost": "hoerbuchdienst",
       "type": "fanout",
       "durable": true,
@@ -119,9 +119,9 @@
   ],
   "bindings": [
     {
-      "source": "federated.dataheartbeat",
+      "source": "federated.databeat",
       "vhost": "hoerbuchdienst",
-      "destination": "dataheartbeat",
+      "destination": "databeat",
       "destination_type": "queue",
       "routing_key": "",
       "arguments": {}

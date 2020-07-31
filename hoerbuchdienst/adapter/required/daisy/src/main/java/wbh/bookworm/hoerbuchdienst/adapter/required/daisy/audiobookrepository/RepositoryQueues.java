@@ -6,9 +6,9 @@ public final class RepositoryQueues {
 
     public static final String QUEUE_HEARTBEAT = "heartbeat";
 
-    public static final String EXCH_FEDERATED_DATAHEARTBEAT = "federated.dataheartbeat";
+    public static final String EXCH_FEDERATED_DATAHEARTBEAT = "federated.databeat";
 
-    public static final String QUEUE_DATAHEARTBEAT = "dataheartbeat";
+    public static final String QUEUE_DATAHEARTBEAT = "databeat";
 
     private RepositoryQueues() {
         throw new AssertionError();

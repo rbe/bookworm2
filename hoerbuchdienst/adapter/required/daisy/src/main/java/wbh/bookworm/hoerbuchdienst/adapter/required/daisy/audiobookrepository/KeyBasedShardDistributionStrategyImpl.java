@@ -5,7 +5,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeats;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
@@ -14,19 +14,19 @@ import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 @Named("keyBasedShardDistributionStrategy")
 class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy {
 
-    private static ShardName calculate(final ShardAudiobook shardAudiobook, final DataHeartbeats dataHeartbeats) {
+    private static ShardName calculate(final ShardAudiobook shardAudiobook, final Databeats databeats) {
         final Titelnummer titelnummer = new Titelnummer(shardAudiobook.getObjectId());
         final int hashCode = MyHashCodeImpl.hashCode(titelnummer.getBytesUTF8());
-        final int shardIndex = hashCode % dataHeartbeats.count();
+        final int shardIndex = hashCode % databeats.count();
         return shardAudiobook.getShardName(); // TODO ShardName.of(shardIndex + 1);
     }
 
     @Override
-    public List<ShardAudiobook> calculate(final DataHeartbeats dataHeartbeats) {
-        final List<ShardAudiobook> shardAudiobooks = dataHeartbeats.allShardAudiobooks();
+    public List<ShardAudiobook> calculate(final Databeats databeats) {
+        final List<ShardAudiobook> shardAudiobooks = databeats.allShardAudiobooks();
         return shardAudiobooks
                 .stream()
-                .map(shardAudiobook -> ShardAudiobook.of(shardAudiobook, calculate(shardAudiobook, dataHeartbeats)))
+                .map(shardAudiobook -> ShardAudiobook.of(shardAudiobook, calculate(shardAudiobook, databeats)))
                 .collect(Collectors.toUnmodifiableList());
     }
 

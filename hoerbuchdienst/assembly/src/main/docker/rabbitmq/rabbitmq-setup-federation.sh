@@ -53,4 +53,14 @@ for node in "${ALL_NODES[@]}"; do
   fi
 done
 
+## Policy
+#echo "Setting policy for federated exchanges"
+#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
+#    --priority 10 --apply-to exchanges \
+#    federate-exchanges "^federated\." '{"federation-upstream-set" : "all"}'
+#echo "Setting policy for federated queues"
+#rabbitmqctl set_policy --vhost="${MY_RABBITMQ_VHOST}" \
+#    --priority 10 --apply-to queues \
+#    federate-queues "^federated\." '{"federation-upstream-set" : "all"}'
+
 exit 0

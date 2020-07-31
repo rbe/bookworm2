@@ -39,7 +39,7 @@ class HeartbeatMessageReceiver {
     }
 
     @Queue(RepositoryQueues.QUEUE_HEARTBEAT)
-    public void receiveHeartbeat(@Header("x-hostname") final String hostname, final Heartbeat heartbeat) {
+    public void receiveHeartbeat(@Header("x-shardname") final String hostname, final Heartbeat heartbeat) {
         LOGGER.trace("Received {} from {}", heartbeat, hostname);
         final boolean heartbeatNotInTime = heartbeat.getPointInTime().isBefore(Instant.now().minusSeconds(2L))
                 || heartbeat.getPointInTime().isAfter(Instant.now().plusSeconds(2L));
@@ -76,7 +76,7 @@ class HeartbeatMessageReceiver {
 
     @Scheduled(fixedDelay = "5s")
     public void checkHeartbeats() {
-        LOGGER.debug("Checking heartbeats");
+        LOGGER.trace("Checking heartbeats");
         // check if a heartbeat is missing over some time
         final Instant heartbeatTooOld = Instant.now().minusSeconds(5L);
         final Map<String, Instant> lostHeartbeats = heartbeats.lastTimestamps()

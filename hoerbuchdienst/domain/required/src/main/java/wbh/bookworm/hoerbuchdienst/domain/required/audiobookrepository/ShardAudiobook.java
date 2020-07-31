@@ -15,16 +15,19 @@ public final class ShardAudiobook implements Serializable {
 
     private final String objectId;
 
+    private final List<ShardObject> shardObjects;
+
     private final ShardName shardName;
 
-    private final List<ShardObject> shardObjects;
+    private final String hashValue;
 
     public ShardAudiobook(final String objectId,
                           final List<ShardObject> shardObjects,
                           final ShardName shardName) {
         this.objectId = objectId;
-        this.shardName = shardName;
         this.shardObjects = Collections.unmodifiableList(shardObjects);
+        hashValue = computeHashValue();
+        this.shardName = shardName;
     }
 
     public static ShardAudiobook local(final String objectId,
@@ -57,13 +60,21 @@ public final class ShardAudiobook implements Serializable {
         return shardName;
     }
 
+    public String getHashValue() {
+        return hashValue;
+    }
+
     public long size() {
         return shardObjects.stream()
                 .map(ShardObject::getSize)
                 .reduce(0L, Long::sum);
     }
 
-    public String hashValue() {
+    public boolean hasTitelnummer(final String titelnummer) {
+        return false;
+    }
+
+    private String computeHashValue() {
         final List<String> allEtags = shardObjects
                 .stream()
                 .map(ShardObject::getHashValue)
@@ -85,8 +96,10 @@ public final class ShardAudiobook implements Serializable {
         return Objects.hash(shardName, shardObjects);
     }
 
-    public boolean hasTitelnummer(final String titelnummer) {
-        return false;
+    @Override
+    public String toString() {
+        return String.format("ShardAudiobook{hashValue='%s', objectId='%s', shardName='%s', shardObjects=%d}",
+                computeHashValue(), objectId, shardName, shardObjects.size());
     }
 
 }

@@ -11,24 +11,24 @@ import io.micronaut.configuration.rabbitmq.intercept.MutableBasicProperties;
 import io.micronaut.configuration.rabbitmq.serdes.RabbitMessageSerDes;
 import io.micronaut.core.type.Argument;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DataHeartbeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 
 @Singleton
-final class DataHeartbeatSerDes implements RabbitMessageSerDes<DataHeartbeat> {
+final class DatabeatSerDes implements RabbitMessageSerDes<Databeat> {
 
     private final ObjectMapper objectMapper;
 
     @Inject
-    DataHeartbeatSerDes(final ObjectMapper objectMapper) {
+    DatabeatSerDes(final ObjectMapper objectMapper) {
         this.objectMapper = objectMapper;
     }
 
     @Nullable
     @Override
-    public DataHeartbeat deserialize(final RabbitConsumerState consumerState,
-                                     final Argument<DataHeartbeat> argument) {
+    public Databeat deserialize(final RabbitConsumerState consumerState,
+                                final Argument<Databeat> argument) {
         try {
-            return objectMapper.readValue(consumerState.getBody(), DataHeartbeat.class);
+            return objectMapper.readValue(consumerState.getBody(), Databeat.class);
         } catch (IOException e) {
             throw new IllegalArgumentException(e);
         }
@@ -36,7 +36,7 @@ final class DataHeartbeatSerDes implements RabbitMessageSerDes<DataHeartbeat> {
 
     @Nullable
     @Override
-    public byte[] serialize(@Nullable final DataHeartbeat data,
+    public byte[] serialize(@Nullable final Databeat data,
                             final MutableBasicProperties properties) {
         if (null != data) {
             try {
@@ -50,8 +50,8 @@ final class DataHeartbeatSerDes implements RabbitMessageSerDes<DataHeartbeat> {
     }
 
     @Override
-    public boolean supports(final Argument<DataHeartbeat> argument) {
-        return argument.getType().isAssignableFrom(DataHeartbeat.class);
+    public boolean supports(final Argument<Databeat> argument) {
+        return argument.getType().isAssignableFrom(Databeat.class);
     }
 
 }
