@@ -1,0 +1,21 @@
+### Ein Hörbuch mit Wasserzeichen direkt abrufen
+POST {{host}}/stream/zip
+Content-Type: application/json
+
+{
+    "mandant": {{mandant}},
+    "hoerernummer": {{hoerernummer}},
+    "aghNummer": "",
+    "titelnummer": {{titelnummer}}
+}
+
+### Einen einzelnen Track mit Wasserzeichen eines Hörbuchs abrufen
+POST {{host}}/stream/track
+Content-Type: application/json
+
+{
+    "mandant": {{mandant}},
+    "hoerernummer": {{hoerernummer}},
+    "titelnummer": {{titelnummer}},
+    "ident": "01_Halt_die_Wolken_fest.mp3"
+}

@@ -177,7 +177,9 @@ class AudiobookServiceImpl implements AudiobookService {
         try (final InputStream audiobook = zipAsStream(hoerernummer, titelnummer)) {
             LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
                     hoerernummer, titelnummer);
-            Files.write(Path.of(orderId), audiobook.readAllBytes());
+            final Path orderDirectory = temporaryDirectory.resolve(orderId);
+            Files.createDirectories(orderDirectory);
+            Files.write(orderDirectory, audiobook.readAllBytes());
             orderStatus.put(orderId, "SUCCESS");
         } catch (Exception e) {
             orderStatus.put(orderId, "FAILED");
@@ -193,8 +195,10 @@ class AudiobookServiceImpl implements AudiobookService {
     @Override
     public InputStream fetchOrder(final String orderId) {
         try {
-            final InputStream inputStream = Files.newInputStream(Path.of(orderId));
+            final Path orderDirectory = temporaryDirectory.resolve(orderId);
+            final InputStream inputStream = Files.newInputStream(orderDirectory.resolve("DAISY.zip"));
             orderStatus.remove(orderId);
+            FilesUtils.cleanupTemporaryDirectory(orderDirectory);
             return inputStream;
         } catch (IOException e) {
             throw new AudiobookServiceException(String.format("Bestellung %s kann nicht abgerufen werden", orderId), e);
