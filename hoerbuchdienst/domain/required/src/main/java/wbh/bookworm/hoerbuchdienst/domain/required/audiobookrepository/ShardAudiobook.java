@@ -70,8 +70,8 @@ public final class ShardAudiobook implements Serializable {
                 .reduce(0L, Long::sum);
     }
 
-    public boolean hasTitelnummer(final String titelnummer) {
-        return false;
+    public boolean isTitelnummer(final String titelnummer) {
+        return titelnummer.equals(objectId);
     }
 
     private String computeHashValue() {

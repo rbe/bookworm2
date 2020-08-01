@@ -70,14 +70,14 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public Optional<ShardName> lookupShard(final String titelnummer) {
+    public Optional<ShardName> lookupShard(/* TODO Mandantenspezifisch */final String titelnummer) {
         if (allShardAudiobooks.isEmpty()) {
             LOGGER.warn("Titelnummer {}: Keine Informationen über die Verteilung der Objekte auf Shards vorhanden",
                     titelnummer);
             return Optional.empty();
         } else {
             return allShardAudiobooks.stream()
-                    .filter(shardAudiobook -> shardAudiobook.hasTitelnummer(titelnummer))
+                    .filter(shardAudiobook -> shardAudiobook.isTitelnummer(titelnummer))
                     .findFirst()
                     .map(ShardAudiobook::getShardName)
                     .or(Optional::empty);
@@ -104,6 +104,7 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     @Override
     public void maybeReshard(final AtomicInteger highWatermark, final Databeats databeats) {
         final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(highWatermark.get(), databeats);
+        allShardAudiobooks = desiredDistribution;
         // filter all objects in local object storage not belonging to this shard (anymore)
         final ShardName myShardName = new ShardName();
         final List<Titelnummer> myShardTitelnummern = allEntriesByKey();
@@ -119,7 +120,6 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
                 // TODO invalidate cache
                 // TODO remove objects from object storage
             });
-            allShardAudiobooks = desiredDistribution;
         }
     }
 

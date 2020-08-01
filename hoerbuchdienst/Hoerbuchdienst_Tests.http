@@ -1,20 +1,30 @@
-#POST /resharding/zip/{titelnummer}/{hash}
+POST /resharding/zip/{titelnummer}/{hash}
+Content-Type: application/json
+
+{
+}
 
 ###
 
 POST /info/audiobook
+Content-Type: application/json
+
 {
 }
 
 ###
 
 POST /info/playlist
+Content-Type: application/json
+
 {
 }
 
 ###
 
 POST /info/track
+Content-Type: application/json
+
 {
 }
 
@@ -35,10 +45,31 @@ Content-Type: application/json
 
 {
     "mandant": "WBH",
-    "hoerernummer": "00001",
+    "hoerernummer": "80170",
     "aghNummer": "",
     "titelnummer": "32909"
 }
+
+###
+
+#POST https://hoerbuchdienst.shard1.audiobook.wbh-online.de/stream/zip/order
+POST http://localhost:8080/stream/zip/order
+Content-Type: application/json
+
+{
+    "mandant": "WBH",
+    "hoerernummer": "80170",
+    "aghNummer": "",
+    "titelnummer": "32909"
+}
+
+###
+
+GET http://localhost:8080/stream/zip/status
+
+###
+
+GET http://localhost:8080/stream/zip/fetch/
 
 ###
 

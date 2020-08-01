@@ -15,13 +15,16 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
 import io.micronaut.context.annotation.Value;
+import io.micronaut.scheduling.annotation.Async;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,9 +39,9 @@ import aoc.mikrokosmos.io.fs.FilesUtils;
 import aoc.mikrokosmos.io.zip.Zip;
 
 @Singleton
-final class AudiobookServiceImpl implements AudiobookService {
+class AudiobookServiceImpl implements AudiobookService {
 
-    public static final String UNKNOWN = "unknown";
+    private static final String UNKNOWN = "unknown";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookServiceImpl.class);
 
@@ -48,8 +51,9 @@ final class AudiobookServiceImpl implements AudiobookService {
 
     private final Zip zip;
 
-    // TODO Mandantenspezifisch
-    @Value("${hoerbuchdienst.piracy.inquiry.urlprefix}")
+    private final Map<String, String> orderStatus;
+
+    @Value(/* TODO Mandantenspezifisch */"${hoerbuchdienst.piracy.inquiry.urlprefix}")
     private String piracyInquiryUrlPrefix;
 
     @Value("${hoerbuchdienst.temporary.path}")
@@ -62,19 +66,35 @@ final class AudiobookServiceImpl implements AudiobookService {
         this.audiobookRepository = audiobookRepository;
         this.watermarker = watermarker;
         this.zip = zip;
+        orderStatus = new ConcurrentHashMap<>(10);
     }
 
     @Override
-    public String shardLocation(final String titelnummer) {
-        final Optional<ShardName> shardName = audiobookRepository.lookupShard(titelnummer);
-        LOGGER.debug("Looked up shard '{}' for '{}'", shardName, titelnummer);
-        return shardName.isPresent()
-                ? shardName.toString()
-                : UNKNOWN;
+    public String shardLocation(/* TODO Mandantenspezifisch */final String titelnummer) {
+        final Optional<ShardName> maybeShardName = audiobookRepository.lookupShard(titelnummer);
+        if (maybeShardName.isPresent()) {
+            LOGGER.debug("Looked up shard '{}' for '{}'", maybeShardName, titelnummer);
+            return maybeShardName.get().toString();
+        } else {
+            LOGGER.warn("Could not lookup shard for {}", titelnummer);
+        }
+        return UNKNOWN;
     }
 
     @Override
-    public InputStream trackAsStream(final String hoerernummer, final String titelnummer, final String ident) {
+    public boolean locatedLocal(/* TODO Mandantenspezifisch */final String titelnummer) {
+        final Optional<ShardName> maybeShardName = audiobookRepository.lookupShard(titelnummer);
+        if (maybeShardName.isPresent()) {
+            LOGGER.debug("Looked up shard '{}' for '{}'", maybeShardName, titelnummer);
+            return new ShardName().equals(maybeShardName.get());
+        } else {
+            LOGGER.warn("Could not lookup shard for {}", titelnummer);
+        }
+        return false;
+    }
+
+    @Override
+    public InputStream trackAsStream(final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String ident) {
         final Path tempMp3File = audiobookRepository.makeLocalCopyOfTrack(hoerernummer, titelnummer, ident,
                 "trackAsByteArray");
         try {
@@ -91,7 +111,7 @@ final class AudiobookServiceImpl implements AudiobookService {
     // TODO Lasttest mit n Hörbüchern und n Threads, wobei n=1,2,4,6,8,...
     // TODO Bis zu wie vielen Threads steigert sich die Anzahl personalisierter Hörbücher?
     @Override
-    public InputStream zipAsStream(final String hoerernummer, final String titelnummer) {
+    public InputStream zipAsStream(final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer) {
         final Path audiobookDirectory = Path.of(String.format("%s/%s-%s-%s", temporaryDirectory, hoerernummer, titelnummer, UUID.randomUUID())
                 .replace("//", "/"));
         try {
@@ -149,7 +169,40 @@ final class AudiobookServiceImpl implements AudiobookService {
     }
 
     @Override
-    public boolean putZip(final String titelnummer, final InputStream inputStream, final String hash) {
+    @Async
+    public void orderZip(final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String orderId) {
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
+                hoerernummer, titelnummer);
+        orderStatus.put(orderId, "PROCESSING");
+        try (final InputStream audiobook = zipAsStream(hoerernummer, titelnummer)) {
+            LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
+                    hoerernummer, titelnummer);
+            Files.write(Path.of(orderId), audiobook.readAllBytes());
+            orderStatus.put(orderId, "SUCCESS");
+        } catch (Exception e) {
+            orderStatus.put(orderId, "FAILED");
+            throw new AudiobookServiceException("Hörer '{}' Hörbuch '{}': Kann Bestellung nicht persistieren", e);
+        }
+    }
+
+    @Override
+    public String orderStatus(final String orderId) {
+        return orderStatus.get(orderId);
+    }
+
+    @Override
+    public InputStream fetchOrder(final String orderId) {
+        try {
+            final InputStream inputStream = Files.newInputStream(Path.of(orderId));
+            orderStatus.remove(orderId);
+            return inputStream;
+        } catch (IOException e) {
+            throw new AudiobookServiceException(String.format("Bestellung %s kann nicht abgerufen werden", orderId), e);
+        }
+    }
+
+    @Override
+    public boolean putZip(/* TODO Mandantenspezifisch */ final String titelnummer, final InputStream inputStream, final String hash) {
         return audiobookRepository.putZip(inputStream, new Titelnummer(titelnummer));
     }
 

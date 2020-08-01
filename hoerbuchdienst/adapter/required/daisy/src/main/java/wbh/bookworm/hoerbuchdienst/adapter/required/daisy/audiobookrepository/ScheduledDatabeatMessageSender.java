@@ -4,15 +4,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.nio.file.FileStore;
-import java.nio.file.FileSystem;
-import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.ZonedDateTime;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
 import io.micronaut.configuration.rabbitmq.exception.RabbitClientException;
+import io.micronaut.context.annotation.Value;
 import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,7 +24,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
-import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 
 @Singleton
@@ -41,6 +40,9 @@ final class ScheduledDatabeatMessageSender {
     private final AudiobookStreamResolver audiobookStreamResolver;
 
     private final DatabeatMessageSender databeatMessageSender;
+
+    @Value("${hoerbuchdienst.objectstorage.path}")
+    private Path objectStoragePath;
 
     @Inject
     ScheduledDatabeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
@@ -66,9 +68,7 @@ final class ScheduledDatabeatMessageSender {
                 .collect(Collectors.toUnmodifiableList());
         long availableBytes;
         try {
-            final FileSystem fileSystem = FileSystems.getDefault();
-            final Iterator<FileStore> fileStoreIterator = fileSystem.getFileStores().iterator();
-            final FileStore fileStore = fileStoreIterator.next();
+            final FileStore fileStore = Files.getFileStore(objectStoragePath);
             availableBytes = fileStore.getTotalSpace() - SPACE_4GB;
             LOGGER.info("Filesystem {} type {} has {} available bytes = {} MB = {} GB",
                     fileStore.name(), fileStore.type(),
@@ -83,17 +83,8 @@ final class ScheduledDatabeatMessageSender {
         try {
             databeatMessageSender.send(shardName.toString(), databeat);
         } catch (RabbitClientException e) {
-            LOGGER.warn("{}", e.getMessage());
+            LOGGER.warn("Cannot send databeat: {}", e.getMessage());
         }
-    }
-
-    private String audiobookHash(final Map<String, String> allShardObjectsHashes, final Titelnummer titelnummer) {
-        final List<String> allEtags = allShardObjectsHashes.entrySet()
-                .stream()
-                .filter(entry -> entry.getKey().startsWith(titelnummer.getValue()))
-                .map(Map.Entry::getValue)
-                .collect(Collectors.toUnmodifiableList());
-        return MessageDigester.ofUTF8(allEtags);
     }
 
     /**

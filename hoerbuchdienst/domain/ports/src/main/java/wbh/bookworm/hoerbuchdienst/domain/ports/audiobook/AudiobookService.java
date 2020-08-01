@@ -12,9 +12,17 @@ public interface AudiobookService {
 
     String shardLocation(/* TODO AghNummer */String titelnummer);
 
+    boolean locatedLocal(/* TODO AghNummer */String titelnummer);
+
     InputStream trackAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer, String ident);
 
     InputStream zipAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer);
+
+    void orderZip(String hoerernummer, String titelnummer, String orderId);
+
+    String orderStatus(String orderId);
+
+    InputStream fetchOrder(String orderId);
 
     boolean putZip(String titelnummer, /* TODO AghNummer */InputStream inputStream, String hash);
 
