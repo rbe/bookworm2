@@ -53,7 +53,7 @@ final class ScheduledDatabeatMessageSender {
     }
 
     @Scheduled(fixedDelay = "1m")
-    void sendHeartbeat() {
+    void send() {
         final List<ObjectMetaInfo> objectMetaInfos = audiobookStreamResolver.allObjectsMetaInfo();
         final Long usedBytes = objectMetaInfos.stream()
                 .map(ObjectMetaInfo::getLength)

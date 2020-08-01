@@ -44,7 +44,7 @@ final class DatabeatMessageReceiver {
             LOGGER.info("Received {} entries from {}", shardObjects.size(), xShardName);
             // calculate only if:
             //     #databeats > 1
-            //     #heartbeats == #databeats
+            //     #HWM heartbeats == #databeats
             //     #objects > #databeats
             final boolean moreThanOneDatabeatReceived = 2 <= databeats.numberOfDatabeats();
             final boolean numberOfHeartAndDatabeatsIsEqual = highWatermark.get() == databeats.numberOfDatabeats();

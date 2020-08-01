@@ -45,6 +45,8 @@ class AudiobookServiceImpl implements AudiobookService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookServiceImpl.class);
 
+    private static final String DAISY_ZIP = "DAISY.zip";
+
     private final AudiobookRepository audiobookRepository;
 
     private final Watermarker watermarker;
@@ -179,7 +181,7 @@ class AudiobookServiceImpl implements AudiobookService {
                     hoerernummer, titelnummer);
             final Path orderDirectory = temporaryDirectory.resolve(orderId);
             Files.createDirectories(orderDirectory);
-            Files.write(orderDirectory, audiobook.readAllBytes());
+            Files.write(orderDirectory.resolve(DAISY_ZIP), audiobook.readAllBytes());
             orderStatus.put(orderId, "SUCCESS");
         } catch (Exception e) {
             orderStatus.put(orderId, "FAILED");
@@ -196,7 +198,7 @@ class AudiobookServiceImpl implements AudiobookService {
     public InputStream fetchOrder(final String orderId) {
         try {
             final Path orderDirectory = temporaryDirectory.resolve(orderId);
-            final InputStream inputStream = Files.newInputStream(orderDirectory.resolve("DAISY.zip"));
+            final InputStream inputStream = Files.newInputStream(orderDirectory.resolve(DAISY_ZIP));
             orderStatus.remove(orderId);
             FilesUtils.cleanupTemporaryDirectory(orderDirectory);
             return inputStream;

@@ -28,7 +28,7 @@ final class ScheduledHeartbeatMessageSender {
     }
 
     @Scheduled(fixedDelay = "1s")
-    void sendHeartbeat() {
+    void send() {
         final Heartbeat heartbeat = new Heartbeat(ZonedDateTime.now().toInstant(), shardName);
         LOGGER.trace("Sending heartbeat {}", heartbeat);
         try {
