@@ -21,7 +21,7 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.model.DomainAggregate;

@@ -13,7 +13,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechAufDieMerklisteGe
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.HoerbuechVonDerMerklisteEntfernt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.MerklisteId;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
 

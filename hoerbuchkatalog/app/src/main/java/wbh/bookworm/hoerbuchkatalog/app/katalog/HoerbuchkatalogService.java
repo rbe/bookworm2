@@ -20,7 +20,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 @Service
 public final class HoerbuchkatalogService {

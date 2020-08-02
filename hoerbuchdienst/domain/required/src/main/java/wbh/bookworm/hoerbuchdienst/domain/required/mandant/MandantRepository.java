@@ -3,8 +3,8 @@ package wbh.bookworm.hoerbuchdienst.domain.required.mandant;
 import java.util.List;
 
 import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
-import wbh.bookworm.shared.domain.hoerer.MandantenId;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.MandantenId;
 
 public interface MandantRepository {
 

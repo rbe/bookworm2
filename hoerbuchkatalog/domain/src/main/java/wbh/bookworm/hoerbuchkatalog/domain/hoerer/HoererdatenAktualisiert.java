@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.hoerer;
 
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 public final class HoererdatenAktualisiert extends HoererdatenEvent {
 

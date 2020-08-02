@@ -21,7 +21,7 @@ import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 @Component
 @SessionScope

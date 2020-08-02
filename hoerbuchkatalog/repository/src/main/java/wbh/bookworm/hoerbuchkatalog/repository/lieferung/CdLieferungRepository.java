@@ -17,7 +17,7 @@ import org.springframework.context.ApplicationContext;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.CdLieferungAktualisiert;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;

@@ -1,4 +1,4 @@
-package wbh.bookworm.shared.domain.hoerer;
+package wbh.bookworm.shared.domain.mandant;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

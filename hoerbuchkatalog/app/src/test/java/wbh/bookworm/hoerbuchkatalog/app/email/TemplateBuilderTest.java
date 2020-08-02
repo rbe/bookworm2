@@ -32,7 +32,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
 import wbh.bookworm.shared.domain.hoerbuch.Sachgebiet;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import static org.junit.jupiter.api.Assertions.assertLinesMatch;
 

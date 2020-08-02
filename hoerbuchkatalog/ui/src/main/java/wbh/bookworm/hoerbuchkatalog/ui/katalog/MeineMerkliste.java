@@ -16,7 +16,7 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 @Component
 @RequestScope

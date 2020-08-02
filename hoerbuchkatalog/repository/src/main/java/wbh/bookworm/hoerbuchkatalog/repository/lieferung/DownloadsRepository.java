@@ -28,7 +28,7 @@ import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsWerk
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.repository.DomainRepositoryComponent;
 

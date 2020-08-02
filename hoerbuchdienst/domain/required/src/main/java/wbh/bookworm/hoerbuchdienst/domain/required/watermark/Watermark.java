@@ -1,7 +1,7 @@
 package wbh.bookworm.hoerbuchdienst.domain.required.watermark;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.HoererIdentifikation;
+import wbh.bookworm.shared.domain.mandant.HoererIdentifikation;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

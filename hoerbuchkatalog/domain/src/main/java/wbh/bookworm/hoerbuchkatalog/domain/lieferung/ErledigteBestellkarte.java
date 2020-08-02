@@ -11,7 +11,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

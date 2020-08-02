@@ -1,6 +1,6 @@
 package wbh.bookworm.hoerbuchdienst.domain.ports.mandant;
 
-import wbh.bookworm.shared.domain.hoerer.MandantenId;
+import wbh.bookworm.shared.domain.mandant.MandantenId;
 
 public interface MandantService {
 

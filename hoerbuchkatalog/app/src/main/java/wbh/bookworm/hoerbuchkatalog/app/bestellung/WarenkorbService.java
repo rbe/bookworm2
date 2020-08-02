@@ -18,7 +18,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 // TODO Peristenz für Warenkörbe nicht notwendig -> WK nur pro Session gültig, Session persistieren
 @Service

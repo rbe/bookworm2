@@ -31,7 +31,7 @@ import org.springframework.stereotype.Component;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.repository.as400.Datenformat;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.io.dataformat.CsvFormat;
 import aoc.mikrokosmos.io.dataformat.CsvParser;

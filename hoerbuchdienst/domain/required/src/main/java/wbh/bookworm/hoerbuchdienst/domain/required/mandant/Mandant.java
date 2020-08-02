@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Objects;
 
 import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 public final class Mandant implements Serializable {
 

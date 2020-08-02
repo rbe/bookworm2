@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 public abstract class HoerbuchEvent extends HoerbuchkatalogHoererEvent {
 

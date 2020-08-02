@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.shared.domain.hoerer;
+package wbh.bookworm.shared.domain.mandant;
 
 import org.junit.jupiter.api.Test;
 

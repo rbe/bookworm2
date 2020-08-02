@@ -50,7 +50,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.HoererBlistaDownloads;
 import wbh.bookworm.shared.domain.hoerbuch.Sachgebiet;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.hoerer.Hoerernummer;
+import wbh.bookworm.shared.domain.mandant.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.event.DomainEventSubscriber;
