@@ -99,7 +99,7 @@ public class StreamController {
             final String status = audiobookService.orderStatus(orderId);
             LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
             return status;
-        }, "", String.format("zip/%s/status/%s", titelnummer, orderId));
+        }, "", String.format("stream/zip/%s/status/%s", titelnummer, orderId));
     }
 
     @Get(uri = "zip/{titelnummer}/fetch/{orderId}", produces = MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ public class StreamController {
                     } catch (IOException e) {
                         throw new BusinessException(EMPTY_STRING, e);
                     }
-                }, EMPTY_BYTE_ARRAY, String.format("zip/%s/fetch/%s", titelnummer, orderId));
+                }, EMPTY_BYTE_ARRAY, String.format("stream/zip/%s/fetch/%s", titelnummer, orderId));
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
