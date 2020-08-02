@@ -30,7 +30,7 @@ import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 
 @OpenAPIDefinition()
-@Controller("/stream")
+@Controller(value = StreamController.URL_STREAM)
 public class StreamController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
@@ -44,6 +44,8 @@ public class StreamController {
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     private static final String EMPTY_STRING = "";
+
+    static final String URL_STREAM = "/stream";
 
     private final AudiobookService audiobookService;
 
@@ -92,7 +94,7 @@ public class StreamController {
                 }, EMPTY_STRING, "stream/zip/order");
     }
 
-    @Get(uri = "zip/{titelnummer}/status/{orderId}", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<String> fetchStatusOfZippedAudiobook(@PathVariable final String titelnummer,
                                                              @PathVariable final String orderId) {
         return withLocalOrRedirect(titelnummer, () -> {
@@ -102,7 +104,7 @@ public class StreamController {
         }, "", String.format("stream/zip/%s/status/%s", titelnummer, orderId));
     }
 
-    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<byte[]> fetchZippedAudiobook(@PathVariable final String titelnummer,
                                                      @PathVariable final String orderId) {
         return withLocalOrRedirect(titelnummer,
