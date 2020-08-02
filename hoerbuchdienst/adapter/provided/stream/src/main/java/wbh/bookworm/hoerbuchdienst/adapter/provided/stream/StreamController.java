@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpResponse;
@@ -21,12 +22,14 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Head;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
 
+@OpenAPIDefinition()
 @Controller("/stream")
 public class StreamController {
 
@@ -58,14 +61,9 @@ public class StreamController {
     @Post(uri = "zip/sync", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> syncZippedAudiobookAsStream(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        final boolean locatedLocal = audiobookService.locatedLocal(audiobookAnfrageDTO.getTitelnummer());
-        if (locatedLocal) {
-            return HttpResponse.ok(makeZippedAudiobook(audiobookAnfrageDTO.getHoerernummer(),
-                    audiobookAnfrageDTO.getTitelnummer()));
-        } else {
-            return tryRedirectToOwningShard(audiobookAnfrageDTO.getHoerernummer(),
-                    audiobookAnfrageDTO.getTitelnummer(), EMPTY_BYTE_ARRAY, "stream/zip/sync");
-        }
+        return withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+                () -> makeZippedAudiobook(audiobookAnfrageDTO.getHoerernummer(),
+                        audiobookAnfrageDTO.getTitelnummer()), EMPTY_BYTE_ARRAY, "/stream/zip/sync");
     }
 
     private byte[] makeZippedAudiobook(final String hoerernummer, final String titelnummer) {
@@ -81,51 +79,41 @@ public class StreamController {
         }
     }
 
-    private <T> HttpResponse<T> tryRedirectToOwningShard(final String hoerernummer, final String titelnummer,
-                                                         final T emptyResponseBody, final String uri) {
-        final String shardName = audiobookService.shardLocation(titelnummer);
-        if (shardName.equals("unknown")) {
-            return HttpResponse.notFound();
-        } else {
-            final String shardURI = String.format("https://%s/%s", shardName, uri);
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Redirecting to {}", hoerernummer, titelnummer, shardURI);
-            return HttpResponse.<T>temporaryRedirect(URI.create(shardURI))
-                    .header(X_SHARD_LOCATION, shardName)
-                    .body(emptyResponseBody);
-        }
-    }
-
     @Post(uri = "zip/order", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     public HttpResponse<String> zippedAudiobookAsStream(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        final boolean locatedLocal = audiobookService.locatedLocal(audiobookAnfrageDTO.getTitelnummer());
-        if (locatedLocal) {
-            final UUID orderId = UUID.randomUUID();
-            audiobookService.orderZip(audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer(),
-                    orderId.toString());
-            LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
-                    audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
-            return HttpResponse.ok(orderId.toString());
-        } else {
-            return tryRedirectToOwningShard(audiobookAnfrageDTO.getHoerernummer(),
-                    audiobookAnfrageDTO.getTitelnummer(), EMPTY_STRING, "stream/zip/order");
-        }
+        return withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+                () -> {
+                    final UUID orderId = UUID.randomUUID();
+                    audiobookService.orderZip(audiobookAnfrageDTO.getHoerernummer(),
+                            audiobookAnfrageDTO.getTitelnummer(), orderId.toString());
+                    LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
+                            audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
+                    return orderId.toString();
+                }, EMPTY_STRING, "stream/zip/order");
     }
 
-    @Get(uri = "zip/status/{orderId}", produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<String> fetchStatusOfZippedAudiobook(@PathVariable final String orderId) {
-        final String status = audiobookService.orderStatus(orderId);
-        LOGGER.info("Hörer '{}' Hörbuch '{}': Status der Bestellung {} ist {}", orderId, status);
-        return HttpResponse.ok(status);
+    @Get(uri = "zip/{titelnummer}/status/{orderId}", produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<String> fetchStatusOfZippedAudiobook(@PathVariable final String titelnummer,
+                                                             @PathVariable final String orderId) {
+        return withLocalOrRedirect(titelnummer, () -> {
+            final String status = audiobookService.orderStatus(orderId);
+            LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
+            return status;
+        }, "", String.format("zip/%s/status/%s", titelnummer, orderId));
     }
 
-    @Get(uri = "zip/fetch/{orderId}", produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<byte[]> fetchZippedAudiobook(@PathVariable final String orderId) {
-        LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung {} wird abgeholt", orderId);
-        try (final InputStream inputStream = audiobookService.fetchOrder(orderId)) {
-            return HttpResponse.ok(inputStream.readAllBytes());
-        } catch (IOException e) {
-            throw new BusinessException(EMPTY_STRING, e);
-        }
+    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<byte[]> fetchZippedAudiobook(@PathVariable final String titelnummer,
+                                                     @PathVariable final String orderId) {
+        return withLocalOrRedirect(titelnummer,
+                () -> {
+                    LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
+                    try (final InputStream inputStream = audiobookService.fetchOrder(orderId)) {
+                        return inputStream.readAllBytes();
+                    } catch (IOException e) {
+                        throw new BusinessException(EMPTY_STRING, e);
+                    }
+                }, EMPTY_BYTE_ARRAY, String.format("zip/%s/fetch/%s", titelnummer, orderId));
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
@@ -144,6 +132,36 @@ public class StreamController {
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);
         }
+    }
+
+    private <T> HttpResponse<T> withLocalOrRedirect(final String titelnummer,
+                                                    final Supplier<T> audiobookSupplier,
+                                                    final T emptyResponseBody, final String uri) {
+        final boolean locatedLocal = audiobookService.isLocatedLocal(titelnummer);
+        if (locatedLocal) {
+            final T apply = audiobookSupplier.get();
+            return HttpResponse.ok(apply);
+        } else {
+            return tryRedirectToOwningShard(titelnummer, emptyResponseBody, uri);
+        }
+    }
+
+    private <T> HttpResponse<T> tryRedirectToOwningShard(final String titelnummer,
+                                                         final T emptyResponseBody, final String uri) {
+        final HttpResponse<T> result;
+        final String shardName = audiobookService.shardLocation(titelnummer);
+        if ("unknown".equals(shardName)) {
+            result = HttpResponse.<T>notFound()
+                    .header(X_SHARD_LOCATION, shardName)
+                    .body(emptyResponseBody);
+        } else {
+            final String shardURI = String.format("https://%s/%s", shardName, uri);
+            LOGGER.debug("Hörbuch '{}': Redirecting to {}", titelnummer, shardURI);
+            result = HttpResponse.<T>temporaryRedirect(URI.create(shardURI))
+                    .header(X_SHARD_LOCATION, shardName)
+                    .body(emptyResponseBody);
+        }
+        return result;
     }
 
 }

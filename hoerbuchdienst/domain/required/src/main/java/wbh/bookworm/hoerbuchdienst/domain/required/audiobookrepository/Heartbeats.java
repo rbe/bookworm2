@@ -45,9 +45,9 @@ public final class Heartbeats implements Serializable {
 
     public void forgetAll(final Set<ShardName> shardNames) {
         synchronized (heartbeatLock) {
-            shardNames.forEach(shardname -> {
-                heartbeatMap.remove(shardname);
-                lostHeartbeats.add(shardname);
+            shardNames.forEach(shardName -> {
+                heartbeatMap.remove(shardName);
+                lostHeartbeats.add(shardName);
             });
         }
     }

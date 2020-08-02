@@ -12,7 +12,7 @@ public interface AudiobookService {
 
     String shardLocation(/* TODO AghNummer */String titelnummer);
 
-    boolean locatedLocal(/* TODO AghNummer */String titelnummer);
+    boolean isLocatedLocal(/* TODO AghNummer */String titelnummer);
 
     InputStream trackAsStream(String hoerernummer, /* TODO AghNummer */String titelnummer, String ident);
 

@@ -8,7 +8,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 // TODO @Introspected does not work with Json fromStringCreator
-public final class ShardName implements Serializable {
+public final class ShardName implements Serializable, Comparable<ShardName> {
 
     private static final long serialVersionUID = -1351069385413170972L;
 
@@ -49,6 +49,11 @@ public final class ShardName implements Serializable {
     @Override
     public String toString() {
         return getShardName();
+    }
+
+    @Override
+    public int compareTo(final ShardName o) {
+        return o.hostName.compareTo(this.hostName);
     }
 
 }

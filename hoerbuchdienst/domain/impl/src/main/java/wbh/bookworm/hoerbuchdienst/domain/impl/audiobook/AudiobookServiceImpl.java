@@ -47,6 +47,14 @@ class AudiobookServiceImpl implements AudiobookService {
 
     private static final String DAISY_ZIP = "DAISY.zip";
 
+    private static final String ORDER_STATUS_PROCESSING = "PROCESSING";
+
+    private static final String ORDER_STATUS_SUCCESS = "SUCCESS";
+
+    private static final String ORDER_STATUS_FAILED = "FAILED";
+
+    private static final String ORDER_STATUS_UNKNOWN = "UNKNOWN";
+
     private final AudiobookRepository audiobookRepository;
 
     private final Watermarker watermarker;
@@ -84,10 +92,9 @@ class AudiobookServiceImpl implements AudiobookService {
     }
 
     @Override
-    public boolean locatedLocal(/* TODO Mandantenspezifisch */final String titelnummer) {
+    public boolean isLocatedLocal(/* TODO Mandantenspezifisch */final String titelnummer) {
         final Optional<ShardName> maybeShardName = audiobookRepository.lookupShard(titelnummer);
         if (maybeShardName.isPresent()) {
-            LOGGER.debug("Looked up shard '{}' for '{}'", maybeShardName, titelnummer);
             return new ShardName().equals(maybeShardName.get());
         } else {
             LOGGER.warn("Could not lookup shard for {}", titelnummer);
@@ -175,23 +182,23 @@ class AudiobookServiceImpl implements AudiobookService {
     public void orderZip(final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String orderId) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
                 hoerernummer, titelnummer);
-        orderStatus.put(orderId, "PROCESSING");
+        orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
         try (final InputStream audiobook = zipAsStream(hoerernummer, titelnummer)) {
             LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
                     hoerernummer, titelnummer);
             final Path orderDirectory = temporaryDirectory.resolve(orderId);
             Files.createDirectories(orderDirectory);
             Files.write(orderDirectory.resolve(DAISY_ZIP), audiobook.readAllBytes());
-            orderStatus.put(orderId, "SUCCESS");
+            orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
         } catch (Exception e) {
-            orderStatus.put(orderId, "FAILED");
-            throw new AudiobookServiceException("Hörer '{}' Hörbuch '{}': Kann Bestellung nicht persistieren", e);
+            orderStatus.put(orderId, ORDER_STATUS_FAILED);
+            throw new AudiobookServiceException(String.format("Hörer %s Hörbuch %s: Kann Bestellung nicht persistieren", hoerernummer, titelnummer), e);
         }
     }
 
     @Override
     public String orderStatus(final String orderId) {
-        return orderStatus.get(orderId);
+        return orderStatus.getOrDefault(orderId, UNKNOWN);
     }
 
     @Override
