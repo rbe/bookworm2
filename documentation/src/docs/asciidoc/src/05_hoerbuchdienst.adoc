@@ -1,5 +1,13 @@
 == Hörbuchdienst
 
+=== Voraussetzungen
+
+Definitionen für DAISY Hörbücher als Archiv:
+
+* ZIP-Dateien müssen einen Ordner beinhalten
+
+=== Heartbeats
+
 [source,text,linenum,subs="quotes"]
 ----
 13:30:55.828 INFO  w.b.h.a.r.d.a.DataHeartbeatMessageReceiver - Received 1 entries from hoerbuchdienst.shard1.audiobook.wbh-online.de

@@ -2,6 +2,8 @@
 
 === Storage Server provisionieren
 
+==== Server installieren
+
 netcup Storage Server installieren:
 
 * ArchLinux
@@ -9,8 +11,11 @@ netcup Storage Server installieren:
 * Partitionen: "Das Betriebssystem wird in einer kleinen Partition bereit gestellt.
 Der restliche Speicherplatz kann nach Bedarf partitioniert werden."
 
+==== SSH Zugriff einrichten
+
 .Auf dem Client
-Bitte `N` gegen die entsprechende Nummer ersetzen
+Der Administrator muss seinen SSH-Schlüssel für den Login auf dem Shard hinterlegen.
+Bitte `N` gegen die entsprechende Nummer ersetzen:
 
 [source,shell,linenum]
 ----
@@ -22,7 +27,7 @@ ssh-copy-id -i ~/.ssh/id_rsa root@shardN1.audiobook.wbh-online.de <1>
 ----
 <1> Bei Aufforderung das Passwort aus der Konsole des Providers verwenden.
 
-.shard1
+.shard1.audiobook.wbh-online.de
 [source,shell,linenum]
 ----
 ssh-keygen -R shard1.audiobook.wbh-online.de
@@ -31,7 +36,7 @@ ssh-keyscan shard1.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
 ssh-copy-id -i ~/.ssh/id_rsa root@shard1.audiobook.wbh-online.de
 ----
 
-.shard2
+.shard2.audiobook.wbh-online.de
 [source,shell,linenum]
 ----
 ssh-keygen -R shard2.audiobook.wbh-online.de
@@ -40,6 +45,8 @@ ssh-keyscan shard2.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
 ssh-copy-id -i ~/.ssh/id_rsa root@shard2.audiobook.wbh-online.de
 ----
 
+==== Das Projekt klonen
+
 .Auf dem Shard einloggen:
 [source,shell,linenum]
 ----
@@ -47,15 +54,16 @@ ssh root@shardN.audiobook.wbh-online.de
 ----
 
 .SSH Schlüssel generieren
+Damit der Source Code auf dem Shard heruntergeladen werden kann, muss ein SSH Schlüssel erzeugt werden.
+
 [source,shell,linenum]
 ----
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
 cat ~/.ssh/id_rsa.pub
 ----
 
-und den Public Key auf GitHub und Bitbucket zum Zugriff durch den Server auf den Source Code hinterlegen lassen.
+und der Public Key muss auf GitHub und Bitbucket zum Zugriff durch den Shard hinterlegt werden.
 
-.WBH Bookworm auschecken
+.Source Code auschecken
 [source,shell,linenum]
 ----
 ssh-keyscan github.com 2>/dev/null >>~/.ssh/known_hosts
@@ -65,6 +73,8 @@ cd ~/bookworm2
 git config pull.rebase false
 git checkout master
 ----
+
+==== Erstinstallation durchführen
 
 .Installation Teil 1 -- Die Installation starten:
 [source,shell,linenum]
@@ -76,11 +86,14 @@ und bei Aufforderung Shard Name eingeben (shardN.audiobook.wbh-online.de) und mi
 
 [source,text,linenum]
 ----
-Please enter FQDN of shard: shard2.audiobook.wbh-online.de
-Shard name is shard2
+Please enter FQDN of shard: shard1.audiobook.wbh-online.de
+Shard name is shard1
 Shard's domain is audiobook.wbh-online.de
 Is this correct? (Enter 'yes') yes
 ----
+
+WARNING: Die eingegebenen Informationen müssen korrekt sein!
+Erfolgt keine Bestätigung per Eingabe von 'yes' wird die Abfrage wiederholt.
 
 Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
 
@@ -90,36 +103,70 @@ Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
 bookworm2 $ bash hoerbuchdienst/bin/setup-storageserver-2.sh
 ----
 
-.Lokale Namensauflösung
-Alle Shards müssen dem einzurichtenden Shard bekannt sein.
+==== Netzwerkkonfiguration
 
+.Namensauflösung
+Alle bereits existierenden Shards müssen dem einzurichtenden Shard bekannt sein.
+Dies kann a) per DNS und/oder b) durch lokale Dienste wie `/etc/hosts` erfolgen.
+
+WARNING: Die *zwingend* zu konfigurierenden Namen sind wie folgt, dabei ist die Domäne immer `audiobook.wbh-online.de`:
+
+[cols="45%a,55%a",opts="header",subs="quotes"]
+|====
+| Name
+| Beschreibung
+
+| shard__N__.audiobook.wbh-online.de
+| Der Shard/der Server selbst
+
+| vault.shard__N__.audiobook.wbh-online.de
+| Vault
+
+| kes.shard__N__.audiobook.wbh-online.de
+| MinIO KES
+
+| s3.shard__N__.audiobook.wbh-online.de
+| MinIO
+
+| rabbitmq.shard__N__.audiobook.wbh-online.de
+| RabbitMQ
+
+| hoerbuchdienst.shard__N__.audiobook.wbh-online.de
+| Hörbuchdienst
+|====
+
+.Lokale Namensauflösung per /etc/hosts einrichten
+[source,shell,linenum]
 ----
-cat >/etc/hosts <<EOF
+$ cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.
 # See hosts(5) for details.
 127.0.0.1       localhost
 188.68.50.68    shard1.audiobook.wbh-online.de  rabbitmq.shard1.audiobook.wbh-online.de  shard1
 188.68.43.25    shard2.audiobook.wbh-online.de  rabbitmq.shard2.audiobook.wbh-online.de  shard2
+... <1>
 EOF
 ----
+<1> Ggf. weitere Shards
 
-=== Applikationen verwalten
+=== Hörbuchdienst installieren
 
-==== Installation
+IMPORTANT: Die durch die Erstinstallation und den ersten Start erzeugten Volumes und Daten dürfen keinesfalls verändert oder gar gelöscht werden!
 
 Die folgenden Schritte müssen auf einem Shard durchgeführt werden.
 
-.Software für Produktion bauen
+.Software für Produktion bauen, deployen und starten
 [source,shell,linenum]
 ----
-bookworm2 $ ./build.sh prod
+bookworm2 $ ./autoupdate.sh prod hbd
 ----
 
-Der Release Zeitpunkt:
+.Releases
+Der durch das Bauen erzeugte Release Zeitpunkt:
 
 * kann aus den Logausgaben abgelesen werden,
-* ist an den Artefakten im Verzeichnis `assembly/target/dependency` ableser oder kann
-* alternativ mit `docker image ls` die aktuellsten Images nachschauen.
+* ist an den Artefakten im Verzeichnis `assembly/target/dependency` ablesbar oder
+* per `docker image ls` die aktuellsten Images nachgesehen werden.
 
 .Beispiel assembly/target/dependency
 [source,shell,linenum]
@@ -146,26 +193,25 @@ In das erstellte Release-Verzeichnis wechseln:
 
 [source,shell,linenum]
 ----
-bookworm2 $ cd ~/releases/prod-hbd-2020-07-18T09-02-06Z/wbh.bookworm.hoerbuchdienst.assembly
+$ cd ~/releases/prod-hbd-2020-07-18T09-02-06Z/wbh.bookworm.hoerbuchdienst.assembly
 releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly $ ./lifecycle.sh start
 ----
 
-==== RabbitMQ
+==== Message Queue einrichten
 
-Die Einrichtung von RabbitMQ erfordert manuelle Schritte.
-Dabei wird in der neuen RabbitMQ Instanz das Passwort für den Nutzer `federator` gesetzt und die weiteren, bereits eingerichteten RabbitMQ Instanzen können bekannt gemacht werden.
+Die Einrichtung von RabbitMQ erfordert manuelle Schritte durch die alle Shards miteinander bekannt gemacht werden.
+Dabei wird in der neuen RabbitMQ Instanz das Passwort für den Nutzer `federator` gesetzt und die weiteren, bereits eingerichteten RabbitMQ Instanzen können verbunden werden.
 
 .RabbitMQ erstmalig provisionieren
 [source,shell,linenum]
 ----
-docker-compose -p prod-hbd exec rabbitmq rabbitmq-provision.sh
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-provision.sh
 ----
 
-Beispiel:
+Ausgabe:
 
 [source,shell,linenum]
 ----
-wbh.bookworm.hoerbuchdienst.assembly $ docker-compose -p prod-hbd exec rabbitmq rabbitmq-provision.sh
 Checking if RabbitMQ is online
 RabbitMQ appears to be online
 Setting password for RabbitMQ federator
@@ -175,11 +221,11 @@ done
 ----
 
 .Andere RabbitMQ Instanzen anbinden
-[source,shell,linenum]
+[source,shell,linenum,subs="verbatim"]
 ----
-docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh \
-    "rabbitmq.shard2:user:pwd" \ <1>
-    "rabbitmq.shard3:user:pwd"   <2>
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh \
+    "*rabbitmq.shard2*:user:pwd" \ <1>
+    "*rabbitmq.shard3*:user:pwd"   <2>
 ----
 <1> Ein weiterer, bereits eingerichteter Shard `shard2`
 <2> Ein weiterer, bereits eingerichteter Shard `shard3`
@@ -190,17 +236,18 @@ Auf Shard1
 
 [source,shell,linenum]
 ----
-docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
 ----
 
-[source,shell,linenum]
+Ausgabe:
+
+[source,shell,linenum,subs="quotes"]
 ----
-wbh.bookworm.hoerbuchdienst.assembly $ docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
 Checking if RabbitMQ is online
 RabbitMQ appears to be online
 My node name is rabbitmq.shard1.audiobook.wbh-online.de
 Common domain for all shards is audiobook.wbh-online.de
-Adding federation upstream to rabbitmq.shard2.audiobook.wbh-online.de at amqps://federator:vae9eiwie3Eikiec@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst
+Adding federation upstream to *rabbitmq.shard2*.audiobook.wbh-online.de at amqps://federator:Abc123Def456@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst
 Setting runtime parameter "shard2" for component "federation-upstream" to "{"uri":"amqps://federator:Abc123Def456@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&heartbeat=10&connection_timeout=10000"}" in vhost "hoerbuchdienst" ...
 ----
 
@@ -208,37 +255,53 @@ Auf Shard2:
 
 [source,shell,linenum]
 ----
-docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard1:federator:Abc123Def456"
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard1:federator:Abc123Def456"
 ----
 
-Beispiel:
+Ausgabe:
 
-[source,shell,linenum]
+[source,shell,linenum,subs="quotes"]
 ----
-wbh.bookworm.hoerbuchdienst.assembly $ docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard1:federator:Abc123Def456"
 Checking if RabbitMQ is online
 RabbitMQ appears to be online
 My node name is rabbitmq.shard2.audiobook.wbh-online.de
 Common domain for all shards is audiobook.wbh-online.de
-Adding federation upstream to rabbitmq.shard1.audiobook.wbh-online.de at amqps://federator:Abc123Def456@rabbitmq.shard1.audiobook.wbh-online.de:5671/hoerbuchdienst
-Setting runtime parameter "shard1" for component "federation-upstream" to "{"uri":"amqps://federator:Aeh9eech3coo7tho@rabbitmq.shard1.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard1.audiobook.wbh-online.de&heartbeat=10&connection_timeout=10000"}" in vhost "hoerbuchdienst" ...
+Adding federation upstream to *rabbitmq.shard1*.audiobook.wbh-online.de at amqps://federator:Abc123Def456@rabbitmq.shard1.audiobook.wbh-online.de:5671/hoerbuchdienst
+Setting runtime parameter "shard1" for component "federation-upstream" to "{"uri":"amqps://federator:Abc123Def456@rabbitmq.shard1.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard1.audiobook.wbh-online.de&heartbeat=10&connection_timeout=10000"}" in vhost "hoerbuchdienst" ...
 ----
 
 .Fehlerfall: sich selbst als Upstream einrichten geht nicht
 Hier soll auf shard2 ein Upstream auf shard2 eingerichtet werden und wird mit der Meldung `Cannot add myself as upstream` abgelehnt:
-[source,shell,linenum]
 
-[source,shell,linenum]
+[source,shell,subs="quotes"]
 ----
-shard2 $ docker-compose -p prod-hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
+*shard2* $ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "*rabbitmq.shard2*:federator:Abc123Def456"
+----
+
+Ausgabe:
+
+[source,shell,linenum,subs="quotes"]
+----
 Checking if RabbitMQ is online
 RabbitMQ appears to be online
-My node name is rabbitmq.shard2.audiobook.wbh-online.de
+My node name is *rabbitmq.shard2*.audiobook.wbh-online.de
 Common domain for all shards is audiobook.wbh-online.de
-Cannot add myself as upstream
+*Cannot add myself as upstream*
 ----
 
-IMPORTANT: Die durch die Erstinstallation und den ersten Start erzeugten Volumes und Daten dürfen keinesfalls verändert oder gar gelöscht werden!
+.Federated Exchange und Queue einrichten
+[source,shell,linenum]
+----
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-add-federated-exchange.sh \
+    federator:password databeat fanout databeat true
+----
+
+.TTL für Nachrichten auf einer Queue setzen
+[source,shell,linenum]
+----
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-set-queue-message-ttl.sh \
+    databeat-message-ttl "^databeat$" 30000
+----
 
 ==== Aktualisierung
 
@@ -251,22 +314,7 @@ git checkout origin/master -- autoupdate.sh
 ./autoupdate.sh prod hbd
 ----
 
-.Stop
-In das *zuvor genutzte Release-Verzeichnis* wechseln:
-
-[source,shell,linenum]
-----
-bookworm2 $ cd ~/releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly
-releases/prod-hbd-2020-07-16T17-16-39Z/wbh.bookworm.hoerbuchdienst.assembly $ ./lifecycle.sh stop
-----
-
-.Start
-Die `restart.sh` mit Umgebung und Projekt aufrufen:
-
-[source,shell,linenum]
-----
-$ restart.sh prod hbd
-----
+TIP: Shell Alias `update-hbd` benutzen.
 
 === Backup
 
