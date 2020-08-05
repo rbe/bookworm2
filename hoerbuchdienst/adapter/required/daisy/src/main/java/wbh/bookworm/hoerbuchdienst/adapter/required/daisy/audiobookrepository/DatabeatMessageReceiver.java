@@ -17,6 +17,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardHighWatermarkEvent;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
+import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @RabbitListener
 @Singleton
@@ -26,16 +28,20 @@ final class DatabeatMessageReceiver {
 
     private final Databeats databeats;
 
-    private final AudiobookRepository audiobookRepository;
+    private final ShardingRepository shardingRepository;
 
     private final AtomicInteger highWatermark = new AtomicInteger(0);
 
-    DatabeatMessageReceiver(final AudiobookRepository audiobookRepository) {
+    private final AudiobookRepository audiobookRepository;
+
+    DatabeatMessageReceiver(final ShardingRepository shardingRepository,
+                            final AudiobookRepository audiobookRepository) {
+        this.shardingRepository = shardingRepository;
         this.audiobookRepository = audiobookRepository;
         databeats = new Databeats();
     }
 
-    @Queue(RepositoryQueues.QUEUE_DATAHEARTBEAT)
+    @Queue(RepositoryQueues.QUEUE_DATABEAT)
     void receiveHeartbeat(@Header("x-shardname") final String xShardName, final Databeat databeat) {
         if (null != databeat.getShardAudiobooks()) {
             final List<ShardAudiobook> shardObjects = databeat.getShardAudiobooks();
@@ -50,7 +56,8 @@ final class DatabeatMessageReceiver {
             final boolean numberOfHeartAndDatabeatsIsEqual = highWatermark.get() == databeats.numberOfDatabeats();
             final boolean moreObjectsThanShards = databeats.numberOfDatabeats() <= databeats.allShardAudiobooks().size();
             if (moreThanOneDatabeatReceived && numberOfHeartAndDatabeatsIsEqual && moreObjectsThanShards) {
-                audiobookRepository.maybeReshard(highWatermark, databeats);
+                final List<Titelnummer> localDomainIds = audiobookRepository.allEntriesByKey();
+                shardingRepository.maybeReshard(highWatermark.get(), databeats, localDomainIds);
             }
         } else {
             LOGGER.warn("List with shard objects from {} is empty", xShardName);

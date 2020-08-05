@@ -31,8 +31,6 @@ final class ScheduledDatabeatMessageSender {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledDatabeatMessageSender.class);
 
-    private static final long AVAILABLE_BYTES_4TB = (long) (4.5d * 1024.0 * 1024.0 * 1024.0 * 1024.0);
-
     private static final long SPACE_4GB = 4L * 1024L * 1024L * 1024L;
 
     private final ShardName shardName;

@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.katalog;
 
 import javax.inject.Inject;
 
+import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -23,55 +24,77 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
+import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 
-@Controller("/info")
+@Controller(InfoController.BASE_URL)
 public class InfoController {
+
+    static final String BASE_URL = "info";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoController.class);
 
     private final KatalogService katalogService;
 
+    private final AudiobookShardRedirector audiobookShardRedirector;
+
     @Inject
-    public InfoController(final KatalogService katalogService) {
+    public InfoController(final KatalogService katalogService,
+                          final AudiobookShardRedirector audiobookShardRedirector) {
         this.katalogService = katalogService;
+        this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
     @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public AudiobookInfoAntwortDTO audiobookInfo(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        try {
-            final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getHoerernummer(),
-                    audiobookAnfrageDTO.getTitelnummer());
-            return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
-        } catch (Exception e) {
-            throw new HoerbuchNichtGefundenException("Hörbuch " + audiobookAnfrageDTO.getTitelnummer() + " nicht gefunden", e);
-        }
+    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+                () -> {
+                    try {
+                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getHoerernummer(),
+                                audiobookAnfrageDTO.getTitelnummer());
+                        return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
+                    } catch (Exception e) {
+                        throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", audiobookAnfrageDTO.getTitelnummer()), e);
+                    }
+                },
+                HttpResponse::ok,
+                null, String.format("%s/audiobook", BASE_URL));
     }
 
     @Post(uri = "playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public PlaylistAntwortDTO playlist(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        try {
-            final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getHoerernummer(),
-                    audiobookAnfrageDTO.getTitelnummer());
-            return PlaylistMapper.INSTANCE.convert(playlist);
-        } catch (Exception e) {
-            throw new BusinessException("", e);
-        }
+    public HttpResponse<PlaylistAntwortDTO> playlist(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+                () -> {
+                    try {
+                        final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getHoerernummer(),
+                                audiobookAnfrageDTO.getTitelnummer());
+                        return PlaylistMapper.INSTANCE.convert(playlist);
+                    } catch (Exception e) {
+                        throw new BusinessException("", e);
+                    }
+                },
+                HttpResponse::ok,
+                null, String.format("%s/playlist", BASE_URL));
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public TrackInfoAntwortDTO track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
-                trackAnfrageDTO.getHoerernummer(),
-                trackAnfrageDTO.getTitelnummer(),
-                trackAnfrageDTO.getIdent());
-        try {
-            final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
-                    trackAnfrageDTO.getTitelnummer(),
-                    trackAnfrageDTO.getIdent());
-            return TrackMapper.INSTANCE.convert(trackInfoDTO);
-        } catch (Exception e) {
-            throw new BusinessException("", e);
-        }
+    public HttpResponse<TrackInfoAntwortDTO> track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
+        return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
+                () -> {
+                    LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
+                            trackAnfrageDTO.getHoerernummer(),
+                            trackAnfrageDTO.getTitelnummer(),
+                            trackAnfrageDTO.getIdent());
+                    try {
+                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
+                                trackAnfrageDTO.getTitelnummer(),
+                                trackAnfrageDTO.getIdent());
+                        return TrackMapper.INSTANCE.convert(trackInfoDTO);
+                    } catch (Exception e) {
+                        throw new BusinessException("", e);
+                    }
+                },
+                HttpResponse::ok,
+                null, String.format("%strack", BASE_URL));
     }
 
     @Mapper

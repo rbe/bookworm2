@@ -1,14 +1,14 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-public final class RepositoryQueues {
+final class RepositoryQueues {
 
-    public static final String EXCH_FEDERATED_HEARTBEAT = "federated.heartbeat";
+    static final String EXCH_FEDERATED_HEARTBEAT = "federated.heartbeat";
 
-    public static final String QUEUE_HEARTBEAT = "heartbeat";
+    static final String QUEUE_HEARTBEAT = "heartbeat";
 
-    public static final String EXCH_FEDERATED_DATAHEARTBEAT = "federated.databeat";
+    static final String EXCH_FEDERATED_DATABEAT = "federated.databeat";
 
-    public static final String QUEUE_DATAHEARTBEAT = "databeat";
+    static final String QUEUE_DATABEAT = "databeat";
 
     private RepositoryQueues() {
         throw new AssertionError();

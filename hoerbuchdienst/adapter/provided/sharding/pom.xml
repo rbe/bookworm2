@@ -20,6 +20,11 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.sharding.shared</artifactId>
+            <version>LocalBuild</version>
+        </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
             <version>LocalBuild</version>
         </dependency>

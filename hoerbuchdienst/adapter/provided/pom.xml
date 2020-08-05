@@ -16,6 +16,7 @@
         <module>helloworld</module>
         <module>suchindex</module>
         <module>sharding</module>
+        <module>shardingshared</module>
         <module>katalog</module>
         <module>stream</module>
         <module>webaudioplayer</module>

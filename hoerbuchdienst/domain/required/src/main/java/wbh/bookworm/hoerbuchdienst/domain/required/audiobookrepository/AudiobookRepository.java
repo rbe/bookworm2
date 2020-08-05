@@ -9,16 +9,10 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
-import java.util.Optional;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 public interface AudiobookRepository {
-
-    Optional<ShardName> lookupShard(/* TODO AghNummer */String titelnummer);
-
-    void maybeReshard(final AtomicInteger highWatermark, Databeats databeats);
 
     List</* TODO AghNummer */Titelnummer> allEntriesByKey();
 
@@ -31,7 +25,5 @@ public interface AudiobookRepository {
     InputStream trackAsStream(/*TODO Titelnummer*/String titelnummer, String ident);
 
     InputStream zipAsStream(/* TODO AghNummer */String titelnummer);
-
-    boolean putZip(InputStream inputStream, /* TODO AghNummer */Titelnummer titelnummer);
 
 }

@@ -50,7 +50,7 @@ import {Audioplayer} from "./audioplayer.js";
         });
     downloadButton.addEventListener('click', event => {
         if (audioplayer) {
-            audioplayer.download();
+            audioplayer.asyncDownloadOrder();
         } else {
             console.log('Cannot download, Audioplayer not initialized');
         }

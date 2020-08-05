@@ -15,11 +15,8 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 import io.micronaut.cache.annotation.CacheConfig;
@@ -34,10 +31,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -52,36 +46,15 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private final AudiobookMapper audiobookMapper;
 
-    private final ShardDistributionStrategy shardDistributionStrategy;
-
-    private List<ShardAudiobook> allShardAudiobooks;
-
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
 
     @Inject
-    AudiobookRepositoryImpl(AudiobookStreamResolver audiobookStreamResolver,
-                            AudiobookMapper audiobookMapper,
-                            @Named("leastUsedShardDistributionStrategy") ShardDistributionStrategy shardDistributionStrategy) {
+    AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
+                            final AudiobookMapper audiobookMapper,
+                            @Named("leastUsedShardDistributionStrategy") final ShardDistributionStrategy shardDistributionStrategy) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
-        this.shardDistributionStrategy = shardDistributionStrategy;
-        allShardAudiobooks = Collections.emptyList();
-    }
-
-    @Override
-    public Optional<ShardName> lookupShard(/* TODO Mandantenspezifisch */final String titelnummer) {
-        if (allShardAudiobooks.isEmpty()) {
-            LOGGER.warn("Titelnummer {}: Keine Informationen über die Verteilung der Objekte auf Shards vorhanden",
-                    titelnummer);
-            return Optional.empty();
-        } else {
-            return allShardAudiobooks.stream()
-                    .filter(shardAudiobook -> shardAudiobook.isTitelnummer(titelnummer))
-                    .findFirst()
-                    .map(ShardAudiobook::getShardName)
-                    .or(Optional::empty);
-        }
     }
 
     @EventListener
@@ -95,32 +68,6 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     public void onShardReappeared(final ShardReappearedEvent event) {
         LOGGER.debug("Shard reappeared, {}", event);
         // TODO allow resharding again
-    }
-
-    /**
-     * Shard has received object list of all shards, calculates new distribution and
-     * moves own objects not belonging here anymore to another shard.
-     */
-    @Override
-    public void maybeReshard(final AtomicInteger highWatermark, final Databeats databeats) {
-        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(highWatermark.get(), databeats);
-        allShardAudiobooks = desiredDistribution;
-        // filter all objects in local object storage not belonging to this shard (anymore)
-        final ShardName myShardName = new ShardName();
-        final List<Titelnummer> myShardTitelnummern = allEntriesByKey();
-        final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
-                .filter(shardAudiobook -> myShardTitelnummern.contains(new Titelnummer(shardAudiobook.getObjectId())))
-                .filter(shardAudiobook -> !myShardName.equals(shardAudiobook.getShardName()))
-                .collect(Collectors.toUnmodifiableList());
-        // Move all my objects now belonging to another shard
-        if (!objectsToTransfer.isEmpty()) {
-            objectsToTransfer.forEach(shardAudiobook -> {
-                LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardAudiobook.getShardName());
-                // TODO move object to another shard
-                // TODO invalidate cache
-                // TODO remove objects from object storage
-            });
-        }
     }
 
     @Override
@@ -172,12 +119,6 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     @Override
     public InputStream zipAsStream(final String titelnummer) {
         return audiobookStreamResolver.zipAsStream(titelnummer);
-    }
-
-    @Override
-    public boolean putZip(final InputStream inputStream, final Titelnummer titelnummer) {
-        audiobookStreamResolver.putZip(inputStream, titelnummer.getValue());
-        return true;
     }
 
 }

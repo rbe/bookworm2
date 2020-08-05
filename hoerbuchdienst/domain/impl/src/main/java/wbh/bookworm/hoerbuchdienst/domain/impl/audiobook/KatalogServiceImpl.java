@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import io.micronaut.context.annotation.Value;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
@@ -35,12 +36,9 @@ import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 import aoc.mikrokosmos.io.fs.FilesUtils;
 
 @Singleton
-public class KatalogServiceImpl implements KatalogService {
+class KatalogServiceImpl implements KatalogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KatalogServiceImpl.class);
-
-    // TODO Konfiguration pro Mandant
-    private static final String PIRACY_INQUIRY_URL_PREFIX = "https://wbh-online.de/ausleihe-anfragen";
 
     private final AudiobookIndex audiobookIndex;
 
@@ -50,11 +48,14 @@ public class KatalogServiceImpl implements KatalogService {
 
     private final ApplicationEventPublisher applicationEventPublisher;
 
+    @Value(/* TODO Mandantenspezifisch */"${hoerbuchdienst.piracy.inquiry.urlprefix}")
+    private String piracyInquiryUrlPrefix;
+
     @Inject
-    public KatalogServiceImpl(final AudiobookIndex audiobookIndex,
-                              final AudiobookRepository audiobookRepository,
-                              final Watermarker watermarker,
-                              final ApplicationEventPublisher applicationEventPublisher) {
+    KatalogServiceImpl(final AudiobookIndex audiobookIndex,
+                       final AudiobookRepository audiobookRepository,
+                       final Watermarker watermarker,
+                       final ApplicationEventPublisher applicationEventPublisher) {
         this.audiobookIndex = audiobookIndex;
         this.audiobookRepository = audiobookRepository;
         this.watermarker = watermarker;
@@ -78,7 +79,7 @@ public class KatalogServiceImpl implements KatalogService {
                 "trackinfo");
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         final WatermarkedTrackInfo watermarkedTrackInfo = watermarker.trackInfo(watermark,
-                PIRACY_INQUIRY_URL_PREFIX, tempMp3File);
+                piracyInquiryUrlPrefix, tempMp3File);
         FilesUtils.tryDelete(tempMp3File);
         return TrackDtoMapper.INSTANCE.convert(watermarkedTrackInfo, titelnummer, ident);
     }

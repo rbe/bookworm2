@@ -98,7 +98,9 @@ export class Audioplayer {
                 }
             })
             .catch(reason => {
-                if (this.DEBUG) { console.log('displayAudiobookInfo,fetch,catch: ' + reason); }
+                if (this.DEBUG) {
+                    console.log('displayAudiobookInfo,fetch,catch: ' + reason);
+                }
             });
     }
 
@@ -140,6 +142,7 @@ export class Audioplayer {
                 break;
         }
     };
+
     initPlayerControls() {
         this.playButton.addEventListener('click', this.playPauseFunction);
         this.previousTrackButton = document.querySelector(this.elementSelectors.previousTrackButtonSelector);
@@ -153,7 +156,9 @@ export class Audioplayer {
     }
 
     selectTrack(trackIndex, currentSecs = 0.0) {
-        if (this.DEBUG) { console.log('selectTrack('+trackIndex+')'); }
+        if (this.DEBUG) {
+            console.log('selectTrack(' + trackIndex + ')');
+        }
         if (this.currentTrack > -1) {
             const id = this.playlist.trackInfo(this.currentTrack).playlistElementId;
             const elements = document.querySelectorAll('#' + id);
@@ -192,22 +197,30 @@ export class Audioplayer {
                 }
             })
             .catch(reason => {
-                if (this.DEBUG) { console.log('play,fetch,catch: ' + reason); }
+                if (this.DEBUG) {
+                    console.log('play,fetch,catch: ' + reason);
+                }
             });
         const trackId = track.playlistElementId;
         document.querySelector('#' + trackId).classList.add('currently-playing');
         //const url = new URL('track/' + track.ident, this.audiobookURL);
         const url = new URL('stream/track', this.audiobookURL);
-        fetch (url.toString(), init1)
+        fetch(url.toString(), init1)
             .then(response => {
-                if (this.DEBUG) { console.log('selectTrack: POST audio.src=' + url.toString()); }
+                if (this.DEBUG) {
+                    console.log('selectTrack: POST audio.src=' + url.toString());
+                }
                 return response.blob();
             })
             .then(blob => {
                 //this.audio.srcObject = blob;
                 this.audio.src = URL.createObjectURL(blob);
-                if (this.DEBUG) { console.log('this.audio.src=' + this.audio.src); }
-                if (this.DEBUG) { console.log('selectTrack: audio.load()'); }
+                if (this.DEBUG) {
+                    console.log('this.audio.src=' + this.audio.src);
+                }
+                if (this.DEBUG) {
+                    console.log('selectTrack: audio.load()');
+                }
                 this.audio.load();
                 if (currentSecs > 0) {
                     this.audio.currentTime = parseFloat(currentSecs);
@@ -218,28 +231,40 @@ export class Audioplayer {
     }
 
     play() {
-        if (this.DEBUG) { console.log('play()'); }
+        if (this.DEBUG) {
+            console.log('play()');
+        }
         const playPromise = this.audio.play();
         if (undefined !== playPromise) {
             playPromise.then(param => {
                 this.playButton.innerText = 'Pause';
-                if (this.DEBUG) { console.log('play(): promise ended, param=' + param); }
+                if (this.DEBUG) {
+                    console.log('play(): promise ended, param=' + param);
+                }
             }).catch(error => {
-                if (this.DEBUG) { console.log('play(): audio.play() was prevented: ' + error); }
+                if (this.DEBUG) {
+                    console.log('play(): audio.play() was prevented: ' + error);
+                }
             });
         } else {
-            if (this.DEBUG) { console.log('play(): No promise'); }
+            if (this.DEBUG) {
+                console.log('play(): No promise');
+            }
         }
     }
 
     pause() {
-        if (this.DEBUG) { console.log('pause()'); }
+        if (this.DEBUG) {
+            console.log('pause()');
+        }
         this.audio.pause();
         this.playButton.innerText = 'Play';
     }
 
     playPrevious() {
-        if (this.DEBUG) { console.log('playPrevious()'); }
+        if (this.DEBUG) {
+            console.log('playPrevious()');
+        }
         this.pause();
         if (this.currentTrack > 0) {
             this.selectTrack(this.currentTrack - 1, 0);
@@ -264,19 +289,20 @@ export class Audioplayer {
         }
     }
 
-    download() {
-        const init1 = {
-            'method': 'POST',
-            'headers': {
-                'Content-Type': 'application/json'
-            },
-            'body': JSON.stringify({
-                'mandant': /* TODO Mandant */'WBH',
-                'hoerernummer': this.hoerernummer,
-                'titelnummer': this.titelnummer
+    syncDownload() {
+        fetch(new URL('stream/zip', this.audiobookURL).toString(),
+            {
+                'method': 'POST',
+                'headers': {
+                    'Content-Type': 'application/json'
+                },
+                'redirect': 'follow',
+                'body': JSON.stringify({
+                    'mandant': /* TODO Mandant */'WBH',
+                    'hoerernummer': this.hoerernummer,
+                    'titelnummer': this.titelnummer
+                })
             })
-        };
-        fetch(new URL('stream/zip', this.audiobookURL).toString(), init1)
             .then(response => {
                 if (response.ok) {
                     return response.blob();
@@ -296,9 +322,85 @@ export class Audioplayer {
             })
             .catch(reason => {
                 if (this.DEBUG) {
-                    console.log('play,fetch,catch: ' + reason);
+                    console.log('syncDownload: ' + reason);
                 }
             });
+    }
+
+    asyncDownloadOrder() {
+        let orderId = "unset";
+        fetch(new URL('bestellung/zip', this.audiobookURL).toString(),
+            {
+                'method': 'POST',
+                'headers': {
+                    'Content-Type': 'application/json'
+                },
+                'redirect': 'follow',
+                'body': JSON.stringify({
+                    'mandant': /* TODO Mandant */'WBH',
+                    'hoerernummer': this.hoerernummer,
+                    'titelnummer': this.titelnummer
+                })
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json.text;
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json) {
+                    orderId = json;
+                    console.log('asyncDownloadOrder(): orderId ' + orderId);
+                    this.asyncDownloadStatus();
+                } else {
+                    console.log('asyncDownloadOrder(): Sorry, no JSON');
+                }
+            })
+            .catch(reason => {
+                if (this.DEBUG) {
+                    console.log('asyncDownloadOrder(): ' + reason);
+                }
+            });
+    }
+
+    asyncDownloadStatus() {
+        let orderStatus = "";
+        while (orderStatus !== "SUCCESS" && orderStatus !== "FAILED") {
+            fetch(new URL('bestellung/zip/' + this.titelnummer + 'status/' + orderId, this.audiobookURL).toString(),
+                {
+                    'method': 'GET',
+                    'redirect': 'follow'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        return response.json.text;
+                    } else {
+                        FetchErrorHandler.handle(response);
+                    }
+                })
+                .then(json => {
+                    if (json) {
+                        orderStatus = json;
+                        console.log('asyncDownloadStatus(): orderStatus ' + orderStatus);
+                    } else {
+                        console.log('asyncDownloadStatus(): Sorry, no JSON');
+                    }
+                })
+                .catch(reason => {
+                    if (this.DEBUG) {
+                        console.log('asyncDownloadStatus(): Cannot retrieve orderStatus: ' + reason);
+                    }
+                });
+            if (orderStatus === 'PROCESSING') {
+                console.log('asyncDownloadStatus(): Checking order status again, please wait...')
+                setTimeout(() => this.asyncDownloadStatus(), 500);
+            } else {
+                console.log('asyncDownloadStatus(): Unhandled status ' + orderStatus);
+            }
+        }
+        console.log('asyncDownloadOrder(): Order status is ' + orderStatus);
     }
 
     reset() {

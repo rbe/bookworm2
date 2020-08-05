@@ -18,29 +18,29 @@ import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
 
-@Controller("/resharding")
+@Controller(ReshardingController.BASE_URL)
 public class ReshardingController {
+
+    static final String BASE_URL = "shard";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReshardingController.class);
 
-    private final AudiobookService audiobookService;
+    private final AudiobookLocationService audiobookLocationService;
 
     @Inject
-    public ReshardingController(final AudiobookService audiobookService) {
-        this.audiobookService = audiobookService;
+    public ReshardingController(final AudiobookLocationService audiobookLocationService) {
+        this.audiobookLocationService = audiobookLocationService;
     }
 
     // shard receives object (push, by REST endpoint)
-    @Post(uri = "zip/{titelnummer}/{hash}",
-            consumes = MediaType.APPLICATION_OCTET_STREAM,
-            produces = MediaType.APPLICATION_OCTET_STREAM)
+    @Post(uri = "zip/{titelnummer}/{hash}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_OCTET_STREAM)
     public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
                                            @PathVariable final String hash,
                                            @Body final InputStream inputStream) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        if (audiobookService.putZip(titelnummer, inputStream, hash)) {
+        if (1 == 2 /* TODO Domäne muss etwas anbieten *//*audiobook???Service.receiveObject(titelnummer, inputStream, hash)*/) {
             // TODO check if object was received and stored successfully (compare computed with received hash)
             return HttpResponse.ok(Boolean.TRUE);
         } else {

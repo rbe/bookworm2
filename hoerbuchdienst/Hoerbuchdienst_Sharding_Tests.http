@@ -1,0 +1,12 @@
+// Den Shard für ein Hörbuch erfragen
+HEAD {{host}}/shard/location/{{titelnummer}}
+
+###
+
+// Ein Hörbuch aufgrund von Resharding zum Shard senden
+POST {{host}}/shard/zip/{{titelnummer}}/{hash}
+Content-Type: application/octet-stream
+
+binaryData...
+
+###

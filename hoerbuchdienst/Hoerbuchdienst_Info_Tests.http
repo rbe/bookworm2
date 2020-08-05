@@ -1,0 +1,39 @@
+// Informationen über ein Hörbuch abrufen
+POST {{host}}/info/audiobook
+Content-Type: application/json
+
+{
+    "mandant": "{{mandant}}",
+    "hoerernummer": "{{hoerernummer}}",
+    "aghNummer": "{{aghNummer}}",
+    "titelnummer": "{{titelnummer}}"
+}
+
+###
+
+// Playlist eines Hörbuchs abrufen
+POST {{host}}/info/playlist
+Content-Type: application/json
+
+{
+    "mandant": "{{mandant}}",
+    "hoerernummer": "{{hoerernummer}}",
+    "aghNummer": "{{aghNummer}}",
+    "titelnummer": "{{titelnummer}}"
+}
+
+###
+
+// Informationen über einen Track eines Hörbuchs abrufen
+POST {{host}}/info/track
+Content-Type: application/json
+
+{
+    "mandant": "{{mandant}}",
+    "hoerernummer": "{{hoerernummer}}",
+    "aghNummer": "{{aghNummer}}",
+    "titelnummer": "{{titelnummer}}",
+    "ident": "01_Halt_die_Wolken_fest.mp3"
+}
+
+###
