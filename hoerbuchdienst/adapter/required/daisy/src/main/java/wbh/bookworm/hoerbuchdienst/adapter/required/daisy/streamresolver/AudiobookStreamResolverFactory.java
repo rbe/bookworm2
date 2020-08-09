@@ -36,6 +36,9 @@ class AudiobookStreamResolverFactory {
     @Property(name = ResolverConfigurationKeys.HOERBUCHDIENST_REPOSITORY_LOCALDISK_URI)
     private Path audiobookDirectory;
 
+    @Property(name = ResolverConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
+    private Path temporaryDirectory;
+
     @Inject
     AudiobookStreamResolverFactory(final BeanContext beanContext, final Zip zip) {
         this.beanContext = beanContext;
@@ -52,7 +55,8 @@ class AudiobookStreamResolverFactory {
                 case "objectstorage":
                     final BucketObjectStorage bucketObjectStorage = beanContext.getBean(BucketObjectStorage.class,
                             Qualifiers.byName(repositoryObjectStorageName));
-                    return new ObjectStorageAudiobookStreamResolverImpl(bucketObjectStorage, zip);
+                    return new ObjectStorageAudiobookStreamResolverImpl(bucketObjectStorage, zip,
+                            temporaryDirectory);
                 default:
                     throw new AudiobookStreamResolverException(
                             String.format("Unsupported repository type '%s'", repositoryType));

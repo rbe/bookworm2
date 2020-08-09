@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
-import io.micronaut.context.annotation.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,13 +35,14 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     private final Zip zip;
 
-    @Property(name = ResolverConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
 
     ObjectStorageAudiobookStreamResolverImpl(final BucketObjectStorage bucketObjectStorage,
-                                             final Zip zip) {
+                                             final Zip zip,
+                                             final Path temporaryDirectory) {
         this.bucketObjectStorage = bucketObjectStorage;
         this.zip = zip;
+        this.temporaryDirectory = temporaryDirectory;
     }
 
     @PostConstruct
