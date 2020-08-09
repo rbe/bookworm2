@@ -35,6 +35,10 @@ releasedir="$(
 running_version="$(docker ps --format "{{.Image}}" --filter "name=${project_name}/*" |
   grep -Eow -e '([0-9]{4}-[0-9]{2}-[0-9]{2}T[0-9]{2}-[0-9]{2}-[0-9]{2}Z)' |
   uniq)"
+if [[ -z "${running_version}" ]]; then
+  echo "No running version found"
+  exit 1
+fi
 current_project_dir="${releasedir}/${project_name}-${running_version}"
 
 dc="docker-compose -p ${env}-${project}"
