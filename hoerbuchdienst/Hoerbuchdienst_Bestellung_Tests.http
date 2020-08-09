@@ -5,11 +5,11 @@ Content-Type: application/json
 {
     "mandant": "{{mandant}}",
     "hoerernummer": "{{hoerernummer}}",
-    "aghNummer": "",
+    "aghNummer": "{{aghNummer}}",
     "titelnummer": "{{titelnummer}}"
 }
 
-> {% client.global.set("orderId", response.body.json); %}
+> {% client.global.set("orderId", response.body); %}
 
 ###
 
