@@ -9,11 +9,14 @@ import java.time.ZonedDateTime;
 import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
+
+import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
 
 @Introspected
 public final class Databeat implements Serializable {
@@ -32,12 +35,15 @@ public final class Databeat implements Serializable {
 
     private final List<ShardAudiobook> shardAudiobooks;
 
+    private final String consentHash;
+
     @JsonCreator
     public Databeat(@JsonProperty("pointInTime") final Instant pointInTime,
                     @JsonProperty("shardName") final ShardName shardName,
                     @JsonProperty("totalBytes") final long totalBytes,
                     @JsonProperty("usedBytes") final long usedBytes,
-                    @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks) {
+                    @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks,
+                    @JsonProperty("consentHash") final String consentHash) {
         Objects.requireNonNull(pointInTime);
         this.pointInTime = pointInTime;
         Objects.requireNonNull(shardName);
@@ -58,14 +64,15 @@ public final class Databeat implements Serializable {
         } else {
             this.shardAudiobooks = Collections.unmodifiableList(shardAudiobooks);
         }
+        this.consentHash = consentHash;
     }
 
-    public Instant getPointInTime() {
+    public Instant pointInTime() {
         return pointInTime;
     }
 
     @JsonIgnore
-    public ZonedDateTime pointInTime() {
+    public ZonedDateTime pointInTimeAsZonedDateTime() {
         return pointInTime.atZone(ZoneId.systemDefault());
     }
 
@@ -91,10 +98,23 @@ public final class Databeat implements Serializable {
                 : Collections.emptyList();
     }
 
+    public String getConsentHash() {
+        return consentHash;
+    }
+
+    /**
+     * Hash over all hashes of all audiobooks in this shard.
+     */
+    public String hashValue() {
+        return MessageDigester.ofUTF8(shardAudiobooks.stream()
+                .map(ShardAudiobook::getHashValue)
+                .collect(Collectors.joining()));
+    }
+
     @Override
     public String toString() {
-        return String.format("Databeat{pointInTime='%s', shardName='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s'}",
-                pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardAudiobooks);
+        return String.format("Databeat{pointInTime='%s', shardName='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s', consentHash='%s'}",
+                pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardAudiobooks, consentHash);
     }
 
 }

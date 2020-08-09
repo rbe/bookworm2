@@ -33,7 +33,11 @@ final class ScheduledDatabeatMessageSender {
 
     private static final long SPACE_4GB = 4L * 1024L * 1024L * 1024L;
 
+    private static final double KILO = 1024.0d;
+
     private final ShardName shardName;
+
+    private final DatabeatManager databeatManager;
 
     private final AudiobookStreamResolver audiobookStreamResolver;
 
@@ -43,9 +47,11 @@ final class ScheduledDatabeatMessageSender {
     private Path objectStoragePath;
 
     @Inject
-    ScheduledDatabeatMessageSender(final AudiobookStreamResolver audiobookStreamResolver,
+    ScheduledDatabeatMessageSender(final DatabeatManager databeatManager,
+                                   final AudiobookStreamResolver audiobookStreamResolver,
                                    final DatabeatMessageSender databeatMessageSender) {
         this.shardName = new ShardName();
+        this.databeatManager = databeatManager;
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.databeatMessageSender = databeatMessageSender;
     }
@@ -70,13 +76,13 @@ final class ScheduledDatabeatMessageSender {
             availableBytes = fileStore.getTotalSpace() - SPACE_4GB;
             LOGGER.info("Filesystem {} type {} has {} available bytes = {} MB = {} GB",
                     fileStore.name(), fileStore.type(),
-                    availableBytes, availableBytes / 1024.0d / 1024.0d, availableBytes / 1024.0d / 1024.0d / 1024.0d);
+                    availableBytes, availableBytes / KILO / KILO, availableBytes / KILO / KILO / KILO);
         } catch (IOException e) {
             LOGGER.error("Cannot determine available space", e);
             availableBytes = -1L;
         }
         final Databeat databeat = new Databeat(ZonedDateTime.now().toInstant(), shardName,
-                availableBytes, usedBytes, shardAudiobooks);
+                availableBytes, usedBytes, shardAudiobooks, databeatManager.consentHash());
         LOGGER.trace("Sending databeat {}", databeat);
         try {
             databeatMessageSender.send(shardName.toString(), databeat);

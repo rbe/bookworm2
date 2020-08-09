@@ -30,7 +30,7 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 @Controller(value = BestellungController.BASE_URL)
 public class BestellungController {
 
-    static final String BASE_URL = "/bestellung";
+    static final String BASE_URL = "bestellung";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungController.class);
 
@@ -45,12 +45,13 @@ public class BestellungController {
     private final AudiobookShardRedirector audiobookShardRedirector;
 
     @Inject
-    public BestellungController(final AudiobookOrderService audiobookOrderService, final AudiobookShardRedirector audiobookShardRedirector) {
+    public BestellungController(final AudiobookOrderService audiobookOrderService,
+                                final AudiobookShardRedirector audiobookShardRedirector) {
         this.audiobookOrderService = audiobookOrderService;
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
-    @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<String> orderZippedAudiobook(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
@@ -76,7 +77,7 @@ public class BestellungController {
                 EMPTY_STRING, String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId));
     }
 
-    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(@PathVariable final String titelnummer,
                                                      @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
@@ -88,7 +89,8 @@ public class BestellungController {
                         throw new BusinessException(EMPTY_STRING, e);
                     }
                 },
-                body -> HttpResponse.ok(body),
+                body -> HttpResponse.ok(body)
+                        .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
                 EMPTY_BYTE_ARRAY, String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId));
     }
 

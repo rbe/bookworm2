@@ -15,7 +15,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 
@@ -28,20 +27,20 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
     private static final double T24 = 1024.0d;
 
     @Override
-    public List<ShardAudiobook> calculate(final int highWatermark, final Databeats databeats) {
-        final Optional<Long> maybeTotalSize = databeats.totalSizeOfAllObjects();
-        final List<ShardAudiobook> shardAudiobooks = new LinkedList<>(databeats.allShardAudiobooks());
+    public List<ShardAudiobook> calculate(final int highWatermark, final DatabeatManager databeatManager) {
+        final Optional<Long> maybeTotalSize = databeatManager.totalSizeOfAllObjects();
+        final List<ShardAudiobook> shardAudiobooks = new LinkedList<>(databeatManager.allShardsAudiobooks());
         if (maybeTotalSize.isPresent()) {
             final double totalSizeOfAllObjects = maybeTotalSize.get();
-            final double idealBytesPerShard = totalSizeOfAllObjects / (double) databeats.numberOfDatabeats();
+            final double idealBytesPerShard = totalSizeOfAllObjects / (double) databeatManager.numberOfDatabeats();
             LOGGER.info("Total size of {} objects is {} = {} MB = {} GB," +
                             " ideal size of audiobooks on every shard: {} bytes = {} MB = {} GB",
-                    databeats.numerOfObjects(),
+                    databeatManager.numerOfObjects(),
                     totalSizeOfAllObjects, totalSizeOfAllObjects / T24 / T24, totalSizeOfAllObjects / T24 / T24 / T24,
                     idealBytesPerShard, idealBytesPerShard / T24 / T24, idealBytesPerShard / T24 / T24 / T24);
             // calculate new distribution across all shards
             // available shards
-            final List<ShardName> availShards = List.copyOf(databeats.allShardNames());
+            final List<ShardName> availShards = List.copyOf(databeatManager.allShardNames());
             final Map<ShardName, AtomicLong> plannedBytesPerShard = new HashMap<>(availShards.size());
             for (final ShardName shardName : availShards) {
                 plannedBytesPerShard.put(shardName, new AtomicLong(0L));

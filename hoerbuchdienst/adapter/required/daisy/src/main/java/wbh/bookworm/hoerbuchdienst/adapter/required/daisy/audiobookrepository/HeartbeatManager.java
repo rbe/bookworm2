@@ -1,6 +1,6 @@
-package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
+package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-import java.io.Serializable;
+import javax.inject.Singleton;
 import java.time.Instant;
 import java.util.Map;
 import java.util.Set;
@@ -8,14 +8,13 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.stream.Collectors;
 
-import io.micronaut.core.annotation.Introspected;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 
-@Introspected
-public final class Heartbeats implements Serializable {
+@Singleton
+final class HeartbeatManager {
 
-    private static final long serialVersionUID = 2579224237511506862L;
-
-    private final transient Object heartbeatLock;
+    private final Object heartbeatLock;
 
     /**
      * hostname -> Heartbeat
@@ -24,26 +23,26 @@ public final class Heartbeats implements Serializable {
 
     private final Set<ShardName> lostHeartbeats;
 
-    public Heartbeats() {
+    HeartbeatManager() {
         heartbeatLock = new Object();
         heartbeatMap = new ConcurrentHashMap<>(5);
         lostHeartbeats = new ConcurrentSkipListSet<>();
     }
 
-    public Heartbeat remember(final ShardName shardname, final Heartbeat heartbeat) {
+    Heartbeat remember(final ShardName shardname, final Heartbeat heartbeat) {
         synchronized (heartbeatLock) {
             lostHeartbeats.remove(shardname);
             return heartbeatMap.put(shardname, heartbeat);
         }
     }
 
-    public void forget(final ShardName shardName) {
+    void forget(final ShardName shardName) {
         synchronized (heartbeatLock) {
             heartbeatMap.remove(shardName);
         }
     }
 
-    public void forgetAll(final Set<ShardName> shardNames) {
+    void forgetAll(final Iterable<ShardName> shardNames) {
         synchronized (heartbeatLock) {
             shardNames.forEach(shardName -> {
                 heartbeatMap.remove(shardName);
@@ -52,22 +51,22 @@ public final class Heartbeats implements Serializable {
         }
     }
 
-    public boolean someReceived() {
+    boolean someReceived() {
         return !heartbeatMap.isEmpty();
     }
 
-    public int count() {
+    int count() {
         return heartbeatMap.size();
     }
 
-    public Map<ShardName, Instant> lastTimestamps() {
+    Map<ShardName, Instant> lastTimestamps() {
         return heartbeatMap.entrySet()
                 .stream()
                 .map(entry -> Map.entry(entry.getKey(), entry.getValue().getPointInTime()))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
-    public boolean isLost(final ShardName shardname) {
+    boolean isLost(final ShardName shardname) {
         return lostHeartbeats.contains(shardname);
     }
 

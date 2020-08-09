@@ -20,7 +20,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeats;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
@@ -39,11 +38,15 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
 
     private final ShardDistributionStrategy shardDistributionStrategy;
 
+    private final DatabeatManager databeatManager;
+
     private List<ShardAudiobook> allShardAudiobooks;
 
     @Inject
-    AudiobookShardingRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
+    AudiobookShardingRepositoryImpl(final DatabeatManager databeatManager,
+                                    final AudiobookStreamResolver audiobookStreamResolver,
                                     @Named("leastUsedShardDistributionStrategy") final ShardDistributionStrategy shardDistributionStrategy) {
+        this.databeatManager = databeatManager;
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.shardDistributionStrategy = shardDistributionStrategy;
         allShardAudiobooks = Collections.emptyList();
@@ -82,10 +85,9 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
      * moves own objects not belonging here anymore to another shard.
      */
     @Override
-    public void maybeReshard(final int highWatermark, final Databeats databeats,
+    public void redistribute(final int heartbeatHighWatermark,
                              final List<? extends DomainId<String>> localDomainIds) {
-        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy
-                .calculate(highWatermark, databeats);
+        final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(heartbeatHighWatermark, databeatManager);
         allShardAudiobooks = desiredDistribution;
         // filter all objects in local object storage not belonging to this shard (anymore)
         final ShardName myShardName = new ShardName();

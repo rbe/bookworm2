@@ -16,7 +16,7 @@ public interface ShardingRepository {
 
     Optional<ShardName> lookupShard(String objectId);
 
-    void maybeReshard(int highWatermark, Databeats databeats, List<? extends DomainId<String>> localDomainIds);
+    void redistribute(int heartbeatHighWatermark, List<? extends DomainId<String>> localDomainIds);
 
     boolean receiveObject(String objectId, InputStream inputStream);
 
