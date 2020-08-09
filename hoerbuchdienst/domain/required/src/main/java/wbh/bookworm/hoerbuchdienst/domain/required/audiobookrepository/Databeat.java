@@ -44,9 +44,9 @@ public final class Databeat implements Serializable {
                     @JsonProperty("usedBytes") final long usedBytes,
                     @JsonProperty("shardAudiobooks") final List<ShardAudiobook> shardAudiobooks,
                     @JsonProperty("consentHash") final String consentHash) {
-        Objects.requireNonNull(pointInTime);
+        Objects.requireNonNull(pointInTime, "PointInTime missing");
         this.pointInTime = pointInTime;
-        Objects.requireNonNull(shardName);
+        Objects.requireNonNull(shardName, "ShardName missing");
         this.shardName = shardName;
         if (0L > totalBytes) {
             throw new IllegalArgumentException("totalBytes must be >0");
@@ -64,10 +64,14 @@ public final class Databeat implements Serializable {
         } else {
             this.shardAudiobooks = Collections.unmodifiableList(shardAudiobooks);
         }
-        this.consentHash = consentHash;
+        if (null == consentHash) {
+            this.consentHash = "";
+        } else {
+            this.consentHash = consentHash;
+        }
     }
 
-    public Instant pointInTime() {
+    public Instant getPointInTime() {
         return pointInTime;
     }
 
@@ -113,7 +117,7 @@ public final class Databeat implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("Databeat{pointInTime='%s', shardName='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s', consentHash='%s'}",
+        return String.format("Databeat{getPointInTime='%s', shardName='%s', totalBytes=%d, usedBytes=%d, usageInPercent=%.2f, shardAudiobooks='%s', consentHash='%s'}",
                 pointInTime, shardName, totalBytes, usedBytes, usageInPercent, shardAudiobooks, consentHash);
     }
 
