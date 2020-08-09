@@ -149,7 +149,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 try (final HttpClient httpClient = HttpClient.create(baseUrl)) {
                     final String uri = String.format("/shard/redistribute/zip/%s/%s", shardAudiobook.getObjectId(), shardAudiobook.getHashValue());
                     final MutableHttpRequest<byte[]> post = HttpRequest.POST(URI.create(uri), bytes)
-                            .contentType("application/zip")
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
                             .accept(MediaType.APPLICATION_JSON_TYPE);
                     final String response = httpClient.toBlocking().retrieve(post);
                     LOGGER.info("Sent {} to {}/{}, response {}", shardAudiobook, baseUrl, uri, response);
