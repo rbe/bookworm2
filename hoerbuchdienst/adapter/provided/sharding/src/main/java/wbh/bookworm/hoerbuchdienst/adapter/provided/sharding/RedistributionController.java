@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import java.io.InputStream;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
@@ -37,15 +38,17 @@ public class RedistributionController {
         this.audiobookLocationService = audiobookLocationService;
     }
 
-    @Post(uri = "zip/{titelnummer}/{hash}", consumes = APPLICATION_ZIP, produces = MediaType.APPLICATION_JSON)
+    @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
-                                           @PathVariable final String hash,
-                                           @Body final InputStream inputStream) {
+                                           @PathVariable final String hashValue,
+                                           @Body InputStream inputStream) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        if (audiobookLocationService.receiveObject(titelnummer, inputStream, hash)) {
+        final boolean objectReceived = audiobookLocationService.receiveObject(titelnummer, inputStream, hashValue);
+        if (objectReceived) {
             return HttpResponse.ok(Boolean.TRUE);
         } else {
-            return HttpResponse.ok(Boolean.FALSE);
+            return HttpResponse.<Boolean>status(HttpStatus.CONFLICT)
+                    .body(Boolean.FALSE);
         }
     }
 

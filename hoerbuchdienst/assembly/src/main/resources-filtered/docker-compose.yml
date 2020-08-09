@@ -248,6 +248,7 @@ services:
       backend:
         aliases:
           - ${hbd.hostname}
+      frontend:
     expose:
       - 8080
   hbd-rproxy:
