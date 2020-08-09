@@ -123,6 +123,11 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         LOGGER.debug("Unpack zip archive for object '{}'", titelnummer);
         // unpack zip and put every file into object storage
         final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");
+        try {
+            Files.createDirectories(unpackDirectory);
+        } catch (IOException e) {
+            throw new AudiobookStreamResolverException("", e);
+        }
         LOGGER.info("Unpacking ZIP archive of audiobook {}", titelnummer);
         zip.unzip(new ZipInputStream(inputStream), unpackDirectory);
         LOGGER.debug("Putting audiobook {} into object storage", titelnummer);

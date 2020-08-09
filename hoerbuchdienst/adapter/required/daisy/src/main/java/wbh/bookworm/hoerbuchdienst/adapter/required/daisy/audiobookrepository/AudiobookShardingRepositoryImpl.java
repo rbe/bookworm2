@@ -19,14 +19,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import io.micronaut.core.io.buffer.ByteBuffer;
 import io.micronaut.http.HttpRequest;
-import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.runtime.event.annotation.EventListener;
-import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -154,7 +151,8 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                     final MutableHttpRequest<byte[]> post = HttpRequest.POST(URI.create(uri), bytes)
                             .contentType("application/zip")
                             .accept(MediaType.APPLICATION_JSON_TYPE);
-                    final Publisher<HttpResponse<ByteBuffer>> exchange = httpClient.exchange(post);
+                    final String response = httpClient.toBlocking().retrieve(post);
+                    LOGGER.info("Sent {} to {}/{}, response {}", shardAudiobook, baseUrl, uri, response);
                     // TODO invalidate cache
                     // TODO remove objects from object storage
                     //audiobookStreamResolver.removeZip(objectId);
