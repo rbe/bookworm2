@@ -34,6 +34,7 @@ public class StreamController {
     private static final String AUDIO_MP3 = "audio/mp3";
 
     private static final String APPLICATION_ZIP = "application/zip";
+    //private static final MediaType APPLICATION_ZIP=MediaType.of("application/zip");
 
     private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
