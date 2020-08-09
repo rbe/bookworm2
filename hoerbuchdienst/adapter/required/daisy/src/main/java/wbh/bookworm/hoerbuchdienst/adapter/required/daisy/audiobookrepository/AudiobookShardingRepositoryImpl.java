@@ -22,6 +22,7 @@ import java.util.stream.Collectors;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.client.BlockingHttpClient;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
@@ -124,7 +125,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         final boolean equals = hashValue.equals(computedHashValue);
         LOGGER.info("Hash value of received object {} equals computed hash value {}? {}",
                 hashValue, computedHashValue, equals);
-        return equals;
+        return true; // TODO equals;
     }
 
     private boolean moveToOtherShard(final ShardAudiobook shardAudiobook) {
@@ -146,16 +147,20 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 result = false;
             }
             if (result) {
-                try (final HttpClient httpClient = HttpClient.create(baseUrl)) {
+                try (final HttpClient httpClient = HttpClient.create(baseUrl);
+                     final BlockingHttpClient blockingHttpClient = httpClient.toBlocking()) {
                     final String uri = String.format("/shard/redistribute/zip/%s/%s", shardAudiobook.getObjectId(), shardAudiobook.getHashValue());
                     final MutableHttpRequest<byte[]> post = HttpRequest.POST(URI.create(uri), bytes)
                             .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
                             .accept(MediaType.APPLICATION_JSON_TYPE);
-                    final String response = httpClient.toBlocking().retrieve(post);
+                    final String response = "TODO";
+                    //final String response = blockingHttpClient.retrieve(post);
                     LOGGER.info("Sent {} to {}/{}, response {}", shardAudiobook, baseUrl, uri, response);
                     // TODO invalidate cache
                     // TODO remove objects from object storage
                     //audiobookStreamResolver.removeZip(objectId);
+                } catch (IOException e) {
+                    LOGGER.error("", e);
                 }
             } else {
                 LOGGER.warn("No data for audiobook {}", shardAudiobook);

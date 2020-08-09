@@ -120,7 +120,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     @Override
     public String putZip(final InputStream inputStream, final String titelnummer) {
-        LOGGER.debug("Unpack zip archive for object '{}'", titelnummer);
+        LOGGER.info("Unpacking zip archive for object '{}'", titelnummer);
         // unpack zip and put every file into object storage
         final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");
         try {
@@ -128,15 +128,15 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
         }
-        LOGGER.info("Unpacking ZIP archive of audiobook {}", titelnummer);
         zip.unzip(new ZipInputStream(inputStream), unpackDirectory);
-        LOGGER.debug("Putting audiobook {} into object storage", titelnummer);
+        LOGGER.info("Putting audiobook {} into object storage", titelnummer);
         try (final Stream<Path> stream = Files.walk(unpackDirectory)
                 .filter(Files::isRegularFile)) {
             stream.forEach(path -> putFile(path, titelnummer));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
         }
+        LOGGER.info("Successfully put object '{}' into object storage", titelnummer);
         FilesUtils.cleanupTemporaryDirectory(unpackDirectory);
         return bucketObjectStorage.hashValueForPrefix(titelnummer);
     }
@@ -145,7 +145,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         try {
             final String objectName = String.format("%sKapitel/%s", titelnummer, path.getFileName());
             bucketObjectStorage.put(objectName, Files.newInputStream(path), APPLICATION_ZIP);
-            LOGGER.info("Sucessfully put object '{}' into object storage", path);
+            LOGGER.debug("Successfully put object '{}' into object storage", path);
         } catch (IOException e) {
             LOGGER.error("Cannot put object '{}' into object storage", path);
         }
