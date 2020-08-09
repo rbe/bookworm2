@@ -17,12 +17,15 @@ import io.micronaut.context.annotation.Factory;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.inject.qualifiers.Qualifiers;
 
+import aoc.mikrokosmos.io.zip.Zip;
 import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
 
 @Factory
 class AudiobookStreamResolverFactory {
 
     private final BeanContext beanContext;
+
+    private final Zip zip;
 
     @Property(name = ResolverConfigurationKeys.HOERBUCHDIENST_REPOSITORY_TYPE)
     private String repositoryType;
@@ -34,8 +37,9 @@ class AudiobookStreamResolverFactory {
     private Path audiobookDirectory;
 
     @Inject
-    AudiobookStreamResolverFactory(final BeanContext beanContext) {
+    AudiobookStreamResolverFactory(final BeanContext beanContext, final Zip zip) {
         this.beanContext = beanContext;
+        this.zip = zip;
     }
 
     @Bean
@@ -48,7 +52,7 @@ class AudiobookStreamResolverFactory {
                 case "objectstorage":
                     final BucketObjectStorage bucketObjectStorage = beanContext.getBean(BucketObjectStorage.class,
                             Qualifiers.byName(repositoryObjectStorageName));
-                    return new ObjectStorageAudiobookStreamResolverImpl(bucketObjectStorage);
+                    return new ObjectStorageAudiobookStreamResolverImpl(bucketObjectStorage, zip);
                 default:
                     throw new AudiobookStreamResolverException(
                             String.format("Unsupported repository type '%s'", repositoryType));

@@ -20,28 +20,29 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
 
-@Controller(ReshardingController.BASE_URL)
-public class ReshardingController {
+@Controller(RedistributionController.BASE_URL)
+public class RedistributionController {
 
-    static final String BASE_URL = "shard";
+    static final String BASE_URL = "shard/redistribute";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReshardingController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(RedistributionController.class);
+
+    private static final String APPLICATION_ZIP = "application/zip";
+    //private static final MediaType APPLICATION_ZIP=MediaType.of("application/zip");
 
     private final AudiobookLocationService audiobookLocationService;
 
     @Inject
-    public ReshardingController(final AudiobookLocationService audiobookLocationService) {
+    public RedistributionController(final AudiobookLocationService audiobookLocationService) {
         this.audiobookLocationService = audiobookLocationService;
     }
 
-    // shard receives object (push, by REST endpoint)
-    @Post(uri = "zip/{titelnummer}/{hash}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_OCTET_STREAM)
+    @Post(uri = "zip/{titelnummer}/{hash}", consumes = APPLICATION_ZIP, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
                                            @PathVariable final String hash,
                                            @Body final InputStream inputStream) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        if (1 == 2 /* TODO Domäne muss etwas anbieten *//*audiobook???Service.receiveObject(titelnummer, inputStream, hash)*/) {
-            // TODO check if object was received and stored successfully (compare computed with received hash)
+        if (audiobookLocationService.receiveObject(titelnummer, inputStream, hash)) {
             return HttpResponse.ok(Boolean.TRUE);
         } else {
             return HttpResponse.ok(Boolean.FALSE);

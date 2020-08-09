@@ -28,6 +28,6 @@ public interface AudiobookStreamResolver {
 
     InputStream zipAsStream(/* TODO AGH Nummer o.ä. */String titelnummer);
 
-    void putZip(InputStream inputStream, /* TODO AGH Nummer o.ä. */String titelnummer);
+    String putZip(InputStream inputStream, /* TODO AGH Nummer o.ä. */String titelnummer);
 
 }

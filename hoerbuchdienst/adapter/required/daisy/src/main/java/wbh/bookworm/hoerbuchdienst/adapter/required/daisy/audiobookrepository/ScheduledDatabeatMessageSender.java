@@ -33,7 +33,7 @@ final class ScheduledDatabeatMessageSender {
 
     private static final long SPACE_4GB = 4L * 1024L * 1024L * 1024L;
 
-    private static final double KILO = 1024.0d;
+    private static final double T24 = 1024.0d;
 
     private final ShardName shardName;
 
@@ -76,7 +76,7 @@ final class ScheduledDatabeatMessageSender {
             availableBytes = fileStore.getTotalSpace() - SPACE_4GB;
             LOGGER.info("Filesystem {} type {} has {} available bytes = {} MB = {} GB",
                     fileStore.name(), fileStore.type(),
-                    availableBytes, availableBytes / KILO / KILO, availableBytes / KILO / KILO / KILO);
+                    availableBytes, availableBytes / T24 / T24, availableBytes / T24 / T24 / T24);
         } catch (IOException e) {
             LOGGER.error("Cannot determine available space", e);
             availableBytes = -1L;

@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchdienst.domain.impl.audiobook;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.InputStream;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -52,6 +53,11 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
             LOGGER.warn("Could not lookup shard for object {}", titelnummer);
         }
         return false;
+    }
+
+    @Override
+    public boolean receiveObject(final String objectId, final InputStream inputStream, final String hashValue) {
+        return shardingRepository.receiveObject(objectId, inputStream, hashValue);
     }
 
 }

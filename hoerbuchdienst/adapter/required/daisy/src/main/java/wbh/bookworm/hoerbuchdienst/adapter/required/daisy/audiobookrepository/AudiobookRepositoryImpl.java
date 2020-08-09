@@ -58,14 +58,14 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @EventListener
-    public void onShardDisappeared(final ShardDisappearedEvent event) {
+    void onShardDisappeared(final ShardDisappearedEvent event) {
         LOGGER.debug("Shard disappeared, {}", event);
         // TODO stop any active resharding
         // TODO disallow resharding
     }
 
     @EventListener
-    public void onShardReappeared(final ShardReappearedEvent event) {
+    void onShardReappeared(final ShardReappearedEvent event) {
         LOGGER.debug("Shard reappeared, {}", event);
         // TODO allow resharding again
     }

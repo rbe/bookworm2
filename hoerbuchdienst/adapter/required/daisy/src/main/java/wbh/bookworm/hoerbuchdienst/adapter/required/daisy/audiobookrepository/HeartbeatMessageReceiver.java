@@ -40,6 +40,7 @@ final class HeartbeatMessageReceiver {
         shardsHighWatermark = new AtomicInteger(0);
     }
 
+    // TODO Just receive and check message here, move logic to HearbeatManager
     @Queue(RepositoryQueues.QUEUE_HEARTBEAT)
     void receiveHeartbeat(@Header("x-shardname") final String xShardName, final Heartbeat heartbeat) {
         LOGGER.trace("Received {} from {}", heartbeat, xShardName);

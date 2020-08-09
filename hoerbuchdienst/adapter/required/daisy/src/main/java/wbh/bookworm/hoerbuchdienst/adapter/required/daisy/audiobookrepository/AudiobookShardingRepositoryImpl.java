@@ -9,13 +9,24 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URL;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import io.micronaut.core.io.buffer.ByteBuffer;
+import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpRequest;
+import io.micronaut.http.client.HttpClient;
 import io.micronaut.runtime.event.annotation.EventListener;
+import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,6 +42,8 @@ import aoc.mikrokosmos.ddd.model.DomainId;
 
 @Singleton
 class AudiobookShardingRepositoryImpl implements ShardingRepository {
+
+    public static final int PORT_HTTPS = 443;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookShardingRepositoryImpl.class);
 
@@ -89,28 +102,70 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                              final List<? extends DomainId<String>> localDomainIds) {
         final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(heartbeatHighWatermark, databeatManager);
         allShardAudiobooks = desiredDistribution;
-        // filter all objects in local object storage not belonging to this shard (anymore)
-        final ShardName myShardName = new ShardName();
-        final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
-                .filter(shardAudiobook -> localDomainIds.contains(new Titelnummer(shardAudiobook.getObjectId())))
-                .filter(shardAudiobook -> !myShardName.equals(shardAudiobook.getShardName()))
-                .collect(Collectors.toUnmodifiableList());
-        // Move all my objects now belonging to another shard
-        if (!objectsToTransfer.isEmpty()) {
-            objectsToTransfer.forEach(shardAudiobook -> {
-                LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardAudiobook.getShardName());
-                // TODO move object to another shard
-                // TODO invalidate cache
-                // TODO remove objects from object storage
-            });
+        // check again redistribution requirements after calculation
+        if (databeatManager.canRedistribute(heartbeatHighWatermark)) {
+            // filter all objects in local object storage not belonging to this shard anymore
+            final ShardName myShardName = new ShardName();
+            final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
+                    .filter(shardAudiobook -> localDomainIds.contains(new Titelnummer(shardAudiobook.getObjectId())))
+                    .filter(shardAudiobook -> !myShardName.equals(shardAudiobook.getShardName()))
+                    .collect(Collectors.toUnmodifiableList());
+            if (!objectsToTransfer.isEmpty()) {
+                // move all my objects now belonging to another shard
+                objectsToTransfer.forEach(this::moveToOtherShard);
+            }
+        } else {
+            LOGGER.warn("Redistribution requirements not met, consent: {}", databeatManager.isConsent());
         }
     }
 
     @Override
-    public boolean receiveObject(final String objectId, final InputStream inputStream) {
+    public boolean receiveObject(final String objectId, final InputStream inputStream, final String hashValue) {
         // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
-        audiobookStreamResolver.putZip(inputStream, objectId);
-        return true;
+        // TODO check if object was received and stored successfully (compare computed with received hash)
+        final String computedHashValue = audiobookStreamResolver.putZip(inputStream, objectId);
+        final boolean equals = hashValue.equals(computedHashValue);
+        LOGGER.info("Hash value of received object {} equals computed hash value {}? {}",
+                hashValue, computedHashValue, equals);
+        return equals;
+    }
+
+    private boolean moveToOtherShard(final ShardAudiobook shardAudiobook) {
+        boolean result = true;
+        LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardAudiobook.getShardName());
+        URL baseUrl = null;
+        try {
+            baseUrl = new URL(String.format("https://%s:%d", shardAudiobook.getShardName().getHostName(), PORT_HTTPS));
+        } catch (MalformedURLException e) {
+            LOGGER.error("Cannot build URL for shard {}", shardAudiobook.getShardName());
+            result = false;
+        }
+        if (result) {
+            byte[] bytes = null;
+            try {
+                bytes = audiobookStreamResolver.zipAsStream(shardAudiobook.getObjectId()).readAllBytes();
+            } catch (IOException e) {
+                LOGGER.error("Cannot retrieve object {} through StreamResolver", shardAudiobook.getObjectId());
+                result = false;
+            }
+            if (result) {
+                try (final HttpClient httpClient = HttpClient.create(baseUrl)) {
+                    final String uri = String.format("/shard/redistribute/zip/%s/%s", shardAudiobook.getObjectId(), shardAudiobook.getHashValue());
+                    final MutableHttpRequest<byte[]> post = HttpRequest.POST(URI.create(uri), bytes)
+                            .contentType("application/zip")
+                            .accept(MediaType.APPLICATION_JSON_TYPE);
+                    final Publisher<HttpResponse<ByteBuffer>> exchange = httpClient.exchange(post);
+                    // TODO invalidate cache
+                    // TODO remove objects from object storage
+                    //audiobookStreamResolver.removeZip(objectId);
+                }
+            } else {
+                LOGGER.warn("No data for audiobook {}", shardAudiobook);
+            }
+        } else {
+            LOGGER.warn("No shard URL for audiobook {}", shardAudiobook);
+        }
+        return result;
     }
 
 }

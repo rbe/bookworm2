@@ -122,12 +122,15 @@ final class DatabeatManager {
         if (databeats.isEmpty()) {
             hashValuesAreEqual = false;
         } else {
-            final List<String> hashValues = databeats
-                    .stream()
+            final List<String> hashValues = databeats.stream()
                     .map(Databeat::getConsentHash)
                     .collect(Collectors.toUnmodifiableList());
             hashValuesAreEqual = Collections.frequency(hashValues, hashValues.get(0)) == hashValues.size();
-            LOGGER.info("All hash values ({}) are equal: {}", hashValues, hashValuesAreEqual);
+            if (hashValuesAreEqual) {
+                LOGGER.info("All consent hash values ({}) are equal", hashValues);
+            } else {
+                LOGGER.warn("Consent hash values ({}) are not equal", hashValues);
+            }
         }
         return hashValuesAreEqual;
     }

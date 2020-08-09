@@ -117,7 +117,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     }
 
     @Override
-    public void putZip(final InputStream inputStream, final String titelnummer) {
+    public String putZip(final InputStream inputStream, final String titelnummer) {
         throw new UnsupportedOperationException();
     }
 

@@ -6,10 +6,14 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports.audiobook;
 
+import java.io.InputStream;
+
 public interface AudiobookLocationService {
 
     String shardLocation(/* TODO AghNummer */String titelnummer);
 
     boolean isLocatedLocal(/* TODO AghNummer */String titelnummer);
+
+    boolean receiveObject(String objectId, InputStream inputStream, String hashValue);
 
 }

@@ -88,6 +88,10 @@
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-inject-java</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.micronaut</groupId>
+            <artifactId>micronaut-http-client</artifactId>
+        </dependency>
         <!-- Test -->
         <dependency>
             <groupId>org.mockito</groupId>
@@ -130,6 +134,10 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.io</artifactId>
         </dependency>
     </dependencies>
     <build>

@@ -9,6 +9,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudi
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
+import aoc.mikrokosmos.crypto.messagedigest.MyHashCodeImpl;
+
 @Singleton
 @Named("keyBasedShardDistributionStrategy")
 class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy {

@@ -8,6 +8,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver;
 
 class ResolverConfigurationKeys {
 
+    static final String HOERBUCHDIENST_TEMPORARY_PATH = "hoerbuchdienst.temporary.path";
+
     static final String HOERBUCHDIENST_REPOSITORY_TYPE = "hoerbuchdienst.repository.type";
 
     static final String HOERBUCHDIENST_REPOSITORY_LOCALDISK_URI = "hoerbuchdienst.repository.localdisk.uri";

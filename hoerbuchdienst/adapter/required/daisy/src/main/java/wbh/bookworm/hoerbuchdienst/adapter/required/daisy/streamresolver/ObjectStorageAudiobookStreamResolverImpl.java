@@ -7,14 +7,21 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver;
 
 import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.zip.ZipInputStream;
 
+import io.micronaut.context.annotation.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import aoc.mikrokosmos.io.fs.FilesUtils;
+import aoc.mikrokosmos.io.zip.Zip;
 import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
@@ -27,8 +34,15 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     private final BucketObjectStorage bucketObjectStorage;
 
-    ObjectStorageAudiobookStreamResolverImpl(final BucketObjectStorage bucketObjectStorage) {
+    private final Zip zip;
+
+    @Property(name = ResolverConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
+    private Path temporaryDirectory;
+
+    ObjectStorageAudiobookStreamResolverImpl(final BucketObjectStorage bucketObjectStorage,
+                                             final Zip zip) {
         this.bucketObjectStorage = bucketObjectStorage;
+        this.zip = zip;
     }
 
     @PostConstruct
@@ -105,14 +119,31 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public void putZip(final InputStream inputStream, final String titelnummer) {
+    public String putZip(final InputStream inputStream, final String titelnummer) {
         LOGGER.debug("Unpack zip archive for object '{}'", titelnummer);
-        // TODO unpack zip and put every file into object storage
-        //for every file {
-        LOGGER.debug("Putting file '{}' into object storage", titelnummer);
-        bucketObjectStorage.put(titelnummer + "Kapitel", inputStream, APPLICATION_ZIP);
-        LOGGER.info("Sucessfully put object '{}' into object storage", titelnummer);
-        //}
+        // unpack zip and put every file into object storage
+        final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");
+        LOGGER.info("Unpacking ZIP archive of audiobook {}", titelnummer);
+        zip.unzip(new ZipInputStream(inputStream), unpackDirectory);
+        LOGGER.debug("Putting audiobook {} into object storage", titelnummer);
+        try (final Stream<Path> stream = Files.walk(unpackDirectory)
+                .filter(Files::isRegularFile)) {
+            stream.forEach(path -> putFile(path, titelnummer));
+        } catch (IOException e) {
+            throw new AudiobookStreamResolverException("", e);
+        }
+        FilesUtils.cleanupTemporaryDirectory(unpackDirectory);
+        return bucketObjectStorage.hashValueForPrefix(titelnummer);
+    }
+
+    private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {
+        try {
+            final String objectName = String.format("%sKapitel/%s", titelnummer, path.getFileName());
+            bucketObjectStorage.put(objectName, Files.newInputStream(path), APPLICATION_ZIP);
+            LOGGER.info("Sucessfully put object '{}' into object storage", path);
+        } catch (IOException e) {
+            LOGGER.error("Cannot put object '{}' into object storage", path);
+        }
     }
 
 }
