@@ -27,9 +27,9 @@ final class DatabeatMessageReceiver {
 
     private final DatabeatManager databeatManager;
 
-    private final ShardingRepository shardingRepository;
-
     private final AtomicInteger heartbeatHighWatermark;
+
+    private final ShardingRepository shardingRepository;
 
     private final AudiobookRepository audiobookRepository;
 
@@ -37,12 +37,12 @@ final class DatabeatMessageReceiver {
                             final ShardingRepository shardingRepository,
                             final AudiobookRepository audiobookRepository) {
         this.databeatManager = databeatManager;
-        this.shardingRepository = shardingRepository;
         heartbeatHighWatermark = new AtomicInteger(0);
+        this.shardingRepository = shardingRepository;
         this.audiobookRepository = audiobookRepository;
     }
 
-    @Queue(RepositoryQueues.QUEUE_DATABEAT)
+    @Queue(ShardingQueues.QUEUE_DATABEAT)
     void receiveDatabeat(@Header("x-shardname") final String xShardName, final Databeat databeat) {
         if (null != databeat.getShardAudiobooks()) {
             final List<ShardAudiobook> shardObjects = databeat.getShardAudiobooks();

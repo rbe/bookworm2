@@ -46,6 +46,10 @@
             <version>LocalBuild</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.io</artifactId>
+        </dependency>
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
@@ -134,10 +138,6 @@
             <groupId>org.codehaus.janino</groupId>
             <artifactId>janino</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>aoc.mikrokosmos</groupId>
-            <artifactId>aoc.mikrokosmos.io</artifactId>
         </dependency>
     </dependencies>
     <build>

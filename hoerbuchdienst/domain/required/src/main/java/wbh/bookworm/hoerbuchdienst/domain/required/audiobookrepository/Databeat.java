@@ -110,7 +110,7 @@ public final class Databeat implements Serializable {
      * Hash over all hashes of all audiobooks in this shard.
      */
     public String hashValue() {
-        return MessageDigester.ofUTF8(shardAudiobooks.stream()
+        return MessageDigester.sha256OfUTF8(shardAudiobooks.stream()
                 .map(ShardAudiobook::getHashValue)
                 .collect(Collectors.joining()));
     }

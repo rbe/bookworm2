@@ -9,15 +9,13 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudi
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
-import aoc.mikrokosmos.crypto.messagedigest.MyHashCodeImpl;
-
 @Singleton
 @Named("keyBasedShardDistributionStrategy")
 class KeyBasedShardDistributionStrategyImpl implements ShardDistributionStrategy {
 
     private static ShardName calculate(final ShardAudiobook shardAudiobook, final DatabeatManager databeatManager) {
         final Titelnummer titelnummer = new Titelnummer(shardAudiobook.getObjectId());
-        final int hashCode = MyHashCodeImpl.hashCode(titelnummer.getBytesUTF8());
+        final int hashCode = -1; //MyHashValue.hashValue(titelnummer.getBytesUTF8());
         final int shardIndex = hashCode % databeatManager.numberOfDatabeats();
         return shardAudiobook.getShardName(); // TODO ShardName.of(shardIndex + 1);
     }

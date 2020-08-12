@@ -5,7 +5,7 @@ import io.micronaut.messaging.annotation.Header;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeat;
 
-@RabbitClient(RepositoryQueues.EXCH_FEDERATED_HEARTBEAT)
+@RabbitClient(ShardingQueues.EXCH_FEDERATED_HEARTBEAT)
 interface HeartbeatMessageSender {
 
     void send(@Header("x-shardname") String hostname, Heartbeat heartbeat);

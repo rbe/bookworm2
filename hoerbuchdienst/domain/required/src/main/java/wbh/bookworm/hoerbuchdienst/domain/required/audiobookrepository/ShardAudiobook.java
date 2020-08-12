@@ -75,11 +75,10 @@ public final class ShardAudiobook implements Serializable {
     }
 
     private String computeHashValue() {
-        final List<String> allEtags = shardObjects
-                .stream()
+        final List<String> allEtags = shardObjects.stream()
                 .map(ShardObject::getHashValue)
                 .collect(Collectors.toUnmodifiableList());
-        return MessageDigester.ofUTF8(allEtags);
+        return MessageDigester.sha256OfUTF8(allEtags);
     }
 
     @Override
@@ -98,8 +97,8 @@ public final class ShardAudiobook implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("ShardAudiobook{hashValue='%s', objectId='%s', shardName='%s', shardObjects=%d}",
-                computeHashValue(), objectId, shardName, shardObjects.size());
+        return String.format("ShardAudiobook{objectId='%s', shardName='%s', shardObjects=%d, hashValue=%d}",
+                objectId, shardName, shardObjects.size(), hashValue);
     }
 
 }

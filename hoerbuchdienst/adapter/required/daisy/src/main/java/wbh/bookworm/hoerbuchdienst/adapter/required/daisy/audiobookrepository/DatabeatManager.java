@@ -65,7 +65,7 @@ final class DatabeatManager {
     }
 
     String consentHash() {
-        return MessageDigester.ofUTF8(allShardsAudiobooks().stream()
+        return MessageDigester.sha256OfUTF8(allShardsAudiobooks().stream()
                 .map(ShardAudiobook::getHashValue)
                 .collect(Collectors.joining()));
     }

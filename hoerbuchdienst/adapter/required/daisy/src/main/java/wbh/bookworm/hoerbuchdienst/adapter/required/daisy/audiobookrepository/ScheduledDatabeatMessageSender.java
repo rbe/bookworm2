@@ -62,6 +62,7 @@ final class ScheduledDatabeatMessageSender {
         final Long usedBytes = objectMetaInfos.stream()
                 .map(ObjectMetaInfo::getLength)
                 .reduce(0L, Long::sum);
+        // Attention: use Etag value from MinIO as hash value
         final Map<Titelnummer, List<ShardObject>> audiobookShardObjects = objectMetaInfos.stream()
                 /* TODO Mandantenspezifisch */.filter(objectMetaInfo -> objectMetaInfo.getObjectName().contains("Kapitel/"))
                 .map(omi -> new ShardObject(omi.getObjectName(), omi.getLength(), omi.getEtag()))

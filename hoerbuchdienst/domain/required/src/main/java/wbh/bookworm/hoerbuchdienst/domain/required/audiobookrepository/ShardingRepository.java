@@ -18,6 +18,6 @@ public interface ShardingRepository {
 
     void redistribute(int heartbeatHighWatermark, List<? extends DomainId<String>> localDomainIds);
 
-    boolean receiveObject(String objectId, InputStream inputStream, String hashValue);
+    boolean receiveObject(String objectId, InputStream inputStream, long hashValue);
 
 }

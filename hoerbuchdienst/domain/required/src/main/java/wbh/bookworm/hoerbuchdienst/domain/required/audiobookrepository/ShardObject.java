@@ -25,8 +25,10 @@ public final class ShardObject implements Serializable {
     public ShardObject(final String objectId,
                        final long size,
                        final String hashValue) {
+        Objects.requireNonNull(objectId);
         this.objectId = objectId;
         this.size = size;
+        Objects.requireNonNull(hashValue);
         this.hashValue = hashValue;
     }
 

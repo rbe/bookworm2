@@ -1,6 +1,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-final class RepositoryQueues {
+final class ShardingQueues {
 
     static final String EXCH_FEDERATED_HEARTBEAT = "federated.heartbeat";
 
@@ -10,7 +10,7 @@ final class RepositoryQueues {
 
     static final String QUEUE_DATABEAT = "databeat";
 
-    private RepositoryQueues() {
+    private ShardingQueues() {
         throw new AssertionError();
     }
 
