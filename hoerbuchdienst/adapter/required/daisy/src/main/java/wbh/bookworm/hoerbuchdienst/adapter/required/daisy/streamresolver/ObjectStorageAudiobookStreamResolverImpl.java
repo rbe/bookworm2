@@ -71,7 +71,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public List<Path> list(final String titelnummer) {
+    public List<Path> list(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
             return bucketObjectStorage.listAllObjects(titelnummer);
         } catch (ObjectStorageException e) {
@@ -80,7 +80,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public InputStream nccHtmlStream(final String titelnummer) {
+    public InputStream nccHtmlStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
             // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/ncc.html", titelnummer));
@@ -90,7 +90,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public InputStream masterSmilStream(final String titelnummer) {
+    public InputStream masterSmilStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
             // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/master.smil", titelnummer));
@@ -100,7 +100,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public InputStream trackAsStream(final String titelnummer, final String ident) {
+    public InputStream trackAsStream(/* TODO Mandantenspezifisch */final String titelnummer, final String ident) {
         try {
             // TODO "Kapitel" Suffix ist mandantenspezifisch
             return bucketObjectStorage.asStream(String.format("%sKapitel/%s", titelnummer, ident));
@@ -110,7 +110,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public InputStream zipAsStream(final String titelnummer) {
+    public InputStream zipAsStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
             return bucketObjectStorage.asZip(/* TODO Mandantenspezifisch */String.format("%sKapitel", titelnummer));
         } catch (ObjectStorageException e) {
