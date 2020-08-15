@@ -50,7 +50,7 @@ class AudiobookStreamServiceImpl implements AudiobookStreamService {
 
     @Override
     public InputStream trackAsStream(final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String ident) {
-        final Path tempMp3File = audiobookRepository.makeLocalCopyOfTrack(hoerernummer, titelnummer, ident,
+        final Path tempMp3File = audiobookRepository.trackAsFile(hoerernummer, titelnummer, ident,
                 "trackAsByteArray");
         try {
             watermarker.addWatermarkInPlace(watermarker.makeWatermark(hoerernummer, titelnummer),
