@@ -1,0 +1,10 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Hoerbuchdienst" type="Application" factoryName="Application">
+    <option name="MAIN_CLASS_NAME" value="wbh.bookworm.hoerbuchdienst.application.impl.Hoerbuchdienst" />
+    <module name="wbh.bookworm.hoerbuchdienst.application.impl" />
+    <option name="VM_PARAMETERS" value="-Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>
