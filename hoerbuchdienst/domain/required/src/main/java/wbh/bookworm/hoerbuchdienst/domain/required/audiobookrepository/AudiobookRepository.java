@@ -18,9 +18,9 @@ public interface AudiobookRepository {
 
     Audiobook find(/* TODO AghNummer */String titelnummer);
 
-    Path makeLocalCopyOfTrack(/* TODO AghNummer */String hoerernummer,
-                                                  String titelnummer, String ident,
-                                                  String temporaryId);
+    Path trackAsFile(String hoerernummer,
+            /* TODO AghNummer */String titelnummer, String ident,
+                     String temporaryId);
 
     InputStream trackAsStream(/*TODO Titelnummer*/String titelnummer, String ident);
 
