@@ -4,7 +4,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchdienst.adapter.provided.suchindex;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.katalog;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -22,8 +22,10 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 
-@Controller("/search")
+@Controller(SuchindexController.BASE_URL)
 public class SuchindexController {
+
+    static final String BASE_URL = "search";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SuchindexController.class);
 
@@ -35,7 +37,7 @@ public class SuchindexController {
     }
 
     // TODO Automatisieren; hier nur für Testzwecke
-    @Get(uri = "/index", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "index", produces = MediaType.APPLICATION_JSON)
     public boolean index() {
         return katalogService.index();
     }
