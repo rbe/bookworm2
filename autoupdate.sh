@@ -18,9 +18,9 @@ fi
 env="$1"
 shift
 project="$1"
-if [[ $# == 1 ]]; then
+if [[ $# == 2 ]]; then
   shift
-  force="$1"
+  force="${1:-}"
   echo "${force} mode"
 else
   force=""
