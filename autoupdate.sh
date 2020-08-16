@@ -18,9 +18,10 @@ fi
 env="$1"
 shift
 project="$1"
-if [[ $# == 3 ]]; then
+if [[ $# == 1 ]]; then
   shift
   force="$1"
+  echo "${force} mode"
 else
   force=""
 fi
@@ -28,7 +29,7 @@ fi
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
   pwd
-  popd >/dev/null
+  popd   >/dev/null
 )"
 
 echo "$(date) Starting update"
