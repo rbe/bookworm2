@@ -7,12 +7,14 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver;
 
 import javax.annotation.PostConstruct;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
@@ -119,6 +121,11 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
+    public String putZip(final byte[] bytes, final String titelnummer) {
+        return putZip(new ByteArrayInputStream(bytes), titelnummer);
+    }
+
+    @Override
     public /* TODO BucketHashValue */String putZip(final InputStream inputStream, /* TODO Mandantenspezifisch */final String titelnummer) {
         LOGGER.info("Putting ZIP archive for object '{}' into bucket {}", titelnummer, bucketObjectStorage.getBucketName());
         // unpack zip and put every file into object storage
@@ -131,10 +138,9 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         }
         LOGGER.debug("Unpacking ZIP archive for object '{}'", titelnummer);
         zip.unzip(new ZipInputStream(inputStream), unpackDirectory);
-        try {
-            final Path[] files = Files.walk(unpackDirectory)
-                    .filter(Files::isRegularFile)
-                    .toArray(Path[]::new);
+        try (final Stream<Path> pathStream = Files.walk(unpackDirectory)
+                .filter(Files::isRegularFile)) {
+            final Path[] files = pathStream.toArray(Path[]::new);
             for (final Path file : files) {
                 LOGGER.debug("Putting {} files into audiobook {}", file, titelnummer);
                 putFile(file, titelnummer);

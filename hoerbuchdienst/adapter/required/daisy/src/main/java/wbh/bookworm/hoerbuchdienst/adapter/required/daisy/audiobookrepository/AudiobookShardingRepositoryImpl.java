@@ -197,7 +197,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         }
         // compute hash value of received object/ZIP archive
         final long computedHashValue = FastByteHash.hash(bytes);
-        audiobookStreamResolver.putZip(inputStream, objectId);
+        audiobookStreamResolver.putZip(bytes, objectId);
         final boolean equals = hashValue == computedHashValue;
         if (equals) {
             LOGGER.info("Hash value {} of received object {} equals computed hash value {}",
