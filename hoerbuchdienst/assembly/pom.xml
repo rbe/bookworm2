@@ -282,7 +282,7 @@
                             </buildArgs>
                         </configuration>
                     </execution>
-                    <execution>
+                    <!--<execution>
                         <id>build-virenscanner</id>
                         <phase>package</phase>
                         <goals>
@@ -297,7 +297,7 @@
                                 </args>
                             </buildArgs>
                         </configuration>
-                    </execution>
+                    </execution>-->
                 </executions>
             </plugin>
             <!--<plugin>
