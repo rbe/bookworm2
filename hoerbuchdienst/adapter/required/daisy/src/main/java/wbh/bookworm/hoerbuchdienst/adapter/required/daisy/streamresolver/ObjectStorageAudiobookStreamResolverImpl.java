@@ -13,7 +13,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
@@ -121,23 +120,29 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     @Override
     public /* TODO BucketHashValue */String putZip(final InputStream inputStream, /* TODO Mandantenspezifisch */final String titelnummer) {
-        LOGGER.info("Unpacking zip archive for object '{}'", titelnummer);
+        LOGGER.info("Putting ZIP archive for object '{}' into bucket {}", titelnummer, bucketObjectStorage.getBucketName());
         // unpack zip and put every file into object storage
         final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");
         try {
+            LOGGER.debug("Creating directory {}", unpackDirectory);
             Files.createDirectories(unpackDirectory);
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
         }
+        LOGGER.debug("Unpacking ZIP archive for object '{}'", titelnummer);
         zip.unzip(new ZipInputStream(inputStream), unpackDirectory);
-        LOGGER.info("Putting audiobook {} into object storage", titelnummer);
-        try (final Stream<Path> stream = Files.walk(unpackDirectory)
-                .filter(Files::isRegularFile)) {
-            stream.forEach(path -> putFile(path, titelnummer));
+        try {
+            final Path[] files = Files.walk(unpackDirectory)
+                    .filter(Files::isRegularFile)
+                    .toArray(Path[]::new);
+            for (final Path file : files) {
+                LOGGER.debug("Putting {} files into audiobook {}", file, titelnummer);
+                putFile(file, titelnummer);
+            }
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
         }
-        LOGGER.info("Successfully put object '{}' into object storage", titelnummer);
+        LOGGER.info("Successfully put object '{}' into bucket {}", titelnummer, bucketObjectStorage.getBucketName());
         FilesUtils.cleanupTemporaryDirectory(unpackDirectory);
         return bucketObjectStorage.hashValueForPrefix(titelnummer);
     }
@@ -149,12 +154,13 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {
+        LOGGER.debug("Putting file {} into audiobook {}", path.toAbsolutePath(), titelnummer);
         try {
             final String objectName = String.format("%sKapitel/%s", titelnummer, path.getFileName());
             bucketObjectStorage.put(objectName, Files.newInputStream(path), APPLICATION_ZIP);
-            LOGGER.debug("Successfully put object '{}' into object storage", path);
+            LOGGER.debug("Successfully put file {} into audiobook {}", path, titelnummer);
         } catch (IOException e) {
-            LOGGER.error("Cannot put object '{}' into object storage", path);
+            LOGGER.error("Cannot put object {} into audiobook {}", path, titelnummer);
         }
     }
 

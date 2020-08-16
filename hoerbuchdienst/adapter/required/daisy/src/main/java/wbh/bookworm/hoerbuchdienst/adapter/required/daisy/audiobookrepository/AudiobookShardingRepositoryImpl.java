@@ -259,7 +259,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                     LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
                                 }
                                 // remove objects from object storage
-                                audiobookStreamResolver.removeZip(objectId);
+                                // TODO audiobookStreamResolver.removeZip(objectId);
                                 // start servicing clients requests again
                                 eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
                             } catch (IOException e) {
