@@ -8,15 +8,20 @@
 set -o nounset
 set -o errexit
 
-if [[ $# != 2 ]]; then
-  echo "usage: $0 <env> <project>"
+if [[ $# -lt 2 ]]; then
+  echo "usage: $0 <env> <project> [<force>]"
   echo "  env        dev | prod"
   echo "  project    hbk | hbd"
+  echo "  force      force build"
   exit 1
 fi
-env=$1
+env="$1"
 shift
-project=$1
+project="$1"
+if [[ $# == 3 ]]; then
+  shift
+  force="$1"
+fi
 
 execdir="$(
   pushd "$(dirname "$0")" >/dev/null
@@ -81,7 +86,7 @@ revlist_count=$(git rev-list --pretty=oneline master..origin/master | wc -l)
 #diff_count=$(git diff --stat origin/master.. | wc -l)
 echo "Found ${revlist_count} changes"
 
-if [[ ${revlist_count} -gt 0 ]]; then
+if [[ ${revlist_count} -gt 0 || -n "${force}" ]]; then
   echo "***"
   echo "*** Pulling changes"
   echo "***"
