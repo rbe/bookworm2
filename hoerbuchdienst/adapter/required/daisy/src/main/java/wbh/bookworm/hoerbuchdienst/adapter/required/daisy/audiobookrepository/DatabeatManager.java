@@ -8,13 +8,16 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
+import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardHighWatermarkEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 
 import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
@@ -29,8 +32,11 @@ final class DatabeatManager {
      */
     private final Map<ShardName, Databeat> databeatMap;
 
+    private final AtomicInteger heartbeatHighWatermark;
+
     DatabeatManager() {
         databeatMap = new ConcurrentHashMap<>(5);
+        heartbeatHighWatermark = new AtomicInteger(0);
     }
 
     void remember(final ShardName shardName, final Databeat databeat) {
@@ -91,6 +97,15 @@ final class DatabeatManager {
         return databeatMap.keySet();
     }
 
+    @EventListener
+    void onShardHighWatermark(final ShardHighWatermarkEvent event) {
+        heartbeatHighWatermark.getAndSet(event.getHighWaterMark());
+    }
+
+    public int getHeartbeatHighWatermark() {
+        return heartbeatHighWatermark.get();
+    }
+
     /**
      * We can redistribute objects between shards if:
      * <ul>
@@ -100,8 +115,8 @@ final class DatabeatManager {
      * <li>all shards have same data</li>
      * </ul>
      */
-    boolean canRedistribute(final int highWatermark) {
-        final boolean numberOfHeartAndDatabeatsIsEqual = highWatermark == numberOfDatabeats();
+    boolean canRedistribute() {
+        final boolean numberOfHeartAndDatabeatsIsEqual = heartbeatHighWatermark.get() == numberOfDatabeats();
         final boolean moreThanOneDatabeatReceived = 2 <= numberOfDatabeats();
         final boolean moreObjectsThanShards = numberOfDatabeats() <= allShardsAudiobooks().size();
         return moreThanOneDatabeatReceived

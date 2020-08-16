@@ -30,4 +30,6 @@ public interface AudiobookStreamResolver {
 
     String putZip(InputStream inputStream, /* TODO AGH Nummer o.ä. */String titelnummer);
 
+    void removeZip(String titelnummer);
+
 }

@@ -15,7 +15,6 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardHighWatermarkEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
@@ -49,18 +48,13 @@ final class DatabeatMessageReceiver {
             LOGGER.debug("Received {}", databeat);
             databeatManager.remember(databeat.getShardName(), databeat);
             LOGGER.info("Received {} entries from {}", shardObjects.size(), xShardName);
-            if (databeatManager.canRedistribute(heartbeatHighWatermark.get())) {
+            if (databeatManager.canRedistribute()) {
                 final List<Titelnummer> localDomainIds = audiobookRepository.allEntriesByKey();
                 shardingRepository.redistribute(heartbeatHighWatermark.get(), localDomainIds);
             }
         } else {
             LOGGER.warn("List with shard objects from {} is empty", xShardName);
         }
-    }
-
-    @EventListener
-    void onShardHighWatermark(final ShardHighWatermarkEvent event) {
-        heartbeatHighWatermark.getAndSet(event.getHighWaterMark());
     }
 
     /**

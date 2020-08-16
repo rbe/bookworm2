@@ -23,6 +23,7 @@ import aoc.mikrokosmos.io.fs.FilesUtils;
 import aoc.mikrokosmos.io.zip.Zip;
 import aoc.mikrokosmos.objectstorage.api.BucketObjectStorage;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
+import aoc.mikrokosmos.objectstorage.api.ObjectStorage;
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolver {
@@ -119,7 +120,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public String putZip(final InputStream inputStream, final String titelnummer) {
+    public /* TODO BucketHashValue */String putZip(final InputStream inputStream, /* TODO Mandantenspezifisch */final String titelnummer) {
         LOGGER.info("Unpacking zip archive for object '{}'", titelnummer);
         // unpack zip and put every file into object storage
         final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");
@@ -139,6 +140,12 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         LOGGER.info("Successfully put object '{}' into object storage", titelnummer);
         FilesUtils.cleanupTemporaryDirectory(unpackDirectory);
         return bucketObjectStorage.hashValueForPrefix(titelnummer);
+    }
+
+    @Override
+    public void removeZip(/* TODO Mandantenspezifisch */final String titelnummer) {
+        final List<ObjectStorage.RemoveResult> removedPaths = bucketObjectStorage.removeObjects(/* TODO Mandantenspezifisch */String.format("%sKapitel", titelnummer));
+        LOGGER.info("Removed audiobook {} with its contents {}", titelnummer, removedPaths);
     }
 
     private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {

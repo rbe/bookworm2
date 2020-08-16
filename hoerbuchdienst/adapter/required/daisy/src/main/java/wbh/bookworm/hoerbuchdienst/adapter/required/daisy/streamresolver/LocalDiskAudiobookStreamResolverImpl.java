@@ -121,4 +121,9 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public void removeZip(final String titelnummer) {
+        throw new UnsupportedOperationException();
+    }
+
 }

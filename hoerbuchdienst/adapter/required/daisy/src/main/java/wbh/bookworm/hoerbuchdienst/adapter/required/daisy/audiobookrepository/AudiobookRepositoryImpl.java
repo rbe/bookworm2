@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,8 +14,11 @@ import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import io.micronaut.cache.annotation.CacheConfig;
@@ -31,8 +33,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookMapper;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReappearedEvent;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStartServicingEvent;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStopServicingEvent;
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 // TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
@@ -46,79 +48,116 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private final AudiobookMapper audiobookMapper;
 
+    private final AtomicBoolean servicingAudiobookRequests;
+
     @Property(name = RepositoryConfigurationKeys.HOERBUCHDIENST_TEMPORARY_PATH)
     private Path temporaryDirectory;
 
     @Inject
     AudiobookRepositoryImpl(final AudiobookStreamResolver audiobookStreamResolver,
-                            final AudiobookMapper audiobookMapper,
-                            @Named("leastUsedShardDistributionStrategy") final ShardDistributionStrategy shardDistributionStrategy) {
+                            final AudiobookMapper audiobookMapper) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.audiobookMapper = audiobookMapper;
+        servicingAudiobookRequests = new AtomicBoolean(true);
     }
 
     @EventListener
-    void onShardDisappeared(final ShardDisappearedEvent event) {
-        LOGGER.debug("Shard disappeared, {}", event);
-        // TODO stop any active resharding
-        // TODO disallow resharding
+    void onStartServicing(final ShardStartServicingEvent event) {
+        LOGGER.debug("Start servicing requests");
+        final boolean witness = servicingAudiobookRequests.compareAndExchange(Boolean.FALSE, Boolean.TRUE);
+        if (witness) {
+            // failed, witness != expected value
+            LOGGER.error("Cannot start servicing requests");
+        } else {
+            // success, witness == expected value
+            LOGGER.info("Successfully started servicing requests");
+        }
     }
 
     @EventListener
-    void onShardReappeared(final ShardReappearedEvent event) {
-        LOGGER.debug("Shard reappeared, {}", event);
-        // TODO allow resharding again
+    void onStopServicing(final ShardStopServicingEvent event) {
+        LOGGER.info("Stop servicing requests");
+        final boolean witness = servicingAudiobookRequests.compareAndExchange(Boolean.TRUE, Boolean.FALSE);
+        if (witness) {
+            // success, witness == expected value
+            LOGGER.info("Successfully stopped servicing requests");
+        } else {
+            // failed, witness != expected value
+            LOGGER.error("Cannot stop servicing requests");
+        }
+    }
+
+    private <T> T whileServicing(final String logIdent, final Supplier<? extends T> supplier, final Supplier<? extends T> empty) {
+        if (servicingAudiobookRequests.get()) {
+            return supplier.get();
+        } else {
+            LOGGER.warn("{}: Currently not servicing requests", logIdent);
+            return empty.get();
+        }
     }
 
     @Override
     public List<Titelnummer> allEntriesByKey() {
-        return audiobookStreamResolver.listAll()
-                .stream()
-                .map(path -> new Titelnummer(path.getFileName().toString()
-                        .replace(/* TODO Mandantenspezifisch */"Kapitel", "")))
-                .collect(Collectors.toUnmodifiableList());
+        return whileServicing("allEntriesByKey", () -> audiobookStreamResolver.listAll()
+                        .stream()
+                        .map(path -> new Titelnummer(path.getFileName().toString()
+                                .replace(/* TODO Mandantenspezifisch */"Kapitel", "")))
+                        .collect(Collectors.toUnmodifiableList()),
+                Collections::emptyList);
     }
 
     @Override
     @Cacheable
     public Audiobook find(final String titelnummer) {
-        final Audiobook audiobook = audiobookMapper.audiobook(titelnummer);
-        if (null == audiobook) {
-            throw new AudiobookRepositoryException(String.format("Hörbuch %s nicht gefunden", titelnummer));
-        } else {
-            return audiobook;
-        }
+        return whileServicing("find",
+                () -> {
+                    final Audiobook audiobook = audiobookMapper.audiobook(titelnummer);
+                    if (null == audiobook) {
+                        throw new AudiobookRepositoryException(String.format("Hörbuch %s nicht gefunden", titelnummer));
+                    } else {
+                        return audiobook;
+                    }
+                },
+                () -> Audiobook.UNKNOWN);
     }
 
     @Override
-    public Path makeLocalCopyOfTrack(final String hoerernummer,
-                                     final String titelnummer, final String ident,
-                                     final String temporaryId) {
-        // TODO "Kapitel" Suffix ist mandantenspezifisch
-        final String tempId = String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
-        final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
-        try {
-            Files.createDirectories(tempMp3File.getParent());
-        } catch (IOException e) {
-            throw new AudiobookRepositoryException("", e);
-        }
-        try (final InputStream trackAsStream = trackAsStream(titelnummer, ident);
-             final OutputStream tempMp3Stream = Files.newOutputStream(tempMp3File, StandardOpenOption.CREATE)) {
-            trackAsStream.transferTo(tempMp3Stream);
-            return tempMp3File;
-        } catch (IOException e) {
-            throw new AudiobookRepositoryException("", e);
-        }
+    public Path trackAsFile(final String hoerernummer,
+                            final String titelnummer, final String ident,
+                            final String temporaryId) {
+        return whileServicing("trackAsFile",
+                () -> {
+                    // TODO "Kapitel" Suffix ist mandantenspezifisch
+                    final String tempId = String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
+                    final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
+                    try {
+                        Files.createDirectories(tempMp3File.getParent());
+                    } catch (IOException e) {
+                        throw new AudiobookRepositoryException("", e);
+                    }
+                    try (final InputStream trackAsStream = trackAsStream(titelnummer, ident);
+                         final OutputStream tempMp3Stream = Files.newOutputStream(tempMp3File, StandardOpenOption.CREATE)) {
+                        trackAsStream.transferTo(tempMp3Stream);
+                        return tempMp3File;
+                    } catch (IOException e) {
+                        throw new AudiobookRepositoryException("", e);
+                    }
+                },
+                () -> null);
     }
 
     @Override
     public InputStream trackAsStream(final String titelnummer, final String ident) {
-        return audiobookStreamResolver.trackAsStream(titelnummer, ident);
+        return whileServicing("trackAsStream",
+                () -> audiobookStreamResolver.trackAsStream(titelnummer, ident),
+                () -> null);
     }
 
     @Override
     public InputStream zipAsStream(final String titelnummer) {
-        return audiobookStreamResolver.zipAsStream(titelnummer);
+        return whileServicing("zipAsStream",
+                () -> audiobookStreamResolver.zipAsStream(titelnummer),
+                () -> null);
     }
 
 }
