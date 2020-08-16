@@ -16,9 +16,9 @@ services:
   rabbitmq:
     build:
       context: rabbitmq
-  virenscanner:
-    build:
-      context: virenscanner
+  #virenscanner:
+  #  build:
+  #    context: virenscanner
   hoerbuchdienst:
   hbd-rproxy:
     build:

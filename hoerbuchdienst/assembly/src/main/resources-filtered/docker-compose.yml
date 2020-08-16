@@ -154,19 +154,19 @@ services:
       - 5672
       - 15671
       - 15672
-  virenscanner:
-    image: wbh-hbd/virenscanner:${hbd.release}
-    restart: unless-stopped
-    volumes:
-      - virenscannerdata:/data
-    environment:
-      - TZ=Europe/Berlin
-      - LANG=en_US.UTF-8
-    networks:
-      - backend
-      - frontend
-    expose:
-      - 3310
+  #virenscanner:
+  #  image: wbh-hbd/virenscanner:${hbd.release}
+  #  restart: unless-stopped
+  #  volumes:
+  #    - virenscannerdata:/data
+  #  environment:
+  #    - TZ=Europe/Berlin
+  #    - LANG=en_US.UTF-8
+  #  networks:
+  #    - backend
+  #    - frontend
+  #  expose:
+  #    - 3310
   #elasticsearch:
   #  image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
   #  #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
@@ -307,8 +307,8 @@ volumes:
     driver: local
   rabbitmqdata:
     driver: local
-  virenscannerdata:
-    driver: local
+  #virenscannerdata:
+  #  driver: local
   #elasticsearchdata:
   #  driver: local
   hoerbuchdienstlocal:

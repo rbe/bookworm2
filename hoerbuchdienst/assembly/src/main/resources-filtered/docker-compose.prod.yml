@@ -10,7 +10,7 @@ services:
     ports:
       - "5671:5671"
       - "15671:15671"
-  virenscanner:
+  #virenscanner:
   #keycloakpostgres:
   #keycloak:
   hoerbuchdienst:
