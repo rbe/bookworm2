@@ -21,6 +21,8 @@ project="$1"
 if [[ $# == 3 ]]; then
   shift
   force="$1"
+else
+  force=""
 fi
 
 execdir="$(
