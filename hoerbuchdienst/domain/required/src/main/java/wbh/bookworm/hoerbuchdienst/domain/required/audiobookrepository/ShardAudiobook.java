@@ -97,7 +97,7 @@ public final class ShardAudiobook implements Serializable {
 
     @Override
     public String toString() {
-        return String.format("ShardAudiobook{objectId='%s', shardName='%s', shardObjects=%d, hashValue=%d}",
+        return String.format("ShardAudiobook{objectId='%s', shardName='%s', shardObjects=%d, hashValue='%s'}",
                 objectId, shardName, shardObjects.size(), hashValue);
     }
 
