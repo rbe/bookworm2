@@ -30,9 +30,11 @@ final class ReshardingInitiator {
         this.audiobookRepository = audiobookRepository;
     }
 
-    @Scheduled(cron = "0 0/5 0 * * *")
+    @Scheduled(cron = "0 0/5 * * * *")
     void maybeRedistribute() {
+        LOGGER.debug("");
         if (databeatManager.canRedistribute()) {
+            LOGGER.debug("Triggering redistribution");
             final List<Titelnummer> localDomainIds = audiobookRepository.allEntriesByKey();
             shardingRepository.redistribute(databeatManager.getHeartbeatHighWatermark(), localDomainIds);
         }
