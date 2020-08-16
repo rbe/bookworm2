@@ -187,13 +187,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     @Override
     public boolean receiveObject(final String objectId, final byte[] bytes, final long hashValue) {
         // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
-        // TODO check if object was received and stored successfully (compare computed with received hash)
-        /*final byte[] bytes;
-        try {
-            bytes = inputStream.readAllBytes();
-        } catch (IOException e) {
-            throw new AudiobookShardingRepositoryException("", e);
-        }*/
+        // check if object was received and stored successfully (compare computed with received hash)
         // compute hash value of received object/ZIP archive
         LOGGER.debug("Computing hash value for {} bytes", bytes.length);
         final long computedHashValue = FastByteHash.hash(bytes);
