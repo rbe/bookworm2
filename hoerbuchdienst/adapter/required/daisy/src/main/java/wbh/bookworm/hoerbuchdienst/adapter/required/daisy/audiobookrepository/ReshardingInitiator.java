@@ -30,6 +30,7 @@ final class ReshardingInitiator {
         this.audiobookRepository = audiobookRepository;
     }
 
+    /* TODO 23-4 Uhr morgens in Produktion */
     @Scheduled(cron = "0 0/5 * * * *")
     void maybeRedistribute() {
         LOGGER.debug("");

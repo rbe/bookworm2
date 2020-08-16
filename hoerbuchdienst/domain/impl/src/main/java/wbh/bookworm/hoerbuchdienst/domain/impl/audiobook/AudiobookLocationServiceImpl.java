@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchdienst.domain.impl.audiobook;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.InputStream;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -56,8 +55,8 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
     }
 
     @Override
-    public boolean receive(final String titelnummer, final InputStream inputStream, final long hashValue) {
-        return shardingRepository.receiveObject(titelnummer, inputStream, hashValue);
+    public boolean receive(final String titelnummer, final byte[] bytes, final long hashValue) {
+        return shardingRepository.receiveObject(titelnummer, bytes, hashValue);
     }
 
 }

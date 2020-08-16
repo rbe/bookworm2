@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookShardingRepositoryException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
@@ -186,16 +185,17 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     }
 
     @Override
-    public boolean receiveObject(final String objectId, final InputStream inputStream, final long hashValue) {
+    public boolean receiveObject(final String objectId, final byte[] bytes, final long hashValue) {
         // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
         // TODO check if object was received and stored successfully (compare computed with received hash)
-        final byte[] bytes;
+        /*final byte[] bytes;
         try {
             bytes = inputStream.readAllBytes();
         } catch (IOException e) {
             throw new AudiobookShardingRepositoryException("", e);
-        }
+        }*/
         // compute hash value of received object/ZIP archive
+        LOGGER.debug("Computing hash value for {} bytes", bytes.length);
         final long computedHashValue = FastByteHash.hash(bytes);
         audiobookStreamResolver.putZip(bytes, objectId);
         final boolean equals = hashValue == computedHashValue;
@@ -260,10 +260,11 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                 }
                                 // remove objects from object storage
                                 // TODO audiobookStreamResolver.removeZip(objectId);
-                                // start servicing clients requests again
-                                eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
                             } catch (IOException e) {
                                 LOGGER.error("", e);
+                            } finally {
+                                // start servicing clients requests again
+                                eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
                             }
                         } else {
                             LOGGER.warn("No data for audiobook {}", shardAudiobook);

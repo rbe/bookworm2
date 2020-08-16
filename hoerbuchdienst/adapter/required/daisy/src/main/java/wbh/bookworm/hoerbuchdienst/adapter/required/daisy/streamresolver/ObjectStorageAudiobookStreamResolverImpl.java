@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.zip.ZipInputStream;
@@ -122,11 +123,16 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     @Override
     public String putZip(final byte[] bytes, final String titelnummer) {
+        Objects.requireNonNull(bytes);
+        Objects.requireNonNull(titelnummer);
+        LOGGER.debug("Received ZIP with {} bytes", bytes.length);
         return putZip(new ByteArrayInputStream(bytes), titelnummer);
     }
 
     @Override
     public /* TODO BucketHashValue */String putZip(final InputStream inputStream, /* TODO Mandantenspezifisch */final String titelnummer) {
+        Objects.requireNonNull(inputStream);
+        Objects.requireNonNull(titelnummer);
         LOGGER.info("Putting ZIP archive for object '{}' into bucket {}", titelnummer, bucketObjectStorage.getBucketName());
         // unpack zip and put every file into object storage
         final Path unpackDirectory = temporaryDirectory.resolve(titelnummer + "_zip");

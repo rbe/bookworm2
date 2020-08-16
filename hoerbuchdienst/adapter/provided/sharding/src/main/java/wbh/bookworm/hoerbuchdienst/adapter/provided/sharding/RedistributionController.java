@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.sharding;
 
 import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -45,7 +44,7 @@ public class RedistributionController {
                                                   @Body final byte[] bytes) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
         final boolean objectReceived = audiobookLocationService.receive(titelnummer,
-                new ByteArrayInputStream(bytes), hashValue);
+                bytes, hashValue);
         if (objectReceived) {
             return HttpResponse.ok(Boolean.TRUE);
         } else {
