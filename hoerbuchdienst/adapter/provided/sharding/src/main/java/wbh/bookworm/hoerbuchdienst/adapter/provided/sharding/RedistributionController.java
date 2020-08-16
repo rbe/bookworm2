@@ -38,7 +38,8 @@ public class RedistributionController {
         this.audiobookLocationService = audiobookLocationService;
     }
 
-    @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_JSON)
+    @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM,
+            produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
                                                   @PathVariable final long hashValue,
                                                   @Body final byte[] bytes) {

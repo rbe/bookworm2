@@ -235,9 +235,9 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                             try (final HttpClient httpClient = HttpClient.create(baseUrl);
                                  final BlockingHttpClient blockingHttpClient = httpClient.toBlocking()) {
                                 final long hashValue = FastByteHash.hash(bytes);
-                                final String uri = String.format("shard/redistribute/zip/%s/%s",
+                                final String uri = String.format("/shard/redistribute/zip/%s/%s",
                                         objectId, hashValue);
-                                LOGGER.debug("Sending {} with hash value {} to {}/{}",
+                                LOGGER.debug("Sending {} with hash value {} to {}{}",
                                         objectId, hashValue, baseUrl, uri);
                                 final MutableHttpRequest<byte[]> post = HttpRequest
                                         .POST(URI.create(uri), bytes)
@@ -251,9 +251,13 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                 // TODO update location for moved audiobook
                                 // invalidate cache
                                 LOGGER.debug("Invalidating cache for object id {}", objectId);
-                                cacheManager.getCache("audiobookRepository")
-                                        .invalidate(shardAudiobook.getObjectId());
-                                LOGGER.info("Invalidated cache for object id {}", objectId);
+                                try {
+                                    cacheManager.getCache("audiobookRepository")
+                                            .invalidate(shardAudiobook.getObjectId());
+                                    LOGGER.info("Invalidated cache for object id {}", objectId);
+                                } catch (Exception e) {
+                                    LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
+                                }
                                 // remove objects from object storage
                                 audiobookStreamResolver.removeZip(objectId);
                                 // start servicing clients requests again

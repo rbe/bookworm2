@@ -2,7 +2,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Singleton;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import io.micronaut.configuration.rabbitmq.annotation.Queue;
 import io.micronaut.configuration.rabbitmq.annotation.RabbitListener;
@@ -11,12 +10,9 @@ import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardDisappearedEvent;
-import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @RabbitListener
 @Singleton
@@ -26,19 +22,8 @@ final class DatabeatMessageReceiver {
 
     private final DatabeatManager databeatManager;
 
-    private final AtomicInteger heartbeatHighWatermark;
-
-    private final ShardingRepository shardingRepository;
-
-    private final AudiobookRepository audiobookRepository;
-
-    DatabeatMessageReceiver(final DatabeatManager databeatManager,
-                            final ShardingRepository shardingRepository,
-                            final AudiobookRepository audiobookRepository) {
+    DatabeatMessageReceiver(final DatabeatManager databeatManager) {
         this.databeatManager = databeatManager;
-        heartbeatHighWatermark = new AtomicInteger(0);
-        this.shardingRepository = shardingRepository;
-        this.audiobookRepository = audiobookRepository;
     }
 
     @Queue(ShardingQueues.QUEUE_DATABEAT)
@@ -48,10 +33,6 @@ final class DatabeatMessageReceiver {
             LOGGER.debug("Received {}", databeat);
             databeatManager.remember(databeat.getShardName(), databeat);
             LOGGER.info("Received {} entries from {}", shardObjects.size(), xShardName);
-            if (databeatManager.canRedistribute()) {
-                final List<Titelnummer> localDomainIds = audiobookRepository.allEntriesByKey();
-                shardingRepository.redistribute(heartbeatHighWatermark.get(), localDomainIds);
-            }
         } else {
             LOGGER.warn("List with shard objects from {} is empty", xShardName);
         }
