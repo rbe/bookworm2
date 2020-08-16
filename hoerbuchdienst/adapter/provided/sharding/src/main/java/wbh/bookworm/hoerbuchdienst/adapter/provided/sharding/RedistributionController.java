@@ -39,11 +39,11 @@ public class RedistributionController {
     }
 
     @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<Boolean> audiobook(@PathVariable final String titelnummer,
-                                           @PathVariable final long hashValue,
-                                           @Body final byte[] bytes) {
+    public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
+                                                  @PathVariable final long hashValue,
+                                                  @Body final byte[] bytes) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        final boolean objectReceived = audiobookLocationService.receiveObject(titelnummer,
+        final boolean objectReceived = audiobookLocationService.receive(titelnummer,
                 new ByteArrayInputStream(bytes), hashValue);
         if (objectReceived) {
             return HttpResponse.ok(Boolean.TRUE);

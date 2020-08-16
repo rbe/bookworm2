@@ -56,8 +56,8 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
     }
 
     @Override
-    public boolean receiveObject(final String objectId, final InputStream inputStream, final long hashValue) {
-        return shardingRepository.receiveObject(objectId, inputStream, hashValue);
+    public boolean receive(final String titelnummer, final InputStream inputStream, final long hashValue) {
+        return shardingRepository.receiveObject(titelnummer, inputStream, hashValue);
     }
 
 }

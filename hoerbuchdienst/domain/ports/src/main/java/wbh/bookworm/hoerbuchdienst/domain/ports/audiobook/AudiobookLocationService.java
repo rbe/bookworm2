@@ -14,6 +14,6 @@ public interface AudiobookLocationService {
 
     boolean isLocatedLocal(/* TODO AghNummer */String titelnummer);
 
-    boolean receiveObject(String objectId, InputStream inputStream, long hashValue);
+    boolean receive(/* TODO AghNummer */String titelnummer, InputStream inputStream, long hashValue);
 
 }
