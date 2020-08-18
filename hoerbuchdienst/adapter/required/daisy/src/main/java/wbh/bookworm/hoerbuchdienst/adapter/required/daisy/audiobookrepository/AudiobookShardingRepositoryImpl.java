@@ -107,30 +107,30 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
 
     @EventListener
     void onShardDisappeared(final ShardDisappearedEvent event) {
-        LOGGER.debug("Shard disappeared, {}", event);
+        LOGGER.debug("Shard {} disappeared, current state={}", event.getShardName(), redistributionAllowed.get());
         // TODO stop any active redistribution?
         // disallow redistribution
         final boolean witness = redistributionAllowed.compareAndExchange(Boolean.TRUE, Boolean.FALSE);
         if (witness) {
             // success, witness == expected value
-            LOGGER.info("Successfully disallowed redistribution");
+            LOGGER.info("Successfully disallowed redistribution, witness={}", witness);
         } else {
             // failed, witness != expected value
-            LOGGER.error("Cannot disallow redistribution");
+            LOGGER.error("Redistribution already disallowed, witness={} expected=true", witness);
         }
     }
 
     @EventListener
     void onShardReappeared(final ShardReappearedEvent event) {
-        LOGGER.debug("Shard reappeared, {}", event);
+        LOGGER.debug("Shard {} reappeared, current state={}", event.getShardName(), redistributionAllowed.get());
         // allow redistribution again
         final boolean witness = redistributionAllowed.compareAndExchange(Boolean.FALSE, Boolean.TRUE);
         if (witness) {
             // failed, witness != expected value
-            LOGGER.error("Cannot allow redistribution");
+            LOGGER.error("Redistribution already allowed, witness={}, expected=false", witness);
         } else {
             // success, witness == expected value
-            LOGGER.info("Successfully allowed redistribution");
+            LOGGER.info("Successfully allowed redistribution, witness={}", witness);
         }
     }
 
@@ -207,20 +207,20 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         return whileRedistributionAllowed("moveToOtherShard",
                 () -> {
                     boolean result = true;
-                    final ShardName shardName = shardAudiobook.getShardName();
-                    LOGGER.info("{} belongs to other shard {}", shardAudiobook, shardName);
+                    final ShardName otherShardName = shardAudiobook.getShardName();
+                    LOGGER.info("{} belongs to other shard {}", shardAudiobook, otherShardName);
                     URL baseUrl = null;
                     try {
-                        baseUrl = new URL(String.format("https://%s:%d", shardName.getHostName(), PORT_HTTPS));
+                        baseUrl = new URL(String.format("https://%s:%d", otherShardName.getHostName(), PORT_HTTPS));
                     } catch (MalformedURLException e) {
-                        LOGGER.error("Cannot build URL for shard {}", shardName);
+                        LOGGER.error("Cannot build URL for shard {}", otherShardName);
                         result = false;
                     }
                     if (result) {
                         byte[] bytes = null;
                         final String objectId = shardAudiobook.getObjectId();
                         try (final InputStream zipAsStream = audiobookStreamResolver.zipAsStream(objectId)) {
-                            bytes = zipAsStream.readAllBytes();
+                            bytes = /* TODO Bessere Möglichkeit für große Datenmengen? */zipAsStream.readAllBytes();
                         } catch (IOException e) {
                             LOGGER.error("Cannot retrieve object {} through StreamResolver", objectId);
                             result = false;
@@ -253,7 +253,8 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                     LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
                                 }
                                 // remove objects from object storage
-                                // TODO audiobookStreamResolver.removeZip(objectId);
+                                audiobookStreamResolver.removeZip(objectId);
+                                LOGGER.info("Moved audiobook {} to {}", objectId, otherShardName);
                             } catch (IOException e) {
                                 LOGGER.error("", e);
                             } finally {

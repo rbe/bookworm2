@@ -63,27 +63,27 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
 
     @EventListener
     void onStartServicing(final ShardStartServicingEvent event) {
-        LOGGER.debug("Start servicing requests");
+        LOGGER.debug("Start servicing requests, current state={}", servicingAudiobookRequests.get());
         final boolean witness = servicingAudiobookRequests.compareAndExchange(Boolean.FALSE, Boolean.TRUE);
         if (witness) {
             // failed, witness != expected value
-            LOGGER.error("Cannot start servicing requests");
+            LOGGER.warn("Servicing requests already started, witness={}, expected=false", witness);
         } else {
             // success, witness == expected value
-            LOGGER.info("Successfully started servicing requests");
+            LOGGER.info("Successfully started servicing requests, witness={}", witness);
         }
     }
 
     @EventListener
     void onStopServicing(final ShardStopServicingEvent event) {
-        LOGGER.info("Stop servicing requests");
+        LOGGER.info("Stop servicing requests, current state={}", servicingAudiobookRequests.get());
         final boolean witness = servicingAudiobookRequests.compareAndExchange(Boolean.TRUE, Boolean.FALSE);
         if (witness) {
             // success, witness == expected value
-            LOGGER.info("Successfully stopped servicing requests");
+            LOGGER.info("Successfully stopped servicing requests, witness={}", witness);
         } else {
             // failed, witness != expected value
-            LOGGER.error("Cannot stop servicing requests");
+            LOGGER.warn("Servicing requests already stopped, witness={} expected=true", witness);
         }
     }
 
