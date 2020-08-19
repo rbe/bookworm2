@@ -19,6 +19,7 @@ import io.micronaut.http.annotation.Post;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
 
 import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
@@ -43,12 +44,18 @@ public class RedistributionController {
     @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM,
             produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
-                                                  @PathVariable final long hashValue,
+                                                  @PathVariable final String sHashValue,
                                                   @Body final byte[] bytes) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
         // TODO Hier Hash berechnen und weitere Verarbeitung asynchron
         LOGGER.debug("Computing hash value for audiobook {}, size {} bytes", titelnummer, bytes.length);
         final long computedHashValue = FastByteHash.hash(bytes);
+        final long hashValue;
+        try {
+            hashValue = Long.parseLong(sHashValue);
+        } catch (NumberFormatException e) {
+            throw new BusinessException(String.format("Cannot convert hash value %s to number", sHashValue), e);
+        }
         if (computedHashValue == hashValue) {
             LOGGER.debug("Hash values are equal, start storing audiobook {}", titelnummer);
             final CompletionStage<Boolean> receive = audiobookLocationService
