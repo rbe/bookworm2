@@ -28,6 +28,7 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
 
     @Override
     public List<ShardAudiobook> calculate(final int highWatermark, final DatabeatManager databeatManager) {
+        final List<ShardAudiobook> result;
         final Optional<Long> maybeTotalSize = databeatManager.totalSizeOfAllObjects();
         final List<ShardAudiobook> shardAudiobooks = new LinkedList<>(databeatManager.allShardsAudiobooks());
         if (maybeTotalSize.isPresent()) {
@@ -40,7 +41,8 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
                     idealBytesPerShard, idealBytesPerShard / T24 / T24, idealBytesPerShard / T24 / T24 / T24);
             // calculate new distribution across all shards
             // available shards
-            final List<ShardName> availShards = List.copyOf(databeatManager.allShardNames());
+            final List<ShardName> availShards = new ArrayList<>(databeatManager.allShardNames());
+            availShards.sort(Comparator.comparing(ShardName::getShardName));
             final Map<ShardName, AtomicLong> plannedBytesPerShard = new HashMap<>(availShards.size());
             for (final ShardName shardName : availShards) {
                 plannedBytesPerShard.put(shardName, new AtomicLong(0L));
@@ -59,13 +61,14 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
                 plannedBytesPerShard.get(currentShard).addAndGet(placedAudiobook.size());
                 distrib.add(placedAudiobook);
             }
-            LOGGER.debug("{}", plannedBytesPerShard);
-            LOGGER.debug("{}", distrib);
-            return distrib;
+            LOGGER.debug("Planned bytes per shard: {}", plannedBytesPerShard);
+            LOGGER.debug("Shard distribution: {}", distrib);
+            result = distrib;
         } else {
             LOGGER.warn("Gesamtgröße aller Objekte nicht vorhanden");
-            return Collections.emptyList();
+            result = Collections.emptyList();
         }
+        return result;
     }
 
 }

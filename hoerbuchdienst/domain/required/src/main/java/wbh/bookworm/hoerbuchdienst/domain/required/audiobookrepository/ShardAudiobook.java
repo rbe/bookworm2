@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
 import java.io.Serializable;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -11,7 +12,7 @@ import io.micronaut.core.annotation.Introspected;
 import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
 
 @Introspected
-public final class ShardAudiobook implements Serializable {
+public final class ShardAudiobook implements Comparable<ShardAudiobook>, Serializable {
 
     private final String objectId;
 
@@ -93,6 +94,12 @@ public final class ShardAudiobook implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(shardName, shardObjects);
+    }
+
+    @Override
+    public int compareTo(final ShardAudiobook o) {
+        return Comparator.comparing(ShardAudiobook::getObjectId)
+                .compare(this, o);
     }
 
     @Override

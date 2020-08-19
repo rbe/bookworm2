@@ -4,11 +4,10 @@ import java.io.Serializable;
 import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 // TODO @Introspected does not work with Json fromStringCreator
-public final class ShardName implements Serializable, Comparable<ShardName> {
+public final class ShardName implements Comparable<ShardName>, Serializable {
 
     private static final long serialVersionUID = -1351069385413170972L;
 
@@ -23,13 +22,8 @@ public final class ShardName implements Serializable, Comparable<ShardName> {
         this.hostName = hostName;
     }
 
-    @JsonIgnore
-    public String getShardName() {
-        return hostName;
-    }
-
     @JsonValue
-    public String getHostName() {
+    public String getShardName() {
         return hostName;
     }
 
@@ -47,13 +41,13 @@ public final class ShardName implements Serializable, Comparable<ShardName> {
     }
 
     @Override
-    public String toString() {
-        return getShardName();
+    public int compareTo(final ShardName o) {
+        return o.hostName.compareTo(this.hostName);
     }
 
     @Override
-    public int compareTo(final ShardName o) {
-        return o.hostName.compareTo(this.hostName);
+    public String toString() {
+        return hostName;
     }
 
 }

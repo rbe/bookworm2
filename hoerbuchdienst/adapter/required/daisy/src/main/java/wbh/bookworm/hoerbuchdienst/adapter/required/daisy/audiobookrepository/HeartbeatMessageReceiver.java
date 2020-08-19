@@ -45,8 +45,7 @@ final class HeartbeatMessageReceiver {
     void receiveHeartbeat(@Header("x-shardname") final String xShardName, final Heartbeat heartbeat) {
         LOGGER.trace("Received {} from {}", heartbeat, xShardName);
         final ShardName shardName = new ShardName(xShardName);
-        final boolean heartbeatNotInTime = heartbeat.getPointInTime()
-                .isBefore(Instant.now().minusSeconds(2L))
+        final boolean heartbeatNotInTime = heartbeat.getPointInTime().isBefore(Instant.now().minusSeconds(2L))
                 || heartbeat.getPointInTime().isAfter(Instant.now().plusSeconds(2L));
         if (heartbeatNotInTime) {
             LOGGER.warn("Discarding heartbeat {} as its timestamp is too old or in the future", heartbeat);

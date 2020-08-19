@@ -211,7 +211,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                     LOGGER.info("{} belongs to other shard {}", shardAudiobook, otherShardName);
                     URL baseUrl = null;
                     try {
-                        baseUrl = new URL(String.format("https://%s:%d", otherShardName.getHostName(), PORT_HTTPS));
+                        baseUrl = new URL(String.format("https://%s:%d", otherShardName.getShardName(), PORT_HTTPS));
                     } catch (MalformedURLException e) {
                         LOGGER.error("Cannot build URL for shard {}", otherShardName);
                         result = false;

@@ -70,12 +70,6 @@ final class DatabeatManager {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    String consentHash() {
-        return MessageDigester.sha256OfUTF8(allShardsAudiobooks().stream()
-                .map(ShardAudiobook::getHashValue)
-                .collect(Collectors.joining()));
-    }
-
     Map<ShardName, List<ShardAudiobook>> allShardsAudiobooksByShardName() {
         return databeatMap.entrySet()
                 .stream()
@@ -123,6 +117,13 @@ final class DatabeatManager {
                 && numberOfHeartAndDatabeatsIsEqual
                 && moreObjectsThanShards
                 && isConsent();
+    }
+
+    String consentHash() {
+        return MessageDigester.sha256OfUTF8(allShardsAudiobooks().stream()
+                .map(ShardAudiobook::getHashValue)
+                .sorted()
+                .collect(Collectors.joining()));
     }
 
     /**
