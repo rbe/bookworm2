@@ -9,7 +9,10 @@ package wbh.bookworm.hoerbuchdienst.domain.impl.audiobook;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionStage;
 
+import io.micronaut.scheduling.annotation.Async;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -54,9 +57,15 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
         return false;
     }
 
+    @Async
     @Override
-    public boolean receive(final String titelnummer, final byte[] bytes, final long hashValue) {
-        return shardingRepository.receiveObject(titelnummer, bytes, hashValue);
+    public CompletionStage<Boolean> receive(final String titelnummer, final byte[] bytes, final long hashValue) {
+        LOGGER.info("Started receiving audiobook {}, hash value {}", titelnummer, hashValue);
+        final boolean objectReceived = shardingRepository.receiveObject(titelnummer, bytes, hashValue);
+        LOGGER.info("{} audiobook {}, hash value {}",
+                (objectReceived ? "Successfully received" : "Error while receiving"),
+                titelnummer, hashValue);
+        return CompletableFuture.completedStage(objectReceived);
     }
 
 }

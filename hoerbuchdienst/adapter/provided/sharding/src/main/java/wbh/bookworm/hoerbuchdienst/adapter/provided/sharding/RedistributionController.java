@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.sharding;
 
 import javax.inject.Inject;
+import java.util.concurrent.CompletionStage;
 
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
@@ -19,6 +20,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
+
+import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
 
 @Controller(RedistributionController.BASE_URL)
 public class RedistributionController {
@@ -43,11 +46,17 @@ public class RedistributionController {
                                                   @PathVariable final long hashValue,
                                                   @Body final byte[] bytes) {
         LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        final boolean objectReceived = audiobookLocationService.receive(titelnummer,
-                bytes, hashValue);
-        if (objectReceived) {
+        // TODO Hier Hash berechnen und weitere Verarbeitung asynchron
+        LOGGER.debug("Computing hash value for audiobook {}, size {} bytes", titelnummer, bytes.length);
+        final long computedHashValue = FastByteHash.hash(bytes);
+        if (computedHashValue == hashValue) {
+            LOGGER.debug("Hash values are equal, start storing audiobook {}", titelnummer);
+            final CompletionStage<Boolean> receive = audiobookLocationService
+                    .receive(titelnummer, bytes, hashValue);
+            LOGGER.info("Started storing audiobook {} in background, {}", titelnummer, receive);
             return HttpResponse.ok(Boolean.TRUE);
         } else {
+            LOGGER.error("Hash values are not equal, cannot store audiobook {}", titelnummer);
             return HttpResponse.<Boolean>status(HttpStatus.CONFLICT)
                     .body(Boolean.FALSE);
         }
