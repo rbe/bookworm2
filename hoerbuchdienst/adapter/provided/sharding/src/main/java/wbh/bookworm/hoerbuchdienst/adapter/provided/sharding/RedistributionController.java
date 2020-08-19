@@ -41,15 +41,14 @@ public class RedistributionController {
         this.audiobookLocationService = audiobookLocationService;
     }
 
-    @Post(uri = "zip/{titelnummer}/{hashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM,
+    @Post(uri = "zip/{titelnummer}/{sHashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM,
             produces = MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
                                                   @PathVariable final String sHashValue,
                                                   @Body final byte[] bytes) {
-        LOGGER.debug("Empfange Hörbuch '{}' als ZIP", titelnummer);
-        // TODO Hier Hash berechnen und weitere Verarbeitung asynchron
-        LOGGER.debug("Computing hash value for audiobook {}, size {} bytes", titelnummer, bytes.length);
         final long computedHashValue = FastByteHash.hash(bytes);
+        LOGGER.debug("Empfange Hörbuch '{}' als ZIP, {} bytes, hash {}",
+                titelnummer, bytes.length, computedHashValue);
         final long hashValue;
         try {
             hashValue = Long.parseLong(sHashValue);

@@ -136,7 +136,15 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
 
     private <T> T whileRedistributionAllowed(final String logIdent, final Supplier<? extends T> supplier, final Supplier<? extends T> empty) {
         if (redistributionAllowed.get()) {
-            return supplier.get();
+            final T t;
+            if (redistributionAllowed.compareAndSet(true, false)) {
+                t = supplier.get();
+            } else {
+                LOGGER.warn("{}: Cannot perform action, redistribution is not allowed", logIdent);
+                t = null;
+            }
+            redistributionAllowed.compareAndSet(false, true);
+            return t;
         } else {
             LOGGER.warn("{}: Currently not redistributing", logIdent);
             return empty.get();
