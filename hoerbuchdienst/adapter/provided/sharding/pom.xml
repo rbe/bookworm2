@@ -28,6 +28,11 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
             <version>LocalBuild</version>
         </dependency>
+        <!-- Mikrokosmos -->
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.crypto</artifactId>
+        </dependency>
         <!-- Micronaut -->
         <dependency>
             <groupId>io.micronaut</groupId>
