@@ -183,20 +183,31 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                         .filter(shardAudiobook -> localDomainIds.contains(new Titelnummer(shardAudiobook.getObjectId())))
                                         .filter(shardAudiobook -> !MY_SHARD_NAME.equals(shardAudiobook.getShardName()))
                                         .collect(Collectors.toUnmodifiableList());
-                                if (!objectsToTransfer.isEmpty()) {
+                                if (objectsToTransfer.isEmpty()) {
+                                    LOGGER.debug("No objects to transfer to other shards");
+                                } else {
                                     // move all my objects now belonging to another shard
                                     objectsToTransfer.forEach(this::moveToOtherShard);
-                                } else {
-                                    LOGGER.debug("No objects to transfer to other shards");
                                 }
                             } else {
                                 LOGGER.warn("Redistribution requirements not met, consent: {}", databeatManager.isConsent());
                             }
                         } else {
-                            LOGGER.warn("Redistribution currently running");
+                            LOGGER.warn("Redistribution currently running (redistributionLock)");
                         }
                     } catch (InterruptedException e) {
                         LOGGER.warn("Interrupted while trying to acquire redistribution lock");
+                        try {
+                            redistributionLock.unlock();
+                        } catch (IllegalMonitorStateException e2) {
+                            LOGGER.error("", e);
+                        }
+                    } finally {
+                        try {
+                            redistributionLock.unlock();
+                        } catch (IllegalMonitorStateException e) {
+                            LOGGER.error("", e);
+                        }
                     }
                     return null;
                 },
