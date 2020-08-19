@@ -212,72 +212,68 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     }
 
     private boolean moveToOtherShard(final ShardAudiobook shardAudiobook) {
-        return whileRedistributionAllowed("moveToOtherShard",
-                () -> {
-                    boolean result = true;
-                    final ShardName otherShardName = shardAudiobook.getShardName();
-                    LOGGER.info("{} belongs to other shard {}", shardAudiobook, otherShardName);
-                    URL baseUrl = null;
+        boolean result = true;
+        final ShardName otherShardName = shardAudiobook.getShardName();
+        LOGGER.info("{} belongs to other shard {}", shardAudiobook, otherShardName);
+        URL baseUrl = null;
+        try {
+            baseUrl = new URL(String.format("https://%s:%d", otherShardName.getShardName(), PORT_HTTPS));
+        } catch (MalformedURLException e) {
+            LOGGER.error("Cannot build URL for shard {}", otherShardName);
+            result = false;
+        }
+        if (result) {
+            byte[] bytes = null;
+            final String objectId = shardAudiobook.getObjectId();
+            try (final InputStream zipAsStream = audiobookStreamResolver.zipAsStream(objectId)) {
+                bytes = /* TODO Bessere Möglichkeit für große Datenmengen? */zipAsStream.readAllBytes();
+            } catch (IOException e) {
+                LOGGER.error("Cannot retrieve object {} through StreamResolver", objectId);
+                result = false;
+            }
+            if (result) {
+                try (final HttpClient httpClient = HttpClient.create(baseUrl);
+                     final BlockingHttpClient blockingHttpClient = httpClient.toBlocking()) {
+                    final long hashValue = FastByteHash.hash(bytes);
+                    final String uri = String.format("/shard/redistribute/zip/%s/%s",
+                            objectId, hashValue);
+                    LOGGER.debug("Sending {} with hash value {} to {}{}",
+                            objectId, hashValue, baseUrl, uri);
+                    final MutableHttpRequest<byte[]> post = HttpRequest
+                            .POST(URI.create(uri), bytes)
+                            .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                            .accept(MediaType.APPLICATION_JSON_TYPE);
+                    final String response = blockingHttpClient.retrieve(post);
+                    LOGGER.info("Sent {} with hash value {} to {}/{}, response {}",
+                            objectId, hashValue, baseUrl, uri, response);
+                    // stop servicing clients requests
+                    eventPublisher.publishEvent(new ShardStopServicingEvent(MY_SHARD_NAME.getShardName()));
+                    // TODO update location for moved audiobook
+                    // invalidate cache
+                    LOGGER.debug("Invalidating cache for object id {}", objectId);
                     try {
-                        baseUrl = new URL(String.format("https://%s:%d", otherShardName.getShardName(), PORT_HTTPS));
-                    } catch (MalformedURLException e) {
-                        LOGGER.error("Cannot build URL for shard {}", otherShardName);
-                        result = false;
+                        cacheManager.getCache("audiobookRepository")
+                                .invalidate(shardAudiobook.getObjectId());
+                        LOGGER.info("Invalidated cache for object id {}", objectId);
+                    } catch (Exception e) {
+                        LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
                     }
-                    if (result) {
-                        byte[] bytes = null;
-                        final String objectId = shardAudiobook.getObjectId();
-                        try (final InputStream zipAsStream = audiobookStreamResolver.zipAsStream(objectId)) {
-                            bytes = /* TODO Bessere Möglichkeit für große Datenmengen? */zipAsStream.readAllBytes();
-                        } catch (IOException e) {
-                            LOGGER.error("Cannot retrieve object {} through StreamResolver", objectId);
-                            result = false;
-                        }
-                        if (result) {
-                            try (final HttpClient httpClient = HttpClient.create(baseUrl);
-                                 final BlockingHttpClient blockingHttpClient = httpClient.toBlocking()) {
-                                final long hashValue = FastByteHash.hash(bytes);
-                                final String uri = String.format("/shard/redistribute/zip/%s/%s",
-                                        objectId, hashValue);
-                                LOGGER.debug("Sending {} with hash value {} to {}{}",
-                                        objectId, hashValue, baseUrl, uri);
-                                final MutableHttpRequest<byte[]> post = HttpRequest
-                                        .POST(URI.create(uri), bytes)
-                                        .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
-                                        .accept(MediaType.APPLICATION_JSON_TYPE);
-                                final String response = blockingHttpClient.retrieve(post);
-                                LOGGER.info("Sent {} with hash value {} to {}/{}, response {}",
-                                        objectId, hashValue, baseUrl, uri, response);
-                                // stop servicing clients requests
-                                eventPublisher.publishEvent(new ShardStopServicingEvent(MY_SHARD_NAME.getShardName()));
-                                // TODO update location for moved audiobook
-                                // invalidate cache
-                                LOGGER.debug("Invalidating cache for object id {}", objectId);
-                                try {
-                                    cacheManager.getCache("audiobookRepository")
-                                            .invalidate(shardAudiobook.getObjectId());
-                                    LOGGER.info("Invalidated cache for object id {}", objectId);
-                                } catch (Exception e) {
-                                    LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
-                                }
-                                // remove objects from object storage
-                                audiobookStreamResolver.removeZip(objectId);
-                                LOGGER.info("Moved audiobook {} to {}", objectId, otherShardName);
-                            } catch (IOException e) {
-                                LOGGER.error("", e);
-                            } finally {
-                                // start servicing clients requests again
-                                eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
-                            }
-                        } else {
-                            LOGGER.warn("No data for audiobook {}", shardAudiobook);
-                        }
-                    } else {
-                        LOGGER.warn("No shard URL for audiobook {}", shardAudiobook);
-                    }
-                    return result;
-                },
-                () -> false);
+                    // remove objects from object storage
+                    audiobookStreamResolver.removeZip(objectId);
+                    LOGGER.info("Moved audiobook {} to {}", objectId, otherShardName);
+                } catch (IOException e) {
+                    LOGGER.error("", e);
+                } finally {
+                    // start servicing clients requests again
+                    eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
+                }
+            } else {
+                LOGGER.warn("No data for audiobook {}", shardAudiobook);
+            }
+        } else {
+            LOGGER.warn("No shard URL for audiobook {}", shardAudiobook);
+        }
+        return result;
     }
 
 }
