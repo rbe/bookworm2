@@ -110,6 +110,10 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         LOGGER.debug("Shard {} disappeared, current state={}", event.getShardName(), redistributionAllowed.get());
         // TODO stop any active redistribution?
         // disallow redistribution
+        disableRedistribution();
+    }
+
+    private void disableRedistribution() {
         final boolean witness = redistributionAllowed.compareAndExchange(Boolean.TRUE, Boolean.FALSE);
         if (witness) {
             // success, witness == expected value
@@ -124,6 +128,10 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     void onShardReappeared(final ShardReappearedEvent event) {
         LOGGER.debug("Shard {} reappeared, current state={}", event.getShardName(), redistributionAllowed.get());
         // allow redistribution again
+        enableRedistribution();
+    }
+
+    private void enableRedistribution() {
         final boolean witness = redistributionAllowed.compareAndExchange(Boolean.FALSE, Boolean.TRUE);
         if (witness) {
             // failed, witness != expected value
@@ -135,20 +143,23 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     }
 
     private <T> T whileRedistributionAllowed(final String logIdent, final Supplier<? extends T> supplier, final Supplier<? extends T> empty) {
+        T result = null;
         if (redistributionAllowed.get()) {
-            final T t;
-            if (redistributionAllowed.compareAndSet(true, false)) {
-                t = supplier.get();
-            } else {
-                LOGGER.warn("{}: Cannot perform action, redistribution is not allowed", logIdent);
-                t = null;
+            disableRedistribution();
+            try {
+                result = supplier.get();
+            } catch (Exception e) {
+                LOGGER.error("", e);
+            } finally {
+                enableRedistribution();
             }
-            redistributionAllowed.compareAndSet(false, true);
-            return t;
         } else {
             LOGGER.warn("{}: Currently not redistributing", logIdent);
-            return empty.get();
+            result = empty.get();
         }
+        LOGGER.debug("Redistribution action completed, result={}, redistribution allowed={}",
+                result, redistributionAllowed.get());
+        return result;
     }
 
     /**
@@ -197,13 +208,14 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
         // check if object was received and stored successfully (compare computed with received hash)
         // compute hash value of received object/ZIP archive
-        LOGGER.debug("Computing hash value for {} bytes", bytes.length);
         final long computedHashValue = FastByteHash.hash(bytes);
-        audiobookStreamResolver.putZip(bytes, objectId);
+        LOGGER.debug("Computing hash value for audiobook {}, {} bytes, hash {}",
+                objectId, bytes.length, computedHashValue);
         final boolean equals = hashValue == computedHashValue;
         if (equals) {
-            LOGGER.info("Hash value {} of received object {} equals computed hash value {}",
+            LOGGER.info("Hash value {} of received object {} equals computed hash value {}, storing audiobook",
                     hashValue, objectId, computedHashValue);
+            audiobookStreamResolver.putZip(bytes, objectId);
         } else {
             LOGGER.error("Hash value {} of received object {} does not equal computed hash value {}",
                     hashValue, objectId, computedHashValue);
@@ -243,9 +255,11 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                             .POST(URI.create(uri), bytes)
                             .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
                             .accept(MediaType.APPLICATION_JSON_TYPE);
+                    final long startPost = System.currentTimeMillis();
                     final String response = blockingHttpClient.retrieve(post);
-                    LOGGER.info("Sent {} with hash value {} to {}/{}, response {}",
-                            objectId, hashValue, baseUrl, uri, response);
+                    final long stopPost = System.currentTimeMillis();
+                    LOGGER.info("Sent {} with hash value {} to {}/{}, response {}, took {} ms",
+                            objectId, hashValue, baseUrl, uri, response, stopPost - startPost);
                     // stop servicing clients requests
                     eventPublisher.publishEvent(new ShardStopServicingEvent(MY_SHARD_NAME.getShardName()));
                     // TODO update location for moved audiobook
