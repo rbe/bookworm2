@@ -7,6 +7,9 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.sharding;
 
 import javax.inject.Inject;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.concurrent.CompletionStage;
 
 import io.micronaut.http.HttpResponse;
@@ -57,10 +60,24 @@ public class RedistributionController {
         }
         if (computedHashValue == hashValue) {
             LOGGER.debug("Hash values are equal, start storing audiobook {}", titelnummer);
-            final CompletionStage<Boolean> receive = audiobookLocationService
-                    .receive(titelnummer, bytes, hashValue);
-            LOGGER.info("Started storing audiobook {} in background, {}", titelnummer, receive);
-            return HttpResponse.ok(Boolean.TRUE);
+            final Path tempFile;
+            try {
+                tempFile = Files.createTempFile(getClass().getSimpleName(), ".zip");
+                Files.write(tempFile, bytes);
+                final CompletionStage<Void> receive = audiobookLocationService.receive(titelnummer,
+                        Files.newInputStream(tempFile));
+                receive.thenRun(() -> {
+                    try {
+                        Files.delete(tempFile);
+                    } catch (IOException e) {
+                        LOGGER.error(String.format("Cannot delete temporary file %s", tempFile), e);
+                    }
+                });
+                LOGGER.info("Started storing audiobook {} in background, {}", titelnummer, receive);
+                return HttpResponse.ok(Boolean.TRUE);
+            } catch (IOException e) {
+                throw new BusinessException("", e);
+            }
         } else {
             LOGGER.error("Hash values are not equal, cannot store audiobook {}", titelnummer);
             return HttpResponse.<Boolean>status(HttpStatus.CONFLICT)

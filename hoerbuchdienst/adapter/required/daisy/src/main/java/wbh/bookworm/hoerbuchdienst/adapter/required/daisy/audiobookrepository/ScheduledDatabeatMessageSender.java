@@ -50,12 +50,13 @@ final class ScheduledDatabeatMessageSender {
     ScheduledDatabeatMessageSender(final DatabeatManager databeatManager,
                                    final AudiobookStreamResolver audiobookStreamResolver,
                                    final DatabeatMessageSender databeatMessageSender) {
-        this.shardName = new ShardName();
+        shardName = new ShardName();
         this.databeatManager = databeatManager;
         this.audiobookStreamResolver = audiobookStreamResolver;
         this.databeatMessageSender = databeatMessageSender;
     }
 
+    // TODO Move logic to DatabeatManager#generateDatabeat
     @Scheduled(fixedDelay = "1m")
     void send() {
         final List<ObjectMetaInfo> objectMetaInfos = audiobookStreamResolver.allObjectsMetaInfo();

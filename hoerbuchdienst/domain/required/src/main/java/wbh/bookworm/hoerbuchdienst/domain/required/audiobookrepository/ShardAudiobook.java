@@ -76,10 +76,10 @@ public final class ShardAudiobook implements Comparable<ShardAudiobook>, Seriali
     }
 
     private String computeHashValue() {
-        final List<String> allEtags = shardObjects.stream()
+        final List<String> allObjectsHashValues = shardObjects.stream()
                 .map(ShardObject::getHashValue)
                 .collect(Collectors.toUnmodifiableList());
-        return MessageDigester.sha256OfUTF8(allEtags);
+        return MessageDigester.sha256OfUTF8(allObjectsHashValues);
     }
 
     @Override

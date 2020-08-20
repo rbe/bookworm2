@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
+import java.io.InputStream;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,6 @@ public interface ShardingRepository {
 
     void redistribute(int heartbeatHighWatermark, List<? extends DomainId<String>> localDomainIds);
 
-    boolean receiveObject(String objectId, byte[] bytes, long hashValue);
+    void receiveObject(String objectId, InputStream inputStream);
 
 }

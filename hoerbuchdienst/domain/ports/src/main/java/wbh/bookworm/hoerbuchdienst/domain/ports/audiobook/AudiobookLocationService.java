@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports.audiobook;
 
+import java.io.InputStream;
 import java.util.concurrent.CompletionStage;
 
 public interface AudiobookLocationService {
@@ -14,6 +15,6 @@ public interface AudiobookLocationService {
 
     boolean isLocatedLocal(/* TODO AghNummer */String titelnummer);
 
-    CompletionStage<Boolean> receive(/* TODO AghNummer */String titelnummer, byte[] bytes, long hashValue);
+    CompletionStage<Void> receive(/* TODO AghNummer */String titelnummer, InputStream inputStream);
 
 }
