@@ -22,7 +22,7 @@ VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
 ENTRYPOINT ["java",\
-    "-Xms2G", "-Xmx2G",\
+    "-Xms1024m", "-Xmx1024m",\
     "-Dlogback.configurationFile=/var/local/logback.xml",\
     "-Dmicronaut.environments=prod",\
     "-Dmicronaut.config.files=/var/local/application-shard.yml",\
