@@ -48,7 +48,7 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
                 plannedBytesPerShard.put(shardName, new AtomicLong(0L));
             }
             // sort audiobooks per hash value, so every shards has the same assumption
-            shardAudiobooks.sort(Comparator.comparing(ShardAudiobook::getHashValue));
+            shardAudiobooks.sort(Comparator.comparing(ShardAudiobook::getObjectId));
             // calculate distribution using audiobook's sizes
             final List<ShardAudiobook> distrib = new ArrayList<>(shardAudiobooks.size());
             for (final ShardAudiobook shardAudiobook : shardAudiobooks) {

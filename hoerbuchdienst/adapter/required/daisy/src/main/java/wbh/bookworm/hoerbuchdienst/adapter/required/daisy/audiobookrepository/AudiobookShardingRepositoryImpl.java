@@ -149,7 +149,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             try {
                 result = supplier.get();
             } catch (Exception e) {
-                LOGGER.error("", e);
+                LOGGER.error(String.format("%s", logIdent), e);
             } finally {
                 enableRedistribution();
             }
