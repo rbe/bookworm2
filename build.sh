@@ -41,7 +41,7 @@ ssh-keyscan bitbucket.org 2>/dev/null 1>>~/.ssh/known_hosts
 ssh-keygen -H
 
 echo "Building Docker Image 'Java/Maven/Docker builder'"
-pushd "${execdir}"/builder/openjdk11-maven-docker >/dev/null
+pushd "${execdir}"/builder/openjdk14-maven-docker >/dev/null
 docker build -t wbh-bookworm/builder:1 .
 popd >/dev/null
 echo "done"
