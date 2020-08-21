@@ -1,17 +1,16 @@
-FROM adoptopenjdk/openjdk14:alpine-slim AS base
+ARG OPENJDK_RELEASE
+FROM openjdk:${OPENJDK_RELEASE} AS base
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
-
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN apk update
-RUN apk --no-cache add tzdata \
-    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
-    && echo "${TZ}" >/etc/timezone
-RUN addgroup bookworm \
-    && adduser -D -S -G bookworm bookworm
-RUN apk --no-cache add bash
+RUN echo "${TZ}" >/etc/timezone \
+    && rm /etc/localtime \
+    && ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
+    && dpkg-reconfigure -f noninteractive tzdata \
+    && groupadd bookworm \
+    && useradd -g bookworm bookworm
 
 FROM base
 WORKDIR /opt/bookworm
