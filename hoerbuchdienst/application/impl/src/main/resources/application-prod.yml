@@ -1,6 +1,9 @@
 micronaut:
   server:
     host: 0.0.0.0
+  http:
+    client:
+      read-timeout: 300
 
 hoerbuchdienst:
   repository:
