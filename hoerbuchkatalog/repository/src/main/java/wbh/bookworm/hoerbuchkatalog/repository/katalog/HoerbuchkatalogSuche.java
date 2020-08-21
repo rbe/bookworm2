@@ -51,8 +51,7 @@ final class HoerbuchkatalogSuche {
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
                          final DomainId<String> hoerbuchkatalogDomainId,
                          final int anzahlSuchergebnisse) {
-        this.luceneIndex = applicationContext.getBean(
-                LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
+        luceneIndex = applicationContext.getBean(LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
         this.anzahlSuchergebnisse = anzahlSuchergebnisse;
     }
 

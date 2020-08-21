@@ -56,7 +56,7 @@ final class HoerbuchkatalogMapper {
 
     private final ColumnPositionLineFileParser columnPositionDatParser;
 
-    public HoerbuchkatalogMapper() {
+    HoerbuchkatalogMapper() {
         columnPositionDatParser = new ColumnPositionLineFileParser(COLUMN_POSITIONS);
     }
 
