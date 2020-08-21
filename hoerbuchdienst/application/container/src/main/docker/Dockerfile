@@ -1,18 +1,18 @@
-FROM openjdk:11-jre-slim AS base
+FROM adoptopenjdk/openjdk14:alpine-slim AS base
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN echo "Europe/Berlin" >/etc/timezone \
-    && rm /etc/localtime \
-    && ln -sf /usr/share/zoneinfo/Europe/Berlin /etc/localtime \
-    && dpkg-reconfigure -f noninteractive tzdata
+RUN apk update
+RUN apk --no-cache add tzdata \
+    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" >/etc/timezone
+RUN addgroup myservice \
+    && adduser -D -S -G myservice myservice
 
 FROM base
-RUN groupadd myservice \
-    && useradd -g myservice myservice
 USER myservice
 ARG JAR_FILE
 COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/hoerbuchdienst/hoerbuchdienst.jar
@@ -22,7 +22,10 @@ VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
 ENTRYPOINT ["java",\
-    "-Xms1024m", "-Xmx1024m",\
+    "-Xms1024m", "-Xmx1536m",\
+    "-Xlog:gc*",\
+    "-XX:+UnlockExperimentalVMOptions",\
+    "-XX:+UseZGC",\
     "-Dlogback.configurationFile=/var/local/logback.xml",\
     "-Dmicronaut.environments=prod",\
     "-Dmicronaut.config.files=/var/local/application-shard.yml",\
