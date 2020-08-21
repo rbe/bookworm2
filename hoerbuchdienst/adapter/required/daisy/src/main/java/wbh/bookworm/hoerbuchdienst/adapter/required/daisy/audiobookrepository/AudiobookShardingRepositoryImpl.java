@@ -14,6 +14,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
+import java.time.Duration;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -30,7 +31,10 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.BlockingHttpClient;
-import io.micronaut.http.client.HttpClient;
+import io.micronaut.http.client.DefaultHttpClient;
+import io.micronaut.http.client.DefaultHttpClientConfiguration;
+import io.micronaut.http.client.HttpClientConfiguration;
+import io.micronaut.http.client.exceptions.ReadTimeoutException;
 import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -187,7 +191,13 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                     LOGGER.debug("No objects to transfer to other shards");
                                 } else {
                                     // move all my objects now belonging to another shard
-                                    objectsToTransfer.forEach(this::moveToOtherShard);
+                                    objectsToTransfer.forEach(shardAudiobook -> {
+                                        try {
+                                            moveToOtherShard(shardAudiobook);
+                                        } catch (ReadTimeoutException e) {
+                                            LOGGER.error("", e);
+                                        }
+                                    });
                                 }
                             } else {
                                 LOGGER.warn("Redistribution requirements not met, consent: {}", databeatManager.isConsent());
@@ -241,8 +251,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 result = false;
             }
             if (result) {
-                try (final HttpClient httpClient = HttpClient.create(baseUrl);
-                     final BlockingHttpClient blockingHttpClient = httpClient.toBlocking()) {
+                try (final BlockingHttpClient blockingHttpClient = getHttpClient(baseUrl)) {
                     final long hashValue = FastByteHash.hash(bytes);
                     final String uri = String.format("/shard/redistribute/zip/%s/%s",
                             objectId, hashValue);
@@ -285,6 +294,12 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             LOGGER.warn("No shard URL for audiobook {}", shardAudiobook);
         }
         return result;
+    }
+
+    private BlockingHttpClient getHttpClient(final URL url) {
+        HttpClientConfiguration configuration = new DefaultHttpClientConfiguration();
+        configuration.setReadTimeout(Duration.ofSeconds(30L));
+        return new DefaultHttpClient(url, configuration).toBlocking();
     }
 
 }
