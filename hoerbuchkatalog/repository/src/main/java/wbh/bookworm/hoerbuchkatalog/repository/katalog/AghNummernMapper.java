@@ -106,10 +106,11 @@ class AghNummernMapper {
 
         static List<String> extractLinesFromPathInZip(final Path download, final String pathToExtract) {
             List<String> strings;
-            try (FileSystem zipFileSystem = FileSystems.newFileSystem(download, null)) {
+            try (final FileSystem zipFileSystem = FileSystems.newFileSystem(download,
+                    Thread.currentThread().getContextClassLoader())) {
                 final Path path = zipFileSystem.getPath(pathToExtract);
                 strings = Files.readAllLines(path);
-            } catch (Exception e) {
+            } catch (IOException e) {
                 throw new RuntimeException(e);
             }
             return strings;
