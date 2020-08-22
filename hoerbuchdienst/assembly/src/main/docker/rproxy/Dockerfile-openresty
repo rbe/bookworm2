@@ -1,0 +1,36 @@
+FROM alpine:3.12 AS base
+LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
+LABEL vendor="Art of Coding UG"
+LABEL project="wbhonline"
+ENV TZ Europe/Berlin
+ENV LANG en_US.UTF-8
+RUN apk update
+RUN apk --no-cache add tzdata \
+    && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
+    && echo "${TZ}" >/etc/timezone
+RUN apk --no-cache add
+RUN apk --no-cache add bash
+RUN apk --no-cache add curl
+RUN apk --no-cache add openssl
+RUN apk --no-cache add certbot-nginx
+RUN apk --no-cache add pwgen
+RUN rm /etc/nginx/conf.d/default.conf*
+RUN adduser -u 82 -D -S -G www-data www-data
+RUN echo "0 0 * * WED,SUN certbot renew" | crontab -
+RUN curl -L -o /etc/apk/keys/'admin@openresty.com-5ea678a6.rsa.pub' 'http://openresty.org/package/admin@openresty.com-5ea678a6.rsa.pub' \
+    && . /etc/os-release \
+    && MAJOR_VER=`echo $VERSION_ID | sed 's/\.[0-9]\+$//'` \
+    && echo "http://openresty.org/package/alpine/v$MAJOR_VER/main" | tee -a /etc/apk/repositories \
+    && apk add openresty
+COPY *.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
+RUN mkdir /var/local/rproxy
+EXPOSE 80/tcp 443/tcp
+VOLUME ["/etc/nginx", "/etc/letsencrypt", "/var/local/rproxy"]
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+
+FROM base
+COPY nginx.conf /etc/nginx/
+COPY tlsredirect.conf /etc/nginx/conf.d/
+COPY *.conf.disabled /etc/nginx/conf.d/
+COPY index.html /var/local/rproxy/
