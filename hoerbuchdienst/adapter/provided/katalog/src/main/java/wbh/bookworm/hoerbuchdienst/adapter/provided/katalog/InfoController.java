@@ -8,11 +8,9 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.katalog;
 
 import javax.inject.Inject;
 
-import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Options;
@@ -29,6 +27,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
+
+import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.corsResponse;
 
 @Controller(InfoController.BASE_URL)
 public class InfoController {
@@ -117,20 +117,6 @@ public class InfoController {
                 HttpResponse::ok,
                 null, String.format("%strack", BASE_URL),
                 httpRequest);
-    }
-
-    private MutableHttpResponse<String> corsResponse(final HttpRequest<?> httpRequest) {
-        httpRequest.getHeaders().forEach(entry -> {
-            LOGGER.debug("{}: {}", entry.getKey(), entry.getValue());
-        });
-        final String remoteHostname = httpRequest.getRemoteAddress().getHostString();
-        return HttpResponse.<String>noContent()
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, remoteHostname)
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
-                .contentType(MediaType.TEXT_PLAIN_TYPE)
-                .contentLength(0L)
-                .body("");
     }
 
     @Mapper

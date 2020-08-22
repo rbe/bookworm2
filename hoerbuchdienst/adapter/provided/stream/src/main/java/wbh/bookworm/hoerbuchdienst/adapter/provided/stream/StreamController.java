@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import java.io.InputStream;
 
 import io.micronaut.core.annotation.Blocking;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -53,11 +54,12 @@ public class StreamController {
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
-    public HttpResponse<byte[]> zippedAudiobookAsStream(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<byte[]> zippedAudiobookAsStream(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> makeZippedAudiobook(audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer()),
                 HttpResponse::ok,
-                EMPTY_BYTE_ARRAY, String.format("%s/zip", BASE_URL));
+                EMPTY_BYTE_ARRAY, String.format("%s/zip", BASE_URL),
+                httpRequest);
     }
 
     private byte[] makeZippedAudiobook(final String hoerernummer, final String titelnummer) {
@@ -75,7 +77,7 @@ public class StreamController {
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
-    public HttpResponse<byte[]> trackAsStream(@Body final TrackAnfrageDTO trackAnfrageDTO) {
+    public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest, @Body final TrackAnfrageDTO trackAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
                 () -> {
                     LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Track '{}' mit Wasserzeichen",
@@ -92,7 +94,8 @@ public class StreamController {
                     }
                 },
                 body -> HttpResponse.ok(body).header("Accept-Ranges", "bytes"),
-                EMPTY_BYTE_ARRAY, String.format("%s/track", BASE_URL));
+                EMPTY_BYTE_ARRAY, String.format("%s/track", BASE_URL),
+                httpRequest);
     }
 
 }

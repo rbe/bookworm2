@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.UUID;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
@@ -52,7 +53,7 @@ public class BestellungController {
     }
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<String> orderZippedAudiobook(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<String> orderZippedAudiobook(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     final UUID orderId = UUID.randomUUID();
@@ -62,11 +63,13 @@ public class BestellungController {
                             audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
                     return orderId.toString();
                 }, body -> HttpResponse.ok(body),
-                EMPTY_STRING, String.format("%s/zip/order", BASE_URL));
+                EMPTY_STRING, String.format("%s/zip/order", BASE_URL),
+                httpRequest);
     }
 
     @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<String> fetchStatusOfZippedAudiobook(@PathVariable final String titelnummer,
+    public HttpResponse<String> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                             @PathVariable final String titelnummer,
                                                              @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
@@ -74,11 +77,13 @@ public class BestellungController {
                     LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
                     return status;
                 }, body -> HttpResponse.ok(body),
-                EMPTY_STRING, String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId));
+                EMPTY_STRING, String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
+                httpRequest);
     }
 
     @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
-    public HttpResponse<byte[]> fetchZippedAudiobook(@PathVariable final String titelnummer,
+    public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                     @PathVariable final String titelnummer,
                                                      @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
@@ -91,7 +96,8 @@ public class BestellungController {
                 },
                 body -> HttpResponse.ok(body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
-                EMPTY_BYTE_ARRAY, String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId));
+                EMPTY_BYTE_ARRAY, String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId),
+                httpRequest);
     }
 
 }
