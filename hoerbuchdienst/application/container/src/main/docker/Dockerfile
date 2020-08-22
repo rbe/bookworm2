@@ -2,7 +2,6 @@ FROM adoptopenjdk/openjdk14:alpine-slim AS base
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
-
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
 RUN apk update
@@ -21,6 +20,9 @@ COPY --chown=myservice src/main/docker/logback.xml /var/local/
 VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
+#-XX:+UnlockExperimentalVMOptions
+#-XX:+UseShenanodoahC
+#-XX:ShenandoahGCHeuristics=adaptive|static|compact
 ENTRYPOINT ["java",\
     "-Xms1024m", "-Xmx1536m",\
     "-Xlog:gc*",\
