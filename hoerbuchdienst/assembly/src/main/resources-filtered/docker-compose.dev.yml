@@ -22,11 +22,11 @@ services:
   #keycloakpostgres:
   #keycloak:
   hoerbuchdienst:
-    volumes:
-      - type: tmpfs
-        target: /tmp
-        tmpfs:
-          size: 104857600 # 100 MB
+    #volumes:
+    #  - type: tmpfs
+    #    target: /tmp
+    #    tmpfs:
+    #      size: 104857600 # 100 MB
     ports:
       - "8080:8080"
   hbd-rproxy:

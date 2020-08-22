@@ -243,6 +243,7 @@ services:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
     volumes:
+      - hoerbuchdiensttmp:/tmp
       - hoerbuchdienstlocal:/var/local
     networks:
       backend:
@@ -311,6 +312,8 @@ volumes:
   #  driver: local
   #elasticsearchdata:
   #  driver: local
+  hoerbuchdiensttmp:
+    driver: local
   hoerbuchdienstlocal:
     driver: local
   rproxyconf:
