@@ -113,6 +113,7 @@ services:
       - miniolocal:/var/local/minio:ro
     networks:
       - backend
+      - frontend
     entrypoint: tail -f /dev/null
   rabbitmq:
     image: wbh-hbd/rabbitmq:${hbd.release}
