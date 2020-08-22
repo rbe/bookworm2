@@ -34,7 +34,7 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
         if (maybeTotalSize.isPresent()) {
             final double totalSizeOfAllObjects = maybeTotalSize.get();
             final double idealBytesPerShard = totalSizeOfAllObjects / (double) databeatManager.numberOfDatabeats();
-            LOGGER.info("Total size of {} objects is {} = {} MB = {} GB," +
+            LOGGER.info("Total size of {} objects is {} bytes = {} MB = {} GB," +
                             " ideal size of audiobooks on every shard: {} bytes = {} MB = {} GB",
                     databeatManager.numerOfObjects(),
                     totalSizeOfAllObjects, totalSizeOfAllObjects / T24 / T24, totalSizeOfAllObjects / T24 / T24 / T24,
