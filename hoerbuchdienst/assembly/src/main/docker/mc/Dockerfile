@@ -5,6 +5,7 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
+RUN apk add --no-cache bash bash
 RUN apk add --no-cache bash pwgen
 RUN mkdir -p /var/local/mc/policy
 COPY *.sh /usr/local/bin/
@@ -13,3 +14,5 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 FROM base
 COPY policy/*.json /var/local/mc/policy/
+COPY *.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/*.sh
