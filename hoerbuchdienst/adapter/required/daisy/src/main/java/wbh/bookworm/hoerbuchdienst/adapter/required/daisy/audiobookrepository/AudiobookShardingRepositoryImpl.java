@@ -28,6 +28,8 @@ import java.util.stream.Collectors;
 import io.micronaut.cache.CacheManager;
 import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.http.HttpRequest;
+import io.micronaut.http.HttpResponse;
+import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpRequest;
 import io.micronaut.http.client.BlockingHttpClient;
@@ -195,7 +197,8 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                                         try {
                                             moveToOtherShard(shardAudiobook);
                                         } catch (ReadTimeoutException e) {
-                                            LOGGER.error("", e);
+                                            LOGGER.error(String.format("Cannot move audiobook %s to %s",
+                                                    shardAudiobook.getObjectId(), shardAudiobook.getShardName()), e);
                                         }
                                     });
                                 }
@@ -207,11 +210,6 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                         }
                     } catch (InterruptedException e) {
                         LOGGER.warn("Interrupted while trying to acquire redistribution lock");
-                        try {
-                            redistributionLock.unlock();
-                        } catch (IllegalMonitorStateException e2) {
-                            LOGGER.error("", e);
-                        }
                     } finally {
                         try {
                             redistributionLock.unlock();
@@ -251,42 +249,17 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 result = false;
             }
             if (result) {
-                try (final BlockingHttpClient blockingHttpClient = getHttpClient(baseUrl)) {
-                    final long hashValue = FastByteHash.hash(bytes);
-                    final String uri = String.format("/shard/redistribute/zip/%s/%s",
-                            objectId, hashValue);
-                    LOGGER.debug("Sending {} with hash value {} to {}{}",
-                            objectId, hashValue, baseUrl, uri);
-                    final MutableHttpRequest<byte[]> post = HttpRequest
-                            .POST(URI.create(uri), bytes)
-                            .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
-                            .accept(MediaType.APPLICATION_JSON_TYPE);
-                    final long startPost = System.currentTimeMillis();
-                    final String response = blockingHttpClient.retrieve(post);
-                    final long stopPost = System.currentTimeMillis();
-                    LOGGER.info("Sent {} with hash value {} to {}/{}, response {}, took {} ms",
-                            objectId, hashValue, baseUrl, uri, response, stopPost - startPost);
-                    // stop servicing clients requests
-                    eventPublisher.publishEvent(new ShardStopServicingEvent(MY_SHARD_NAME.getShardName()));
+                final HttpResponse<String> response = postWithHash(objectId, bytes, baseUrl);
+                if (HttpStatus.OK == response.getStatus()) {
+                    sendStopServicingClientRequestsEvent();
                     // TODO update location for moved audiobook
-                    // invalidate cache
-                    LOGGER.debug("Invalidating cache for object id {}", objectId);
-                    try {
-                        cacheManager.getCache("audiobookRepository")
-                                .invalidate(shardAudiobook.getObjectId());
-                        LOGGER.info("Invalidated cache for object id {}", objectId);
-                    } catch (Exception e) {
-                        LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
-                    }
-                    // remove objects from object storage
+                    invalidateCache(shardAudiobook);
                     audiobookStreamResolver.removeZip(objectId);
                     LOGGER.info("Moved audiobook {} to {}", objectId, otherShardName);
-                } catch (IOException e) {
-                    LOGGER.error("", e);
-                } finally {
-                    // start servicing clients requests again
-                    eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
+                } else {
+                    LOGGER.error("Could not move audiobook {} to {}", objectId, otherShardName);
                 }
+                sendStartServicingRequestsEvent();
             } else {
                 LOGGER.warn("No data for audiobook {}", shardAudiobook);
             }
@@ -296,8 +269,50 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         return result;
     }
 
+    private void sendStartServicingRequestsEvent() {
+        eventPublisher.publishEvent(new ShardStartServicingEvent(MY_SHARD_NAME.getShardName()));
+    }
+
+    private void sendStopServicingClientRequestsEvent() {
+        eventPublisher.publishEvent(new ShardStopServicingEvent(MY_SHARD_NAME.getShardName()));
+    }
+
+    private HttpResponse<String> postWithHash(final String objectId, final byte[] bytes, final URL baseUrl) {
+        HttpResponse<String> result = null;
+        try (final BlockingHttpClient blockingHttpClient = getHttpClient(baseUrl)) {
+            final long hashValue = FastByteHash.hash(bytes);
+            final String uri = String.format("/shard/redistribute/zip/%s/%s", objectId, hashValue);
+            LOGGER.debug("Sending {} with hash value {} to {}{}", objectId, hashValue, baseUrl, uri);
+            final MutableHttpRequest<byte[]> post = HttpRequest
+                    .POST(URI.create(uri), bytes)
+                    .contentType(MediaType.APPLICATION_OCTET_STREAM_TYPE)
+                    .accept(MediaType.APPLICATION_JSON_TYPE);
+            final long startPost = System.currentTimeMillis();
+            final HttpResponse<String> response = blockingHttpClient.exchange(post, String.class);
+            final long stopPost = System.currentTimeMillis();
+            LOGGER.info("Sent audiobook {} with hash value {} to {}/{}, response {}, took {} ms",
+                    objectId, hashValue, baseUrl, uri, response, stopPost - startPost);
+            result = response;
+        } catch (IOException e) {
+            LOGGER.error("", e);
+        }
+        return result;
+    }
+
+    private void invalidateCache(final ShardAudiobook shardAudiobook) {
+        final String objectId = shardAudiobook.getObjectId();
+        LOGGER.debug("Invalidating cache for object id {}", objectId);
+        try {
+            cacheManager.getCache("audiobookRepository")
+                    .invalidate(objectId);
+            LOGGER.info("Invalidated cache for object id {}", objectId);
+        } catch (Exception e) {
+            LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
+        }
+    }
+
     private BlockingHttpClient getHttpClient(final URL url) {
-        HttpClientConfiguration configuration = new DefaultHttpClientConfiguration();
+        final HttpClientConfiguration configuration = new DefaultHttpClientConfiguration();
         configuration.setReadTimeout(Duration.ofSeconds(30L));
         return new DefaultHttpClient(url, configuration).toBlocking();
     }
