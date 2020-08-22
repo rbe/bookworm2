@@ -12,11 +12,12 @@ RUN addgroup myservice \
     && adduser -D -S -G myservice myservice
 
 FROM base
-USER myservice
 ARG JAR_FILE
 COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/hoerbuchdienst/hoerbuchdienst.jar
 COPY --chown=myservice src/main/docker/application-shard.tmpl.yml /var/local/
 COPY --chown=myservice src/main/docker/logback.xml /var/local/
+RUN chown -R myservice:myservice /var/local
+USER myservice
 VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
