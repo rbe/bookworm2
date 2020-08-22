@@ -8,10 +8,14 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.katalog;
 
 import javax.inject.Inject;
 
+import io.micronaut.http.HttpHeaders;
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.Post;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
@@ -44,8 +48,13 @@ public class InfoController {
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
+    @Options(uri = "audiobook")
+    public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest) {
+        return corsResponse(httpRequest);
+    }
+
     @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     try {
@@ -57,11 +66,17 @@ public class InfoController {
                     }
                 },
                 HttpResponse::ok,
-                null, String.format("%s/audiobook", BASE_URL));
+                null, String.format("%s/audiobook", BASE_URL),
+                httpRequest);
+    }
+
+    @Options(uri = "playlist")
+    public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest) {
+        return corsResponse(httpRequest);
     }
 
     @Post(uri = "playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<PlaylistAntwortDTO> playlist(@Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     try {
@@ -73,11 +88,17 @@ public class InfoController {
                     }
                 },
                 HttpResponse::ok,
-                null, String.format("%s/playlist", BASE_URL));
+                null, String.format("%s/playlist", BASE_URL),
+                httpRequest);
+    }
+
+    @Options(uri = "track")
+    public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest) {
+        return corsResponse(httpRequest);
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<TrackInfoAntwortDTO> track(@Body final TrackAnfrageDTO trackAnfrageDTO) {
+    public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest, @Body final TrackAnfrageDTO trackAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
                 () -> {
                     LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
@@ -94,7 +115,22 @@ public class InfoController {
                     }
                 },
                 HttpResponse::ok,
-                null, String.format("%strack", BASE_URL));
+                null, String.format("%strack", BASE_URL),
+                httpRequest);
+    }
+
+    private MutableHttpResponse<String> corsResponse(final HttpRequest<?> httpRequest) {
+        httpRequest.getHeaders().forEach(entry -> {
+            LOGGER.debug("{}: {}", entry.getKey(), entry.getValue());
+        });
+        final String remoteHostname = httpRequest.getRemoteAddress().getHostString();
+        return HttpResponse.<String>noContent()
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, remoteHostname)
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
+                .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
+                .contentType(MediaType.TEXT_PLAIN_TYPE)
+                .contentLength(0L)
+                .body("");
     }
 
     @Mapper
