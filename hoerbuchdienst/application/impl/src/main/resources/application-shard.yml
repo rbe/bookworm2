@@ -7,9 +7,6 @@ micronaut:
     max-request-size: 3072mb
     multipart:
       max-file-size: 3072mb
-  http:
-    client:
-      read-timeout: 300
 
 hoerbuchdienst:
   objectstorage:
