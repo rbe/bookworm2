@@ -15,7 +15,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.time.Duration;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
@@ -78,8 +77,6 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
 
     private final CacheManager<Audiobook> cacheManager;
 
-    private List<ShardAudiobook> allShardAudiobooks;
-
     @Inject
     AudiobookShardingRepositoryImpl(final DatabeatManager databeatManager,
                                     final AudiobookStreamResolver audiobookStreamResolver,
@@ -91,24 +88,13 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         this.shardDistributionStrategy = shardDistributionStrategy;
         this.eventPublisher = eventPublisher;
         this.cacheManager = cacheManager;
-        allShardAudiobooks = Collections.emptyList();
         redistributionLock = new ReentrantLock();
         redistributionAllowed = new AtomicBoolean(true);
     }
 
     @Override
     public Optional<ShardName> lookupShard(/* TODO Mandantenspezifisch */final String titelnummer) {
-        if (allShardAudiobooks.isEmpty()) {
-            LOGGER.warn("Titelnummer {}: Keine Informationen über die Verteilung der Objekte auf Shards vorhanden",
-                    titelnummer);
-            return Optional.empty();
-        } else {
-            return allShardAudiobooks.stream()
-                    .filter(shardAudiobook -> shardAudiobook.isTitelnummer(titelnummer))
-                    .findFirst()
-                    .map(ShardAudiobook::getShardName)
-                    .or(Optional::empty);
-        }
+        return databeatManager.findShardNameForAudiobook(titelnummer);
     }
 
     @EventListener
@@ -181,7 +167,6 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                         // lock redistribution process
                         if (redistributionLock.tryLock(1L, TimeUnit.SECONDS)) {
                             final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(heartbeatHighWatermark, databeatManager);
-                            allShardAudiobooks = desiredDistribution;
                             // check again redistribution requirements after calculation
                             if (databeatManager.canRedistribute()) {
                                 // filter all objects in local object storage not belonging to this shard anymore

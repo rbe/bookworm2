@@ -70,11 +70,14 @@ final class DatabeatManager {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    Map<ShardName, List<ShardAudiobook>> allShardsAudiobooksByShardName() {
-        return databeatMap.entrySet()
+    Optional<ShardName> findShardNameForAudiobook(final String titelnummer) {
+        return databeatMap.values()
                 .stream()
-                .map(entry -> Map.entry(entry.getKey(), entry.getValue().getShardAudiobooks()))
-                .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
+                .map(Databeat::getShardAudiobooks)
+                .flatMap(List::stream)
+                .filter(entry -> entry.isTitelnummer(titelnummer))
+                .map(ShardAudiobook::getShardName)
+                .findFirst();
     }
 
     /**
@@ -96,7 +99,7 @@ final class DatabeatManager {
         heartbeatHighWatermark.getAndSet(event.getHighWaterMark());
     }
 
-    public int getHeartbeatHighWatermark() {
+    int getHeartbeatHighWatermark() {
         return heartbeatHighWatermark.get();
     }
 
@@ -153,7 +156,8 @@ final class DatabeatManager {
 
     @Override
     public String toString() {
-        return String.format("DatabeatManager{%s}", databeatMap.size());
+        return String.format("DatabeatManager{databeats=%d, heartbeatHwm=%d}",
+                databeatMap.size(), heartbeatHighWatermark.get());
     }
 
 }
