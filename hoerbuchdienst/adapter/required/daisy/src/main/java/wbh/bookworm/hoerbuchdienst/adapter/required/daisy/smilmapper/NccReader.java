@@ -13,7 +13,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 
-class NccReader {
+final class NccReader {
 
     private final Document document;
 
@@ -32,7 +32,9 @@ class NccReader {
         final Elements elementsByAttribute = document.head()
                 .getElementsByAttributeValue("name", metaName);
         if (null != elementsByAttribute) {
-            return elementsByAttribute.get(0).attr("content");
+            return elementsByAttribute.isEmpty()
+                    ? ""
+                    : elementsByAttribute.get(0).attr("content");
         }
         return "";
     }
