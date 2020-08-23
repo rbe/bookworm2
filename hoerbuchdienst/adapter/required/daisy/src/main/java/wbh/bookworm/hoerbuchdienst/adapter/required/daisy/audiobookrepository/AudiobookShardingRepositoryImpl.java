@@ -169,24 +169,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                             final List<ShardAudiobook> desiredDistribution = shardDistributionStrategy.calculate(heartbeatHighWatermark, databeatManager);
                             // check again redistribution requirements after calculation
                             if (databeatManager.canRedistribute()) {
-                                // filter all objects in local object storage not belonging to this shard anymore
-                                final List<ShardAudiobook> objectsToTransfer = desiredDistribution.stream()
-                                        .filter(shardAudiobook -> localDomainIds.contains(new Titelnummer(shardAudiobook.getObjectId())))
-                                        .filter(shardAudiobook -> !MY_SHARD_NAME.equals(shardAudiobook.getShardName()))
-                                        .collect(Collectors.toUnmodifiableList());
-                                if (objectsToTransfer.isEmpty()) {
-                                    LOGGER.debug("No objects to transfer to other shards");
-                                } else {
-                                    // move all my objects now belonging to another shard
-                                    objectsToTransfer.forEach(shardAudiobook -> {
-                                        try {
-                                            moveToOtherShard(shardAudiobook);
-                                        } catch (ReadTimeoutException e) {
-                                            LOGGER.error(String.format("Cannot move audiobook %s to %s",
-                                                    shardAudiobook.getObjectId(), shardAudiobook.getShardName()), e);
-                                        }
-                                    });
-                                }
+                                findObjectsToMoveAndMoveThem(localDomainIds, desiredDistribution);
                             } else {
                                 LOGGER.warn("Redistribution requirements not met, consent: {}", databeatManager.isConsent());
                             }
@@ -207,10 +190,27 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 () -> null);
     }
 
-    @Override
-    public void receiveObject(final String objectId, final InputStream inputStream) {
-        // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
-        audiobookStreamResolver.putZip(inputStream, objectId);
+    private void findObjectsToMoveAndMoveThem(final List<? extends DomainId<String>> localDomainIds,
+                                              final List<ShardAudiobook> desiredDistribution) {
+        // filter all objects in local object storage not belonging to this shard anymore
+        final List<ShardAudiobook> objectsToMove = desiredDistribution.stream()
+                .filter(shardAudiobook -> localDomainIds.contains(new Titelnummer(shardAudiobook.getObjectId())))
+                .filter(shardAudiobook -> !MY_SHARD_NAME.equals(shardAudiobook.getShardName()))
+                .limit(2L)
+                .collect(Collectors.toUnmodifiableList());
+        if (objectsToMove.isEmpty()) {
+            LOGGER.info("No objects to transfer to other shards");
+        } else {
+            // move all my objects now belonging to another shard
+            objectsToMove.forEach(shardAudiobook -> {
+                try {
+                    moveToOtherShard(shardAudiobook);
+                } catch (ReadTimeoutException e) {
+                    LOGGER.error(String.format("Cannot move audiobook %s to %s",
+                            shardAudiobook.getObjectId(), shardAudiobook.getShardName()), e);
+                }
+            });
+        }
     }
 
     private boolean moveToOtherShard(final ShardAudiobook shardAudiobook) {
@@ -235,16 +235,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             }
             if (result) {
                 final HttpResponse<String> response = postWithHash(objectId, bytes, baseUrl);
-                if (HttpStatus.OK == response.getStatus()) {
-                    sendStopServicingClientRequestsEvent();
-                    // TODO update location for moved audiobook
-                    invalidateCache(shardAudiobook);
-                    audiobookStreamResolver.removeZip(objectId);
-                    LOGGER.info("Moved audiobook {} to {}", objectId, otherShardName);
-                } else {
-                    LOGGER.error("Could not move audiobook {} to {}", objectId, otherShardName);
-                }
-                sendStartServicingRequestsEvent();
+                processMoveResponse(shardAudiobook, response);
             } else {
                 LOGGER.warn("No data for audiobook {}", shardAudiobook);
             }
@@ -252,6 +243,12 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             LOGGER.warn("No shard URL for audiobook {}", shardAudiobook);
         }
         return result;
+    }
+
+    @Override
+    public void receiveObject(final String objectId, final InputStream inputStream) {
+        // TODO Titelnummer prüfen? final Titelnummer titelnummer = new Titelnummer(objectId);
+        audiobookStreamResolver.putZip(inputStream, objectId);
     }
 
     private void sendStartServicingRequestsEvent() {
@@ -282,6 +279,21 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             LOGGER.error("", e);
         }
         return result;
+    }
+
+    private void processMoveResponse(final ShardAudiobook shardAudiobook,
+                                     final HttpResponse<String> response) {
+        if (HttpStatus.OK == response.getStatus()) {
+            sendStopServicingClientRequestsEvent();
+            invalidateCache(shardAudiobook);
+            // location of moved audiobook is updated by next Databeat
+            // TODO remove zip in a separate @Scheduled?
+            audiobookStreamResolver.removeZip(shardAudiobook.getObjectId());
+            LOGGER.info("Moved audiobook {} to {}", shardAudiobook.getObjectId(), shardAudiobook.getShardName());
+            sendStartServicingRequestsEvent();
+        } else {
+            LOGGER.error("Could not move audiobook {} to {}", shardAudiobook.getObjectId(), shardAudiobook.getShardName());
+        }
     }
 
     private void invalidateCache(final ShardAudiobook shardAudiobook) {
