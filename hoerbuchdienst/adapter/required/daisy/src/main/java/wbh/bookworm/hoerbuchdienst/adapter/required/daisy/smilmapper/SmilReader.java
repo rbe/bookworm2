@@ -22,7 +22,7 @@ import org.xml.sax.SAXNotRecognizedException;
 import org.xml.sax.SAXNotSupportedException;
 import org.xml.sax.XMLReader;
 
-class SmilReader {
+final class SmilReader {
 
     private final JAXBContext jaxbContext;
 

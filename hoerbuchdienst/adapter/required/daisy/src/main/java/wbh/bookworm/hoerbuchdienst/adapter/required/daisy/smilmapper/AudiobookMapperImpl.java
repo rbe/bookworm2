@@ -34,7 +34,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiotrac
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 @Singleton
-class AudiobookMapperImpl implements AudiobookMapper {
+final class AudiobookMapperImpl implements AudiobookMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImpl.class);
 
