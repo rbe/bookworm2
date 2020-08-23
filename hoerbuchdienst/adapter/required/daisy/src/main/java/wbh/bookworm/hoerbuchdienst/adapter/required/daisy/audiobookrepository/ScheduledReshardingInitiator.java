@@ -12,9 +12,9 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingR
 import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 @Singleton
-final class ReshardingInitiator {
+final class ScheduledReshardingInitiator {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ReshardingInitiator.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ScheduledReshardingInitiator.class);
 
     private final DatabeatManager databeatManager;
 
@@ -22,9 +22,9 @@ final class ReshardingInitiator {
 
     private final AudiobookRepository audiobookRepository;
 
-    ReshardingInitiator(final DatabeatManager databeatManager,
-                        final ShardingRepository shardingRepository,
-                        final AudiobookRepository audiobookRepository) {
+    ScheduledReshardingInitiator(final DatabeatManager databeatManager,
+                                 final ShardingRepository shardingRepository,
+                                 final AudiobookRepository audiobookRepository) {
         this.databeatManager = databeatManager;
         this.shardingRepository = shardingRepository;
         this.audiobookRepository = audiobookRepository;
@@ -35,7 +35,7 @@ final class ReshardingInitiator {
     void maybeRedistribute() {
         LOGGER.debug("");
         if (databeatManager.canRedistribute()) {
-            LOGGER.debug("Triggering redistribution");
+            LOGGER.info("Triggering shard redistribution");
             final List<Titelnummer> localDomainIds = audiobookRepository.allEntriesByKey();
             shardingRepository.redistribute(databeatManager.getHeartbeatHighWatermark(), localDomainIds);
         }
