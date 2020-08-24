@@ -37,8 +37,8 @@ public final class AudiobookShardRedirector {
         final HttpResponse<T> result;
         final boolean locatedLocal = audiobookLocationService.isLocatedLocal(titelnummer);
         if (locatedLocal) {
-            final T apply = audiobookSupplier.get();
-            result = httpResponseSupplier.apply(apply);
+            final T audiobook = audiobookSupplier.get();
+            result = httpResponseSupplier.apply(audiobook);
         } else {
             result = tryRedirectToOwningShard(titelnummer, emptyResponseBody, serviceUri, httpRequest);
         }

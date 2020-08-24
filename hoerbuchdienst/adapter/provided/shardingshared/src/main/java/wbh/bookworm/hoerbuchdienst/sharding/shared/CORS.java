@@ -18,11 +18,27 @@ public final class CORS {
         throw new AssertionError();
     }
 
-    public static MutableHttpResponse<String> corsResponse(final HttpRequest<?> httpRequest) {
+    public static <T> MutableHttpResponse<T> response(final HttpRequest<?> httpRequest, T dto) {
+        final String origin = httpRequest.getHeaders().get("Origin");
+        if (null == origin) {
+            LOGGER.error("Missing HTTP header 'Origin' in HTTP request {}", httpRequest);
+            return HttpResponse.unauthorized();
+        }
+        if (origin.endsWith(ALLOWED_DOMAIN)) {
+            return HttpResponse.<T>ok()
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                    .body(dto);
+        } else {
+            LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
+            return HttpResponse.unauthorized();
+        }
+    }
+
+    public static MutableHttpResponse<String> optionsResponse(final HttpRequest<?> httpRequest) {
         httpRequest.getHeaders().forEach(entry -> LOGGER.debug("{}: {}", entry.getKey(), entry.getValue()));
         final String origin = httpRequest.getHeaders().get("Origin");
         if (null == origin) {
-            LOGGER.error("Missing HTTP header 'Origin'");
+            LOGGER.error("Missing HTTP header 'Origin' in HTTP request {}", httpRequest);
             return HttpResponse.unauthorized();
         }
         if (origin.endsWith(ALLOWED_DOMAIN)) {

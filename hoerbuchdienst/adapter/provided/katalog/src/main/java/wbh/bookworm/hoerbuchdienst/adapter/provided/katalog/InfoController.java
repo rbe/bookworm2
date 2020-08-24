@@ -27,8 +27,9 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
+import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
-import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.corsResponse;
+import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @Controller(InfoController.BASE_URL)
 public class InfoController {
@@ -50,7 +51,7 @@ public class InfoController {
 
     @Options(uri = "audiobook")
     public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest) {
-        return corsResponse(httpRequest);
+        return optionsResponse(httpRequest);
     }
 
     @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -65,14 +66,14 @@ public class InfoController {
                         throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", audiobookAnfrageDTO.getTitelnummer()), e);
                     }
                 },
-                HttpResponse::ok,
+                dto -> CORS.response(httpRequest, dto),
                 null, String.format("%s/audiobook", BASE_URL),
                 httpRequest);
     }
 
     @Options(uri = "playlist")
     public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest) {
-        return corsResponse(httpRequest);
+        return optionsResponse(httpRequest);
     }
 
     @Post(uri = "playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -87,14 +88,14 @@ public class InfoController {
                         throw new BusinessException("", e);
                     }
                 },
-                HttpResponse::ok,
+                dto -> CORS.response(httpRequest, dto),
                 null, String.format("%s/playlist", BASE_URL),
                 httpRequest);
     }
 
     @Options(uri = "track")
     public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest) {
-        return corsResponse(httpRequest);
+        return optionsResponse(httpRequest);
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
@@ -114,7 +115,7 @@ public class InfoController {
                         throw new BusinessException("", e);
                     }
                 },
-                HttpResponse::ok,
+                dto -> CORS.response(httpRequest, dto),
                 null, String.format("%strack", BASE_URL),
                 httpRequest);
     }
