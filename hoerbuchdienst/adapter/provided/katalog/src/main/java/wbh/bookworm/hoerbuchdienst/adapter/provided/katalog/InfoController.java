@@ -116,7 +116,7 @@ public class InfoController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%strack", BASE_URL),
+                String.format("%s/track", BASE_URL),
                 httpRequest);
     }
 
