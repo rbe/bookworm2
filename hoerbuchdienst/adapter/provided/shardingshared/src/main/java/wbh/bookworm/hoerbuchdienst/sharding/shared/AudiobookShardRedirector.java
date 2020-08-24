@@ -31,7 +31,6 @@ public final class AudiobookShardRedirector {
     public <T> HttpResponse<T> withLocalOrRedirect(final /* TODO Mandantenspezifisch */String titelnummer,
                                                    final Supplier<? extends T> audiobookSupplier,
                                                    final Function<? super T, ? extends HttpResponse<T>> httpResponseSupplier,
-                                                   final T emptyResponseBody,
                                                    final String serviceUri,
                                                    final HttpRequest<?> httpRequest) {
         final HttpResponse<T> result;
@@ -40,32 +39,28 @@ public final class AudiobookShardRedirector {
             final T audiobook = audiobookSupplier.get();
             result = httpResponseSupplier.apply(audiobook);
         } else {
-            result = tryRedirectToOwningShard(titelnummer, emptyResponseBody, serviceUri, httpRequest);
+            result = (HttpResponse<T>) tryRedirectToOwningShard(titelnummer, serviceUri, httpRequest);
         }
         return result;
     }
 
-    private <T> HttpResponse<T> tryRedirectToOwningShard(final String objectId,
-                                                         final T emptyResponseBody,
-                                                         final String serviceUri,
-                                                         final HttpRequest<?> httpRequest) {
-        final HttpResponse<T> result;
+    private HttpResponse<String> tryRedirectToOwningShard(final String objectId,
+                                                          final String serviceUri,
+                                                          final HttpRequest<?> httpRequest) {
+        final HttpResponse<String> result;
         final String shardName = audiobookLocationService.shardLocation(objectId);
         final String origin = httpRequest.getHeaders().get("Origin");
         if ("unknown".equals(shardName)) {
-            result = HttpResponse.<T>notFound()
+            result = HttpResponse.<String>notFound()
                     .header(X_SHARD_LOCATION, shardName)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                    .body(emptyResponseBody);
+                    .body("");
         } else {
             final String shardURI = String.format("https://%s/%s", shardName, serviceUri);
             LOGGER.info("Hörbuch '{}': Redirecting to {}", objectId, shardURI);
-            result = HttpResponse.<T>temporaryRedirect(URI.create(shardURI))
-                    .header(X_SHARD_LOCATION, shardName)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                    .body(emptyResponseBody);
+            result = CORS.temporaryRedirect(httpRequest, URI.create(shardURI))
+                    .header(X_SHARD_LOCATION, shardName);
         }
         return result;
     }

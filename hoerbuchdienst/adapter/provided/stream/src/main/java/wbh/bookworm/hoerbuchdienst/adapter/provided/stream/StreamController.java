@@ -67,7 +67,7 @@ public class StreamController {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> makeZippedAudiobook(audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer()),
                 dto -> CORS.response(httpRequest, dto),
-                EMPTY_BYTE_ARRAY, String.format("%s/zip", BASE_URL),
+                String.format("%s/zip", BASE_URL),
                 httpRequest);
     }
 
@@ -109,7 +109,7 @@ public class StreamController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
-                EMPTY_BYTE_ARRAY, String.format("%s/track", BASE_URL),
+                String.format("%s/track", BASE_URL),
                 httpRequest);
     }
 

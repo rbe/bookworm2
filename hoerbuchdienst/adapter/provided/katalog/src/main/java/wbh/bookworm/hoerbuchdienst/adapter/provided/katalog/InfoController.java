@@ -67,7 +67,7 @@ public class InfoController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                null, String.format("%s/audiobook", BASE_URL),
+                String.format("%s/audiobook", BASE_URL),
                 httpRequest);
     }
 
@@ -89,7 +89,7 @@ public class InfoController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                null, String.format("%s/playlist", BASE_URL),
+                String.format("%s/playlist", BASE_URL),
                 httpRequest);
     }
 
@@ -116,7 +116,7 @@ public class InfoController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                null, String.format("%strack", BASE_URL),
+                String.format("%strack", BASE_URL),
                 httpRequest);
     }
 

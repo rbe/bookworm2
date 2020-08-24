@@ -62,7 +62,8 @@ public class BestellungController {
     }
 
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<String> orderZippedAudiobook(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<String> orderZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                     @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     final UUID orderId = UUID.randomUUID();
@@ -73,12 +74,14 @@ public class BestellungController {
                     return orderId.toString();
                 },
                 body -> CORS.response(httpRequest, body),
-                EMPTY_STRING, String.format("%s/zip/order", BASE_URL),
+                String.format("%s/zip/order", BASE_URL),
                 httpRequest);
     }
 
     @Options(uri = "zip/{titelnummer}/status/{orderId}")
-    public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest) {
+    public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                                    @PathVariable final String titelnummer,
+                                                                    @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
@@ -93,12 +96,14 @@ public class BestellungController {
                     return status;
                 },
                 body -> CORS.response(httpRequest, body),
-                EMPTY_STRING, String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
+                String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 
     @Options(uri = "zip/{titelnummer}/fetch/{orderId}")
-    public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest) {
+    public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                            @PathVariable final String titelnummer,
+                                                            @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
@@ -117,7 +122,7 @@ public class BestellungController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
-                EMPTY_BYTE_ARRAY, String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId),
+                String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 

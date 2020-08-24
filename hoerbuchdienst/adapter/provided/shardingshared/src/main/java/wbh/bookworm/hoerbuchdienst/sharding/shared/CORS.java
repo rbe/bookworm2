@@ -1,5 +1,8 @@
 package wbh.bookworm.hoerbuchdienst.sharding.shared;
 
+import java.net.URI;
+import java.util.function.Function;
+
 import io.micronaut.http.HttpHeaders;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -18,23 +21,34 @@ public final class CORS {
         throw new AssertionError();
     }
 
-    public static <T> MutableHttpResponse<T> response(final HttpRequest<?> httpRequest, T dto) {
-        final String origin = httpRequest.getHeaders().get("Origin");
-        if (null == origin) {
-            LOGGER.error("Missing HTTP header 'Origin' in HTTP request {}", httpRequest);
-            return HttpResponse.unauthorized();
-        }
-        if (origin.endsWith(ALLOWED_DOMAIN)) {
-            return HttpResponse.<T>ok()
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
-                    .body(dto);
-        } else {
-            LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
-            return HttpResponse.unauthorized();
-        }
+    public static <T> MutableHttpResponse<T> response(final HttpRequest<?> httpRequest, final T dto) {
+        return with(httpRequest,
+                origin -> HttpResponse.<T>ok()
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .body(dto));
+    }
+
+    public static MutableHttpResponse<String> temporaryRedirect(final HttpRequest<?> httpRequest,
+                                                                final URI uri) {
+        return with(httpRequest,
+                origin -> HttpResponse.<String>temporaryRedirect(uri)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .body(""));
     }
 
     public static MutableHttpResponse<String> optionsResponse(final HttpRequest<?> httpRequest) {
+        return with(httpRequest,
+                origin -> HttpResponse.<String>noContent()
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
+                        .contentType(MediaType.TEXT_PLAIN_TYPE)
+                        .contentLength(0L)
+                        .body(""));
+    }
+
+    private static <T> MutableHttpResponse<T> with(final HttpRequest<?> httpRequest,
+                                                   final Function<? super String, ? extends MutableHttpResponse<T>> supplier) {
         httpRequest.getHeaders().forEach(entry -> LOGGER.debug("{}: {}", entry.getKey(), entry.getValue()));
         final String origin = httpRequest.getHeaders().get("Origin");
         if (null == origin) {
@@ -42,13 +56,7 @@ public final class CORS {
             return HttpResponse.unauthorized();
         }
         if (origin.endsWith(ALLOWED_DOMAIN)) {
-            return HttpResponse.<String>noContent()
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
-                    .contentType(MediaType.TEXT_PLAIN_TYPE)
-                    .contentLength(0L)
-                    .body("");
+            return supplier.apply(origin);
         } else {
             LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
             return HttpResponse.unauthorized();
