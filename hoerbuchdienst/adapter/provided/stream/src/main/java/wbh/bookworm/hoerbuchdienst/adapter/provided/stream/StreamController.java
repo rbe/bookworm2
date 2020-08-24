@@ -15,6 +15,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.Post;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.slf4j.Logger;
@@ -23,6 +24,9 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookStreamService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
+import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
+
+import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition()
 @Controller(value = StreamController.BASE_URL)
@@ -52,12 +56,17 @@ public class StreamController {
         this.audiobookStreamService = audiobookStreamService;
     }
 
+    @Options(uri = "zip")
+    public HttpResponse<String> optionsZippedAudiobookAsStream(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
+    }
+
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookAsStream(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> makeZippedAudiobook(audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer()),
-                HttpResponse::ok,
+                dto -> CORS.response(httpRequest, dto),
                 EMPTY_BYTE_ARRAY, String.format("%s/zip", BASE_URL),
                 httpRequest);
     }
@@ -73,6 +82,11 @@ public class StreamController {
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);
         }
+    }
+
+    @Options(uri = "track")
+    public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
     }
 
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
@@ -93,7 +107,8 @@ public class StreamController {
                         throw new BusinessException(EMPTY_STRING, e);
                     }
                 },
-                body -> HttpResponse.ok(body).header("Accept-Ranges", "bytes"),
+                body -> CORS.response(httpRequest, body)
+                        .header("Accept-Ranges", "bytes"),
                 EMPTY_BYTE_ARRAY, String.format("%s/track", BASE_URL),
                 httpRequest);
     }

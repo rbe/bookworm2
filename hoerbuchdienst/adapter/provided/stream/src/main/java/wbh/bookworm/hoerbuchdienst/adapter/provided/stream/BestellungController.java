@@ -17,6 +17,7 @@ import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -26,6 +27,9 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookOrderService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
+import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
+
+import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition()
 @Controller(value = BestellungController.BASE_URL)
@@ -52,6 +56,11 @@ public class BestellungController {
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
+    @Options(uri = "zip")
+    public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
+    }
+
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public HttpResponse<String> orderZippedAudiobook(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
@@ -62,9 +71,15 @@ public class BestellungController {
                     LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
                             audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
                     return orderId.toString();
-                }, body -> HttpResponse.ok(body),
+                },
+                body -> CORS.response(httpRequest, body),
                 EMPTY_STRING, String.format("%s/zip/order", BASE_URL),
                 httpRequest);
+    }
+
+    @Options(uri = "zip/{titelnummer}/status/{orderId}")
+    public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
     }
 
     @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
@@ -76,9 +91,15 @@ public class BestellungController {
                     final String status = audiobookOrderService.orderStatus(orderId);
                     LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
                     return status;
-                }, body -> HttpResponse.ok(body),
+                },
+                body -> CORS.response(httpRequest, body),
                 EMPTY_STRING, String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
+    }
+
+    @Options(uri = "zip/{titelnummer}/fetch/{orderId}")
+    public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
     }
 
     @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
@@ -94,7 +115,7 @@ public class BestellungController {
                         throw new BusinessException(EMPTY_STRING, e);
                     }
                 },
-                body -> HttpResponse.ok(body)
+                body -> CORS.response(httpRequest, body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
                 EMPTY_BYTE_ARRAY, String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
