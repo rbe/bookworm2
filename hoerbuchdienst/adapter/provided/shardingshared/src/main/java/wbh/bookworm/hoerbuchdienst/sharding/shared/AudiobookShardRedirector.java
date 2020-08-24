@@ -51,11 +51,11 @@ public final class AudiobookShardRedirector {
                                                          final HttpRequest<?> httpRequest) {
         final HttpResponse<T> result;
         final String shardName = audiobookLocationService.shardLocation(objectId);
-        final String remoteHostname = httpRequest.getRemoteAddress().getHostString();
+        final String origin = httpRequest.getHeaders().get("Origin");
         if ("unknown".equals(shardName)) {
             result = HttpResponse.<T>notFound()
                     .header(X_SHARD_LOCATION, shardName)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, remoteHostname)
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                     .body(emptyResponseBody);
         } else {
@@ -63,7 +63,7 @@ public final class AudiobookShardRedirector {
             LOGGER.info("Hörbuch '{}': Redirecting to {}", objectId, shardURI);
             result = HttpResponse.<T>temporaryRedirect(URI.create(shardURI))
                     .header(X_SHARD_LOCATION, shardName)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, remoteHostname)
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                     .body(emptyResponseBody);
         }
