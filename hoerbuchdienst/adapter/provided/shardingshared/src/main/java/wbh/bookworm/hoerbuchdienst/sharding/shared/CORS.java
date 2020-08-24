@@ -34,7 +34,7 @@ public final class CORS {
                     .contentLength(0L)
                     .body("");
         } else {
-            LOGGER.error("HTTP header 'Origin' != {}", ALLOWED_DOMAIN);
+            LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
             return HttpResponse.unauthorized();
         }
     }
