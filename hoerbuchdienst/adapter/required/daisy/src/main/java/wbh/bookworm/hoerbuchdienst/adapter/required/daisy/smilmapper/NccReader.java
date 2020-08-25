@@ -9,20 +9,31 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.smilmapper;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.ibm.icu.text.CharsetDetector;
+import com.ibm.icu.text.CharsetMatch;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 final class NccReader {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(NccReader.class);
 
     private final Document document;
 
     NccReader(final InputStream nccHtml) {
+        final byte[] bytes;
         try {
-            document = Jsoup.parse(nccHtml, "UTF-8", "");
+            bytes = nccHtml.readAllBytes();
         } catch (IOException e) {
             throw new NccReaderException(e);
         }
+        final CharsetDetector charsetDetector = new CharsetDetector();
+        final CharsetMatch charsetMatch = charsetDetector.setText(bytes).detect();
+        LOGGER.debug("Detected charset {}, confidence={}", charsetMatch.getName(), charsetMatch.getConfidence());
+        document = Jsoup.parse(charsetDetector.getString(bytes, charsetMatch.getName()), "");
         if (null == document) {
             throw new NccReaderException("No document from stream");
         }

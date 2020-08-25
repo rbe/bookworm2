@@ -50,6 +50,12 @@
             <groupId>aoc.mikrokosmos</groupId>
             <artifactId>aoc.mikrokosmos.io</artifactId>
         </dependency>
+        <!-- ICU4J -->
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j-charset</artifactId>
+            <version>67.1</version>
+        </dependency>
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
