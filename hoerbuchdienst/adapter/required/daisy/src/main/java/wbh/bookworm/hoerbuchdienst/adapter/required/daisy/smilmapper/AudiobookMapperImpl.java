@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,26 +71,19 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     }
 
     Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
-        Audiobook result = null;
         Objects.requireNonNull(titelnummer);
         Objects.requireNonNull(audiobookStreamResolver);
         final Lock lock = locker.lock(titelnummer);
+        lock.lock();
         try {
-            if (lock.tryLock(2L, TimeUnit.SECONDS)) {
-                final Audiobook audiobook = new Audiobook();
-                audiobook.setTitelnummer(titelnummer);
-                read(audiobook);
-            } else {
-                LOGGER.error("Hörbuch {}: Cannot acquire lock", titelnummer);
-            }
-        } catch (InterruptedException e) {
-            LOGGER.warn("Interrupted");
-            Thread.currentThread().interrupt();
+            final Audiobook audiobook = new Audiobook();
+            audiobook.setTitelnummer(titelnummer);
+            read(audiobook);
+            return audiobook;
         } finally {
             lock.unlock();
             locker.putBack(titelnummer, lock);
         }
-        return result;
     }
 
     private void read(Audiobook audiobook) {
