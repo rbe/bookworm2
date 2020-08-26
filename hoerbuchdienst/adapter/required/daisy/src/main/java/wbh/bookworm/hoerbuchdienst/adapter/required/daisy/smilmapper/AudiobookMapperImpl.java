@@ -58,8 +58,8 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     @Override
     public Audiobook audiobook(final String titelnummer) {
         Objects.requireNonNull(titelnummer);
-        Audiobook audiobook;
         LOGGER.debug("Creating audiobook '{}'", titelnummer);
+        Audiobook audiobook;
         try {
             audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
             LOGGER.debug("Audiobook '{}' created", audiobook.getIdentifier());
@@ -221,29 +221,38 @@ final class AudiobookMapperImpl implements AudiobookMapper {
 
         private static final Logger LOGGER = LoggerFactory.getLogger(Locker.class);
 
-        private final Map<String, Lock> identLock;
+        private final Map<String, Lock> identLocks;
+
+        private final Map<String, Lock> returnedIdentLocks;
 
         Locker() {
-            identLock = new ConcurrentHashMap<>(10);
+            identLocks = new ConcurrentHashMap<>(10);
+            returnedIdentLocks = new ConcurrentHashMap<>(10);
         }
 
         Lock lock(final String ident) {
-            synchronized (identLock) {
-                final Lock lock;
-                if (identLock.containsKey(ident)) {
-                    lock = identLock.remove(ident);
-                } else {
+            synchronized (identLocks) {
+                Lock lock = null;
+                if (identLocks.containsKey(ident)) {
+                    lock = identLocks.remove(ident);
+                    returnedIdentLocks.put(ident, lock);
+                } else if (!returnedIdentLocks.containsKey(ident)) {
                     lock = new ReentrantLock();
                 }
-                LOGGER.debug("Returninng lock {} for ident {}", lock, ident);
+                if (null != lock) {
+                    LOGGER.debug("Returning lock {} for ident {}", lock, ident);
+                } else {
+                    LOGGER.debug("Cannot return lock for ident {}", ident);
+                }
                 return lock;
             }
         }
 
         void putBack(final String ident, final Lock lock) {
-            synchronized (identLock) {
+            synchronized (identLocks) {
                 LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
-                identLock.put(ident, lock);
+                identLocks.put(ident, lock);
+                returnedIdentLocks.remove(ident);
             }
         }
 
