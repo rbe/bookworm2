@@ -83,8 +83,8 @@ final class AudiobookMapperImpl implements AudiobookMapper {
             read(audiobook);
             return audiobook;
         } finally {
-            locker.putBack(titelnummer, lock);
             lock.unlock();
+            locker.putBack(titelnummer, lock);
         }
     }
 
@@ -235,16 +235,18 @@ final class AudiobookMapperImpl implements AudiobookMapper {
         Lock lock(final String ident) {
             synchronized (identLocks) {
                 Lock lock = null;
-                if (identLocks.containsKey(ident)) {
+                final boolean lockReturned = returnedIdentLocks.containsKey(ident);
+                final boolean identLockExists = identLocks.containsKey(ident);
+                if (!lockReturned && identLockExists) {
                     lock = identLocks.remove(ident);
                     returnedIdentLocks.put(ident, lock);
-                } else if (!returnedIdentLocks.containsKey(ident)) {
+                } else if (!lockReturned) {
                     lock = new ReentrantLock();
                 }
                 if (null != lock) {
                     LOGGER.debug("Returning lock {} for ident {}", lock, ident);
                 } else {
-                    LOGGER.debug("Cannot return lock for ident {}", ident);
+                    LOGGER.debug("Cannot return lock for ident {}, already in use", ident);
                 }
                 return lock;
             }
