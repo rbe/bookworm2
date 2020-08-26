@@ -234,10 +234,11 @@ final class AudiobookMapperImpl implements AudiobookMapper {
                 final boolean identLockExists = identLocks.containsKey(ident);
                 LOGGER.debug("identLockExists={}", identLockExists);
                 if (identLockExists) {
-                    lock = identLocks.remove(ident);
+                    lock = identLocks.get(ident);
                     LOGGER.debug("Using existing lock {} for ident {}", lock, ident);
                 } else {
                     lock = new ReentrantLock();
+                    identLocks.put(ident, lock);
                     LOGGER.debug("Created new lock {} for ident {}", lock, ident);
                 }
                 LOGGER.debug("Returning lock {} for ident {}", lock, ident);

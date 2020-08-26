@@ -24,7 +24,7 @@ ENV MICRONAUT_CONFIG_FILES ""
 
 #https://sematext.com/blog/jvm-performance-tuning/
 
-#-XX:+UseStringDeduplication
+#-XX:+UseG1GC -XX:+UseStringDeduplication
 #-XX:+PrintStringDeduplicationStatistics
 #-XX:+UseStringCache
 #-XX:+UseCompressedStrings
