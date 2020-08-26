@@ -49,7 +49,7 @@ public final class CORS {
 
     private static <T> MutableHttpResponse<T> with(final HttpRequest<?> httpRequest,
                                                    final Function<? super String, ? extends MutableHttpResponse<T>> supplier) {
-        httpRequest.getHeaders().forEach(entry -> LOGGER.debug("{}: {}", entry.getKey(), entry.getValue()));
+        httpRequest.getHeaders().forEach(entry -> LOGGER.trace("{}: {}", entry.getKey(), entry.getValue()));
         final String origin = httpRequest.getHeaders().get("Origin");
         if (null == origin) {
             LOGGER.error("Missing HTTP header 'Origin' in HTTP request {}", httpRequest);
