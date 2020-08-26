@@ -83,8 +83,8 @@ final class AudiobookMapperImpl implements AudiobookMapper {
             read(audiobook);
             return audiobook;
         } finally {
-            lock.unlock();
             locker.putBack(titelnummer, lock);
+            lock.unlock();
         }
     }
 
