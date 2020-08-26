@@ -219,6 +219,8 @@ final class AudiobookMapperImpl implements AudiobookMapper {
 
     private static class Locker {
 
+        private static final Logger LOGGER = LoggerFactory.getLogger(Locker.class);
+
         private final Map<String, Lock> identLock;
 
         Locker() {
@@ -226,19 +228,23 @@ final class AudiobookMapperImpl implements AudiobookMapper {
         }
 
         Lock lock(final String ident) {
-            final Lock lock;
-            if (identLock.containsKey(ident)) {
-                lock = identLock.remove(ident);
-            } else {
-                lock = new ReentrantLock();
+            synchronized (identLock) {
+                final Lock lock;
+                if (identLock.containsKey(ident)) {
+                    lock = identLock.remove(ident);
+                } else {
+                    lock = new ReentrantLock();
+                }
+                LOGGER.debug("Returninng lock {} for ident {}", lock, ident);
+                return lock;
             }
-            LOGGER.debug("Returninng lock {} for ident {}", lock, ident);
-            return lock;
         }
 
-        void putBack(String ident, Lock lock) {
-            LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
-            identLock.put(ident, lock);
+        void putBack(final String ident, final Lock lock) {
+            synchronized (identLock) {
+                LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
+                identLock.put(ident, lock);
+            }
         }
 
     }
