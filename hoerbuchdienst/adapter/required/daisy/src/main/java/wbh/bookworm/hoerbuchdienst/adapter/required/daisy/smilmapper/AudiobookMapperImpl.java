@@ -224,32 +224,23 @@ final class AudiobookMapperImpl implements AudiobookMapper {
 
         private final Map<String, Lock> identLocks;
 
-        private final Map<String, Lock> returnedIdentLocks;
-
         Locker() {
             identLocks = new ConcurrentHashMap<>(10);
-            returnedIdentLocks = new ConcurrentHashMap<>(10);
         }
 
         Lock lock(final String ident) {
             synchronized (identLocks) {
-                Lock lock = null;
-                final boolean lockNotReturned = !returnedIdentLocks.containsKey(ident);
+                final Lock lock;
                 final boolean identLockExists = identLocks.containsKey(ident);
-                LOGGER.debug("lockNotReturned={} identLockExists={}", lockNotReturned, identLockExists);
-                if (lockNotReturned) {
-                    if (identLockExists) {
-                        lock = identLocks.remove(ident);
-                        LOGGER.debug("Using existing lock {} for ident {}", lock, ident);
-                    } else {
-                        lock = new ReentrantLock();
-                        LOGGER.debug("Created new lock {} for ident {}", lock, ident);
-                    }
-                    returnedIdentLocks.put(ident, lock);
-                    LOGGER.debug("Returning lock {} for ident {}", lock, ident);
+                LOGGER.debug("identLockExists={}", identLockExists);
+                if (identLockExists) {
+                    lock = identLocks.remove(ident);
+                    LOGGER.debug("Using existing lock {} for ident {}", lock, ident);
                 } else {
-                    LOGGER.debug("Cannot return lock for ident {}, already in use", ident);
+                    lock = new ReentrantLock();
+                    LOGGER.debug("Created new lock {} for ident {}", lock, ident);
                 }
+                LOGGER.debug("Returning lock {} for ident {}", lock, ident);
                 return lock;
             }
         }
@@ -258,7 +249,6 @@ final class AudiobookMapperImpl implements AudiobookMapper {
             synchronized (identLocks) {
                 LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
                 identLocks.put(ident, lock);
-                returnedIdentLocks.remove(ident);
             }
         }
 

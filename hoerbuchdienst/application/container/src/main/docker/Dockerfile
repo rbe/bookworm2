@@ -21,11 +21,41 @@ USER myservice
 VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
+
+#https://sematext.com/blog/jvm-performance-tuning/
+
+#-XX:+UseStringDeduplication
+#-XX:+PrintStringDeduplicationStatistics
+#-XX:+UseStringCache
+#-XX:+UseCompressedStrings
+#-XX:+OptimizeStringConcat
+
+#-XX:+UseGCLogFileRotation
+#-XX:NumberOfGCLogFiles=<number of log files>
+#-XX:GCLogFileSize=<file size>[unit]
+#-Xlog:gc=info:file=/var/local/gc.log:time,uptime,pid:filecount=5,filesize=4096
+#-Xlog:gc*
+#-Xloggc:/path/to/gc.log
+
+#-XX:+HeapDumpOnOutOfMemoryError
+#-XX:HeapDumpPath=./java_pid<pid>.hprof
+#-XX:OnOutOfMemoryError="<cmd args>;<cmd args>"
+#-XX:+UseGCOverheadLimit
+
+# G1
+#-XX:+UseG1GC
+
+# Shenandoah
 #-XX:+UnlockExperimentalVMOptions
 #-XX:+UseShenanodoahC
 #-XX:ShenandoahGCHeuristics=adaptive|static|compact
+
+# ZGC, https://wiki.openjdk.java.net/display/zgc/Main#Main-Configuration&Tuning
+#-XX:+UnlockExperimentalVMOptions
+#-XX:+UseZGC
+
 ENTRYPOINT ["java",\
-    "-Xms1024m", "-Xmx1536m",\
+    "-Xms1536m", "-Xmx1536m",\
     "-Xlog:gc*",\
     "-XX:+UnlockExperimentalVMOptions",\
     "-XX:+UseZGC",\
