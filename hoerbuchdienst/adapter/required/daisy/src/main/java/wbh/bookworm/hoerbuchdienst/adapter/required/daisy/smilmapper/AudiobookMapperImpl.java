@@ -73,9 +73,11 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
         Objects.requireNonNull(titelnummer);
         Objects.requireNonNull(audiobookStreamResolver);
+        LOGGER.debug("Acquiring lock for {}", titelnummer);
         final Lock lock = locker.lock(titelnummer);
         lock.lock();
         try {
+            LOGGER.debug("Lock for {} acquired, creating audiobook", titelnummer);
             final Audiobook audiobook = new Audiobook();
             audiobook.setTitelnummer(titelnummer);
             read(audiobook);
