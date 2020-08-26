@@ -58,7 +58,6 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     @Override
     public Audiobook audiobook(final String titelnummer) {
         Objects.requireNonNull(titelnummer);
-        LOGGER.debug("Creating audiobook '{}'", titelnummer);
         Audiobook audiobook;
         try {
             audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
@@ -235,15 +234,18 @@ final class AudiobookMapperImpl implements AudiobookMapper {
         Lock lock(final String ident) {
             synchronized (identLocks) {
                 Lock lock = null;
-                final boolean lockReturned = returnedIdentLocks.containsKey(ident);
+                final boolean lockNotReturned = !returnedIdentLocks.containsKey(ident);
                 final boolean identLockExists = identLocks.containsKey(ident);
-                if (!lockReturned && identLockExists) {
-                    lock = identLocks.remove(ident);
+                LOGGER.debug("lockNotReturned={} identLockExists={}", lockNotReturned, identLockExists);
+                if (lockNotReturned) {
+                    if (identLockExists) {
+                        lock = identLocks.remove(ident);
+                        LOGGER.debug("Using existing lock {} for ident {}", lock, ident);
+                    } else {
+                        lock = new ReentrantLock();
+                        LOGGER.debug("Created new lock {} for ident {}", lock, ident);
+                    }
                     returnedIdentLocks.put(ident, lock);
-                } else if (!lockReturned) {
-                    lock = new ReentrantLock();
-                }
-                if (null != lock) {
                     LOGGER.debug("Returning lock {} for ident {}", lock, ident);
                 } else {
                     LOGGER.debug("Cannot return lock for ident {}, already in use", ident);
