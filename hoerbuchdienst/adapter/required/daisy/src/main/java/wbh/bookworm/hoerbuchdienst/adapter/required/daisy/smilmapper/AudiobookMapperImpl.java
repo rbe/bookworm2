@@ -13,7 +13,12 @@ import javax.xml.bind.JAXBElement;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -42,10 +47,13 @@ final class AudiobookMapperImpl implements AudiobookMapper {
 
     private final SmilReader smilReader;
 
+    private final Locker locker;
+
     @Inject
     AudiobookMapperImpl(@Named("ByConfiguration") final AudiobookStreamResolver audiobookStreamResolver) {
         this.audiobookStreamResolver = audiobookStreamResolver;
         smilReader = new SmilReader();
+        locker = new Locker();
     }
 
     @Override
@@ -55,7 +63,7 @@ final class AudiobookMapperImpl implements AudiobookMapper {
         LOGGER.debug("Creating audiobook '{}'", titelnummer);
         try {
             audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
-            LOGGER.debug("Audiobook '{}' created", audiobook);
+            LOGGER.debug("Audiobook '{}' created", audiobook.getIdentifier());
         } catch (AudiobookMapperException e) {
             audiobook = null;
             LOGGER.error("", e);
@@ -64,10 +72,30 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     }
 
     Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
+        Audiobook result = null;
         Objects.requireNonNull(titelnummer);
         Objects.requireNonNull(audiobookStreamResolver);
-        final Audiobook audiobook = new Audiobook();
-        audiobook.setTitelnummer(titelnummer);
+        final Lock lock = locker.lock(titelnummer);
+        try {
+            if (lock.tryLock(2L, TimeUnit.SECONDS)) {
+                final Audiobook audiobook = new Audiobook();
+                audiobook.setTitelnummer(titelnummer);
+                read(audiobook);
+            } else {
+                LOGGER.error("Hörbuch {}: Cannot acquire lock", titelnummer);
+            }
+        } catch (InterruptedException e) {
+            LOGGER.warn("Interrupted");
+            Thread.currentThread().interrupt();
+        } finally {
+            lock.unlock();
+            locker.putBack(titelnummer, lock);
+        }
+        return result;
+    }
+
+    private void read(Audiobook audiobook) {
+        final String titelnummer = audiobook.getTitelnummer();
         try {
             fromNcc(audiobook, audiobookStreamResolver.nccHtmlStream(titelnummer));
             final List<Ref> refs = fromMasterSmil(audiobook, audiobookStreamResolver.masterSmilStream(titelnummer));
@@ -76,13 +104,12 @@ final class AudiobookMapperImpl implements AudiobookMapper {
                 final InputStream refStream = audiobookStreamResolver.trackAsStream(titelnummer, filename);
                 audiobook.addAudiotrack(fromRef(ref, refStream));
             }
-            return audiobook;
         } catch (ObjectStorageException e) {
             throw new AudiobookMapperException(e);
         } catch (AudiobookStreamResolverException | AudiobookMapperException e) {
             LOGGER.error("", e);
-            return null;
         }
+
     }
 
     String filenameFromSrc(final Ref ref) {
@@ -196,6 +223,32 @@ final class AudiobookMapperImpl implements AudiobookMapper {
             }
         }
         return audiotrack;
+    }
+
+    private static class Locker {
+
+        private final Map<String, Lock> identLock;
+
+        Locker() {
+            identLock = new ConcurrentHashMap<>(10);
+        }
+
+        Lock lock(final String ident) {
+            final Lock lock;
+            if (identLock.containsKey(ident)) {
+                lock = identLock.remove(ident);
+            } else {
+                lock = new ReentrantLock();
+            }
+            LOGGER.debug("Returninng lock {} for ident {}", lock, ident);
+            return lock;
+        }
+
+        void putBack(String ident, Lock lock) {
+            LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
+            identLock.put(ident, lock);
+        }
+
     }
 
 }
