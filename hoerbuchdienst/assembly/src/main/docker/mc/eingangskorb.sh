@@ -4,16 +4,15 @@
 set -o nounset
 set -o errexit
 
-if [[ $# -lt 2 ]]; then
+function show_usage() {
   echo "usage: $0 <shard> <Titelnummer1> [<TitelnummerN> ...]"
   echo "  shard          mc host alias for shard, see 'mc config host list'"
   echo "  Titelnummer    Identifier of audiobook"
   echo ""
-  echo "  Copies ZIP archive of audiobook <Titelnummer> from bucket 'eingangskorb',"
-  echo "  unpacks it and moves files into bucket 'hoerbuchdienst'"
-  echo "  on Shard <shard>"
+  echo "  Copies ZIP archive of audiobook(s) <Titelnummer> from bucket 'eingangskorb',"
+  echo "  unpacks and moves files into bucket 'hoerbuchdienst' on Shard <shard>"
   exit 1
-fi
+}
 
 function move() {
   local titelnummer="$1"
@@ -22,8 +21,11 @@ function move() {
   tmpdir="/var/local/mc/${titelnummer}_zip"
   dir="${titelnummer}Kapitel"
   dst="${shard}/hoerbuchdienst"
-  if mc stat "${zip}" >/dev/null; then
+  mc stat "${zip}"
+  # shellcheck disable=SC2181
+  if [[ $? == 0 ]]; then
     mkdir "${tmpdir}"
+    echo "Unpacking ${titelnummer} in ${tmpdir}"
     mc cat "${zip}" | unzip -d "${tmpdir}" -
     if [[ -d "${tmpdir}/${dir}" ]]; then
       pushd "${tmpdir}" >/dev/null
@@ -40,12 +42,19 @@ function move() {
   fi
 }
 
+if [[ $# -lt 2 ]]; then
+  show_usage
+fi
+
 SHARD="$1"
 shift
 TITELNUMMERN=("$@")
 
+echo "Moving ${#TITELNUMMERN[@]} audiobooks to ${SHARD}"
 for t in "${TITELNUMMERN[@]}"; do
+  echo "Moving ${t} to ${SHARD}"
   move "${t}" "${SHARD}"
+  echo "done"
 done
 
 exit 0
