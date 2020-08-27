@@ -18,8 +18,11 @@ function mandant_wbh() {
   local titelnummer="$1"
   shift
   local tmpdir="$1"
+  if [[ -d "${tmpdir}/${titelnummer}Kapitel" ]]; then
+    mv "${tmpdir}/${titelnummer}Kapitel" "${tmpdir}/${titelnummer}DAISY"
+  fi
   if [[ -d "${tmpdir}/${titelnummer}" ]]; then
-    mv "${tmpdir}/${titelnummer}" "${tmpdir}/${titelnummer}Kapitel"
+    mv "${tmpdir}/${titelnummer}" "${tmpdir}/${titelnummer}DAISY"
   fi
 }
 
@@ -28,7 +31,7 @@ function move() {
   local shard="$2"
   zip="minio/eingangskorb/${titelnummer}.zip"
   tmpdir="/var/local/mc/${titelnummer}_zip"
-  dir="${titelnummer}Kapitel"
+  dir="${titelnummer}DAISY"
   dst="${shard}/hoerbuchdienst"
   mc stat "${zip}"
   # shellcheck disable=SC2181

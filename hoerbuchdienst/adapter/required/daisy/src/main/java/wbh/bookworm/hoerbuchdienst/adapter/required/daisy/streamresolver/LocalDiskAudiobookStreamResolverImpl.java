@@ -45,10 +45,9 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
     @Override
     public List<Path> listAll() {
-        final List<Path> list = new ArrayList<>();
+        final List<Path> list;
         try (final Stream<Path> paths = Files.walk(audiobookDirectory.resolve("."), 1)) {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            list.addAll(paths.filter(p -> p.getFileName().toString().endsWith("Kapitel"))
+            list = new ArrayList<>(paths.filter(p -> p.getFileName().toString().endsWith("DAISY"))
                     .collect(Collectors.toUnmodifiableList()));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
@@ -63,11 +62,10 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
 
     @Override
     public List<Path> list(final String titelnummer) {
-        final List<Path> list = new ArrayList<>();
+        final List<Path> list;
         try (final Stream<Path> paths = Files.walk(audiobookDirectory
                 .resolve(titelnummer).resolve("."), 1)) {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            list.addAll(paths.filter(p -> p.getFileName().toString().endsWith("Kapitel"))
+            list = new ArrayList<>(paths.filter(p -> p.getFileName().toString().endsWith("DAISY"))
                     .collect(Collectors.toUnmodifiableList()));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
@@ -79,8 +77,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream nccHtmlStream(final String titelnummer) {
         try {
             return Files.newInputStream(audiobookDirectory
-                    // TODO "Kapitel" Suffix ist mandantenspezifisch
-                    .resolve(String.format("%sKapitel", titelnummer))
+                    .resolve(String.format("%sDAISY", titelnummer))
                     .resolve("ncc.html"));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
@@ -91,8 +88,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream masterSmilStream(final String titelnummer) {
         try {
             return Files.newInputStream(audiobookDirectory
-                    // TODO "Kapitel" Suffix ist mandantenspezifisch
-                    .resolve(String.format("%sKapitel", titelnummer))
+                    .resolve(String.format("%sDAISY", titelnummer))
                     .resolve("master.smil"));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
@@ -103,8 +99,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     public InputStream trackAsStream(final String titelnummer, final String ident) {
         try {
             return Files.newInputStream(audiobookDirectory
-                    // TODO "Kapitel" Suffix ist mandantenspezifisch
-                    .resolve(String.format("%sKapitel", titelnummer))
+                    .resolve(String.format("%sDAISY", titelnummer))
                     .resolve(ident));
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);

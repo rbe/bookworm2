@@ -66,7 +66,7 @@ final class AudiobookZipper {
         }
         final String watermark = watermarker.makeWatermark(hoerernummer, titelnummer);
         // Wasserzeichen an MP3s anbringen
-        final Path kapitelDirectory = audiobookDirectory.resolve(/* TODO "Kapitel" ist mandantenspezifisch */String.format("%sKapitel", titelnummer));
+        final Path kapitelDirectory = audiobookDirectory.resolve(String.format("%sDAISY", titelnummer));
         try (final Stream<Path> paths = Files.list(kapitelDirectory)
                 .filter(path -> path.getFileName().toString().endsWith(".mp3"))) {
             paths.collect(Collectors.toUnmodifiableList())

@@ -55,8 +55,7 @@ class AudiobookIndexImpl implements AudiobookIndex {
         final List<Path> paths = audiobookStreamResolver.listAll();
         final List<String> audiobooksAsJson = paths.stream()
                 .peek(p -> LOGGER.info("{}", p.getFileName()))
-                // TODO "Kapitel" Suffix ist mandantenspezifisch
-                .map(p -> p.getFileName().toString().replace("Kapitel", ""))
+                .map(p -> p.getFileName().toString().replace("DAISY", ""))
                 .map(audiobookMapper::audiobook)
                 .map(audiobook -> {
                     try {

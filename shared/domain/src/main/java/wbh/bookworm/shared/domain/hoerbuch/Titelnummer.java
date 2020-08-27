@@ -18,7 +18,7 @@ public final class Titelnummer extends DomainId<String> {
 
     private static final long serialVersionUID = -1L;
 
-    private static final String KAPITEL = "Kapitel";
+    private static final String DAISY = "DAISY";
 
     @JsonCreator
     public Titelnummer(@JsonProperty("value") final String value) {
@@ -33,12 +33,12 @@ public final class Titelnummer extends DomainId<String> {
         this(titelnummer.value);
     }
 
-    public static Titelnummer of(final String wbhKapitel) {
-        if (wbhKapitel.endsWith(KAPITEL)) {
-            int idx = wbhKapitel.indexOf(KAPITEL);
-            return new Titelnummer(wbhKapitel.substring(0, idx));
+    public static Titelnummer of(final String titelnummer) {
+        if (titelnummer.endsWith(DAISY)) {
+            int idx = titelnummer.indexOf(DAISY);
+            return new Titelnummer(titelnummer.substring(0, idx));
         } else {
-            return new Titelnummer(wbhKapitel);
+            return new Titelnummer(titelnummer);
         }
     }
 

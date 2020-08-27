@@ -101,7 +101,7 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
         return whileServicing("allEntriesByKey", () -> audiobookStreamResolver.listAll()
                         .stream()
                         .map(path -> new Titelnummer(path.getFileName().toString()
-                                .replace(/* TODO Mandantenspezifisch */"Kapitel", "")))
+                                .replace("DAISY", "")))
                         .collect(Collectors.toUnmodifiableList()),
                 Collections::emptyList);
     }
@@ -127,8 +127,7 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
                             final String temporaryId) {
         return whileServicing("trackAsFile",
                 () -> {
-                    // TODO "Kapitel" Suffix ist mandantenspezifisch
-                    final String tempId = String.format("%sKapitel-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
+                    final String tempId = String.format("%sDAISY-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
                     final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
                     try {
                         Files.createDirectories(tempMp3File.getParent());

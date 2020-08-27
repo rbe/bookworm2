@@ -59,8 +59,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
             return bucketObjectStorage.listAllObjects()
                     .stream()
                     .map(path -> path.getName(0))
-                    // TODO "Kapitel" Suffix ist mandantenspezifisch
-                    .filter(path -> path.toString().endsWith("Kapitel"))
+                    .filter(path -> path.toString().endsWith("DAISY"))
                     .distinct()
                     .collect(Collectors.toUnmodifiableList());
         } catch (ObjectStorageException e) {
@@ -85,8 +84,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream nccHtmlStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            return bucketObjectStorage.asStream(String.format("%sKapitel/ncc.html", titelnummer));
+            return bucketObjectStorage.asStream(String.format("%sDAISY/ncc.html", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }
@@ -95,8 +93,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream masterSmilStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            return bucketObjectStorage.asStream(String.format("%sKapitel/master.smil", titelnummer));
+            return bucketObjectStorage.asStream(String.format("%sDAISY/master.smil", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }
@@ -105,8 +102,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream trackAsStream(/* TODO Mandantenspezifisch */final String titelnummer, final String ident) {
         try {
-            // TODO "Kapitel" Suffix ist mandantenspezifisch
-            return bucketObjectStorage.asStream(String.format("%sKapitel/%s", titelnummer, ident));
+            return bucketObjectStorage.asStream(String.format("%sDAISY/%s", titelnummer, ident));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }
@@ -115,7 +111,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream zipAsStream(/* TODO Mandantenspezifisch */final String titelnummer) {
         try {
-            return bucketObjectStorage.asZip(/* TODO Mandantenspezifisch */String.format("%sKapitel", titelnummer));
+            return bucketObjectStorage.asZip(String.format("%sDAISY", titelnummer));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }
@@ -161,14 +157,14 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     @Override
     public void removeZip(/* TODO Mandantenspezifisch */final String titelnummer) {
-        final List<ObjectStorage.RemoveResult> removedPaths = bucketObjectStorage.removeObjects(/* TODO Mandantenspezifisch */String.format("%sKapitel", titelnummer));
+        final List<ObjectStorage.RemoveResult> removedPaths = bucketObjectStorage.removeObjects(String.format("%sDAISY", titelnummer));
         LOGGER.info("Removed audiobook {} with its contents {}", titelnummer, removedPaths);
     }
 
     private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {
         LOGGER.debug("Putting file {} into audiobook {}", path.toAbsolutePath(), titelnummer);
         try {
-            final String objectName = String.format("%sKapitel/%s", titelnummer, path.getFileName());
+            final String objectName = String.format("%sDAISY/%s", titelnummer, path.getFileName());
             bucketObjectStorage.put(objectName, Files.newInputStream(path), APPLICATION_ZIP);
             LOGGER.debug("Successfully put file {} into audiobook {}", path, titelnummer);
         } catch (IOException e) {
