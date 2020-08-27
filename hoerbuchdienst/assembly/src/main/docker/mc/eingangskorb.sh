@@ -14,6 +14,15 @@ function show_usage() {
   exit 1
 }
 
+function mandant_wbh() {
+  local titelnummer="$1"
+  shift
+  local tmpdir="$1"
+  if [[ -d "${tmpdir}/${titelnummer}" ]]; then
+    mv "${tmpdir}/${titelnummer}" "${tmpdir}/${titelnummer}Kapitel"
+  fi
+}
+
 function move() {
   local titelnummer="$1"
   local shard="$2"
@@ -27,6 +36,7 @@ function move() {
     mkdir "${tmpdir}"
     echo "Unpacking ${titelnummer} in ${tmpdir}"
     mc cat "${zip}" | unzip -d "${tmpdir}" -
+    mandant_wbh "${titelnummer}" "${tmpdir}"
     if [[ -d "${tmpdir}/${dir}" ]]; then
       pushd "${tmpdir}" >/dev/null
       mc mv --recursive "${dir}" "${dst}"
@@ -35,7 +45,7 @@ function move() {
       echo "Could not unzip ${zip} into ${dir}"
       exit 1
     fi
-    rmdir "${tmpdir}"
+    rm -rf "${tmpdir}"
   else
     echo "${zip} not found"
     exit 1
