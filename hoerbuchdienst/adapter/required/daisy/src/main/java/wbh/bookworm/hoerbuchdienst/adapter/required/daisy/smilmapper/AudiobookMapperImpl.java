@@ -19,6 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import io.micronaut.cache.annotation.CacheConfig;
+import io.micronaut.cache.annotation.Cacheable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.smil10.Audio;
@@ -38,7 +40,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiotrac
 import aoc.mikrokosmos.objectstorage.api.ObjectStorageException;
 
 @Singleton
-final class AudiobookMapperImpl implements AudiobookMapper {
+@CacheConfig("audiobookRepository")
+class AudiobookMapperImpl implements AudiobookMapper {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImpl.class);
 
@@ -55,6 +58,7 @@ final class AudiobookMapperImpl implements AudiobookMapper {
         locker = new Locker();
     }
 
+    @Cacheable
     @Override
     public Audiobook audiobook(final String titelnummer) {
         Objects.requireNonNull(titelnummer);
@@ -72,11 +76,11 @@ final class AudiobookMapperImpl implements AudiobookMapper {
     Audiobook createAudiobook(final String titelnummer, final AudiobookStreamResolver audiobookStreamResolver) {
         Objects.requireNonNull(titelnummer);
         Objects.requireNonNull(audiobookStreamResolver);
-        LOGGER.debug("Acquiring lock for {}", titelnummer);
+        LOGGER.trace("Acquiring lock for {}", titelnummer);
         final Lock lock = locker.lock(titelnummer);
         lock.lock();
         try {
-            LOGGER.debug("Lock for {} acquired, creating audiobook", titelnummer);
+            LOGGER.trace("Lock for {} acquired, creating audiobook", titelnummer);
             final Audiobook audiobook = new Audiobook();
             audiobook.setTitelnummer(titelnummer);
             read(audiobook);
@@ -232,23 +236,23 @@ final class AudiobookMapperImpl implements AudiobookMapper {
             synchronized (identLocks) {
                 final Lock lock;
                 final boolean identLockExists = identLocks.containsKey(ident);
-                LOGGER.debug("identLockExists={}", identLockExists);
+                LOGGER.trace("identLockExists={}", identLockExists);
                 if (identLockExists) {
                     lock = identLocks.get(ident);
-                    LOGGER.debug("Using existing lock {} for ident {}", lock, ident);
+                    LOGGER.trace("Using existing lock {} for ident {}", lock, ident);
                 } else {
                     lock = new ReentrantLock();
                     identLocks.put(ident, lock);
-                    LOGGER.debug("Created new lock {} for ident {}", lock, ident);
+                    LOGGER.trace("Created new lock {} for ident {}", lock, ident);
                 }
-                LOGGER.debug("Returning lock {} for ident {}", lock, ident);
+                LOGGER.trace("Returning lock {} for ident {}", lock, ident);
                 return lock;
             }
         }
 
         void putBack(final String ident, final Lock lock) {
             synchronized (identLocks) {
-                LOGGER.debug("Putting back lock {} for ident {}", lock, ident);
+                LOGGER.trace("Putting back lock {} for ident {}", lock, ident);
                 identLocks.put(ident, lock);
             }
         }

@@ -21,8 +21,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
-import io.micronaut.cache.annotation.CacheConfig;
-import io.micronaut.cache.annotation.Cacheable;
 import io.micronaut.context.annotation.Property;
 import io.micronaut.runtime.event.annotation.EventListener;
 import org.slf4j.Logger;
@@ -39,8 +37,7 @@ import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
 
 // TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
 @Singleton
-@CacheConfig("audiobookRepository")
-class AudiobookRepositoryImpl implements AudiobookRepository {
+final class AudiobookRepositoryImpl implements AudiobookRepository {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImpl.class);
 
@@ -107,7 +104,6 @@ class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    @Cacheable
     public Audiobook find(final String titelnummer) {
         return whileServicing("find",
                 () -> {
