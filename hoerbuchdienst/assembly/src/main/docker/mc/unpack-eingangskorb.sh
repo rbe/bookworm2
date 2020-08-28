@@ -26,7 +26,7 @@ function mandant_wbh() {
   fi
 }
 
-function move() {
+function unpack() {
   local titelnummer="$1"
   local shard="$2"
   zip="minio/eingangskorb/${titelnummer}.zip"
@@ -66,7 +66,7 @@ TITELNUMMERN=("$@")
 echo "Moving ${#TITELNUMMERN[@]} audiobooks to ${SHARD}"
 for t in "${TITELNUMMERN[@]}"; do
   echo "Moving ${t} to ${SHARD}"
-  move "${t}" "${SHARD}"
+  unpack "${t}" "${SHARD}"
   echo "done"
 done
 
