@@ -16,3 +16,5 @@ FROM base
 COPY policy/*.json /var/local/mc/policy/
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
+VOLUME ["/var/local/mc"]
+WORKDIR /var/local/mc

@@ -12,4 +12,5 @@ COPY docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 EXPOSE 7373/tcp
 VOLUME ["/var/local/kes"]
+WORKDIR /var/local/kes
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

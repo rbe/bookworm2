@@ -36,3 +36,4 @@ COPY nginx.conf /etc/nginx/
 COPY tlsredirect.conf /etc/nginx/conf.d/
 COPY *.conf.disabled /etc/nginx/conf.d/
 COPY index.html /var/local/rproxy/
+WORKDIR /etc/nginx
