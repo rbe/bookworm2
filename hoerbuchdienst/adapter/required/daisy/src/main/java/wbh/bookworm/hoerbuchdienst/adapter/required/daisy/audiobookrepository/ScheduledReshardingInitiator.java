@@ -3,7 +3,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 import javax.inject.Singleton;
 import java.util.List;
 
-import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,8 +29,7 @@ final class ScheduledReshardingInitiator {
         this.audiobookRepository = audiobookRepository;
     }
 
-    /* TODO 23-4 Uhr morgens in Produktion */
-    @Scheduled(cron = "0 0/5 * * * *")
+    //@Scheduled(cron = "0 0/5 * * * *")
     void maybeRedistribute() {
         LOGGER.debug("");
         if (databeatManager.canRedistribute()) {
