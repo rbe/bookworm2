@@ -14,5 +14,6 @@
     <modules>
         <module>daisy</module>
         <module>watermark</module>
+        <module>mandantrepository</module>
     </modules>
 </project>

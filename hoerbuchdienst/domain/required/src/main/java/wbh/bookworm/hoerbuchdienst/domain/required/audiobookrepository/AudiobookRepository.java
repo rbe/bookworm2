@@ -10,20 +10,18 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.List;
 
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 public interface AudiobookRepository {
 
-    List</* TODO AghNummer */Titelnummer> allEntriesByKey();
+    List</* TODO Mandantenspezifisch */Titelnummer> allEntriesByKey();
 
-    Audiobook find(/* TODO AghNummer */String titelnummer);
+    Audiobook find(/* TODO Mandantenspezifisch */String titelnummer);
 
-    Path trackAsFile(String hoerernummer,
-            /* TODO AghNummer */String titelnummer, String ident,
-                     String temporaryId);
+    Path trackAsFile(String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer, String ident);
 
     InputStream trackAsStream(/*TODO Titelnummer*/String titelnummer, String ident);
 
-    InputStream zipAsStream(/* TODO AghNummer */String titelnummer);
+    InputStream zipAsStream(/* TODO Mandantenspezifisch */String titelnummer);
 
 }

@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.MerklisteRepository;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Service
 public class MerklisteService {

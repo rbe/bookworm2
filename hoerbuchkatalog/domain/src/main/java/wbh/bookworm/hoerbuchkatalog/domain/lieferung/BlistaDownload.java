@@ -14,9 +14,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

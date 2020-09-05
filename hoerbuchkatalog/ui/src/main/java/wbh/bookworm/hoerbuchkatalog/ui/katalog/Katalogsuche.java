@@ -17,7 +17,7 @@ import org.springframework.web.context.annotation.RequestScope;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-import wbh.bookworm.shared.domain.hoerbuch.Sachgebiet;
+import wbh.bookworm.shared.domain.Sachgebiet;
 
 @Component
 @RequestScope

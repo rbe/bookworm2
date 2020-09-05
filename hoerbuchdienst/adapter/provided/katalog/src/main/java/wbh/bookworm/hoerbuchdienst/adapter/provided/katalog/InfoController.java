@@ -22,10 +22,10 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.HoerbuchNichtGefundenException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.TrackInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -59,8 +59,7 @@ public class InfoController {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     try {
-                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getHoerernummer(),
-                                audiobookAnfrageDTO.getTitelnummer());
+                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getTitelnummer());
                         return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
                     } catch (Exception e) {
                         throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", audiobookAnfrageDTO.getTitelnummer()), e);
@@ -81,8 +80,7 @@ public class InfoController {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     try {
-                        final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getHoerernummer(),
-                                audiobookAnfrageDTO.getTitelnummer());
+                        final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getTitelnummer());
                         return PlaylistMapper.INSTANCE.convert(playlist);
                     } catch (Exception e) {
                         throw new BusinessException("", e);
@@ -107,9 +105,7 @@ public class InfoController {
                             trackAnfrageDTO.getTitelnummer(),
                             trackAnfrageDTO.getIdent());
                     try {
-                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
-                                trackAnfrageDTO.getTitelnummer(),
-                                trackAnfrageDTO.getIdent());
+                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
                         return TrackMapper.INSTANCE.convert(trackInfoDTO);
                     } catch (Exception e) {
                         throw new BusinessException("", e);

@@ -12,7 +12,7 @@ import java.util.Objects;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.model.DomainAggregate;
 

@@ -19,9 +19,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerbuch.Sachgebiet;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.io.dataformat.ColumnPositionLineFileParser;
 

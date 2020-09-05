@@ -13,9 +13,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import wbh.bookworm.shared.domain.hoerbuch.AghNummer;
-import wbh.bookworm.shared.domain.hoerbuch.Sachgebiet;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.AghNummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertSame;

@@ -21,7 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import static wbh.bookworm.hoerbuchkatalog.ui.katalog.SessionKey.SCOPEDTARGET_HOERERSESSION;
 

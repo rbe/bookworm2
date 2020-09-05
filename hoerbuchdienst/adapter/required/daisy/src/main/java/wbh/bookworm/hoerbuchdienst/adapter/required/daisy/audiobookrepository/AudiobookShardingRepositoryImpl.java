@@ -49,7 +49,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardReap
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStartServicingEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStopServicingEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
 import aoc.mikrokosmos.ddd.model.DomainId;

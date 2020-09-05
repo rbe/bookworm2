@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Singleton
 @Named("keyBasedShardDistributionStrategy")

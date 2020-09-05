@@ -31,8 +31,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 

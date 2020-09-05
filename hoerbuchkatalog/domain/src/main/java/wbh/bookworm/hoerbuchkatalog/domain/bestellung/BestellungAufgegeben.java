@@ -8,7 +8,7 @@ package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.util.Objects;
 
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.ddd.event.DomainAggregateWriteEvent;
 

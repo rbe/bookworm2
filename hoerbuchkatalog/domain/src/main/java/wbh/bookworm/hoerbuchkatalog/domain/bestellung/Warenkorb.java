@@ -16,8 +16,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.event.DomainEventPublisher;
 import aoc.mikrokosmos.ddd.model.DomainAggregate;

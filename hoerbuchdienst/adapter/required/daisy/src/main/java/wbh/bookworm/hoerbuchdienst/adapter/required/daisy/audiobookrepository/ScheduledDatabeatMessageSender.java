@@ -22,7 +22,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardObject;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 

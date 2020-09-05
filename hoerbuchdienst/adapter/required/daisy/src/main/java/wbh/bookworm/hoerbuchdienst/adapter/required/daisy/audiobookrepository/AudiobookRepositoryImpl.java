@@ -33,7 +33,7 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepositoryException;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStartServicingEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardStopServicingEvent;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 // TODO Event empfangen, um (gelöschtes/geändertes Hörbuch) aus dem Cache zu entfernen
 @Singleton
@@ -118,12 +118,10 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public Path trackAsFile(final String hoerernummer,
-                            final String titelnummer, final String ident,
-                            final String temporaryId) {
+    public Path trackAsFile(final String hoerernummer, final String titelnummer, final String ident) {
         return whileServicing("trackAsFile",
                 () -> {
-                    final String tempId = String.format("%sDAISY-%s-%s-%s", titelnummer, ident, UUID.randomUUID(), temporaryId);
+                    final String tempId = String.format("%sDAISY-%s-%s-%s", titelnummer, ident, UUID.randomUUID());
                     final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
                     try {
                         Files.createDirectories(tempMp3File.getParent());

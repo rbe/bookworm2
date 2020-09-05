@@ -15,7 +15,7 @@ import io.micronaut.http.annotation.PathVariable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
 
 @Controller(ShardInfoController.SHARD)
 public class ShardInfoController {

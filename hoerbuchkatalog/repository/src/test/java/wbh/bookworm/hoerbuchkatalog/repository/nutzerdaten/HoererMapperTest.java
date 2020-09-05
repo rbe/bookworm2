@@ -20,7 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {NutzerdatenAppConfig.class})
 @ExtendWith(SpringExtension.class)

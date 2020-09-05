@@ -13,8 +13,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.UUID;
 
+import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Genres;
 import com.mpatric.mp3agic.ID3v1Tag;
+import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -31,8 +33,8 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     private static final String GENRE_SPEECH = "Speech";
 
     @Override
-    public String makeWatermark(/* TODO Mandant mandant,*/final String hoerernummer, final String titelnummer) {
-        return String.format(/* TODO Mandant */"WBH-%s-%s", hoerernummer, titelnummer);
+    public String makeWatermark(final String mandant, final String hoerernummer, final String titelnummer) {
+        return String.format("%s-%s-%s", mandant, hoerernummer, titelnummer);
     }
 
     @Override
@@ -40,49 +42,51 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
         addWatermarkInPlace(watermark, urlPrefix, mp3);
         try {
             final Mp3File mp3file = new Mp3File(mp3);
+            final ID3v1 id3v1Tag = mp3file.getId3v1Tag();
+            final ID3v2 id3v2Tag = mp3file.getId3v2Tag();
             return new WatermarkedTrackInfo(
                     // ID3v1
-                    mp3file.getId3v1Tag().getComment(),
-                    mp3file.getId3v1Tag().getArtist(),
-                    mp3file.getId3v1Tag().getYear(),
-                    mp3file.getId3v1Tag().getVersion(),
-                    mp3file.getId3v1Tag().getGenre(),
+                    id3v1Tag.getComment(),
+                    id3v1Tag.getArtist(),
+                    id3v1Tag.getYear(),
+                    id3v1Tag.getVersion(),
+                    id3v1Tag.getGenre(),
                     // ID3v2
-                    mp3file.getId3v2Tag().getPadding(),
-                    mp3file.getId3v2Tag().hasFooter(),
-                    mp3file.getId3v2Tag().hasUnsynchronisation(),
-                    mp3file.getId3v2Tag().getBPM(),
-                    mp3file.getId3v2Tag().getGrouping(),
-                    mp3file.getId3v2Tag().getKey(),
-                    mp3file.getId3v2Tag().getDate(),
-                    mp3file.getId3v2Tag().getComposer(),
-                    mp3file.getId3v2Tag().getPublisher(),
-                    mp3file.getId3v2Tag().getOriginalArtist(),
-                    mp3file.getId3v2Tag().getAlbumArtist(),
-                    mp3file.getId3v2Tag().getCopyright(),
-                    mp3file.getId3v2Tag().getArtistUrl(),
-                    mp3file.getId3v2Tag().getCommercialUrl(),
-                    mp3file.getId3v2Tag().getCopyrightUrl(),
-                    mp3file.getId3v2Tag().getAudiofileUrl(),
-                    mp3file.getId3v2Tag().getAudioSourceUrl(),
-                    mp3file.getId3v2Tag().getRadiostationUrl(),
-                    mp3file.getId3v2Tag().getPaymentUrl(),
-                    mp3file.getId3v2Tag().getPublisherUrl(),
-                    mp3file.getId3v2Tag().getUrl(),
-                    mp3file.getId3v2Tag().getPartOfSet(),
-                    mp3file.getId3v2Tag().isCompilation(),
+                    id3v2Tag.getPadding(),
+                    id3v2Tag.hasFooter(),
+                    id3v2Tag.hasUnsynchronisation(),
+                    id3v2Tag.getBPM(),
+                    id3v2Tag.getGrouping(),
+                    id3v2Tag.getKey(),
+                    id3v2Tag.getDate(),
+                    id3v2Tag.getComposer(),
+                    id3v2Tag.getPublisher(),
+                    id3v2Tag.getOriginalArtist(),
+                    id3v2Tag.getAlbumArtist(),
+                    id3v2Tag.getCopyright(),
+                    id3v2Tag.getArtistUrl(),
+                    id3v2Tag.getCommercialUrl(),
+                    id3v2Tag.getCopyrightUrl(),
+                    id3v2Tag.getAudiofileUrl(),
+                    id3v2Tag.getAudioSourceUrl(),
+                    id3v2Tag.getRadiostationUrl(),
+                    id3v2Tag.getPaymentUrl(),
+                    id3v2Tag.getPublisherUrl(),
+                    id3v2Tag.getUrl(),
+                    id3v2Tag.getPartOfSet(),
+                    id3v2Tag.isCompilation(),
                     /*mp3file.getId3v2Tag().getChapters(),
                     mp3file.getId3v2Tag().getChapterTOC(),*/
-                    mp3file.getId3v2Tag().getEncoder(),
-                    mp3file.getId3v2Tag().getAlbumImage(),
-                    mp3file.getId3v2Tag().getAlbumImageMimeType(),
-                    mp3file.getId3v2Tag().getWmpRating(),
-                    mp3file.getId3v2Tag().getItunesComment(),
-                    mp3file.getId3v2Tag().getLyrics(),
-                    mp3file.getId3v2Tag().getGenreDescription(),
-                    mp3file.getId3v2Tag().getDataLength(),
-                    mp3file.getId3v2Tag().getLength(),
-                    mp3file.getId3v2Tag().getObseleteFormat()/*,
+                    id3v2Tag.getEncoder(),
+                    id3v2Tag.getAlbumImage(),
+                    id3v2Tag.getAlbumImageMimeType(),
+                    id3v2Tag.getWmpRating(),
+                    id3v2Tag.getItunesComment(),
+                    id3v2Tag.getLyrics(),
+                    id3v2Tag.getGenreDescription(),
+                    id3v2Tag.getDataLength(),
+                    id3v2Tag.getLength(),
+                    id3v2Tag.getObseleteFormat()/*,
                     mp3file.getId3v2Tag().getFrameSets()*/
             );
         } catch (IOException | UnsupportedTagException | InvalidDataException e) {

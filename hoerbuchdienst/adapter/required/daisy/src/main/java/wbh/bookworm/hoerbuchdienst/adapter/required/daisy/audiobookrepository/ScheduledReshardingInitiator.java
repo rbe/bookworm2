@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 @Singleton
 final class ScheduledReshardingInitiator {

@@ -12,7 +12,7 @@ import io.micronaut.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookLocationService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
 
 @Singleton
 public final class AudiobookShardRedirector {

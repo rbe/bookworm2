@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookOrderService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -40,8 +40,6 @@ public class BestellungController {
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungController.class);
 
     private static final String APPLICATION_ZIP = "application/zip";
-
-    private static final byte[] EMPTY_BYTE_ARRAY = new byte[0];
 
     private static final String EMPTY_STRING = "";
 
@@ -67,7 +65,7 @@ public class BestellungController {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     final UUID orderId = UUID.randomUUID();
-                    audiobookOrderService.orderZip(audiobookAnfrageDTO.getHoerernummer(),
+                    audiobookOrderService.orderZip(audiobookAnfrageDTO.getMandant(), audiobookAnfrageDTO.getHoerernummer(),
                             audiobookAnfrageDTO.getTitelnummer(), orderId.toString());
                     LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
                             audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());

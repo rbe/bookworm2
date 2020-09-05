@@ -10,8 +10,8 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Objects;
 
-import wbh.bookworm.shared.domain.hoerbuch.Titelnummer;
-import wbh.bookworm.shared.domain.mandant.Hoerernummer;
+import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.model.DomainValueObject;
 

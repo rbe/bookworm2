@@ -19,8 +19,8 @@ import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.AudiobookInfoDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.KatalogService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 
 @Controller(SuchindexController.BASE_URL)
 public class SuchindexController {
@@ -44,8 +44,7 @@ public class SuchindexController {
 
     @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
     public List<SuchindexAntwortDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
-        final List<AudiobookInfoDTO> result = katalogService.findAll(suchindexAnfrageDTO.getHoerernummer(),
-                suchindexAnfrageDTO.getKeywords());
+        final List<AudiobookInfoDTO> result = katalogService.findAll(suchindexAnfrageDTO.getKeywords());
         return AntwortMapper.INSTANCE.convert(result);
     }
 

@@ -10,7 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import wbh.bookworm.hoerbuchdienst.domain.ports.audiobook.PlaylistEntryDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 
 public final class PlaylistAntwortDTO implements Serializable {
 
