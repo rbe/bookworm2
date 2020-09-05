@@ -1,0 +1,45 @@
+== JVM
+
+#https://www.oracle.com/java/technologies/javase/vmoptions-jsp.html
+#http://www.angelikalanger.com/Articles/EffectiveJava/91.Java9.What-is-new-in-Java-9/90.java-9.1.overview.ready_4.html
+#https://www.jrebel.com/blog/jvm-options-cheat-sheet
+#https://sematext.com/blog/jvm-performance-tuning/
+
+#https://openjdk.java.net/jeps/271
+#https://openjdk.java.net/jeps/158
+
+#https://gceasy.io
+
+.Heap
+----
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=/var/local/java_pid<pid>.hprof
+-XX:OnOutOfMemoryError="<cmd args>;<cmd args>"
+-XX:OnError="<cmd args>;<cmd args>"
+-XX:+UseGCOverheadLimit
+----
+
+.G1
+----
+-XX:+UseG1GC
+-XX:+UseStringDeduplication
+-XX:+PrintStringDeduplicationStatistics
+----
+
+.Shenandoah
+----
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseShenanodoahC
+-XX:ShenandoahGCHeuristics=adaptive|static|compact
+----
+
+.ZGC, https://wiki.openjdk.java.net/display/zgc/Main#Main-Configuration&Tuning
+----
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseZGC
+----
+
+.Garbage Collection Logging
+----
+#-Xlog:gc=info:file=/var/local/gc.log:time,uptime,pid:filecount=5,filesize=4096
+----

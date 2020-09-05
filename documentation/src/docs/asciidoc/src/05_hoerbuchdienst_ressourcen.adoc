@@ -87,3 +87,11 @@ https://github.com/rbackhouse/Music-Server
 https://github.com/ericfarng/jid3lib
 http://javamusictag.sourceforge.net/docs.htm
 
+=== HTTP
+
+* https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Content-Disposition
+* https://tools.ietf.org/html/rfc6266
+* https://tools.ietf.org/html/rfc2183
+* https://www.iana.org/assignments/cont-disp/cont-disp.xhtml
+* https://www.ietf.org/rfc/rfc2616.html[HTTP/1.1]
+* https://www.ietf.org/rfc/rfc2616.html#section-15.5[HTTP/1.1, Content-Disposition Issues]
