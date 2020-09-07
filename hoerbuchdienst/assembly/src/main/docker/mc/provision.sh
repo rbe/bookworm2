@@ -67,6 +67,8 @@ mc mb minio-admin/rogers
 mc mb minio-admin/buckrogers
 mc mb minio-admin/hoerbuchdienst
 mc mb minio-admin/eingangskorb
+mc mb minio-admin/hoerbuchkatalog
+mc mb minio-admin/hoererdaten
 mc config host rm gcs
 mc config host rm local
 mc config host rm play
