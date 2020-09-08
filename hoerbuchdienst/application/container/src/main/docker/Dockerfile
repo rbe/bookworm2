@@ -13,22 +13,23 @@ RUN addgroup myservice \
 
 FROM base
 ARG JAR_FILE
-COPY --chown=myservice target/dependency/${JAR_FILE} /usr/local/service.jar
-COPY --chown=myservice src/main/docker/application-shard.tmpl.yml /var/local/
-COPY --chown=myservice src/main/docker/logback.xml /var/local/
-RUN chown -R myservice:myservice /var/local
-USER myservice
+COPY --chown=service target/dependency/${JAR_FILE} /usr/local/service.jar
+COPY --chown=service src/main/docker/application-shard.tmpl.yml /var/local/
+COPY --chown=service src/main/docker/logback.xml /var/local/
+RUN mkdir /var/local/java_debug
+RUN chown -R service:service /var/local \
+   && chmod -R 755 /var/local/java_debug
+USER service
 VOLUME ["/var/local"]
 WORKDIR /var/local
 ENV MICRONAUT_CONFIG_FILES ""
 ENTRYPOINT ["java",\
     "-Xms1536m", "-Xmx1536m",\
     "-XX:+HeapDumpOnOutOfMemoryError",\
-    "-XX:HeapDumpPath=/var/local",\
-    "-Xlog:gc*",\
+    "-XX:HeapDumpPath=/var/local/java_debug",\
     "-XX:+UnlockExperimentalVMOptions",\
     "-XX:+UseZGC",\
-    "-Xlog:gc=info:file=/var/local/gc.log:time,uptime,pid:filecount=16,filesize=16M",\
+    "-Xlog:gc=info,stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M",\
     "-Dlogback.configurationFile=/var/local/logback.xml",\
     "-Dmicronaut.environments=prod",\
     "-Dmicronaut.config.files=/var/local/application-shard.yml",\
