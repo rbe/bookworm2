@@ -61,10 +61,16 @@ echo "Cleaning package cache"
 echo "y" | pacman -Scc
 echo "done"
 
-echo "Generating SSH key for user $(id -un)"
-ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
-cat ~/.ssh/id_rsa.pub
-echo "done"
+if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
+  echo "Generating SSH key for user $(id -un)"
+  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+  cat ~/.ssh/id_rsa.pub
+  echo "done"
+else
+  echo "SSH Key id_rsa already exists"
+fi
+
+cat dot_bash_profile >>~/.bash_profile
 
 echo "!!!"
 echo "!!!"

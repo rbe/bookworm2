@@ -27,11 +27,7 @@ while [[ ${correct} != 1 ]]; do
   fi
 done
 
-echo "Updating ArchLinux keyring"
-pacman --noconfirm -Sy archlinux-keyring
-echo "Updating installed packages"
-pacman --noconfirm -Syu
-echo "done"
+"${execdir}"/update-linux.sh
 
 pacinstall inetutils
 pacinstall man man-pages
@@ -72,13 +68,14 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
+pacinstall lvm2
+
 echo "Partitioning hard disk"
+cd
 sfdisk --dump /dev/sda >sda.dump.1
-echo ",,30" | sfdisk --force -a /dev/sda
+echo ",,L" | sfdisk --no-reread --force -a /dev/sda
 sfdisk --dump /dev/sda >sda.dump.2
 echo "done"
-
-pacinstall lvm2
 
 echo "!!!"
 echo "!!!"

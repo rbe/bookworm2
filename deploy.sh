@@ -53,7 +53,7 @@ function deploy_artifacts() {
     if [[ ! -d "${project_dir}/${artifact}" ]]; then
       unzip "${file}.zip" \
         docker-compose.yml docker-compose.${env}.yml .env \
-        lifecycle.sh \
+        lifecycle.sh backup-metadata.sh setup-ufw.sh \
         -d "${project_dir}/${artifact}"
     else
       echo "Artifact ${artifact} already exists hoerbuchkatalog ${project_dir}/${artifact}"
@@ -84,9 +84,9 @@ case "${project}" in
     chmod +x lifecycle.sh
     if ! docker volume ls | grep -c "${project_name}_minio" >/dev/null; then
       echo "Provisioning ${project}, environment ${env} (${project_name})"
-      ./lifecycle.sh provision
-      ./backup-metadata.sh
-      ./setup-ufw.sh
+      "${execdir}"/lifecycle.sh provision
+      "${execdir}"/backup-metadata.sh
+      "${execdir}"/setup-ufw.sh
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"
