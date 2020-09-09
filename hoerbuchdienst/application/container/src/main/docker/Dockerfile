@@ -8,8 +8,8 @@ RUN apk update
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
-RUN addgroup myservice \
-    && adduser -D -S -G myservice myservice
+RUN addgroup service \
+    && adduser -D -S -G service service
 
 FROM base
 ARG JAR_FILE
