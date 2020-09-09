@@ -14,7 +14,7 @@ fi
 
 username="$(pwgen -Bcn 16 1)"
 password="$(pwgen -BCn 32 1)"
-echo "Generated RabbitMQ ${username} with password: ${password}"
+echo "Generated RabbitMQ ${username} with password ${password}"
 if rabbitmqctl change_password "${username}" "${password}"; then
   echo "done"
 else
