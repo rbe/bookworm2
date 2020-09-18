@@ -5,9 +5,9 @@ set -o nounset
 set -o errexit
 
 function show_usage() {
-  echo "usage: $0 <shard> <Titelnummer1> [<TitelnummerN> ...]"
-  echo "  shard          mc host alias for shard, see 'mc config host list'"
-  echo "  Titelnummer    Identifier of audiobook"
+  echo "usage: $0 <shard> <Name im Eingangskorb 1> [<Name im Eingangskorb N> ...]"
+  echo "  shard          Ziel-Shard (mc host alias for shard, see 'mc config host list')"
+  echo "  Titelnummer    Name im Eingangskorb, ohne .zip"
   echo ""
   echo "  Copies ZIP archive of audiobook(s) <Titelnummer> from bucket 'eingangskorb',"
   echo "  unpacks and moves files into bucket 'hoerbuchdienst' on Shard <shard>"
@@ -15,42 +15,51 @@ function show_usage() {
 }
 
 function mandant_wbh() {
-  local titelnummer="$1"
+  local ident="$1"
   shift
   local tmpdir="$1"
-  if [[ -d "${tmpdir}/${titelnummer}Kapitel" ]]; then
-    mv "${tmpdir}/${titelnummer}Kapitel" "${tmpdir}/${titelnummer}DAISY"
+  local n=""
+  if [[ -d "${tmpdir}/${ident}Kapitel" ]]; then
+    n="${tmpdir}/${ident}Kapitel"
+  elif [[ -d "${tmpdir}/${ident}" ]]; then
+    n="${tmpdir}/${ident}"
   fi
-  if [[ -d "${tmpdir}/${titelnummer}" ]]; then
-    mv "${tmpdir}/${titelnummer}" "${tmpdir}/${titelnummer}DAISY"
-  fi
+  mv "${n}" "${tmpdir}/${ident}DAISY"
 }
 
 function unpack() {
-  local titelnummer="$1"
+  local ident="$1"
   local shard="$2"
-  zip="minio/eingangskorb/${titelnummer}.zip"
-  tmpdir="/var/local/mc/${titelnummer}_zip"
-  dir="${titelnummer}DAISY"
+  zip="minio/eingangskorb/${ident}.zip"
+  tmpdir="/var/local/mc/${ident}_zip"
+  dir="${ident}DAISY"
   dst="${shard}/hoerbuchdienst"
   mc stat "${zip}"
   # shellcheck disable=SC2181
   if [[ $? == 0 ]]; then
     mkdir "${tmpdir}"
-    echo "Unpacking ${titelnummer} in ${tmpdir}"
-    mc cat "${zip}" | unzip -d "${tmpdir}" -
-    mandant_wbh "${titelnummer}" "${tmpdir}"
+    echo "Unpacking ${ident} in ${tmpdir}"
+    mc cp "${zip}" /var/local/mc
+    unzip -d "${tmpdir}" /var/local/mc/"${zip}"
+    mandant_wbh "${ident}" "${tmpdir}"
+    num_files_in_zip="$(unzip -Z /var/local/mc/"${zip}" | grep -cE "^(d|-).*")"
+    num_extracted_files="$(find "${tmpdir}/${ident}" | wc -l)"
+    if [[ ${num_files_in_zip} != "${num_extracted_files}" ]]; then
+      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})"
+      exit 1
+    fi
     if [[ -d "${tmpdir}/${dir}" ]]; then
       pushd "${tmpdir}" >/dev/null
       mc mv --recursive "${dir}" "${dst}"
       popd >/dev/null
     else
-      echo "Could not unzip ${zip} into ${dir}"
+      echo "${ident}: Could not unzip ${zip} into ${dir}"
       exit 1
     fi
     rm -rf "${tmpdir}"
+    rm /var/local/mc/"${zip}"
   else
-    echo "${zip} not found"
+    echo "${ident}: ${zip} not found"
     exit 1
   fi
 }
