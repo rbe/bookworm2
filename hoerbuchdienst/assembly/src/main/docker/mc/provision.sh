@@ -61,14 +61,24 @@ echo "done"
 echo "Creating WBH user"
 recreate_user_readwrite minio-admin wbh readwrite
 echo "done"
-echo "Creating WBH buckets"
 set +o errexit
+echo "Creating bucket 'rogers'"
 mc mb minio-admin/rogers
+echo "Creating bucket 'buckrogers'"
 mc mb minio-admin/buckrogers
+echo "Creating bucket 'hoerbuchdienst'"
 mc mb minio-admin/hoerbuchdienst
+echo "Creating bucket 'eingangskorb'"
 mc mb minio-admin/eingangskorb
+echo "Creating bucket 'hoerbuchkatalog'"
 mc mb minio-admin/hoerbuchkatalog
+echo "Creating bucket 'hoererdaten'"
 mc mb minio-admin/hoererdaten
+set -o errexit
+echo "done"
+
+echo "Removing standard but unneeded host configurations"
+set +o errexit
 mc config host rm gcs
 mc config host rm local
 mc config host rm play
