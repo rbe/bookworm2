@@ -82,8 +82,8 @@ echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
 echo "!!!"
 echo "!!!"
-#echo "!!! *** After reboot execute setup-storageserver-2.sh ***"
-#echo "!!!"
-#echo "!!!"
+echo "!!! *** After reboot execute setup-storageserver-2.sh ***"
+echo "!!!"
+echo "!!!"
 sleep 10
 systemctl reboot
