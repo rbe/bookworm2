@@ -48,19 +48,19 @@ case "${mode}" in
     docker system prune -f
     if [[ "${all}" == "all" ]]; then
       docker volume ls |
-        grep cms |
+        grep hbd |
         awk '{print $2}' |
         xargs docker volume rm
     else
       docker volume ls |
-        grep cms |
+        grep hbd |
         grep -vE "(rproxycerts)" |
         awk '{print $2}' |
         xargs docker volume rm
     fi
     docker image ls |
       grep wbh- |
-      grep "${CMS_RELEASE}" |
+      grep "${HBK_RELEASE}" |
       awk '{print $1":"$2}' |
       xargs docker image rm
     set -o errexit

@@ -50,8 +50,25 @@ fi
 
 case "${project}" in
   hbk)
-    echo "Not implemented"
-    exit 1
+    artifacts=("wbh.bookworm.hoerbuchkatalog.deployment" "wbh.bookworm.cms.assembly")
+    if [[ -n "${current_project_dir}" ]]; then
+      pushd "${current_project_dir}" >/dev/null
+      for artifact in "${artifacts[@]}"; do
+        pushd "${artifact}" >/dev/null
+        echo "Stopping artifact ${artifact} in $(pwd)"
+        ./lifecycle.sh stop
+        popd >/dev/null
+      done
+      popd >/dev/null
+    fi
+    pushd "${new_project_dir}" >/dev/null
+    for artifact in "${artifacts[@]}"; do
+      pushd "${artifact}" >/dev/null
+      echo "Starting artifact ${artifact} in $(pwd)"
+      ./lifecycle.sh start
+      popd >/dev/null
+    done
+    popd >/dev/null
     ;;
   hbd)
     artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
