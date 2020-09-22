@@ -37,5 +37,17 @@
             <outputDirectory>.</outputDirectory>
             <fileMode>755</fileMode>
         </file>
+        <file>
+            <source>target/classes/backup.sh</source>
+            <destName>backup.sh</destName>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>755</fileMode>
+        </file>
+        <file>
+            <source>target/classes/setup-ufw.sh</source>
+            <destName>setup-ufw.sh</destName>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>755</fileMode>
+        </file>
     </files>
 </assembly>
