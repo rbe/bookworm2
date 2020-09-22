@@ -70,7 +70,7 @@ else
   echo "SSH Key id_rsa already exists"
 fi
 
-cat dot_bash_profile >>~/.bash_profile
+[[ -f dot_bash_profile ]] && cat dot_bash_profile >>~/.bash_profile
 
 echo "!!!"
 echo "!!!"

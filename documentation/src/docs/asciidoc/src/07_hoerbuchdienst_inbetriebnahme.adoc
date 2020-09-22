@@ -58,6 +58,7 @@ Damit der Source Code auf dem Shard heruntergeladen werden kann, muss ein SSH Sc
 
 [source,shell,linenum]
 ----
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "wbh-shardN"
 cat ~/.ssh/id_rsa.pub
 ----
 
@@ -158,15 +159,15 @@ Die folgenden Schritte müssen auf einem Shard durchgeführt werden.
 .Software für Produktion bauen, deployen und starten
 [source,shell,linenum]
 ----
-bookworm2 $ ./autoupdate.sh prod hbd
+bookworm2 $ ./autoupdate.sh prod hbd force
 ----
 
 .Releases
 Der durch das Bauen erzeugte Release Zeitpunkt:
 
-* kann aus den Logausgaben abgelesen werden,
+* kann aus den Logausgaben des Builds abgelesen werden,
 * ist an den Artefakten im Verzeichnis `assembly/target/dependency` ablesbar oder
-* per `docker image ls` die aktuellsten Images nachgesehen werden.
+* kann per `docker image ls` (die jeweils aktuellsten Images) nachgesehen werden.
 
 .Beispiel assembly/target/dependency
 [source,shell,linenum]
@@ -293,7 +294,7 @@ Common domain for all shards is audiobook.wbh-online.de
 [source,shell,linenum]
 ----
 $ cnt.sh prod hbd exec rabbitmq rabbitmq-add-federated-exchange.sh \
-    federator:password databeat fanout databeat true
+    federator:<password> databeat fanout databeat true
 ----
 
 .TTL für Nachrichten auf einer Queue setzen
@@ -301,6 +302,13 @@ $ cnt.sh prod hbd exec rabbitmq rabbitmq-add-federated-exchange.sh \
 ----
 $ cnt.sh prod hbd exec rabbitmq rabbitmq-set-queue-message-ttl.sh \
     databeat-message-ttl "^databeat$" 30000
+----
+
+NOTE: Die Konfiguration der TTL für Nachrichten ist bereits in der `definitions.json` enthalten und wird somit automatisch gesetzt.
+
+.Nutzer für den Hörbuchdienst einrichten
+----
+$ cnt.sh prod hbd exec rabbitmq rabbitmq-change-password.sh bugs
 ----
 
 ==== Aktualisierung

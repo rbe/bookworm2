@@ -15,9 +15,27 @@
         </fileSet>
         <fileSet>
             <directory>target/classes</directory>
+            <excludes>
+                <exclude>dot_env</exclude>
+                <exclude>lifecycle.sh</exclude>
+            </excludes>
             <outputDirectory>.</outputDirectory>
             <directoryMode>755</directoryMode>
             <fileMode>644</fileMode>
         </fileSet>
     </fileSets>
+    <files>
+        <file>
+            <source>target/classes/dot_env</source>
+            <destName>.env</destName>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>644</fileMode>
+        </file>
+        <file>
+            <source>target/classes/lifecycle.sh</source>
+            <destName>lifecycle.sh</destName>
+            <outputDirectory>.</outputDirectory>
+            <fileMode>755</fileMode>
+        </file>
+    </files>
 </assembly>

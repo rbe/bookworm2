@@ -61,7 +61,7 @@ git checkout master
 .Installation Teil 1 -- Die Installation starten:
 [source,shell,linenum]
 ----
-bookworm2 $ bash hoerbuchdienst/bin/setup-cms-1.sh
+bookworm2 $ bash cms/bin/setup-cms-1.sh
 ----
 
 und bei Aufforderung Server Name eingeben (wbh-test.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
@@ -82,7 +82,7 @@ Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
 .Installation Teil 2 -- Storage einrichten und Docker installieren:
 [source,shell,linenum]
 ----
-bookworm2 $ bash hoerbuchdienst/bin/setup-cms-2.sh
+bookworm2 $ bash cms/bin/setup-cms-2.sh
 ----
 
 === CMS und Hörbuchkatalog installieren
@@ -94,7 +94,7 @@ Die folgenden Schritte müssen auf einem Server durchgeführt werden.
 .Software für Produktion bauen, deployen und starten
 [source,shell,linenum]
 ----
-bookworm2 $ ./autoupdate.sh prod hbk
+bookworm2 $ ./autoupdate.sh prod hbk force
 ----
 
 .Releases
