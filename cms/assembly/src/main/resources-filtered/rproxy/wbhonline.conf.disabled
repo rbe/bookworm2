@@ -2,12 +2,12 @@ server {
 
     listen 443 ssl;
     #listen [::]:443 ssl;
-    server_name ${hbk.hostname};
+    server_name ${cms.hostname};
     access_log /proc/self/fd/1 main;
     error_log /proc/self/fd/2 error;
     #error_log /proc/self/fd/2 debug;
-    ssl_certificate ${tls.path}/${hbk.hostname}/fullchain.pem;
-    ssl_certificate_key ${tls.path}/${hbk.hostname}/privkey.pem;
+    ssl_certificate ${tls.path}/${cms.hostname}/fullchain.pem;
+    ssl_certificate_key ${tls.path}/${cms.hostname}/privkey.pem;
     #include /etc/letsencrypt/options-ssl-nginx.conf;
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
