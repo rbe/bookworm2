@@ -31,33 +31,57 @@ function unpack() {
   local ident="$1"
   local shard="$2"
   zip="minio/eingangskorb/${ident}.zip"
+  zipdownload="/var/local/mc/${zip}"
   tmpdir="/var/local/mc/${ident}_zip"
-  dir="${ident}DAISY"
+  daisydir="${ident}DAISY"
   dst="${shard}/hoerbuchdienst"
   mc stat "${zip}"
   # shellcheck disable=SC2181
   if [[ $? == 0 ]]; then
+    if [[ -d "${tmpdir}" || -f "${zipdownload}" ]]; then
+      echo "Please cleanup possibly existing directories or files:"
+      echo "  - ${tmpdir}"
+      echo "  - ${zipdownload}"
+      exit 1
+    fi
+    if mc stat "${dst}/${daisydir}" 2>/dev/null; then
+      echo "${ident} already exists at ${dst}/${daisydir}"
+      echo "Please remove for update"
+      exit 1
+    fi
     mkdir "${tmpdir}"
+    echo "Copying ${ident} to ${zipdownload}"
+    mc cp "${zip}" "${zipdownload}"
+    echo "done"
     echo "Unpacking ${ident} in ${tmpdir}"
-    mc cp "${zip}" /var/local/mc
-    unzip -d "${tmpdir}" /var/local/mc/"${zip}"
+    unzip -d "${tmpdir}" "${zipdownload}"
+    echo "done"
     mandant_wbh "${ident}" "${tmpdir}"
     num_files_in_zip="$(unzip -Z /var/local/mc/"${zip}" | grep -cE "^(d|-).*")"
     num_extracted_files="$(find "${tmpdir}/${ident}" | wc -l)"
-    if [[ ${num_files_in_zip} != "${num_extracted_files}" ]]; then
+    if [[ "${num_files_in_zip}" != "${num_extracted_files}" ]]; then
       echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})"
       exit 1
     fi
-    if [[ -d "${tmpdir}/${dir}" ]]; then
+    if [[ -d "${tmpdir}/${daisydir}" ]]; then
       pushd "${tmpdir}" >/dev/null
-      mc mv --recursive "${dir}" "${dst}"
+      mc mv --recursive "${daisydir}" "${dst}"
       popd >/dev/null
+      echo "Cleaning up temporary files"
+      rm -rf "${tmpdir}"
+      rm /var/local/mc/"${zip}"
+      echo "done"
+      if mc stat "${dst}/${daisydir}" 2>/dev/null; then
+        echo "Removing ${zip}"
+        mc rm "${zip}"
+        echo "done"
+      else
+        echo "Cannot stat ${dst}, did not remove ${zip}"
+      fi
     else
-      echo "${ident}: Could not unzip ${zip} into ${dir}"
+      echo "${ident}: Could not unzip ${zip} into ${daisydir}"
       exit 1
     fi
-    rm -rf "${tmpdir}"
-    rm /var/local/mc/"${zip}"
   else
     echo "${ident}: ${zip} not found"
     exit 1
