@@ -7,25 +7,7 @@ set -o errexit
 execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 . "${execdir}/lib.sh"
 
-correct=0
-while [[ ${correct} != 1 ]]; do
-  read -r -e -p "Please enter FQDN of shard: " shard_fqdn
-  if [[ -n "${shard_fqdn}" ]]; then
-    shard_name="${shard_fqdn/.*/}"
-    shard_domain="${shard_fqdn#*.}"
-    echo "Shard name is ${shard_name}"
-    echo "Shard's domain is ${shard_domain}"
-  fi
-  if [[ -n "${shard_fqdn}" ]]; then
-    read -r -e -p "Is this correct? (Enter 'yes') " correct_answer
-    [[ "${correct_answer}" == "yes" ]] && correct=1
-    echo -e "${shard_fqdn}" >/etc/hostname
-    hostnamectl set-hostname "$(cat /etc/hostname)"
-  else
-    echo "No FQDN entered!"
-    correct=0
-  fi
-done
+set_fqdn
 
 "${execdir}"/update-linux.sh
 
