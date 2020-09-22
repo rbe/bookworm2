@@ -1,0 +1,147 @@
+== CMS und Hörbuchkatalog
+
+=== Server provisionieren
+
+==== Server installieren
+
+netcup Server installieren:
+
+* ArchLinux
+* Ausführung "Minimal"
+* Partitionen: "Das Betriebssystem wird in einer kleinen Partition bereit gestellt.
+Der restliche Speicherplatz kann nach Bedarf partitioniert werden."
+
+==== SSH Zugriff einrichten
+
+.Auf dem Client
+Der Administrator muss seinen SSH-Schlüssel für den Login auf dem Server hinterlegen.
+
+[source,shell,linenum]
+----
+ssh-keygen -R wbh-test.wbh-online.de
+ssh-keygen -R <IP Adresse shardN>
+ssh-keyscan shardN.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
+ssh-keygen -H
+ssh-copy-id -i ~/.ssh/id_rsa root@wbh-test.wbh-online.de <1>
+----
+<1> Bei Aufforderung das Passwort aus der Konsole des Providers verwenden.
+
+==== Das Projekt klonen
+
+.Auf dem Shard einloggen:
+[source,shell,linenum]
+----
+ssh root@wbh-test.wbh-online.de
+----
+
+.SSH Schlüssel generieren
+Damit der Source Code auf dem Shard heruntergeladen werden kann, muss ein SSH Schlüssel erzeugt werden.
+
+[source,shell,linenum]
+----
+ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "wbh-test"
+cat ~/.ssh/id_rsa.pub
+----
+
+und der Public Key muss auf GitHub und Bitbucket zum Zugriff durch den Shard hinterlegt werden.
+
+.Source Code auschecken
+[source,shell,linenum]
+----
+ssh-keyscan github.com 2>/dev/null >>~/.ssh/known_hosts
+ssh-keyscan bitbucket.org 2>/dev/null >>~/.ssh/known_hosts
+git clone git@bitbucket.org:artofcoding/bookworm2 ~/bookworm2
+cd ~/bookworm2
+git config pull.rebase false
+git checkout master
+----
+
+==== Erstinstallation durchführen
+
+.Installation Teil 1 -- Die Installation starten:
+[source,shell,linenum]
+----
+bookworm2 $ bash hoerbuchdienst/bin/setup-cms-1.sh
+----
+
+und bei Aufforderung Server Name eingeben (wbh-test.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
+
+[source,text,linenum]
+----
+Please enter FQDN of server: wbh-test.wbh-online.de
+Shard name is wbh-test
+Shard's domain is wbh-online.de
+Is this correct? (Enter 'yes') yes
+----
+
+WARNING: Die eingegebenen Informationen müssen korrekt sein!
+Erfolgt keine Bestätigung per Eingabe von 'yes' wird die Abfrage wiederholt.
+
+Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
+
+.Installation Teil 2 -- Storage einrichten und Docker installieren:
+[source,shell,linenum]
+----
+bookworm2 $ bash hoerbuchdienst/bin/setup-cms-2.sh
+----
+
+=== CMS und Hörbuchkatalog installieren
+
+IMPORTANT: Die durch die Erstinstallation und den ersten Start erzeugten Volumes und Daten dürfen keinesfalls verändert oder gar gelöscht werden!
+
+Die folgenden Schritte müssen auf einem Server durchgeführt werden.
+
+.Software für Produktion bauen, deployen und starten
+[source,shell,linenum]
+----
+bookworm2 $ ./autoupdate.sh prod hbk
+----
+
+.Releases
+Der durch das Bauen erzeugte Release Zeitpunkt:
+
+* kann aus den Logausgaben des Builds abgelesen werden,
+* ist an den Artefakten im Verzeichnis `assembly/target/dependency` ablesbar oder
+* kann per `docker image ls` (die jeweils aktuellsten Images) nachgesehen werden.
+
+.Beispiel assembly/target/dependency
+[source,shell,linenum]
+----
+bookworm2 $ ls -l assembly/target/dependency/
+total 37940
+-rw-r--r-- 1 root root    51279 Jul 18 11:03 wbh.bookworm.cms.assembly-2020-07-18T09-02-06Z.zip
+-rw-r--r-- 1 root root    58689 Jul 18 11:08 wbh.bookworm.hoerbuchdienst.assembly-2020-07-18T09-02-06Z.zip
+-rw-r--r-- 1 root root 38733860 Jul 18 11:04 wbh.bookworm.hoerbuchkatalog.deployment-2020-07-18T09-02-06Z.zip
+----
+
+Hier ist der Zeitstempel `2020-07-18T09-02-06Z`.
+
+.Das Deployment durchführen
+Dabei den gewünschten Release-Zeitpunkt wählen und per `deploy.sh` in das `release`-Verzeichnis einspielen lassen:
+
+[source,shell,linenum]
+----
+bookworm2 $ ./deploy.sh prod hbk 2020-07-18T09-02-06Z
+----
+
+.Starten der Applikationen
+In das erstellte Release-Verzeichnis wechseln:
+
+[source,shell,linenum]
+----
+$ cd ~/releases/prod-hbk-2020-07-18T09-02-06Z/wbh.bookworm.cms.assembly
+releases/prod-hbk-2020-07-16T17-16-39Z/wbh.bookworm.cms.assembly $ ./lifecycle.sh start
+----
+
+==== Aktualisierung
+
+.Software erneut bauen
+[source,shell,linenum]
+----
+cd ~/bookworm2
+git fetch origin
+git checkout origin/master -- autoupdate.sh
+./autoupdate.sh prod hbd
+----
+
+TIP: Shell Alias `update-hbd` benutzen.
