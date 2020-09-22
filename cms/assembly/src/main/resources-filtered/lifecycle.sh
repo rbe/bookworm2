@@ -60,7 +60,7 @@ case "${mode}" in
     fi
     docker image ls |
       grep wbh- |
-      grep "${HBD_RELEASE}" |
+      grep "${HBK_RELEASE}" |
       awk '{print $1":"$2}' |
       xargs docker image rm
     set -o errexit
