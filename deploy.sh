@@ -68,6 +68,7 @@ case "${project}" in
     deploy_artifacts "${artifacts[@]}"
     for artifact in "${artifacts[@]}"; do
       pushd "${project_dir}/${artifact}" >/dev/null
+      chmod +x *.sh
       echo "Starting ${artifact}"
       docker-compose \
         -p "${project_name}" \
@@ -81,7 +82,7 @@ case "${project}" in
     artifacts=("wbh.bookworm.hoerbuchdienst.assembly")
     deploy_artifacts "${artifacts[@]}"
     pushd "${project_dir}/wbh.bookworm.hoerbuchdienst.assembly" >/dev/null
-    chmod +x lifecycle.sh
+    chmod +x *.sh
     if ! docker volume ls | grep -c "${project_name}_minio" >/dev/null; then
       echo "Provisioning ${project}, environment ${env} (${project_name})"
       "${execdir}"/lifecycle.sh provision
