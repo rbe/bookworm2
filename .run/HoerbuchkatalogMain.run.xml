@@ -1,0 +1,22 @@
+<component name="ProjectRunConfigurationManager">
+    <configuration default="false" name="HoerbuchkatalogMain" type="SpringBootApplicationConfigurationType"
+                   factoryName="Spring Boot" nameIsGenerated="true">
+        <module name="wbh.bookworm.hoerbuchkatalog.assembly"/>
+        <extension name="coverage">
+            <pattern>
+                <option name="PATTERN" value="wbh.bookworm.hoerbuchkatalog.assembly.*"/>
+                <option name="ENABLED" value="true"/>
+            </pattern>
+        </extension>
+        <option name="SPRING_BOOT_MAIN_CLASS" value="wbh.bookworm.hoerbuchkatalog.assembly.HoerbuchkatalogMain"/>
+        <option name="DEBUG_MODE" value="true"/>
+        <option name="ACTIVE_PROFILES" value="development"/>
+        <option name="ALTERNATIVE_JRE_PATH"/>
+        <envs>
+            <env name="HOERBUCHKATALOG_TEMPLATE" value="$PROJECT_DIR$/hoerbuchkatalog/ui/src/main/resources/templates"/>
+        </envs>
+        <method v="2">
+            <option name="Make" enabled="true"/>
+        </method>
+    </configuration>
+</component>

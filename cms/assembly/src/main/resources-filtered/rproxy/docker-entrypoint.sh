@@ -5,7 +5,14 @@ echo "Starting at $(date), domain ${domain}"
 env
 ls -l /etc/nginx/conf.d
 cat /etc/nginx/nginx.conf
-cat /etc/nginx/conf.d/*.conf
+for conf in $(find /etc/nginx/conf.d -type f -name \*.conf); do
+  echo ""
+  echo ""
+  echo "Configuration ${conf}"
+  cat "${conf}"
+  echo ""
+  echo ""
+done
 [[ -d "${tls.path}" ]] && ls -lR "${tls.path}"
 nginx -t
 
@@ -50,33 +57,38 @@ then
     echo "Unknown domain, no TLS certificates generated"
   fi
   if [[ -d "${tls.path}" ]]; then
-    echo "Certificates in ${tls.path}"
+    echo "TLS certificates in ${tls.path}"
     ls -lR "${tls.path}"
   fi
-  echo "done"
-  echo "Stopping nginx"
-  nginx -s stop
-  sleep 1
   echo "done"
   touch /etc/letsencrypt/is_initialized
 fi
 
-echo "Enabling servers: ${nginx.enable.servers}"
-for server in ${nginx.enable.servers}
-do
-  if [ -f /etc/nginx/conf.d/"${server}".conf.disabled ] && [ ! -f /etc/nginx/conf.d/"${server}".conf ]
-  then
-    echo "Activating configuration for ${server}"
-    mv /etc/nginx/conf.d/"${server}".conf.disabled /etc/nginx/conf.d/"${server}".conf
-  fi
-done
+if [[ -n "${nginx.enable.servers}" ]]; then
+  echo "Enabling servers: ${nginx.enable.servers}"
+  for server in ${nginx.enable.servers}
+  do
+    if [ -f /etc/nginx/conf.d/"${server}".conf.disabled ] && [ ! -f /etc/nginx/conf.d/"${server}".conf ]
+    then
+      echo "Activating configuration for ${server}"
+      mv /etc/nginx/conf.d/"${server}".conf.disabled /etc/nginx/conf.d/"${server}".conf
+    elif [ ! -f /etc/nginx/conf.d/"${server}".conf ]; then
+      echo "Configuration for ${server} already activated"
+    fi
+  done
+fi
 
-if [ "${tld}" != "local" ]
+if [[ "${tld}" != "local" ]]
 then
   echo "Starting crond to renew Lets Encrypt certificates"
   crond -b -S -l 8
   echo "done"
 fi
+
+echo "Stopping nginx"
+nginx -s stop
+sleep 1
+echo "done"
 
 echo "Starting nginx"
 nginx -g "daemon off;"

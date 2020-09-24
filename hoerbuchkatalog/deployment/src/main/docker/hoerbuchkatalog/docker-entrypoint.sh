@@ -6,18 +6,30 @@
 #
 
 set -o nounset
+set -o errexit
 
 umask 0007
+
 TZ="Europe/Berlin"
 export TZ
 
-cd /opt/bookworm
-rm -rf var/wbh/hoerbuchkatalog/lucene/*
-SPRING_APPLICATION_JSON="$(cat conf/secrets.json)" \
+ls -l /usr/local/service.jar
+ls -l /var/local
+
+rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
+
+SPRING_APPLICATION_JSON="$(cat /var/local/conf/secrets.json)" \
   java \
-  -Xms2g -Xmx2g \
-  -jar app/wbh.bookworm.hoerbuchkatalog.assembly.jar \
+  -Xms2048m -Xmx2048m \
+  -XX:+UseCompressedOops \
+  -XX:+HeapDumpOnOutOfMemoryError \
+  -XX:HeapDumpPath=/var/local/java_debug \
+  -XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
+  -XX:+UnlockExperimentalVMOptions \
+  -XX:+UseZGC \
+  -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M \
+  -jar /usr/local/service.jar \
   --spring.profiles.active=production \
-  --spring.config.additional-location=conf/
+  --spring.config.additional-location=/var/local/conf/
 
 exit 0

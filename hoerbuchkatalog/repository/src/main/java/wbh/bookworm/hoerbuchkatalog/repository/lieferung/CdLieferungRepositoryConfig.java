@@ -6,14 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
 import java.nio.file.Path;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
-@PropertySource("classpath:/conf/cdlieferung.properties")
 @ConfigurationProperties(prefix = "cdlieferung")
 public class CdLieferungRepositoryConfig {
 

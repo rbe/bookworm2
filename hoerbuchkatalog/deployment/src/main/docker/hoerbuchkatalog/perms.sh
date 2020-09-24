@@ -6,53 +6,44 @@
 #
 
 set -o nounset
+set -o errexit
 
-pushd /opt/bookworm >/dev/null || exit 1
+pushd /var/local >/dev/null
 
 # Generell
-chown -R bookworm:bookworm .
-find . -type d -print0 | xargs -r -0 chmod 770
-find . -type f -print0 | xargs -r -0 chmod 660
+chown -R service:service /var/local
+find /var/local -type d -print0 | xargs -r -0 chmod 770
+find /var/local -type f -print0 | xargs -r -0 chmod 660
+find /var/local -type f -name \*.sh -print0 | xargs -r -0 chmod 550
 
 # App
-chmod 555 .
-chmod 550 bin/*.sh
-chmod 550 app
-chmod 660 app/*
+chmod 440 /usr/local/service.jar
 
 # Konfiguration
-chmod 660 -- *.yml
-chmod 440 conf/*
-chmod 660 conf/secrets.json
-chmod 660 conf/hoerbuchkatalog.properties
-chmod 660 conf/blista-dls.properties
+find /var/local -type f -name \*.yml -print0 | xargs -r -0 chmod 660
+chmod 550 /var/local/conf
+find /var/local/conf -type f -print0 | xargs -r -0 chmod 660
 
 # Templates
-find var/templates/* -type f -print0 | xargs -r -0 chmod 660
+find /var/local/templates/* -type f -print0 | xargs -r -0 chmod 660
 
 # Daten - Hörbuchkatalog
-chmod 750 var/wbh/hoerbuchkatalog
+chmod 750 /var/local/wbh/hoerbuchkatalog
 # Daten - Nutzerdaten
-chmod 750 var/wbh/nutzerdaten
-# Aktualisierung der Daten
-chown root:root var
-chmod 555 var
-chown root:root var/wbh
-chmod 555 var/wbh
-chown root:root var/wbh/aktualisierung
-chmod 555 var/wbh/aktualisierung
+chmod 750 /var/local/wbh/nutzerdaten
+# Daten - blista DLS
+chmod 550 /var/local/blista
+chmod 750 /var/local/blista/dls
 
-# blista DLS
-chmod 550 var/blista
-chmod 750 var/blista/dls
+# Aktualisierung der Daten
+chown root:root /var/local/wbh
+chmod 555 /var/local/wbh
+chown root:root /var/local/wbh/aktualisierung
+chmod 555 /var/local/wbh/aktualisierung
 
 # Repository
-chmod 555 var/repository
+chmod 555 /var/local/repository
 
-# var
-chown root:root var/*
-chmod 555 var/*
-
-popd >/dev/null || exit 1
+popd >/dev/null
 
 exit 0

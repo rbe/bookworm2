@@ -1,3 +1,47 @@
+hoererdaten:
+  directory: ./var/wbh/nutzerdaten
+
+hoerbuchkatalog:
+  directory: ./var/wbh/hoerbuchkatalog
+  cron:
+    expression: 0 15 5 * * MON-FRI
+  suchergebnisse:
+    anzahl: 1000
+  wbh:
+    gesamtdat:
+      filename: Gesamt.dat
+      charset: ISO-8859-15
+  blista:
+    rest:
+      url: https://rest-dls-katalog.blista.de:443/v1/isofiles
+    aghnummern:
+      pathinzip: /iso.txt
+      charset: ISO-8859-15
+
+blista:
+  dls:
+    downloadsProTag: 5
+    downloadsProMonat: 10
+    sftp:
+      host: rest-dls-katalog.blista.de
+      port: 95
+      bibliothek:
+      bibkennwort:
+      directory: ./var/blista/dls
+    rest:
+      werkeurl: https://rest-dls-katalog.blista.de:443/v1/werke
+      checkurl: https://rest-dls-katalog.blista.de:443/v1/check
+      bibliothek:
+      bibkennwort:
+      directory: ./var/blista/dls
+
+cdlieferung:
+  directory: ./var/wbh/nutzerdaten
+
+lucene:
+  index:
+    directory: ${hoerbuchkatalog.directory}/lucene
+
 spring:
   banner:
     location: classpath:/banner/banner-starwars0.txt

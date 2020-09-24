@@ -6,15 +6,13 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.PropertySource;
-
 import java.nio.charset.Charset;
 import java.nio.file.Path;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.context.annotation.Configuration;
+
 @Configuration
-@PropertySource("classpath:/conf/hoerbuchkatalog.properties")
 @ConfigurationProperties(prefix = "hoerbuchkatalog")
 public class HoerbuchkatalogConfig {
 

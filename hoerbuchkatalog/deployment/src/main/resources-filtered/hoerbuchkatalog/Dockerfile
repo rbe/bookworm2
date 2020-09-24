@@ -9,32 +9,23 @@ RUN apk update
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
-RUN addgroup bookworm \
-    && adduser -D -S -G bookworm bookworm
+RUN addgroup service \
+    && adduser -D -S -G service service
 RUN apk --no-cache add bash
 
 FROM base
-WORKDIR /opt/bookworm
-COPY *.sh bin/
-RUN chmod ug+x bin/*.sh \
-    && bin/mkdirs.sh
-COPY application-production.yml .
-COPY wbh.bookworm.hoerbuchkatalog.assembly-${project.version}.jar app/wbh.bookworm.hoerbuchkatalog.assembly.jar
-COPY conf/* conf/
-COPY secrets.json conf/
-COPY templates/* var/templates/
-RUN bin/perms.sh
-
-USER bookworm:bookworm
-
-VOLUME [\
-    "/opt/bookworm",\
-    "/opt/bookworm/var/templates",\
-    "/opt/bookworm/var/repository",\
-    "/opt/bookworm/var/wbh",\
-    "/opt/bookworm/var/blista"\
-]
-
+COPY --chown=service *.sh /usr/local/bin/
+RUN find /usr/local/bin -type f -name \*.sh -print0 | xargs -0 chmod 755 \
+    && /usr/local/bin/mkdirs.sh
+COPY --chown=service wbh.bookworm.hoerbuchkatalog.assembly-${project.version}.jar /usr/local/service.jar
+COPY --chown=service application-production.yml /var/local/
+COPY --chown=service conf/* /var/local/conf/
+COPY --chown=service secrets.json /var/local/conf/
+COPY --chown=service templates/* /var/local/templates/
+RUN /usr/local/bin/perms.sh
+USER service:service
+VOLUME ["/var/local"]
+WORKDIR /var/local
 EXPOSE 8080/tcp
-ENV HOERBUCHKATALOG_TEMPLATE /opt/bookworm/var/templates
-ENTRYPOINT ["/opt/bookworm/bin/docker-entrypoint.sh"]
+ENV HOERBUCHKATALOG_TEMPLATE /var/local/templates
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

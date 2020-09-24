@@ -6,15 +6,13 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog;
 
-import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.context.annotation.PropertySource;
-import org.springframework.stereotype.Component;
-
 import java.nio.file.Path;
 import java.util.Arrays;
 
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.stereotype.Component;
+
 @Component
-@PropertySource({"classpath:/conf/blista-dls.properties"})
 @ConfigurationProperties(prefix = "blista.dls.rest")
 /**
  * <pre>
