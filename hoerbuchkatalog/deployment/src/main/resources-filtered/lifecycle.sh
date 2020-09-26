@@ -76,7 +76,9 @@ case "${mode}" in
     ;;
   stop)
     pushd "${execdir}" >/dev/null
+    set +o errexit  # 2 Projekte, daher wird ein Netzwerk noch genutzt und kann nicht gelöscht werden
     ${dc} down
+    set -o errexit
     popd >/dev/null
     ;;
   *)
