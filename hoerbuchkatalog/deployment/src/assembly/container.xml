@@ -27,7 +27,7 @@
             <directory>target/dependency/BOOT-INF/classes</directory>
             <includes>
                 <include>application-production.yml</include>
-                <include>conf/**</include>
+                <include>application-secrets.tmpl.yml</include>
             </includes>
             <outputDirectory>hoerbuchkatalog</outputDirectory>
             <directoryMode>755</directoryMode>
