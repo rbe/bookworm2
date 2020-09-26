@@ -33,7 +33,7 @@ out/
 
 dependency-reduced-pom.xml
 var/
-/hoerbuchkatalog/assembly/src/main/resources/conf/secrets.json
+/hoerbuchkatalog/assembly/src/main/resources/application-secrets.yml
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/fonts/
