@@ -6,12 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.email;
 
+import java.nio.file.Path;
+
 import wbh.bookworm.hoerbuchkatalog.domain.email.EmailTemplateId;
 import wbh.bookworm.hoerbuchkatalog.domain.email.HtmlEmailTemplate;
 
 import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
-
-import java.nio.file.Path;
 
 // TODO spring.main.allow-bean-definition-overriding=true @DomainRepositoryComponent
 public class EmailTemplateRepository extends JsonDomainRepository<HtmlEmailTemplate, EmailTemplateId> {
