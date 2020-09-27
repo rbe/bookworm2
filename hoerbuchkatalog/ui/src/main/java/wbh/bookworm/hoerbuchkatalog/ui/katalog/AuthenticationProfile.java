@@ -32,7 +32,7 @@ public class AuthenticationProfile {
 
     private static final List<String> TRUSTED_IP = Arrays.asList(
             "127.0.0.1",
-            "172.16.",
+            "172.",
             "192.168.");
 
     @Bean
