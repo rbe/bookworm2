@@ -5,11 +5,10 @@ LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
-RUN apk --no-cache add \
-        tzdata \
-        pwgen \
+RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
+RUN apk --no-cache add pwgen
 RUN rabbitmq-plugins enable --offline rabbitmq_federation
 RUN rabbitmq-plugins enable --offline rabbitmq_federation_management
 COPY *.sh /usr/local/bin/

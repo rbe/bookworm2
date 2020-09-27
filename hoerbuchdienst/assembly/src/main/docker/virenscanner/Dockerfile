@@ -16,8 +16,8 @@ RUN apk add --no-cache \
 RUN apk add --no-cache clamav clamav-libunrar
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
-EXPOSE 3310/tcp
 VOLUME ["/data"]
+EXPOSE 3310/tcp
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 HEALTHCHECK --start-period=300s CMD ping.sh
 

@@ -11,8 +11,8 @@ RUN apk add --no-cache pwgen \
     && pwgen -BCn 40 1 >/var/local/minio/secret_key
 COPY docker-entrypoint.sh /usr/local/bin
 RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-EXPOSE 9000/tcp
 VOLUME ["/var/local/minio", "/miniodata"]
 WORKDIR /var/local/minio
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+EXPOSE 9000/tcp
 CMD ["server", "--address=:9000", "/miniodata"]
