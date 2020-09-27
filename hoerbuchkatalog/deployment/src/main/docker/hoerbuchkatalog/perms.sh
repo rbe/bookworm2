@@ -21,8 +21,6 @@ chmod 440 /usr/local/service.jar
 
 # Konfiguration
 find /var/local -type f -name \*.yml -print0 | xargs -r -0 chmod 660
-chmod 550 /var/local/conf
-find /var/local/conf -type f -print0 | xargs -r -0 chmod 660
 
 # Templates
 find /var/local/templates/* -type f -print0 | xargs -r -0 chmod 660
