@@ -27,7 +27,7 @@ services:
       - JOOMLA_DB_USER=joomla
       - JOOMLA_DB_PASSWORD=joomla
     volumes:
-      - html:/var/www/html:rw
+      - joomladata:/var/www/html:rw
     networks:
       - backend
       - frontend
@@ -51,7 +51,7 @@ services:
       - TZ=Europe/Berlin
     volumes:
       - rproxycerts:/etc/letsencrypt:rw
-      - html:/var/www/html:ro
+      - joomladata:/var/www/html:ro
     networks:
       #- proxy-hbk-backend
       - hbk-backend
@@ -93,7 +93,7 @@ networks:
 volumes:
   mysqldata:
     driver: local
-  html:
+  joomladata:
     driver: local
   rproxycerts:
     driver: local
