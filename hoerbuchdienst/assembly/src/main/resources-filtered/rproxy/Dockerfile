@@ -15,8 +15,8 @@ RUN apk add --no-cache git
 RUN apk add --no-cache pwgen
 RUN apk --no-cache add openssl
 RUN apk --no-cache add certbot-nginx
-RUN rm /etc/nginx/conf.d/default.conf* \
-RUN adduser -u 82 -D -S -G www-data www-data \
+RUN rm /etc/nginx/conf.d/default.conf*
+RUN adduser -u 82 -D -S -G www-data www-data
 RUN echo "0 0 * * WED,SUN certbot renew" | crontab -
 #RUN apk add --no-cache make
 #RUN apk add --no-cache python3

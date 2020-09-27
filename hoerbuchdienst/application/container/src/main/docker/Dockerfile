@@ -20,9 +20,10 @@ COPY --chown=service src/main/docker/logback.xml /var/local/
 RUN mkdir /var/local/java_debug
 RUN find /var/local -type d -print0 | xargs -0 chown service:service \
    && find /var/local -type d -print0 | xargs -0 chmod 755
-USER service
+USER service:service
 VOLUME ["/var/local"]
 WORKDIR /var/local
+EXPOSE 8080/tcp
 ENV MICRONAUT_CONFIG_FILES ""
 ENTRYPOINT ["java",\
     "-Xms1536m", "-Xmx1536m",\
