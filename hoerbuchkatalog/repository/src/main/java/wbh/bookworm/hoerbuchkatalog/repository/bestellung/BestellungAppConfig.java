@@ -6,11 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
+import java.nio.file.Path;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-
-import java.nio.file.Path;
 
 @Configuration
 @ComponentScan(basePackageClasses = {
@@ -19,18 +20,18 @@ import java.nio.file.Path;
 public class BestellungAppConfig {
 
     @Bean
-    public WarenkorbRepository warenkorbRepository() {
-        return new WarenkorbRepository(Path.of("var"));
+    public WarenkorbRepository warenkorbRepository(@Value("${repository.path}") final String repositoryPath) {
+        return new WarenkorbRepository(Path.of(repositoryPath));
     }
 
     @Bean
-    public MerklisteRepository merklisteRepository() {
-        return new MerklisteRepository(Path.of("var"));
+    public MerklisteRepository merklisteRepository(@Value("${repository.path}") final String repositoryPath) {
+        return new MerklisteRepository(Path.of(repositoryPath));
     }
 
     @Bean
-    public BestellungRepository bestellungRepository() {
-        return new BestellungRepository(Path.of("var"));
+    public BestellungRepository bestellungRepository(@Value("${repository.path}") final String repositoryPath) {
+        return new BestellungRepository(Path.of(repositoryPath));
     }
 
 }

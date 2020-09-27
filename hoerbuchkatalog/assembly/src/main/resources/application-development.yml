@@ -1,6 +1,3 @@
-hoererdaten:
-  directory: ./var/wbh/nutzerdaten
-
 hoerbuchkatalog:
   directory: ./var/wbh/hoerbuchkatalog
   cron:
@@ -18,6 +15,15 @@ hoerbuchkatalog:
       pathinzip: /iso.txt
       charset: ISO-8859-15
 
+hoererdaten:
+  directory: ./var/wbh/nutzerdaten
+
+cdlieferung:
+  directory: ./var/wbh/nutzerdaten
+
+repository:
+  path: ./var
+
 blista:
   dls:
     downloadsProTag: 5
@@ -34,9 +40,6 @@ blista:
       bibliothek:
       bibkennwort:
       directory: ./var/blista/dls
-
-cdlieferung:
-  directory: ./var/wbh/nutzerdaten
 
 lucene:
   index:
