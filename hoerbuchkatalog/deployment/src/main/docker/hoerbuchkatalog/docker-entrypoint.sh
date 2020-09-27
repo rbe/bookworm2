@@ -29,6 +29,6 @@ java \
   -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M \
   -jar /usr/local/service.jar \
   --spring.profiles.active=production \
-  --spring.config.additional-location=/var/local/
+  --spring.config.additional-location=/var/local/application-secrets.yml
 
 exit 0
