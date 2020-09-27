@@ -14,12 +14,11 @@ TZ="Europe/Berlin"
 export TZ
 
 ls -l /usr/local/service.jar
-ls -l /var/local
+ls -la /var/local
 
 rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
 
-SPRING_APPLICATION_JSON="$(cat /var/local/conf/secrets.json)" \
-  java \
+java \
   -Xms2048m -Xmx2048m \
   -XX:+UseCompressedOops \
   -XX:+HeapDumpOnOutOfMemoryError \
@@ -30,6 +29,6 @@ SPRING_APPLICATION_JSON="$(cat /var/local/conf/secrets.json)" \
   -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M \
   -jar /usr/local/service.jar \
   --spring.profiles.active=production \
-  --spring.config.additional-location=/var/local/conf/
+  --spring.config.additional-location=/var/local/
 
 exit 0
