@@ -154,13 +154,7 @@ server {
         fastcgi_connect_timeout 5s;
         fastcgi_ignore_client_abort on;
         fastcgi_pass joomla:9000;
-    }
-    location /hbk/ {
-        # CSS, Bilder vom CMS
-        location ~* \.(css|png|jpe?g|gif|ico)$ {
-            try_files $uri =404;
-            expires 24h;
-        }
+        #proxy_pass http://hoerbuchkatalog:8080;
     }
 
 }
