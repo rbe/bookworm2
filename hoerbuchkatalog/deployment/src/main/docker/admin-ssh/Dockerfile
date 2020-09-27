@@ -33,7 +33,6 @@ RUN chmod 700 /usr/local/bin/setup-ssh-users.sh \
 COPY sshd_config_2 /var/local
 RUN cat /var/local/sshd_config_2 >>/etc/ssh/sshd_config \
         && rm /var/local/sshd_config_2
-VOLUME ["/etc/ssh", "/etc/ssh/keys"]
-EXPOSE 22
 WORKDIR /etc/ssh
+EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

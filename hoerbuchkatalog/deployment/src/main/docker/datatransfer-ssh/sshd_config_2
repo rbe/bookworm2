@@ -8,15 +8,15 @@ Subsystem sftp internal-sftp -u 0007
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
-    ChrootDirectory /opt/bookworm/var/wbh/aktualisierung
+    ChrootDirectory /var/local/wbh/aktualisierung
     ForceCommand internal-sftp -u 0007
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
-    ChrootDirectory /opt/bookworm/var/wbh/aktualisierung
+    ChrootDirectory /var/local/wbh/aktualisierung
     ForceCommand internal-sftp -u 0007
 
 Match User wbh
     AuthorizedKeysFile /etc/ssh/keys/wbh_authorized_keys
-    ChrootDirectory /opt/bookworm/var/wbh/aktualisierung
+    ChrootDirectory /var/local/wbh/aktualisierung
     ForceCommand internal-sftp -u 0007

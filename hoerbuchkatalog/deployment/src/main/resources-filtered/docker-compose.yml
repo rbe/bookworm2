@@ -9,11 +9,7 @@ services:
       - LANG=en_US.UTF-8
       - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
     volumes:
-      - app:/opt/bookworm:ro
-      - templates:/opt/bookworm/var/templates:ro
-      - wbh:/opt/bookworm/var/wbh:rw
-      - blista:/opt/bookworm/var/blista:rw
-      - repository:/opt/bookworm/var/repository:rw
+      - hoerbuchkataloglocal:/var/local:rw
     networks:
       - backend
       - frontend
@@ -26,8 +22,7 @@ services:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
     volumes:
-      - datatransfer_etc_ssh:/etc/ssh:ro
-      - wbh:/opt/bookworm/var/wbh:rw
+      - hoerbuchkataloglocal:/var/local:rw
     networks:
       - frontend
     expose:
@@ -39,31 +34,14 @@ services:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
     volumes:
-      - admin_etc_ssh:/etc/ssh:ro
-      - app:/opt/bookworm:rw
-      - templates:/opt/bookworm/var/templates:rw
-      - wbh:/opt/bookworm/var/wbh:rw
-      - blista:/opt/bookworm/var/blista:rw
-      - repository:/opt/bookworm/var/repository:rw
+      - hoerbuchkataloglocal:/var/local:rw
     networks:
       - frontend
     expose:
       - 2202
 
 volumes:
-  admin_etc_ssh:
-    driver: local
-  datatransfer_etc_ssh:
-    driver: local
-  app:
-    driver: local
-  templates:
-    driver: local
-  repository:
-    driver: local
-  wbh:
-    driver: local
-  blista:
+  hoerbuchkataloglocal:
     driver: local
 
 networks:

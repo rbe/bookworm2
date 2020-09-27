@@ -34,6 +34,5 @@ RUN chmod 500 /usr/local/bin/setup-ssh-users.sh \
 RUN cat /var/local/sshd_config_2 >>/etc/ssh/sshd_config \
         && rm /var/local/sshd_config_2
 WORKDIR /etc/ssh
-VOLUME ["/etc/ssh", "/etc/ssh/keys"]
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]
