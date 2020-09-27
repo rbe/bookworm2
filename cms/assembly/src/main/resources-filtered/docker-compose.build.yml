@@ -13,6 +13,6 @@ services:
   cms-rproxy:
     build:
       context: ./rproxy
-  rproxy-certbot:
-    build:
-      context: ./rproxy-certbot
+  #rproxy-certbot:
+  #  build:
+  #    context: ./rproxy-certbot
