@@ -24,7 +24,7 @@ RUN echo "0 0 * * WED,SUN certbot renew" | crontab -
 COPY *.sh /usr/local/bin/
 RUN chmod +x /usr/local/bin/*.sh
 RUN mkdir /var/local/rproxy
-VOLUME ["/etc/nginx", "/etc/letsencrypt", "/var/local/rproxy"]
+VOLUME ["/etc/letsencrypt", "/var/local/rproxy"]
 EXPOSE 80/tcp 443/tcp
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 

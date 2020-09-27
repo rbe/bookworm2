@@ -263,7 +263,6 @@ services:
       - RABBITMQ_HOSTNAME=${rabbitmq.hostname}
       - HBD_HOSTNAME=${hbd.hostname}
     volumes:
-      - rproxyconf:/etc/nginx:rw
       - rproxycerts:/etc/letsencrypt:rw
     networks:
       - backend
@@ -316,8 +315,6 @@ volumes:
   hoerbuchdiensttmp:
     driver: local
   hoerbuchdienstlocal:
-    driver: local
-  rproxyconf:
     driver: local
   rproxycerts:
     driver: local
