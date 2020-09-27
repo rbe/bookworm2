@@ -20,7 +20,7 @@ RUN find /usr/local/bin -type f -name \*.sh -print0 | xargs -0 chmod 755 \
 COPY --chown=service wbh.bookworm.hoerbuchkatalog.assembly-${project.version}.jar /usr/local/service.jar
 COPY --chown=service application-production.yml /var/local/
 COPY --chown=service application-secrets.tmpl.yml /var/local/
-COPY --chown=service templates/* /var/local/templates/
+COPY --chown=service templates/ /var/local/templates/
 RUN /usr/local/bin/perms.sh
 USER service:service
 VOLUME ["/var/local"]
