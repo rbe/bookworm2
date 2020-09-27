@@ -37,6 +37,6 @@ RUN chmod 700 /usr/local/bin/setup-ssh-users.sh \
     && rm /usr/local/bin/setup-ssh-users.sh \
     && passwd -u www-data
 WORKDIR /var/www/html
-VOLUME ["/etc/ssh", "/etc/ssh/keys", "/var/www/html"]
+VOLUME ["/var/www/html"]
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

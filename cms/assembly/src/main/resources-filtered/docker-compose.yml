@@ -39,7 +39,6 @@ services:
     environment:
       - TZ=Europe/Berlin
     volumes:
-      - assetsconf:/etc/ssh:ro
       - html:/var/www/html:rw
     networks:
       - backend
@@ -51,7 +50,6 @@ services:
     environment:
       - TZ=Europe/Berlin
     volumes:
-      - rproxyconf:/etc/nginx:rw
       - rproxycerts:/etc/letsencrypt:rw
       - html:/var/www/html:ro
     networks:
@@ -59,18 +57,18 @@ services:
       - hbk-backend
       - backend
       - frontend
-  rproxy-certbot:
-    image: wbh-cms/rproxy-certbot:${cms.release}
-    restart: unless-stopped
-    depends_on:
-      - cms-rproxy
-    environment:
-      - TZ=Europe/Berlin
-    volumes:
-      - rproxyconf:/etc/nginx:rw
-      - rproxycerts:/etc/letsencrypt:rw
-    networks:
-      - hbk-backend
+  #rproxy-certbot:
+  #  image: wbh-cms/rproxy-certbot:${cms.release}
+  #  restart: unless-stopped
+  #  depends_on:
+  #    - cms-rproxy
+  #  environment:
+  #    - TZ=Europe/Berlin
+  #  volumes:
+  #    - rproxyconf:/etc/nginx:rw
+  #    - rproxycerts:/etc/letsencrypt:rw
+  #  networks:
+  #    - hbk-backend
 
 networks:
   #proxy-hbk-backend:
@@ -93,13 +91,9 @@ networks:
     internal: false
 
 volumes:
-  assetsconf:
-    driver: local
   mysqldata:
     driver: local
   html:
-    driver: local
-  rproxyconf:
     driver: local
   rproxycerts:
     driver: local
