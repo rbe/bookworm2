@@ -13,7 +13,7 @@ echo "!!!"
 echo "Proceed? Enter 'yes' or use Ctrl-C to cancel."
 read yn
 if [[ "${yn}" == "yes" ]]; then
-  if ! docker rm -f "$(docker ps -aq)"; then
+  if ! docker rm -f $(docker ps -aq); then
     failed "Remove all containers"
   fi
   if ! docker image ls | grep wbh- | awk '{print $1":"$2}' | xargs docker image rm -f; then
