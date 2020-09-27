@@ -75,7 +75,7 @@
                 <docker.project.name>hbk</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
-                <nginx.enable.servers/>
+                <nginx.enable.servers>wbhonline</nginx.enable.servers>
             </properties>
             <build>
                 <plugins>
