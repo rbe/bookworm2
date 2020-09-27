@@ -11,7 +11,6 @@ set -o errexit
 pushd /var/local
 
 set +o errexit
-mkdir conf 2>/dev/null
 mkdir java_debug 2>/dev/null
 mkdir templates 2>/dev/null
 mkdir repository 2>/dev/null
