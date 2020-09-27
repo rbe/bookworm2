@@ -42,8 +42,8 @@ services:
       - joomladata:/var/www/html:rw
     networks:
       - backend
-    ports:
-      - "2203:22"
+    expose:
+      - 2203
   cms-rproxy:
     image: wbh-cms/rproxy:${cms.release}
     restart: unless-stopped

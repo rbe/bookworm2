@@ -4,6 +4,8 @@ services:
   mysql:
   joomla:
   assets-ssh:
+    ports:
+      - "2203:22"
   cms-rproxy:
     ports:
       - "80:80"
