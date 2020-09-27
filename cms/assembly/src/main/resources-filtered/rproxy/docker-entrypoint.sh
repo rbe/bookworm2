@@ -72,7 +72,7 @@ if [[ -n "${nginx.enable.servers}" ]]; then
     then
       echo "Activating configuration for ${server}"
       mv /etc/nginx/conf.d/"${server}".conf.disabled /etc/nginx/conf.d/"${server}".conf
-    elif [ ! -f /etc/nginx/conf.d/"${server}".conf ]; then
+    elif [[ ! -f /etc/nginx/conf.d/"${server}".conf ]]; then
       echo "Configuration for ${server} already activated"
     fi
   done
