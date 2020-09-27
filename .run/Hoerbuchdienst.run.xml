@@ -8,20 +8,18 @@
             <option name="Make" enabled="true"/>
         </method>
     </configuration>
-    <configuration default="false" name="Hoerbuchdienst" type="Application" factoryName="Application"
-                   nameIsGenerated="true">
-        <option name="MAIN_CLASS_NAME" value="wbh.bookworm.hoerbuchdienst.application.impl.Hoerbuchdienst"/>
-        <module name="wbh.bookworm.hoerbuchdienst.application.impl"/>
-        <option name="VM_PARAMETERS"
-                value="-Xms1g -Xmx1g -Xlog:gc* -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml"/>
-        <extension name="coverage">
-            <pattern>
-                <option name="PATTERN" value="wbh.bookworm.hoerbuchdienst.application.impl.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-        </extension>
-        <method v="2">
-            <option name="Make" enabled="true"/>
-        </method>
+    <configuration default="false" name="Hoerbuchdienst" type="docker-deploy" factoryName="docker-compose.yml"
+                   server-name="Docker">
+        <deployment type="docker-compose.yml">
+            <settings>
+                <option name="secondarySourceFiles">
+                    <list>
+                        <option value="hoerbuchdienst/assembly/target/classes/docker-compose.dev.yml"/>
+                    </list>
+                </option>
+                <option name="sourceFilePath" value="hoerbuchdienst/assembly/target/classes/docker-compose.yml"/>
+            </settings>
+        </deployment>
+        <method v="2"/>
     </configuration>
 </component>

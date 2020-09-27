@@ -13,7 +13,7 @@
         <option name="ACTIVE_PROFILES" value="development"/>
         <option name="ALTERNATIVE_JRE_PATH"/>
         <envs>
-            <env name="HOERBUCHKATALOG_TEMPLATE" value="$PROJECT_DIR$/hoerbuchkatalog/ui/src/main/resources/templates"/>
+            <env name="HOERBUCHKATALOG_TEMPLATE" value="hoerbuchkatalog/ui/src/main/resources/templates"/>
         </envs>
         <method v="2">
             <option name="Make" enabled="true"/>
