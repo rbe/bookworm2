@@ -7,7 +7,7 @@ services:
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
-      - HOERBUCHKATALOG_TEMPLATE=/opt/bookworm/var/templates
+      - HOERBUCHKATALOG_TEMPLATE=/var/local/templates
     volumes:
       - hoerbuchkataloglocal:/var/local:rw
     networks:
