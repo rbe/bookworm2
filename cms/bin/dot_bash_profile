@@ -1,0 +1,4 @@
+export PATH=~/bookworm2:$PATH
+alias prodhbk="cnt.sh prod hbk"
+alias update-hbk="pushd ~/bookworm2 >/dev/null && git fetch origin && git checkout origin/master -- autoupdate.sh && autoupdate.sh prod hbk && popd >/dev/null"
+alias force-update-hbk="pushd ~/bookworm2 >/dev/null && git fetch origin && git checkout origin/master -- autoupdate.sh && autoupdate.sh prod hbk force && popd >/dev/null"
