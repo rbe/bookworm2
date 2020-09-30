@@ -14,6 +14,7 @@ function enable_nginx_conf() {
   if [[ -f "/etc/nginx/conf.d/${server}.conf.disabled" ]]; then
     mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
     echo "Enabled reverse proxy server ${server}"
+    nginx -t && nginx -s reload
   else
     echo "Reverse proxy server ${server} enabled already"
   fi
