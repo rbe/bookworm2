@@ -72,7 +72,7 @@ public class BestellungController {
                     return orderId.toString();
                 },
                 body -> CORS.response(httpRequest, body),
-                String.format("%s/zip/order", BASE_URL),
+                String.format("%s/zip", BASE_URL),
                 httpRequest);
     }
 
