@@ -25,6 +25,7 @@ public final class CORS {
         return with(httpRequest,
                 origin -> HttpResponse.<T>ok()
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .contentType(MediaType.APPLICATION_JSON_TYPE)
                         .body(dto));
     }
 
