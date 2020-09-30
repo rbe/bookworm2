@@ -34,5 +34,15 @@ function set_fqdn() {
       echo "No FQDN entered!"
       correct=0
     fi
+    # TODO Check DNS entries for shard
+    domains=("vault" "kes" "s3" "rabbitmq" "hoerbuchdienst")
+    for d in ${domains[*]}; do
+      name="${d}.${server_fqdn}"
+      if ! getent hosts "${name}"; then
+        echo "${name} resolved: FAILED"
+      else
+        echo "${name} resolved: OK"
+      fi
+    done
   done
 }
