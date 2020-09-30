@@ -344,7 +344,7 @@ export class Audioplayer {
             })
             .then(response => {
                 if (response.ok) {
-                    return response.json.text;
+                    return response.json().text;
                 } else {
                     FetchErrorHandler.handle(response);
                 }
@@ -375,7 +375,7 @@ export class Audioplayer {
                 })
                 .then(response => {
                     if (response.ok) {
-                        return response.json.text;
+                        return response.json().text;
                     } else {
                         FetchErrorHandler.handle(response);
                     }
