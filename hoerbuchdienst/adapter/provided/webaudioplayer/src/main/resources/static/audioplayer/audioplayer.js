@@ -344,14 +344,14 @@ export class Audioplayer {
             })
             .then(response => {
                 if (response.ok) {
-                    return response.json().text;
+                    return response.json();
                 } else {
                     FetchErrorHandler.handle(response);
                 }
             })
             .then(json => {
                 if (json) {
-                    orderId = json;
+                    orderId = json.orderId;
                     console.log('asyncDownloadOrder(): orderId ' + orderId);
                     this.asyncDownloadStatus();
                 } else {
@@ -375,14 +375,14 @@ export class Audioplayer {
                 })
                 .then(response => {
                     if (response.ok) {
-                        return response.json().text;
+                        return response.json();
                     } else {
                         FetchErrorHandler.handle(response);
                     }
                 })
                 .then(json => {
                     if (json) {
-                        orderStatus = json;
+                        orderStatus = json.orderStatus;
                         console.log('asyncDownloadStatus(): orderStatus ' + orderStatus);
                     } else {
                         console.log('asyncDownloadStatus(): Sorry, no JSON');
