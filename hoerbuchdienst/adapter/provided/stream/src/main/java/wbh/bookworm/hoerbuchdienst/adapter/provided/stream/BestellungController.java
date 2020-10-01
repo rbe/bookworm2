@@ -9,6 +9,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Map;
 import java.util.UUID;
 
 import io.micronaut.http.HttpRequest;
@@ -61,8 +62,8 @@ public class BestellungController {
     }
 
     @Post(uri = "zip")
-    public HttpResponse<JsonString> orderZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                         @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+    public HttpResponse<Map<String, String>> orderZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                                  @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     final UUID orderId = UUID.randomUUID();
@@ -70,7 +71,7 @@ public class BestellungController {
                             audiobookAnfrageDTO.getTitelnummer(), orderId.toString());
                     LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
                             audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
-                    return new JsonString("orderId", orderId.toString());
+                    return Map.of("orderId", orderId.toString());
                 },
                 body -> CORS.response(httpRequest, body),
                 String.format("%s/zip", BASE_URL),
@@ -85,14 +86,14 @@ public class BestellungController {
     }
 
     @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false)
-    public HttpResponse<JsonString> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                 @PathVariable final String titelnummer,
-                                                                 @PathVariable final String orderId) {
+    public HttpResponse<Map<String, String>> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                                          @PathVariable final String titelnummer,
+                                                                          @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final String status = audiobookOrderService.orderStatus(orderId);
                     LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
-                    return new JsonString("orderStatus", status);
+                    return Map.of("orderStatus", status);
                 },
                 body -> CORS.response(httpRequest, body),
                 String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
