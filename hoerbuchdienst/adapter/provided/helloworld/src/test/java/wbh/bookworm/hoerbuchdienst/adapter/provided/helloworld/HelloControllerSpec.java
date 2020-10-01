@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.helloworld;
 
 import javax.inject.Inject;
 
+import io.micronaut.context.ApplicationContext;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.client.HttpClient;
 import io.micronaut.http.client.annotation.Client;
@@ -20,7 +21,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @MicronautTest
 public class HelloControllerSpec {
 
-    private final EmbeddedServer server;
+    @Inject
+    private ApplicationContext applicationContext;
+
+    @Inject
+    private EmbeddedServer server;
 
     @Inject
     @Client("/")
@@ -29,8 +34,7 @@ public class HelloControllerSpec {
     private final HelloClient helloClient;
 
     @Inject
-    public HelloControllerSpec(final EmbeddedServer server, final HelloClient helloClient) {
-        this.server = server;
+    public HelloControllerSpec(final HelloClient helloClient) {
         this.helloClient = helloClient;
     }
 
@@ -45,7 +49,15 @@ public class HelloControllerSpec {
         /*HelloWorldDTO response = client.toBlocking().retrieve(HttpRequest.GET("/hello/json"),
                 HelloWorldDTO.class);*/
         HelloWorldDTO response = helloClient.helloJson("Ralf");
+        System.out.println("RESPONSE:" + response);
         assertEquals(new HelloWorldDTO("Ralf"), response);
+    }
+
+    @Test
+    void testJsonStringResponse() {
+        String response = helloClient.jsonString();
+        System.out.println("RESPONSE:" + response);
+        assertEquals("\"Test\"", response);
     }
 
 }

@@ -11,8 +11,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import io.micronaut.configuration.rabbitmq.exception.RabbitClientException;
 import io.micronaut.context.annotation.Value;
+import io.micronaut.rabbitmq.exception.RabbitClientException;
 import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

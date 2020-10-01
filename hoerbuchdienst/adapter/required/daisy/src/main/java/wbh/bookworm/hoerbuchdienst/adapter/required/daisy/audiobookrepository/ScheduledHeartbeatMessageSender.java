@@ -4,7 +4,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.time.ZonedDateTime;
 
-import io.micronaut.configuration.rabbitmq.exception.RabbitClientException;
+import io.micronaut.rabbitmq.exception.RabbitClientException;
 import io.micronaut.scheduling.annotation.Scheduled;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

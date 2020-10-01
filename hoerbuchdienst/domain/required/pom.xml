@@ -37,7 +37,7 @@
         </dependency>
         <!-- Micronaut -->
         <dependency>
-            <groupId>io.micronaut.configuration</groupId>
+            <groupId>io.micronaut.rabbitmq</groupId>
             <artifactId>micronaut-rabbitmq</artifactId>
         </dependency>
         <dependency>

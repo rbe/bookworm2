@@ -15,4 +15,7 @@ public interface HelloClient {
     @Get("/json")
     HelloWorldDTO helloJson(String name);
 
+    @Get("/json/string")
+    String jsonString();
+
 }

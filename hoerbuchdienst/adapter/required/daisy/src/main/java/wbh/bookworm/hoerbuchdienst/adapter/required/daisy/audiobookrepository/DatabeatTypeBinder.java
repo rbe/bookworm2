@@ -6,10 +6,10 @@ import java.io.IOException;
 import java.util.Optional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.micronaut.configuration.rabbitmq.bind.RabbitConsumerState;
-import io.micronaut.configuration.rabbitmq.bind.RabbitTypeArgumentBinder;
 import io.micronaut.core.convert.ArgumentConversionContext;
 import io.micronaut.core.type.Argument;
+import io.micronaut.rabbitmq.bind.RabbitConsumerState;
+import io.micronaut.rabbitmq.bind.RabbitTypeArgumentBinder;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
 

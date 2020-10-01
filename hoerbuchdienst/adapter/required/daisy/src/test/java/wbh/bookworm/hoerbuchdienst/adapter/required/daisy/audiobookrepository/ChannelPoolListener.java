@@ -4,7 +4,7 @@ import javax.inject.Singleton;
 import java.io.IOException;
 
 import com.rabbitmq.client.Channel;
-import io.micronaut.configuration.rabbitmq.connect.ChannelInitializer;
+import io.micronaut.rabbitmq.connect.ChannelInitializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

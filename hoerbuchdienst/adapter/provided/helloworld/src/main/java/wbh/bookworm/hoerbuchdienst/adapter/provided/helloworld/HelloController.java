@@ -6,17 +6,23 @@
 
 package wbh.bookworm.hoerbuchdienst.adapter.provided.helloworld;
 
+import javax.inject.Inject;
+
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
-import io.swagger.v3.oas.annotations.info.Info;
+import io.micronaut.http.codec.MediaTypeCodec;
+import io.micronaut.http.codec.MediaTypeCodecRegistry;
 
-@OpenAPIDefinition(
-        info = @Info(title = "wbh.sds", version = "0.0")
-)
 @Controller("/hello")
 public class HelloController {
+
+    private final MediaTypeCodecRegistry mediaTypeCodecRegistry;
+
+    @Inject
+    public HelloController(final MediaTypeCodecRegistry mediaTypeCodecRegistry) {
+        this.mediaTypeCodecRegistry = mediaTypeCodecRegistry;
+    }
 
     @Get(uri = "/plain", produces = MediaType.TEXT_PLAIN)
     public String helloWorld() {
@@ -26,6 +32,14 @@ public class HelloController {
     @Get(uri = "/json", produces = MediaType.APPLICATION_JSON)
     public HelloWorldDTO helloWorldJson() {
         return new HelloWorldDTO("Ralf");
+    }
+
+    @Get(uri = "/json/string", produces = MediaType.APPLICATION_JSON)
+    public String jsonString() {
+        final MediaTypeCodec codec = mediaTypeCodecRegistry
+                .findCodec(MediaType.APPLICATION_JSON_TYPE)
+                .orElseThrow();
+        return new String(codec.encode("Test"));
     }
 
 }

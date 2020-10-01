@@ -1,7 +1,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-import io.micronaut.configuration.rabbitmq.annotation.RabbitClient;
 import io.micronaut.messaging.annotation.Header;
+import io.micronaut.rabbitmq.annotation.RabbitClient;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Heartbeat;
 
