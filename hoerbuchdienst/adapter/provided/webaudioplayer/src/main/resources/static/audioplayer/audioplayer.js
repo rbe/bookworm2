@@ -351,8 +351,8 @@ export class Audioplayer {
             })
             .then(json => {
                 if (json) {
-                    orderId = json.orderId;
-                    console.log('asyncDownloadOrder(): orderId ' + orderId);
+                    this.orderId = json.orderId;
+                    console.log('asyncDownloadOrder(): orderId ' + this.orderId);
                     this.asyncDownloadStatus();
                 } else {
                     console.log('asyncDownloadOrder(): Sorry, no JSON');
@@ -368,10 +368,13 @@ export class Audioplayer {
     asyncDownloadStatus() {
         let orderStatus = "";
         while (orderStatus !== "SUCCESS" && orderStatus !== "FAILED") {
-            fetch(new URL('bestellung/zip/' + this.titelnummer + 'status/' + orderId, this.audiobookURL).toString(),
+            fetch(new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString(),
                 {
                     'method': 'GET',
-                    'redirect': 'follow'
+                    'headers': {
+                        'Origin': 'hoerbuchdienst.shard1.audiobook.wbh-online.de'
+                    },
+                    'redirect': 'follow',
                 })
                 .then(response => {
                     if (response.ok) {
