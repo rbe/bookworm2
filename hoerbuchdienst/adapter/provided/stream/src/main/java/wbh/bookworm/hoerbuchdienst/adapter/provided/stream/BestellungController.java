@@ -20,6 +20,8 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.codec.MediaTypeCodec;
+import io.micronaut.http.codec.MediaTypeCodecRegistry;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +34,8 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition()
-@Controller(value = BestellungController.BASE_URL)
+@Controller(value = BestellungController.BASE_URL,
+        consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 public class BestellungController {
 
     static final String BASE_URL = "bestellung";
@@ -47,11 +50,15 @@ public class BestellungController {
 
     private final AudiobookShardRedirector audiobookShardRedirector;
 
+    private final MediaTypeCodecRegistry mediaTypeCodecRegistry;
+
     @Inject
     public BestellungController(final AudiobookOrderService audiobookOrderService,
-                                final AudiobookShardRedirector audiobookShardRedirector) {
+                                final AudiobookShardRedirector audiobookShardRedirector,
+                                final MediaTypeCodecRegistry mediaTypeCodecRegistry) {
         this.audiobookOrderService = audiobookOrderService;
         this.audiobookShardRedirector = audiobookShardRedirector;
+        this.mediaTypeCodecRegistry = mediaTypeCodecRegistry;
     }
 
     @Options(uri = "zip")
@@ -59,9 +66,12 @@ public class BestellungController {
         return optionsResponse(httpRequest);
     }
 
-    @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Post(uri = "zip")
     public HttpResponse<String> orderZippedAudiobook(final HttpRequest<?> httpRequest,
                                                      @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
+        final MediaTypeCodec jsonMediaTypeCodec = mediaTypeCodecRegistry
+                .findCodec(MediaType.APPLICATION_JSON_TYPE)
+                .orElseThrow();
         return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
                 () -> {
                     final UUID orderId = UUID.randomUUID();
@@ -69,7 +79,8 @@ public class BestellungController {
                             audiobookAnfrageDTO.getTitelnummer(), orderId.toString());
                     LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
                             audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
-                    return orderId.toString();
+                    final byte[] encode = jsonMediaTypeCodec.encode(orderId.toString());
+                    return String.valueOf(encode);
                 },
                 body -> CORS.response(httpRequest, body),
                 String.format("%s/zip", BASE_URL),
@@ -83,15 +94,19 @@ public class BestellungController {
         return optionsResponse(httpRequest);
     }
 
-    @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false, produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false)
     public HttpResponse<String> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
                                                              @PathVariable final String titelnummer,
                                                              @PathVariable final String orderId) {
+        final MediaTypeCodec jsonMediaTypeCodec = mediaTypeCodecRegistry
+                .findCodec(MediaType.APPLICATION_JSON_TYPE)
+                .orElseThrow();
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final String status = audiobookOrderService.orderStatus(orderId);
                     LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
-                    return status;
+                    final byte[] encode = jsonMediaTypeCodec.encode(status);
+                    return String.valueOf(encode);
                 },
                 body -> CORS.response(httpRequest, body),
                 String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
