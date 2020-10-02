@@ -367,43 +367,43 @@ export class Audioplayer {
 
     asyncDownloadStatus() {
         let orderStatus = "";
-        while (orderStatus !== "SUCCESS" && orderStatus !== "FAILED") {
-            fetch(new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString(),
-                {
-                    'method': 'GET',
-                    'headers': {
-                        'Origin': 'hoerbuchdienst.shard1.audiobook.wbh-online.de'
-                    },
-                    'redirect': 'follow',
-                })
-                .then(response => {
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        FetchErrorHandler.handle(response);
+        fetch(new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString(),
+            {
+                'method': 'GET',
+                'headers': {
+                    'Origin': 'hoerbuchdienst.shard1.audiobook.wbh-online.de'
+                },
+                'redirect': 'follow',
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json) {
+                    orderStatus = json.orderStatus;
+                    console.log('asyncDownloadStatus(): orderStatus ' + orderStatus);
+                    if (!this.asyncDownloadStatusTimeoutId) {
+                        this.asyncDownloadStatusTimeoutId = setTimeout(this.asyncDownloadStatus, 1500);
                     }
-                })
-                .then(json => {
-                    if (json) {
-                        orderStatus = json.orderStatus;
-                        console.log('asyncDownloadStatus(): orderStatus ' + orderStatus);
-                    } else {
-                        console.log('asyncDownloadStatus(): Sorry, no JSON');
-                    }
-                })
-                .catch(reason => {
-                    if (this.DEBUG) {
-                        console.log('asyncDownloadStatus(): Cannot retrieve orderStatus: ' + reason);
-                    }
-                });
-            if (orderStatus === 'PROCESSING') {
-                console.log('asyncDownloadStatus(): Checking order status again, please wait...')
-                setTimeout(() => this.asyncDownloadStatus(), 500);
-            } else {
-                console.log('asyncDownloadStatus(): Unhandled status ' + orderStatus);
+                } else {
+                    console.log('asyncDownloadStatus(): Sorry, no JSON');
+                }
+            })
+            .catch(reason => {
+                if (this.DEBUG) {
+                    console.log('asyncDownloadStatus(): Cannot retrieve orderStatus: ' + reason);
+                }
+            });
+        console.log('asyncDownloadOrder(): Order status is ' + orderStatus);
+        if (orderStatus === "SUCCESS" || orderStatus === "FAILED") {
+            if (this.asyncDownloadStatusTimeoutId) {
+                clearTimeout(this.asyncDownloadStatusTimeoutId);
             }
         }
-        console.log('asyncDownloadOrder(): Order status is ' + orderStatus);
     }
 
     reset() {
