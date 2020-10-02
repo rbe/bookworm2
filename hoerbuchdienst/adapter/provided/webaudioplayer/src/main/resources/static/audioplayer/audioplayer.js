@@ -17,6 +17,7 @@ export class Audioplayer {
         this.audio = this.createAudioElement();
         this.initElementSelectors();
         this.DEBUG = true;
+        this.asyncDownloadStatusTimeoutId = new Map();
     }
 
     init(audiobookURL, hoerernummer, titelnummer, onReadyCallback) {
@@ -385,11 +386,22 @@ export class Audioplayer {
                 }
             })
             .then(json => {
-                if (json) {
+                if (json && json.orderStatus) {
                     orderStatus = json.orderStatus;
-                    console.log('asyncDownloadStatus(): orderStatus ' + orderStatus);
-                    if (!this.asyncDownloadStatusTimeoutId) {
-                        this.asyncDownloadStatusTimeoutId = setTimeout(this.asyncDownloadStatus, 1500);
+                    console.log('asyncDownloadOrder(): Order status ' + this.orderId + ' is ' + orderStatus);
+                    if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
+                        if (this.asyncDownloadStatusTimeoutId.has(this.orderId)) {
+                            console.log('clearTimeout');
+                            clearTimeout(this.asyncDownloadStatusTimeoutId.get(this.orderId));
+                            this.asyncDownloadStatusTimeoutId.delete(this.orderId);
+                        }
+                        if (orderStatus === 'SUCCESS') {
+                            this.asyncDownloadAudiobook();
+                        }
+                    } else {
+                        console.log('setTimeout');
+                        this.asyncDownloadStatusTimeoutId.set(this.orderId,
+                            setTimeout(() => this.asyncDownloadStatus(), 1500));
                     }
                 } else {
                     console.log('asyncDownloadStatus(): Sorry, no JSON');
@@ -400,12 +412,38 @@ export class Audioplayer {
                     console.log('asyncDownloadStatus(): Cannot retrieve orderStatus: ' + reason);
                 }
             });
-        console.log('asyncDownloadOrder(): Order status is ' + orderStatus);
-        if (orderStatus === "SUCCESS" || orderStatus === "FAILED") {
-            if (this.asyncDownloadStatusTimeoutId) {
-                clearTimeout(this.asyncDownloadStatusTimeoutId);
-            }
-        }
+    }
+
+    asyncDownloadAudiobook() {
+        console.log('asyncDownloadAudiobook()');
+        const url = new URL('bestellung/zip/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
+        fetch(url, {
+            'method': 'GET',
+            'mode': 'cors',
+            'redirect': 'follow'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.blob();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(blob => {
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = this.orderId + ".zip";
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+                this.orderId = null;
+            })
+            .catch(reason => {
+                if (this.DEBUG) {
+                    console.log('asyncDownloadAudiobook(): ' + reason);
+                }
+            });
     }
 
     reset() {
