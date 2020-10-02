@@ -23,11 +23,13 @@ public final class CORS {
 
     public static <T> MutableHttpResponse<T> response(final HttpRequest<?> httpRequest, final T dto) {
         return with(httpRequest,
-                origin -> HttpResponse.<T>ok()
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
-                        .contentType(MediaType.APPLICATION_JSON_TYPE)
-                        .body(dto));
+                origin -> {
+                    final MutableHttpResponse<T> response = HttpResponse.ok();
+                    maybeAddOrigin(origin, response);
+                    return response
+                            .contentType(MediaType.APPLICATION_JSON_TYPE)
+                            .body(dto);
+                });
     }
 
     public static MutableHttpResponse<String> temporaryRedirect(final HttpRequest<?> httpRequest,
@@ -60,6 +62,13 @@ public final class CORS {
         } else {
             LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
             return HttpResponse.unauthorized();
+        }
+    }
+
+    private static <T> void maybeAddOrigin(final String origin, final MutableHttpResponse<T> response) {
+        if (null != origin) {
+            response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS");
         }
     }
 
