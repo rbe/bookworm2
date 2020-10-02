@@ -25,6 +25,7 @@ public final class CORS {
         return with(httpRequest,
                 origin -> HttpResponse.<T>ok()
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                         .contentType(MediaType.APPLICATION_JSON_TYPE)
                         .body(dto));
     }
@@ -34,6 +35,7 @@ public final class CORS {
         return with(httpRequest,
                 origin -> HttpResponse.<String>temporaryRedirect(uri)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                         .body(""));
     }
 
@@ -43,6 +45,7 @@ public final class CORS {
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Range")
+                        .header(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "86400")
                         .contentType(MediaType.TEXT_PLAIN_TYPE)
                         .contentLength(0L)
                         .body(""));
@@ -52,11 +55,7 @@ public final class CORS {
                                                    final Function<? super String, ? extends MutableHttpResponse<T>> supplier) {
         httpRequest.getHeaders().forEach(entry -> LOGGER.trace("{}: {}", entry.getKey(), entry.getValue()));
         final String origin = httpRequest.getHeaders().get("Origin");
-        if (null == origin) {
-            LOGGER.error("Missing HTTP header 'Origin' in HTTP request {}", httpRequest);
-            return HttpResponse.unauthorized();
-        }
-        if (origin.endsWith(ALLOWED_DOMAIN)) {
+        if (null == origin || origin.endsWith(ALLOWED_DOMAIN)) {
             return supplier.apply(origin);
         } else {
             LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);

@@ -328,20 +328,21 @@ export class Audioplayer {
     }
 
     asyncDownloadOrder() {
-        let orderId = "unset";
-        fetch(new URL('bestellung/zip', this.audiobookURL).toString(),
-            {
-                'method': 'POST',
-                'headers': {
-                    'Content-Type': 'application/json'
-                },
-                'redirect': 'follow',
-                'body': JSON.stringify({
-                    'mandant': /* TODO Mandant */'WBH',
-                    'hoerernummer': this.hoerernummer,
-                    'titelnummer': this.titelnummer
-                })
+        const url = new URL('bestellung/zip', this.audiobookURL).toString();
+        fetch(url, {
+            'method': 'POST',
+            'mode': 'cors',
+            'headers': {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json'
+            },
+            'redirect': 'follow',
+            'body': JSON.stringify({
+                'mandant': /* TODO Mandant */'WBH',
+                'hoerernummer': this.hoerernummer,
+                'titelnummer': this.titelnummer
             })
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -367,14 +368,15 @@ export class Audioplayer {
 
     asyncDownloadStatus() {
         let orderStatus = "";
-        fetch(new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString(),
-            {
-                'method': 'GET',
-                'headers': {
-                    'Origin': 'hoerbuchdienst.shard1.audiobook.wbh-online.de'
-                },
-                'redirect': 'follow',
-            })
+        const url = new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
+        fetch(url, {
+            'method': 'GET',
+            'mode': 'cors',
+            'headers': {
+                'Accept': 'application/json'
+            },
+            'redirect': 'follow'
+        })
             .then(response => {
                 if (response.ok) {
                     return response.json();
