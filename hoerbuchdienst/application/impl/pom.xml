@@ -58,6 +58,11 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.mandantrepository</artifactId>
+            <version>LocalBuild</version>
+        </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.daisy</artifactId>
             <version>LocalBuild</version>
         </dependency>
