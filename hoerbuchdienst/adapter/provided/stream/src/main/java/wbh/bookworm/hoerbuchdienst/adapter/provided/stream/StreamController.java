@@ -8,6 +8,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -78,10 +80,13 @@ public class StreamController {
     private byte[] makeZippedAudiobook(final String mandant, final String hoerernummer, final String titelnummer) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
                 hoerernummer, titelnummer);
-        try (final InputStream audiobook = audiobookStreamService.zipAsStream(mandant, hoerernummer, titelnummer)) {
+        final Path zip = audiobookStreamService.zipAsFile(mandant, hoerernummer, titelnummer);
+        try {
             LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
                     hoerernummer, titelnummer);
-            return audiobook.readAllBytes();
+            final byte[] bytes = Files.readAllBytes(zip);
+            Files.delete(zip);
+            return bytes;
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);
         }

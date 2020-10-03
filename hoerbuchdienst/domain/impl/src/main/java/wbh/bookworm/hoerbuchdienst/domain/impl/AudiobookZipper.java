@@ -94,11 +94,12 @@ final class AudiobookZipper {
             final List<Path> files = paths.sorted().collect(Collectors.toUnmodifiableList());
             LOGGER.debug("Hörer {} Erstelle DAISY Hörbuch {} mit folgenden Dateien: {}", hoerernummer, titelnummer, files);
             zipInputStream = zip.zipAsStream(files);
-            final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID().toString());
+            final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID() + ".zip");
             final OutputStream outputStream = Files.newOutputStream(zipFile);
             LOGGER.debug("Wrote {} bytes into ZIP file", zipInputStream.transferTo(outputStream));
+            LOGGER.info("Hörer {} DAISY Hörbuch {} unter {} erstellt", hoerernummer, titelnummer, zipFile);
+            zipInputStream.close();
             outputStream.close();
-            LOGGER.info("Hörer {} DAISY Hörbuch {} erstellt", hoerernummer, titelnummer);
             return zipFile;
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);

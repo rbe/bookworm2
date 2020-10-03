@@ -7,11 +7,14 @@
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.io.InputStream;
+import java.nio.file.Path;
 
 public interface AudiobookStreamService {
 
     InputStream trackAsStream(String mandant, String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer, String ident);
 
     InputStream zipAsStream(String mandant, String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer);
+
+    Path zipAsFile(String mandant, String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer);
 
 }
