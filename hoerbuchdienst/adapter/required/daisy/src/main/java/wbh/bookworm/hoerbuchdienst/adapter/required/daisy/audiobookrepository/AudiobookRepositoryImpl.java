@@ -121,7 +121,7 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     public Path trackAsFile(final String hoerernummer, final String titelnummer, final String ident) {
         return whileServicing("trackAsFile",
                 () -> {
-                    final String tempId = String.format("%sDAISY-%s-%s-%s", titelnummer, ident, UUID.randomUUID());
+                    final String tempId = String.format("%sDAISY-%s-%s.mp3", titelnummer, ident, UUID.randomUUID());
                     final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
                     try {
                         Files.createDirectories(tempMp3File.getParent());
