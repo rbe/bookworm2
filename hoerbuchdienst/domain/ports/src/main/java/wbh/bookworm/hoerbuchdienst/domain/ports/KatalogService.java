@@ -12,7 +12,7 @@ public interface KatalogService {
 
     AudiobookInfoDTO audiobookInfo(String titelnummer);
 
-    TrackInfoDTO trackInfo(String titelnummer, String ident);
+    TrackInfoDTO trackInfo(String hoerernummer, String titelnummer, String ident);
 
     PlaylistDTO playlist(String titelnummer);
 

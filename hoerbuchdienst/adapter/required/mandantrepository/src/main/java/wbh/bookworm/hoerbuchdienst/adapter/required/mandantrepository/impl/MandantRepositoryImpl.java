@@ -11,6 +11,7 @@ import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -41,8 +42,14 @@ final class MandantRepositoryImpl implements MandantRepository {
     @Inject
     MandantRepositoryImpl() {
         mandanten = new ConcurrentHashMap<>(3);
+        makeMandant("WBH", "06", Collections.emptySet());
         objectMapper = new ObjectMapper();
         objectMapperLock = new ReentrantLock();
+    }
+
+    private void makeMandant(final String name, final String id, final Set<Hoerernummer> hoerernummern) {
+        final MandantenId mandantenId = new MandantenId(id);
+        mandanten.put(mandantenId, new Mandant(mandantenId, hoerernummern));
     }
 
     @Override

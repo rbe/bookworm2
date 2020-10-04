@@ -69,16 +69,14 @@ class KatalogServiceImpl implements KatalogService {
             throw new IllegalStateException(String.format("Hörbuch %s nicht gefunden", titelnummer));
         }
         return new AudiobookInfoDTO(titelnummer, audiobook.getTitle(),
-                audiobook.getAuthor(), audiobook.getNarrator(),
-                audiobook.getTimeInThisSmil());
+                audiobook.getAuthor(), audiobook.getNarrator(), audiobook.getTimeInThisSmil());
     }
 
     @Override
-    public TrackInfoDTO trackInfo(final String titelnummer, final String ident) {
-        final Path tempMp3File = audiobookRepository.trackAsFile("KATALOG", titelnummer, ident);
-        final String watermark = watermarker.makeWatermark("", "KATALOG", titelnummer);
-        final WatermarkedTrackInfo watermarkedTrackInfo = watermarker.trackInfo(watermark,
-                piracyInquiryUrlPrefix, tempMp3File);
+    public TrackInfoDTO trackInfo(final String hoerernummer, final String titelnummer, final String ident) {
+        final Path tempMp3File = audiobookRepository.trackAsFile(hoerernummer, titelnummer, ident);
+        final String watermark = watermarker.makeWatermark("06", hoerernummer, titelnummer);
+        final WatermarkedTrackInfo watermarkedTrackInfo = watermarker.trackInfo(watermark, piracyInquiryUrlPrefix, tempMp3File);
         FilesUtils.tryDelete(tempMp3File);
         return TrackDtoMapper.INSTANCE.convert(watermarkedTrackInfo, titelnummer, ident);
     }

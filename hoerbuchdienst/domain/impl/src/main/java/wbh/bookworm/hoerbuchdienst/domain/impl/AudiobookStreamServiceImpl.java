@@ -52,8 +52,8 @@ class AudiobookStreamServiceImpl implements AudiobookStreamService {
     public InputStream trackAsStream(final String mandant, final String hoerernummer, final String titelnummer, final String ident) {
         final Path tempMp3File = audiobookRepository.trackAsFile(hoerernummer, titelnummer, ident);
         try {
-            watermarker.addWatermarkInPlace(watermarker.makeWatermark(mandant, hoerernummer, titelnummer),
-                    piracyInquiryUrlPrefix, tempMp3File);
+            final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
+            watermarker.addWatermarkInPlace(watermark, piracyInquiryUrlPrefix, tempMp3File);
             final byte[] watermarkedMp3Track = Files.readAllBytes(tempMp3File);
             FilesUtils.tryDelete(tempMp3File);
             return new ByteArrayInputStream(watermarkedMp3Track);

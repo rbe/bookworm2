@@ -22,6 +22,8 @@ import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
 import com.mpatric.mp3agic.UnsupportedTagException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.WatermarkedTrackInfo;
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
@@ -30,10 +32,14 @@ import wbh.bookworm.hoerbuchdienst.domain.required.watermark.WatermarkerExceptio
 @Singleton
 public final class WatermarkerMp3agicImpl implements Watermarker {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(WatermarkerMp3agicImpl.class);
+
     private static final String GENRE_SPEECH = "Speech";
 
     @Override
     public String makeWatermark(final String mandant, final String hoerernummer, final String titelnummer) {
+        LOGGER.info("Erzeuge Wasserzeichen für Mandant {}, Hörer {}, Titelnummer {}",
+                mandant, hoerernummer, titelnummer);
         return String.format("%s-%s-%s", mandant, hoerernummer, titelnummer);
     }
 

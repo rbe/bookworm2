@@ -101,11 +101,10 @@ public class InfoController {
         return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
                 () -> {
                     LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
-                            trackAnfrageDTO.getHoerernummer(),
-                            trackAnfrageDTO.getTitelnummer(),
-                            trackAnfrageDTO.getIdent());
+                            trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
                     try {
-                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
+                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
+                                trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
                         return TrackMapper.INSTANCE.convert(trackInfoDTO);
                     } catch (Exception e) {
                         throw new BusinessException("", e);

@@ -177,7 +177,7 @@ export class Audioplayer {
                 'Content-Type': 'application/json'
             },
             'body': JSON.stringify({
-                'mandant': 'WBH',
+                'mandant': '06',
                 'hoerernummer': this.hoerernummer,
                 'titelnummer': this.titelnummer,
                 'ident': track.ident
@@ -299,7 +299,7 @@ export class Audioplayer {
                 },
                 'redirect': 'follow',
                 'body': JSON.stringify({
-                    'mandant': /* TODO Mandant */'WBH',
+                    'mandant': '06',
                     'hoerernummer': this.hoerernummer,
                     'titelnummer': this.titelnummer
                 })
@@ -339,7 +339,7 @@ export class Audioplayer {
             },
             'redirect': 'follow',
             'body': JSON.stringify({
-                'mandant': /* TODO Mandant */'WBH',
+                'mandant': '06',
                 'hoerernummer': this.hoerernummer,
                 'titelnummer': this.titelnummer
             })
