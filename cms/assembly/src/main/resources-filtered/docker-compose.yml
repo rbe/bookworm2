@@ -29,6 +29,7 @@ services:
     volumes:
       - joomladata:/var/www/html:rw
     networks:
+      - hbk-backend
       - backend
       - frontend
     expose:
