@@ -10,6 +10,7 @@ RUN apk --no-cache add tzdata \
     && echo "${TZ}" >/etc/timezone
 RUN addgroup service \
     && adduser -D -S -G service service
+RUN apk --no-cache add bash
 COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x -- /usr/local/bin/*
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
