@@ -19,7 +19,7 @@ ls -la /var/local
 export MICRONAUT_CONFIG_FILES=""
 
 java \
-  -Xms1536m,   -Xmx1536m \
+  -Xms1536m -Xmx1536m \
   -XX:+UseCompressedOops \
   -XX:+HeapDumpOnOutOfMemoryError \
   -XX:HeapDumpPath=/var/local/java_debug \
@@ -31,6 +31,6 @@ java \
   -Dlogback.configurationFile=/var/local/logback.xml \
   -Dmicronaut.environments=prod \
   -Dmicronaut.config.files=/var/local/application-shard.yml \
-  -jar   /usr/local/service.jar
+  -jar /usr/local/service.jar
 
 exit 0
