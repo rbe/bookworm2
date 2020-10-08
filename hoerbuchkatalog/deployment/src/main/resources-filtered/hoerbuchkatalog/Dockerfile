@@ -2,7 +2,6 @@ FROM adoptopenjdk/openjdk14:alpine-slim AS base
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
-
 ENV TZ Europe/Berlin
 ENV LANG en_US.UTF-8
 RUN apk update
@@ -25,6 +24,6 @@ RUN /usr/local/bin/perms.sh
 USER service:service
 VOLUME ["/var/local"]
 WORKDIR /var/local
-EXPOSE 8080/tcp
+EXPOSE 8080/tcp 8000/tcp
 ENV HOERBUCHKATALOG_TEMPLATE /var/local/templates
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

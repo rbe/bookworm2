@@ -24,3 +24,12 @@ server {
         proxy_pass http://hoerbuchdienst:8080;
     }
 }
+stream {
+    upstream java_debug {
+        server localhost:8000;
+    }
+    server {
+        listen 8000;
+        proxy_pass java_debug;
+    }
+}
