@@ -33,5 +33,8 @@ RUN openssl rand 80 >/etc/nginx/ssl_session_ticket.key
 COPY nginx.conf /etc/nginx/
 COPY tlsredirect.conf /etc/nginx/conf.d/
 COPY *.conf.disabled /etc/nginx/conf.d/
+RUN mkdir /etc/nginx/stream.d
+COPY *.stream.disabled /etc/nginx/stream.d/
+COPY robots.txt /var/local/rproxy/
 COPY index.html /var/local/rproxy/
 WORKDIR /etc/nginx
