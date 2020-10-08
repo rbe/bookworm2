@@ -11,6 +11,7 @@ RUN apk --no-cache add tzdata \
 RUN addgroup service \
     && adduser -D -S -G service service
 COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x -- /usr/local/bin/*
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 FROM base

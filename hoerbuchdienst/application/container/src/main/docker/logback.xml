@@ -20,7 +20,7 @@
     <logger name="io.micronaut.http.server" level="${io.micronaut.http.server.loglevel:-DEBUG}"/>
     <logger name="io.micronaut.scheduling" level="${io.micronaut.scheduling.loglevel:-INFO}"/>
     <logger name="io.micronaut.configuration" level="${io.micronaut.configuration.loglevel:-INFO}"/>
-    <logger name="io.micronaut.configuration.rabbitmq" level="${io.micronaut.configuration.rabbitmq.loglevel:-INFO}"/>
+    <logger name="io.micronaut.rabbitmq" level="${io.micronaut.rabbitmq.loglevel:-INFO}"/>
     <logger name="io.micronaut.context" level="${io.micronaut.context.loglevel:-INFO}"/>
     <logger name="io.micronaut.context.condition" level="${io.micronaut.context.condition.loglevel:-INFO}"/>
     <logger name="io.micronaut.context.env" level="${io.micronaut.context.env.loglevel:-INFO}"/>
