@@ -1,0 +1,12 @@
+stream {
+
+    upstream java_debug {
+        server hoerbuchdienst:8000;
+    }
+
+    server {
+        listen 8000;
+        proxy_pass java_debug;
+    }
+
+}
