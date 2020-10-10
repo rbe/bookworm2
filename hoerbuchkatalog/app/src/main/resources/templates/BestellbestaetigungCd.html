@@ -1,1 +1,72 @@
-﻿<!DOCTYPE html><html xmlns:th="http://www.thymeleaf.org"><head>    <title th:remove="all">CD-Bestellung WBH</title>    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>    <style type="text/css">        body {            width: 80%;            font-family: Verdana, serif;            margin: 0 auto;            padding: 20px 40px;        }    </style></head><body><!--/*@thymesVar id="bestellung" type="wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung"*/--><!--/*@thymesVar id="hoerbuecher" type="java.util.Set<wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch>"*/--><p>    Ihre Bestellung vom:    <span th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 um 12:34</span> Uhr<br/>    Ihre Hörernummer: <span th:text="${bestellung.hoerernummer}">123456</span><br/>    Hörer: <span th:text="${bestellung.hoerername}">Erika Mustermann</span><br/>    E-Mail: <span th:text="${bestellung.hoereremail}">erika.mustermann@example.com</span></p><p>&nbsp;</p><p>Sehr geehrte/r Frau/Herr <span th:text="${bestellung.hoerername}">Erika Mustermann</span>,</p><p th:if="${hoerbuecher.size() == 1}">    wir haben am <span style="font-weight: bold" th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 12:34</span> Uhr    folgende Bestellung über <span style="font-weight: bold;">1 Hörbuch</span> erhalten:</p><p th:if="${hoerbuecher.size() > 1}">    wir haben am <span style="font-weight: bold" th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 12:34</span> Uhr    folgende Bestellung über <span style="font-weight: bold;" th:text="${hoerbuecher.size()}">4</span> <span style="font-weight: bold;">Hörbücher</span> erhalten:</p><p><table cellpadding="1" cellspacing="1" border="1" width="90%">    <tbody>    <tr>        <th align="left" style="background: #ccc; color:#fff;">Titelnummer</th>        <th align="left" style="background: #ccc; color:#fff;">Autor</th>        <th align="left" style="background: #ccc; color:#fff;">Titel</th>    </tr>    <!--/*@thymesVar id="b" type="wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch"*/-->    <tr th:each="b : ${hoerbuecher}">        <td valign="top" width="15%" th:text="${b.titelnummer}">123456</td>        <td valign="top" width="30%" th:text="${b.autor}">Max Mustermann</td>        <td valign="top" width="55%" th:text="${b.titel}">Ein Titel eines Hörbuchs</td>    </tr>    </tbody></table></p><p th:if="${bestellung.hasBemerkung()}">    Ihre Bemerkung: <span th:text="${bestellung.bemerkung}">Lorem ispum dolor sit amet...</span></p><p th:if="${bestellung.getBestellkarteMischen()}">Ihre Bestellkarte wird gemischt!</p><p th:if="${bestellung.getAlteBestellkarteLoeschen()}">Ihre alte Bestellkarte wird gelöscht.</p><p>    Mit freundlichen Grüßen,<br/>    Ihre WBH</p><p>    Westdeutsche Bibliothek der Hörmedien für blinde, seh- und lesebehinderte Menschen e.V. - Harkortstr. 9 - 48163 Münster<br/>    Telefon: 0251 / 71 99 01 - Fax: 0251 / 71 28 46<br/>    E-Mail: <a href="mailto:wbh@wbh-online.de">wbh@wbh-online.de</a> - Homepage: <a href="https://www.wbh-online.de">www.wbh-online.de</a><br/>    Folgen Sie uns auf <a href="https://www.facebook.com/WBHMuenster">Facebook</a><br/>    Vereins-Reg.-Nr. 1298<br/>    Vorsitzender: S. Volkert, W. Harth<br/>    Geschäftsführer: Werner Kahle</p></body></html>
+﻿<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:remove="all">CD-Bestellung WBH</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+        body {
+            width: 80%;
+            font-family: Verdana, serif;
+            margin: 0 auto;
+            padding: 20px 40px;
+        }
+    </style>
+</head>
+<body>
+<!--/*@thymesVar id="bestellung" type="wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung"*/-->
+<!--/*@thymesVar id="hoerbuecher" type="java.util.Set<wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch>"*/-->
+<p>
+    Ihre Bestellung vom:
+    <span th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 um 12:34</span> Uhr<br/>
+    Ihre Hörernummer: <span th:text="${bestellung.hoerernummer}">123456</span><br/>
+    Hörer: <span th:text="${bestellung.hoerername}">Erika Mustermann</span><br/>
+    E-Mail: <span th:text="${bestellung.hoereremail}">erika.mustermann@example.com</span>
+</p>
+<p>&nbsp;</p>
+<p>Sehr geehrte/r Frau/Herr <span th:text="${bestellung.hoerername}">Erika Mustermann</span>,</p>
+<p th:if="${hoerbuecher.size() == 1}">
+    wir haben am <span style="font-weight: bold" th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 12:34</span> Uhr
+    folgende Bestellung über <span style="font-weight: bold;">1 Hörbuch</span> erhalten:
+</p>
+<p th:if="${hoerbuecher.size() > 1}">
+    wir haben am <span style="font-weight: bold" th:text="${bestellung.zeitpunktAbgeschicktAlsDeutschesDatum}">20.09.2018 12:34</span> Uhr
+    folgende Bestellung über <span style="font-weight: bold;" th:text="${hoerbuecher.size()}">4</span> <span style="font-weight: bold;">Hörbücher</span> erhalten:
+</p>
+<p>
+<table cellpadding="1" cellspacing="1" border="1" width="90%">
+    <tbody>
+    <tr>
+        <th align="left" style="background: #ccc; color:#fff;">Titelnummer</th>
+        <th align="left" style="background: #ccc; color:#fff;">Autor</th>
+        <th align="left" style="background: #ccc; color:#fff;">Titel</th>
+    </tr>
+    <!--/*@thymesVar id="b" type="wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch"*/-->
+    <tr th:each="b : ${hoerbuecher}">
+        <td valign="top" width="15%" th:text="${b.titelnummer}">123456</td>
+        <td valign="top" width="30%" th:text="${b.autor}">Max Mustermann</td>
+        <td valign="top" width="55%" th:text="${b.titel}">Ein Titel eines Hörbuchs</td>
+    </tr>
+    </tbody>
+</table>
+</p>
+<p th:if="${bestellung.hasBemerkung()}">
+    Ihre Bemerkung: <span th:text="${bestellung.bemerkung}">Lorem ispum dolor sit amet...</span>
+</p>
+<p th:if="${bestellung.getBestellkarteMischen()}">Ihre Bestellkarte wird gemischt!</p>
+<p th:if="${bestellung.getAlteBestellkarteLoeschen()}">Ihre alte Bestellkarte wird gelöscht.</p>
+<p>
+    Mit freundlichen Grüßen,<br/>
+    Ihre WBH
+</p>
+<p>
+    Westdeutsche Bibliothek der Hörmedien für blinde, seh- und lesebehinderte Menschen e.V. - Harkortstr. 9 - 48163
+    Münster<br/>
+    Telefon: 0251 / 71 99 01 - Fax: 0251 / 71 28 46<br/>
+    E-Mail: <a href="mailto:wbh@wbh-online.de">wbh@wbh-online.de</a> - Homepage: <a href="https://www.wbh-online.de">www.wbh-online.de</a><br/>
+    Folgen Sie uns auf <a href="https://www.facebook.com/WBHMuenster">Facebook</a><br/>
+    Vereins-Reg.-Nr. 1298<br/>
+    Vorsitzender: S. Volkert<br/>
+    Geschäftsführer: Werner Kahle
+</p>
+</body>
+</html>
