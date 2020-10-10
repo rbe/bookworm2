@@ -22,15 +22,16 @@ RUN apk update \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
+VOLUME ["/etc/ssh"]
 
 FROM base
 COPY *_authorized_keys /etc/ssh/keys/
 RUN chmod 444 /etc/ssh/keys/*_authorized_keys
-COPY sshd_config_2 /var/local
 COPY setup-ssh-users.sh /usr/local/bin
 RUN chmod 500 /usr/local/bin/setup-ssh-users.sh \
         && /usr/local/bin/setup-ssh-users.sh rbe cew wbh \
         && rm /usr/local/bin/setup-ssh-users.sh
+COPY sshd_config_2 /var/local
 RUN cat /var/local/sshd_config_2 >>/etc/ssh/sshd_config \
         && rm /var/local/sshd_config_2
 WORKDIR /etc/ssh

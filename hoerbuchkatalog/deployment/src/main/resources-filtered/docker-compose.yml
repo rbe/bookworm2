@@ -22,11 +22,12 @@ services:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
     volumes:
+      - datatransfersshconf:/etc/ssh:rw
       - hoerbuchkataloglocal:/var/local:rw
     networks:
       - frontend
     expose:
-      - 2201
+      - 22
   admin-ssh:
     image: wbh-hbk/admin-ssh:${hbk.release}
     restart: unless-stopped
@@ -34,13 +35,18 @@ services:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
     volumes:
+      - adminsshconf:/etc/ssh:rw
       - hoerbuchkataloglocal:/var/local:rw
     networks:
       - frontend
     expose:
-      - 2202
+      - 22
 
 volumes:
+  adminsshconf:
+    driver: local
+  datatransfersshconf:
+    driver: local
   hoerbuchkataloglocal:
     driver: local
 

@@ -24,6 +24,7 @@ RUN apk update \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key \
     && addgroup -g 82 -S www-data \
     && adduser -u 82 -D -S -G www-data www-data
+VOLUME ["/etc/ssh"]
 
 FROM base
 COPY *_authorized_keys /etc/ssh/keys/

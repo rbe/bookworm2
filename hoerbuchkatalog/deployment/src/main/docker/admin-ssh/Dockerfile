@@ -22,6 +22,7 @@ RUN apk update \
         /etc/ssh/sshd_config \
     && ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
+VOLUME ["/etc/ssh"]
 
 FROM base
 COPY *_authorized_keys /etc/ssh/keys/

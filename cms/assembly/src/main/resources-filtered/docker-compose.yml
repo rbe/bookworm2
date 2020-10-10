@@ -40,11 +40,12 @@ services:
     environment:
       - TZ=Europe/Berlin
     volumes:
+      - assetssshconf:/etc/ssh:rw
       - joomladata:/var/www/html:rw
     networks:
       - backend
     expose:
-      - 2203
+      - 22
   cms-rproxy:
     image: wbh-cms/rproxy:${cms.release}
     restart: unless-stopped
@@ -71,6 +72,16 @@ services:
   #  networks:
   #    - hbk-backend
 
+volumes:
+  mysqldata:
+    driver: local
+  joomladata:
+    driver: local
+  assetssshconf:
+    driver: local
+  rproxycerts:
+    driver: local
+
 networks:
   #proxy-hbk-backend:
   #  external:
@@ -90,11 +101,3 @@ networks:
     driver: bridge
     external: false
     internal: false
-
-volumes:
-  mysqldata:
-    driver: local
-  joomladata:
-    driver: local
-  rproxycerts:
-    driver: local
