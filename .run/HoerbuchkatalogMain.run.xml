@@ -12,8 +12,9 @@
         <option name="DEBUG_MODE" value="true"/>
         <option name="ACTIVE_PROFILES" value="development"/>
         <option name="PROGRAM_PARAMETERS"
-                value="--spring.profiles.active=development --spring.config.additional-location=hoerbuchkatalog/assembly/target/classes/application-secrets.yml"/>
+                value="--spring.profiles.active=development --spring.config.additional-location=hoerbuchkatalog/assembly/src/main/resources/application-secrets.yml"/>
         <option name="ALTERNATIVE_JRE_PATH"/>
+        <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
         <envs>
             <env name="HOERBUCHKATALOG_TEMPLATE" value="hoerbuchkatalog/ui/src/main/resources/templates"/>
         </envs>
