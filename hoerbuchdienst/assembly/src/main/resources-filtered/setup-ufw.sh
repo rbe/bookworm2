@@ -64,7 +64,7 @@ ufw allow in from any to any port https proto tcp
 # HTTP incoming: RabbitMQ Web UI
 ufw allow in from any to any port 15671 proto tcp
 # RabbitMQ AMQPS
-shard_names=("shard1" "shard2")
+shard_names=("shard1" "shard2" "shard3" "shard4")
 my_name="$(hostname -f)"
 my_domain="$(hostname -d)"
 for shard_name in ${shard_names[*]}; do
