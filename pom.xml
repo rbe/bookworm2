@@ -26,8 +26,8 @@
         <maven.require.version>3.6</maven.require.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss</maven.build.timestamp.format>
         <!-- Java -->
-        <maven.compiler.source>14</maven.compiler.source>
-        <maven.compiler.target>14</maven.compiler.target>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <!-- Mikrokosmos -->
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <!-- Jackson -->

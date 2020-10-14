@@ -32,6 +32,10 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
         </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.shared.domain</artifactId>
+        </dependency>
         <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

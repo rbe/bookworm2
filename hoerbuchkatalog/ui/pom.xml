@@ -50,6 +50,10 @@
             <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
         </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.shared.domain</artifactId>
+        </dependency>
         <!-- Mikrokosmos -->
         <dependency>
             <groupId>aoc.mikrokosmos</groupId>

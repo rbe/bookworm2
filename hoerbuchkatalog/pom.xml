@@ -21,6 +21,9 @@
         <module>migrator</module>
     </modules>
     <properties>
+        <!-- Java -->
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
         <!-- Spring -->
         <spring-boot.version>2.2.6.RELEASE</spring-boot.version>
         <spring.version>5.2.5.RELEASE</spring.version>
@@ -52,6 +55,11 @@
                 <groupId>wbh.bookworm</groupId>
                 <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>wbh.bookworm</groupId>
+                <artifactId>wbh.bookworm.shared.domain</artifactId>
+                <version>LocalBuild</version>
             </dependency>
             <!-- Thymeleaf -->
             <dependency>

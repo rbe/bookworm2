@@ -8,10 +8,12 @@ package wbh.bookworm.shared.domain;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import aoc.mikrokosmos.ddd.model.DomainId;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public final class Hoerernummer extends DomainId<String> {
 
     private static final long serialVersionUID = -1L;
@@ -29,7 +31,7 @@ public final class Hoerernummer extends DomainId<String> {
     }
 
     @JsonCreator
-    public Hoerernummer(final @JsonProperty("value") String value) {
+    public Hoerernummer(@JsonProperty("value") final String value) {
         super(value);
     }
 
