@@ -18,7 +18,7 @@ declare -i i=0
 for t in "${titelnummern[@]}"; do
   n=$((10#$t))
   if [[ ${n} -ge ${MIN} ]]; then
-    echo "${n}"
+    printf "%05d\n" "${n}"
     i=$((i + 1))
   fi
   if [[ "${i}" == "${NUM}" ]]; then

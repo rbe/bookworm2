@@ -17,7 +17,6 @@ dst="${SHARD}/eingangskorb"
 mapfile -t TITELNUMMERN < <(titelnummern.sh "${START}" "${NUM}")
 
 for titelnummer in "${TITELNUMMERN[@]}"; do
-  titelnummer="$(printf "%05d" "${titelnummer}")"
   zip="minio/eingangskorb/${titelnummer}.zip"
   if mc stat "${zip}"; then
     echo "Copying ${titelnummer} to ${SHARD}"
