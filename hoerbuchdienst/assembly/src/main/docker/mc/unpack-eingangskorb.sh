@@ -31,13 +31,12 @@ function unpack() {
   local ident="$1"
   local shard="$2"
   zip="minio/eingangskorb/${ident}.zip"
-  zipdownload="/var/local/mc/${zip}"
+  zipdownload="/var/local/mc/${ident}.zip"
   tmpdir="/var/local/mc/${ident}_zip"
   daisydir="${ident}DAISY"
   dst="${shard}/hoerbuchdienst"
-  mc stat "${zip}"
   # shellcheck disable=SC2181
-  if [[ $? == 0 ]]; then
+  if mc stat "${zip}"; then
     if [[ -d "${tmpdir}" || -f "${zipdownload}" ]]; then
       echo "Please cleanup possibly existing directories or files:"
       echo "  - ${tmpdir}"
@@ -45,10 +44,13 @@ function unpack() {
       exit 1
     fi
     if mc stat "${dst}/${daisydir}" 2>/dev/null; then
-      echo "${ident} already exists at ${dst}/${daisydir}"
-      echo "Please remove for update"
-      exit 1
+      #echo "${ident} already exists at ${dst}/${daisydir}"
+      #echo "Please remove for update"
+      #exit 1
+      echo "Removing ${dst}/${daisydir} as it already exists"
+      mc rm --force --recursive "${dst}/${daisydir}"
     fi
+    echo "Moving ${t} to ${SHARD}"
     mkdir "${tmpdir}"
     echo "Copying ${ident} to ${zipdownload}"
     mc cp "${zip}" "${zipdownload}"
@@ -57,8 +59,8 @@ function unpack() {
     unzip -d "${tmpdir}" "${zipdownload}"
     echo "done"
     mandant_wbh "${ident}" "${tmpdir}"
-    num_files_in_zip="$(unzip -Z /var/local/mc/"${zip}" | grep -cE "^(d|-).*")"
-    num_extracted_files="$(find "${tmpdir}/${ident}" | wc -l)"
+    num_files_in_zip="$(unzip -Z "${zipdownload}" | grep -cE "^(d|-).*")"
+    num_extracted_files="$(find "${tmpdir}/${ident}DAISY" | wc -l)"
     if [[ "${num_files_in_zip}" != "${num_extracted_files}" ]]; then
       echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})"
       exit 1
@@ -69,7 +71,7 @@ function unpack() {
       popd >/dev/null
       echo "Cleaning up temporary files"
       rm -rf "${tmpdir}"
-      rm /var/local/mc/"${zip}"
+      rm "${zipdownload}"
       echo "done"
       if mc stat "${dst}/${daisydir}" 2>/dev/null; then
         echo "Removing ${zip}"
@@ -86,6 +88,7 @@ function unpack() {
     echo "${ident}: ${zip} not found"
     exit 1
   fi
+  echo "done"
 }
 
 if [[ $# -lt 2 ]]; then
@@ -98,9 +101,7 @@ TITELNUMMERN=("$@")
 
 echo "Moving ${#TITELNUMMERN[@]} audiobooks to ${SHARD}"
 for t in "${TITELNUMMERN[@]}"; do
-  echo "Moving ${t} to ${SHARD}"
   unpack "${t}" "${SHARD}"
-  echo "done"
 done
 
 exit 0
