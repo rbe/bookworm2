@@ -11,9 +11,8 @@ fi
 
 TITELNUMMER="$1"
 
-# Titelnummer Spalte 5-9
-# AGH Nummer ab Spalte 1018
-mc cat minio/hoerbuchkatalog/Gesamt.dat |
+# Titelnummer Spalte 5-9, AGH Nummer ab Spalte 1018
+AGHNUMMER=$(mc cat minio/hoerbuchkatalog/Gesamt.dat |
   dos2unix |
   awk '{
     titelnummer = substr($0, 5, 5);
@@ -21,7 +20,7 @@ mc cat minio/hoerbuchkatalog/Gesamt.dat |
     print titelnummer","aghnummer;
   }' |
   grep "${TITELNUMMER}" |
-  awk -F, '{print $2}'
+  awk -F, '{print $2}')
 
 SUFFIX="DAISY"
 
