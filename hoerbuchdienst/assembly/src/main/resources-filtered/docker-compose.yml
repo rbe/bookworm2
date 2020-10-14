@@ -252,6 +252,7 @@ services:
           - ${hbd.hostname}
       frontend:
     expose:
+      - 8000
       - 8080
   hbd-rproxy:
     image: wbh-hbd/rproxy:${hbd.release}
@@ -270,6 +271,7 @@ services:
     expose:
       - 80
       - 443
+      - 8000
 
 networks:
   backend:
