@@ -1,5 +1,12 @@
 // Ein Hörbuch mit Wasserzeichen bestellen
+OPTIONS {{host}}/bestellung/zip
+Origin: {{origin}}
+
+###
+
+// Ein Hörbuch mit Wasserzeichen bestellen
 POST {{host}}/bestellung/zip
+Origin: {{origin}}
 Content-Type: application/json
 
 {
@@ -9,16 +16,26 @@ Content-Type: application/json
     "titelnummer": "{{titelnummer}}"
 }
 
-> {% client.global.set("orderId", response.body); %}
+> {% client.global.set("orderId", response.json().orderId); %}
+
+###
+
+//  Den Status einer Bestellung eines Hörbuchs mit Wasserzeichen abfragen
+OPTIONS {{host}}/bestellung/zip/{{titelnummer}}/status/{{orderId}}
 
 ###
 
 //  Den Status einer Bestellung eines Hörbuchs mit Wasserzeichen abfragen
 GET {{host}}/bestellung/zip/{{titelnummer}}/status/{{orderId}}
+Origin: {{origin}}
 
 ###
 
 //  Eine zuvor bestelltes Hörbuch mit Wasserzeichen abrufen
 GET {{host}}/bestellung/zip/{{titelnummer}}/fetch/{{orderId}}
+Origin: {{origin}}
 
 ###
+
+GET {{host}}/bestellung/zip/00004/status/8a190f21-6e8f-4f9a-8411-7ce9ad18d13d
+Origin: {{origin}}
