@@ -8,9 +8,9 @@ VC="/vault/config"
 VCJSON="${VC}/vault-config.json"
 
 echo "Setting filesystem permissions"
-chown -R vault:vault /vault/config || echo "Could not chown /vault/config (may not have appropriate permissions)"
-chown -R vault:vault /vault/logs || echo "Could not chown /vault/logs (may not have appropriate permissions)"
-chown -R vault:vault /vault/file || echo "Could not chown /vault/file (may not have appropriate permissions)"
+chown -R vault:vault /vault/config || echo "Could not chown /vault/config"
+chown -R vault:vault /vault/logs || echo "Could not chown /vault/logs"
+chown -R vault:vault /vault/file || echo "Could not chown /vault/file"
 
 echo "Starting Vault server"
 vault server -config=${VCJSON} &
