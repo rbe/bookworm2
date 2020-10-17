@@ -12,18 +12,28 @@ fi
 function enable_nginx_conf() {
   local server="$1"
   if [[ -f "/etc/nginx/conf.d/${server}.conf.disabled" ]]; then
+    echo "Enabling nginx server ${server}"
     mv "/etc/nginx/conf.d/${server}.conf.disabled" "/etc/nginx/conf.d/${server}.conf"
-    echo "Enabled reverse proxy server ${server}"
-    nginx -t && nginx -s reload
+    if nginx -t && nginx -s reload; then
+      echo "done"
+    else
+      echo "failed"
+      exit 1
+    fi
   else
-    echo "Reverse proxy server ${server} enabled already"
+    echo "Reverse proxy server ${server} already enabled"
   fi
   if [[ -f "/etc/nginx/stream.d/${server}.stream.disabled" ]]; then
+    echo "Enabling TCP proxy ${server}"
     mv "/etc/nginx/stream.d/${server}.stream.disabled" "/etc/nginx/stream.d/${server}.stream"
-    echo "Enabled TCP proxy ${server}"
-    nginx -t && nginx -s reload
+    if nginx -t && nginx -s reload; then
+      echo "done"
+    else
+      echo "failed"
+      exit 1
+    fi
   else
-    echo "TCP proxy ${server} enabled already"
+    echo "TCP proxy ${server} already enabled"
   fi
 }
 
