@@ -20,7 +20,7 @@ for titelnummer in "${TITELNUMMERN[@]}"; do
   zip="minio/eingangskorb/${titelnummer}.zip"
   if mc stat "${zip}"; then
     echo "Copying ${titelnummer} to ${SHARD}"
-    if mc cp "${zip}" "${dst}"; then
+    if mc cp --continue --preserve "${zip}" "${dst}"; then
       echo "Removing ${titelnummer}"
       mc rm "${zip}"
       echo "Waiting 1 second"

@@ -5,8 +5,8 @@ set -o nounset
 set -o errexit
 
 function show_usage() {
-  echo "usage: $0 <shard> <Name im Eingangskorb 1> [<Name im Eingangskorb N> ...]"
-  echo "  shard          Ziel-Shard (mc host alias for shard, see 'mc config host list')"
+  echo "usage: $0 <Dst Shard> <Name im Eingangskorb 1> [<Name im Eingangskorb N> ...]"
+  echo "  Dst Shard      Ziel-Shard (mc host alias for shard, see 'mc config host list')"
   echo "  Titelnummer    Name im Eingangskorb, ohne .zip"
   echo ""
   echo "  Copies ZIP archive of audiobook(s) <Titelnummer> from bucket 'eingangskorb',"
@@ -102,6 +102,8 @@ TITELNUMMERN=("$@")
 echo "Moving ${#TITELNUMMERN[@]} audiobooks to ${SHARD}"
 for t in "${TITELNUMMERN[@]}"; do
   unpack "${t}" "${SHARD}"
+  echo "Waiting 1 second"
+  sleep 1
 done
 
 exit 0
