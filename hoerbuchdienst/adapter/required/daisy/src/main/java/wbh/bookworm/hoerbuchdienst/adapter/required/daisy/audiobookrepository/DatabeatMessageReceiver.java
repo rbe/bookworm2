@@ -30,7 +30,7 @@ final class DatabeatMessageReceiver {
     void receiveDatabeat(@Header("x-shardname") final String xShardName, final Databeat databeat) {
         if (null != databeat.getShardAudiobooks()) {
             final List<ShardAudiobook> shardObjects = databeat.getShardAudiobooks();
-            LOGGER.debug("Received {}", databeat);
+            LOGGER.trace("Received {}", databeat);
             databeatManager.remember(databeat.getShardName(), databeat);
             LOGGER.info("Received {} entries from {}", shardObjects.size(), xShardName);
         } else {

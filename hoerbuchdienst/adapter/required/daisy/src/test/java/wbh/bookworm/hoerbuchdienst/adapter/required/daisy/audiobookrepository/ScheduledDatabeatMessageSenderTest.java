@@ -1,20 +1,26 @@
 package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
-import java.util.concurrent.TimeUnit;
+import javax.inject.Inject;
 
+import io.micronaut.context.event.ApplicationEventPublisher;
 import io.micronaut.test.annotation.MicronautTest;
 import org.junit.jupiter.api.Test;
+
+import aoc.mikrokosmos.objectstorage.api.BucketObjectRemovedEvent;
 
 @MicronautTest
 class ScheduledDatabeatMessageSenderTest {
 
+    private ApplicationEventPublisher eventPublisher;
+
+    @Inject
+    ScheduledDatabeatMessageSenderTest(final ApplicationEventPublisher eventPublisher) {
+        this.eventPublisher = eventPublisher;
+    }
+
     @Test
-    void shouldSendHeartbeat() {
-        try {
-            TimeUnit.SECONDS.sleep(65);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    void shouldSendDatabeat() {
+        eventPublisher.publishEvent(new BucketObjectRemovedEvent("a-bucket", "an-object"));
     }
 
 }

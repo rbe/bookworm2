@@ -118,7 +118,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public String putZip(final byte[] bytes, final String titelnummer) {
+    public String putZip(final byte[] bytes, /* TODO Mandantenspezifisch */final String titelnummer) {
         Objects.requireNonNull(bytes);
         Objects.requireNonNull(titelnummer);
         LOGGER.debug("Received ZIP with {} bytes", bytes.length);
