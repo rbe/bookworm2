@@ -38,7 +38,7 @@ import aoc.mikrokosmos.objectstorage.api.BucketObjectRemovedEvent;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 
 @Singleton
-final class DatabeatManager {
+class DatabeatManager {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabeatManager.class);
 
