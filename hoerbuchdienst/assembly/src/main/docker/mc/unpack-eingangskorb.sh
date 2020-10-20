@@ -78,7 +78,8 @@ function unpack() {
         mc rm "${zip}"
         echo "done"
       else
-        echo "Cannot stat ${dst}, did not remove ${zip}"
+        echo "Cannot stat ${dst}/${daisydir}, did not remove ${zip}"
+        exit 1
       fi
     else
       echo "${ident}: Could not unzip ${zip} into ${daisydir}"
