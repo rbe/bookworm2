@@ -21,7 +21,7 @@ function enable_nginx_conf() {
       exit 1
     fi
   else
-    echo "Reverse proxy server ${server} already enabled"
+    echo "No reverse proxy server for ${server}"
   fi
   if [[ -f "/etc/nginx/stream.d/${server}.stream.disabled" ]]; then
     echo "Enabling TCP proxy ${server}"
@@ -33,7 +33,7 @@ function enable_nginx_conf() {
       exit 1
     fi
   else
-    echo "TCP proxy ${server} already enabled"
+    echo "No TCP proxy for ${server}"
   fi
 }
 
