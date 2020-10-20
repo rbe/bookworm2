@@ -32,7 +32,7 @@ class ScheduledDatabeatMessageSender {
         this.databeatMessageSender = databeatMessageSender;
     }
 
-    @Scheduled(fixedDelay = "10m")
+    @Scheduled(fixedDelay = "5m")
     void generateAndBroadcast() {
         final Optional<Databeat> maybeDatabeat = databeatManager.getMyDatabeat();
         if (maybeDatabeat.isPresent()) {

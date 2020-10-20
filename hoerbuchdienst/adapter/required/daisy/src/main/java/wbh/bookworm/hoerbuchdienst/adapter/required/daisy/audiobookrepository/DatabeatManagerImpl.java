@@ -3,6 +3,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 import javax.annotation.PostConstruct;
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.FileStore;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -19,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.scheduling.annotation.Async;
@@ -49,15 +52,19 @@ class DatabeatManagerImpl implements DatabeatManager {
 
     private final ShardName myShardName;
 
-    private final Path objectStoragePath;
-
-    private final AudiobookStreamResolver audiobookStreamResolver;
-
-    private final ReentrantLock databeatGenerationLock;
-
     private final Map<ShardName, Databeat> databeatMap;
 
     private final AtomicInteger heartbeatHighWatermark;
+
+    private final ReentrantLock databeatGenerationLock;
+
+    private final ObjectMapper objectMapper;
+
+    private final Path databeatJson;
+
+    private final Path objectStoragePath;
+
+    private final AudiobookStreamResolver audiobookStreamResolver;
 
     DatabeatManagerImpl(@Value("${hoerbuchdienst.objectstorage.path}") final Path objectStoragePath,
                         final AudiobookStreamResolver audiobookStreamResolver) {
@@ -65,6 +72,8 @@ class DatabeatManagerImpl implements DatabeatManager {
         databeatMap = new ConcurrentHashMap<>(5);
         heartbeatHighWatermark = new AtomicInteger(0);
         databeatGenerationLock = new ReentrantLock();
+        objectMapper = new ObjectMapper();
+        databeatJson = Path.of("/var/local/databeat.json");
         this.objectStoragePath = objectStoragePath;
         this.audiobookStreamResolver = audiobookStreamResolver;
     }
@@ -84,9 +93,16 @@ class DatabeatManagerImpl implements DatabeatManager {
 
     @PostConstruct
     private void postConstruct() {
-        LOGGER.info("!");
+        loadDatabeat();
         generate();
-        LOGGER.info("!");
+    }
+
+    private void loadDatabeat() {
+        try (final InputStream inputStream = Files.newInputStream(databeatJson)) {
+            databeatMap.put(myShardName, objectMapper.readValue(inputStream, Databeat.class));
+        } catch (IOException e) {
+            LOGGER.error("Could not load (previously persisted?) Databeat", e);
+        }
     }
 
     @EventListener
@@ -127,6 +143,7 @@ class DatabeatManagerImpl implements DatabeatManager {
                 final Databeat myDatabeat = new Databeat(ZonedDateTime.now().toInstant(), myShardName,
                         availableBytes, usedBytes, shardAudiobooks, consentHash());
                 databeatMap.put(myShardName, myDatabeat);
+                persistDatabeat(myDatabeat);
                 databeatGenerationLock.unlock();
             } else {
                 LOGGER.warn("Could not acquire lock");
@@ -134,6 +151,14 @@ class DatabeatManagerImpl implements DatabeatManager {
         } catch (InterruptedException e) {
             LOGGER.error("", e);
             Thread.currentThread().interrupt();
+        }
+    }
+
+    private void persistDatabeat(final Databeat myDatabeat) {
+        try (final OutputStream outputStream = Files.newOutputStream(databeatJson)) {
+            objectMapper.writeValue(outputStream, myDatabeat);
+        } catch (IOException e) {
+            LOGGER.error("Cannot persist Databeat", e);
         }
     }
 
