@@ -44,7 +44,7 @@ public class BucketObjectRemovedEventApplicationEventAdapter {
                             objectStorageEvent.getObjectName());
                     eventPublisher.publishEvent(event);
                 },
-                BucketEvent.S3_OBJECT_REMOVED);
+                BucketEvent.S3_OBJECT_REMOVED_DELETE);
     }
 
 }
