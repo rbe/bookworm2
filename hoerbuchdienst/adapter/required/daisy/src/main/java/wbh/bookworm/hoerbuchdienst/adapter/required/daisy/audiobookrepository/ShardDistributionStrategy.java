@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import java.util.List;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DatabeatManager;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 
 @FunctionalInterface

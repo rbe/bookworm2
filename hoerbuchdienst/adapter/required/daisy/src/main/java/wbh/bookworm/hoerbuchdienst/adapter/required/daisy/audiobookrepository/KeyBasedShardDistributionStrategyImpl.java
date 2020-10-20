@@ -5,6 +5,7 @@ import javax.inject.Singleton;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DatabeatManager;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.shared.domain.Titelnummer;

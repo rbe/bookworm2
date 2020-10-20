@@ -10,6 +10,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DatabeatManager;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 
 @Singleton
@@ -31,8 +32,8 @@ class ScheduledDatabeatMessageSender {
         this.databeatMessageSender = databeatMessageSender;
     }
 
-    @Scheduled(initialDelay = "20m", fixedDelay = "10m")
-    void generateAndBroadcastDatabeat() {
+    @Scheduled(fixedDelay = "10m")
+    void generateAndBroadcast() {
         final Optional<Databeat> maybeDatabeat = databeatManager.getMyDatabeat();
         if (maybeDatabeat.isPresent()) {
             final Databeat databeat = maybeDatabeat.get();

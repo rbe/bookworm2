@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.required.daisy.streamresolver.AudiobookStreamResolver;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Databeat;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DatabeatManager;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardAudiobook;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardHighWatermarkEvent;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
@@ -38,9 +39,9 @@ import aoc.mikrokosmos.objectstorage.api.BucketObjectRemovedEvent;
 import aoc.mikrokosmos.objectstorage.api.ObjectMetaInfo;
 
 @Singleton
-class DatabeatManager {
+class DatabeatManagerImpl implements DatabeatManager {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(DatabeatManager.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(DatabeatManagerImpl.class);
 
     private static final long SPACE_4GB = 4L * 1024L * 1024L * 1024L;
 
@@ -58,8 +59,8 @@ class DatabeatManager {
 
     private final AtomicInteger heartbeatHighWatermark;
 
-    DatabeatManager(@Value("${hoerbuchdienst.objectstorage.path}") final Path objectStoragePath,
-                    final AudiobookStreamResolver audiobookStreamResolver) {
+    DatabeatManagerImpl(@Value("${hoerbuchdienst.objectstorage.path}") final Path objectStoragePath,
+                        final AudiobookStreamResolver audiobookStreamResolver) {
         myShardName = new ShardName();
         databeatMap = new ConcurrentHashMap<>(5);
         heartbeatHighWatermark = new AtomicInteger(0);
@@ -83,22 +84,25 @@ class DatabeatManager {
 
     @PostConstruct
     private void postConstruct() {
-        generateDatabeat();
+        LOGGER.info("!");
+        generate();
+        LOGGER.info("!");
     }
 
     @EventListener
-    @Async
     void processEvent(final BucketObjectRemovedEvent event) {
         if ("eingangskorb".equals(event.getBucketName())) {
             LOGGER.info("Generating Databeat as requested by {}", event);
             // TODO Just add event.getObjectName() to Databeat; what about other changes?
-            generateDatabeat();
+            generate();
         } else {
             LOGGER.debug("Ignoring event {}", event);
         }
     }
 
-    private void generateDatabeat() {
+    @Override
+    @Async
+    public void generate() {
         try {
             if (databeatGenerationLock.tryLock(1L, TimeUnit.SECONDS)) {
                 LOGGER.info("Generating Databeat");
@@ -119,7 +123,7 @@ class DatabeatManager {
                 final long availableBytes = availableBytes();
                 final long stop = System.currentTimeMillis();
                 final long delta = stop - start;
-                LOGGER.info("Generating Databeat took {} ms = {} s", delta, delta / 60L);
+                LOGGER.info("Generating Databeat took {} ms = {} s = {} min", delta, delta / 1_000L, delta / 1_000L / 60L);
                 final Databeat myDatabeat = new Databeat(ZonedDateTime.now().toInstant(), myShardName,
                         availableBytes, usedBytes, shardAudiobooks, consentHash());
                 databeatMap.put(myShardName, myDatabeat);
@@ -148,7 +152,8 @@ class DatabeatManager {
         return availableBytes;
     }
 
-    Optional<Databeat> getMyDatabeat() {
+    @Override
+    public Optional<Databeat> getMyDatabeat() {
         return Optional.ofNullable(databeatMap.get(myShardName));
     }
 
@@ -159,11 +164,13 @@ class DatabeatManager {
                 .collect(Collectors.joining()));
     }
 
-    void remember(final ShardName shardName, final Databeat databeat) {
+    @Override
+    public void remember(final ShardName shardName, final Databeat databeat) {
         databeatMap.put(shardName, databeat);
     }
 
-    void forget(final ShardName shardName) {
+    @Override
+    public void forget(final ShardName shardName) {
         databeatMap.remove(shardName);
     }
 
@@ -174,15 +181,18 @@ class DatabeatManager {
     /**
      * Number of received databeats
      */
-    int numberOfDatabeats() {
+    @Override
+    public int numberOfDatabeats() {
         return databeatMap.size();
     }
 
-    long numerOfObjects() {
+    @Override
+    public long numerOfObjects() {
         return (long) allShardsAudiobooks().size();
     }
 
-    List<ShardAudiobook> allShardsAudiobooks() {
+    @Override
+    public List<ShardAudiobook> allShardsAudiobooks() {
         return databeatMap.values()
                 .stream()
                 .map(Databeat::getShardAudiobooks)
@@ -190,7 +200,8 @@ class DatabeatManager {
                 .collect(Collectors.toUnmodifiableList());
     }
 
-    Optional<ShardName> findShardNameForAudiobook(final String titelnummer) {
+    @Override
+    public Optional<ShardName> findShardNameForAudiobook(final String titelnummer) {
         return databeatMap.values()
                 .stream()
                 .map(Databeat::getShardAudiobooks)
@@ -203,14 +214,16 @@ class DatabeatManager {
     /**
      * Summarize sizes of all shard objects
      */
-    Optional<Long> totalSizeOfAllObjects() {
+    @Override
+    public Optional<Long> totalSizeOfAllObjects() {
         return allShardsAudiobooks()
                 .stream()
                 .map(ShardAudiobook::size)
                 .reduce(Long::sum);
     }
 
-    Set<ShardName> allShardNames() {
+    @Override
+    public Set<ShardName> allShardNames() {
         return databeatMap.keySet();
     }
 
@@ -219,7 +232,8 @@ class DatabeatManager {
         heartbeatHighWatermark.getAndSet(event.getHighWaterMark());
     }
 
-    int getHeartbeatHighWatermark() {
+    @Override
+    public int getHeartbeatHighWatermark() {
         return heartbeatHighWatermark.get();
     }
 
@@ -232,7 +246,8 @@ class DatabeatManager {
      * <li>all shards have same data</li>
      * </ul>
      */
-    boolean canRedistribute() {
+    @Override
+    public boolean canRedistribute() {
         final boolean numberOfHeartAndDatabeatsIsEqual = heartbeatHighWatermark.get() == numberOfDatabeats();
         final boolean moreThanOneDatabeatReceived = 2 <= numberOfDatabeats();
         final boolean moreObjectsThanShards = numberOfDatabeats() <= allShardsAudiobooks().size();
@@ -248,7 +263,8 @@ class DatabeatManager {
      * If every shard has computed same hash values -> that's a consent!
      * Because we all have the same data and using the same calculation will produce same result.
      */
-    boolean isConsent() {
+    @Override
+    public boolean isConsent() {
         final boolean hashValuesAreEqual;
         final Collection<Databeat> databeats = databeatMap.values();
         if (databeats.isEmpty()) {

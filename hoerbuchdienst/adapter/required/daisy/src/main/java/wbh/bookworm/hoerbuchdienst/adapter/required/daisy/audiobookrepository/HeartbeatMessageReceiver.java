@@ -27,6 +27,10 @@ final class HeartbeatMessageReceiver {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HeartbeatMessageReceiver.class);
 
+    private static final long SECONDS = 30L;
+
+    private final ShardName myShardName;
+
     private final HeartbeatManager heartbeatManager;
 
     private final AtomicInteger shardsHighWatermark;
@@ -35,6 +39,7 @@ final class HeartbeatMessageReceiver {
 
     HeartbeatMessageReceiver(final HeartbeatManager heartbeatManager,
                              final ApplicationEventPublisher eventPublisher) {
+        myShardName = new ShardName();
         this.heartbeatManager = heartbeatManager;
         this.eventPublisher = eventPublisher;
         shardsHighWatermark = new AtomicInteger(0);
@@ -78,22 +83,23 @@ final class HeartbeatMessageReceiver {
         }
     }
 
-    @Scheduled(fixedDelay = "5s")
+    @Scheduled(fixedDelay = SECONDS + "s")
     void checkHeartbeats() {
-        LOGGER.trace("Checking heartbeats");
+        LOGGER.trace("Checking other shard's heartbeats");
         // check if a heartbeat is missing over some time
-        final Instant heartbeatTooOld = Instant.now().minusSeconds(5L);
+        final Instant heartbeatTooOld = Instant.now().minusSeconds(SECONDS);
         final Map<ShardName, Instant> lostHeartbeats = heartbeatManager.lastTimestamps()
                 .entrySet()
                 .stream()
                 .filter(entry -> entry.getValue().isBefore(heartbeatTooOld))
+                .filter(entry -> !entry.getKey().equals(myShardName))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
         if (!lostHeartbeats.isEmpty()) {
-            LOGGER.debug("Forgetting lost heartbeats {}", lostHeartbeats);
+            LOGGER.warn("Forgetting lost heartbeats {}", lostHeartbeats);
             heartbeatManager.forgetAll(lostHeartbeats.keySet());
             if (shardsHighWatermark.get() > heartbeatManager.count()) {
-                LOGGER.error("Current number of heartbeats ({}) within 5 secs lower than high water mark ({})",
-                        heartbeatManager.count(), shardsHighWatermark);
+                LOGGER.warn("Current number of heartbeats = {} within {} secs lower than high water mark = {}",
+                        heartbeatManager.count(), SECONDS, shardsHighWatermark);
                 lostHeartbeats.forEach((key, value) -> {
                     LOGGER.error("Shard {} disappeared!", key);
                     eventPublisher.publishEvent(new ShardDisappearedEvent(key));
