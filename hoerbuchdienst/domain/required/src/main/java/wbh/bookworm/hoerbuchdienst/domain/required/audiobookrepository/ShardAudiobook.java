@@ -22,9 +22,9 @@ public final class ShardAudiobook implements Comparable<ShardAudiobook>, Seriali
 
     private final String hashValue;
 
-    private ShardAudiobook(final String objectId,
-                           final List<ShardObject> shardObjects,
-                           final ShardName shardName) {
+    public ShardAudiobook(final String objectId,
+                          final List<ShardObject> shardObjects,
+                          final ShardName shardName) {
         this.objectId = objectId;
         this.shardObjects = null != shardObjects && !shardObjects.isEmpty()
                 ? Collections.unmodifiableList(shardObjects)

@@ -52,7 +52,7 @@ public final class ShardObject implements Serializable {
     }
 
     public String getHashValue() {
-        return hashValue;
+        return null != hashValue ? hashValue : "";
     }
 
     public void setHashValue(final String hashValue) {
