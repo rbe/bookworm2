@@ -32,8 +32,7 @@ public final class ShardObject implements Serializable {
 
     public static ShardObject of(final ShardObject shardObject) {
         return new ShardObject(shardObject.objectId,
-                shardObject.size,
-                shardObject.hashValue);
+                shardObject.size, shardObject.hashValue);
     }
 
     public String getObjectId() {

@@ -22,11 +22,13 @@ public final class ShardAudiobook implements Comparable<ShardAudiobook>, Seriali
 
     private final String hashValue;
 
-    public ShardAudiobook(final String objectId,
-                          final List<ShardObject> shardObjects,
-                          final ShardName shardName) {
+    private ShardAudiobook(final String objectId,
+                           final List<ShardObject> shardObjects,
+                           final ShardName shardName) {
         this.objectId = objectId;
-        this.shardObjects = Collections.unmodifiableList(shardObjects);
+        this.shardObjects = null != shardObjects && !shardObjects.isEmpty()
+                ? Collections.unmodifiableList(shardObjects)
+                : Collections.emptyList();
         hashValue = computeHashValue();
         this.shardName = shardName;
     }
