@@ -12,7 +12,7 @@ server {
     ignore_invalid_headers off;
     client_max_body_size 0;
     proxy_buffering off;
-    location / {
+    location ~* /(info|search|shard|bestellung|stream|audioplayer)/.* {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -23,4 +23,5 @@ server {
         chunked_transfer_encoding off;
         proxy_pass http://hoerbuchdienst:8080;
     }
+    return 444;
 }
