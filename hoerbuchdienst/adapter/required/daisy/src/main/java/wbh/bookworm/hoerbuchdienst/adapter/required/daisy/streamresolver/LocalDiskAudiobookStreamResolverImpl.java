@@ -56,7 +56,7 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     }
 
     @Override
-    public List<ObjectMetaInfo> allObjectsMetaInfo() {
+    public List<ObjectMetaInfo> objectsMetaInfo() {
         throw new UnsupportedOperationException();
     }
 
