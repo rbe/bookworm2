@@ -16,7 +16,7 @@ public interface AudiobookStreamResolver {
 
     List<Path> listAll();
 
-    List<ObjectMetaInfo> allObjectsMetaInfo();
+    List<ObjectMetaInfo> objectsMetaInfo();
 
     List<Path> list(/* TODO AGH Nummer o.ä. */String titelnummer);
 

@@ -56,7 +56,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public List<Path> listAll() {
         try {
-            return bucketObjectStorage.listAllObjects()
+            return bucketObjectStorage.listObjects()
                     .stream()
                     .map(path -> path.getName(0))
                     .filter(path -> path.toString().endsWith("DAISY"))
@@ -68,8 +68,8 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public List<ObjectMetaInfo> allObjectsMetaInfo() {
-        return bucketObjectStorage.allObjectsMetaInfo();
+    public List<ObjectMetaInfo> objectsMetaInfo() {
+        return bucketObjectStorage.objectsMetaInfo();
     }
 
     @Override
