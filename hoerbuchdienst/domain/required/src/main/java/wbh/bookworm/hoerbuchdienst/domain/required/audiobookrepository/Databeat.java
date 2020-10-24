@@ -102,6 +102,10 @@ public final class Databeat implements Serializable {
                 : Collections.emptyList();
     }
 
+    public int numberOfObjects() {
+        return shardAudiobooks.size();
+    }
+
     public String getConsentHash() {
         return consentHash;
     }

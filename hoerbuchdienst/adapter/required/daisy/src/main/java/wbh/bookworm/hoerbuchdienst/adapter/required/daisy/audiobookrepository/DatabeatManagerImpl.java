@@ -97,11 +97,17 @@ class DatabeatManagerImpl implements DatabeatManager {
         generate();
     }
 
-    private void loadDatabeat() {
-        try (final InputStream inputStream = Files.newInputStream(databeatJson)) {
-            databeatMap.put(myShardName, objectMapper.readValue(inputStream, Databeat.class));
-        } catch (IOException e) {
-            LOGGER.error("Could not load (previously persisted?) Databeat", e);
+    void loadDatabeat() {
+        if (Files.exists(databeatJson)) {
+            try (final InputStream inputStream = Files.newInputStream(databeatJson)) {
+                final Databeat databeat = objectMapper.readValue(inputStream, Databeat.class);
+                databeatMap.put(myShardName, databeat);
+                LOGGER.info("Successfully loaded Databeat with {} entries", databeat.numberOfObjects());
+            } catch (IOException e) {
+                LOGGER.error(String.format("Could not load Databeat from %s", databeatJson), e);
+            }
+        } else {
+            LOGGER.info("No persisted Databeat found at {}", databeatJson);
         }
     }
 
@@ -123,7 +129,7 @@ class DatabeatManagerImpl implements DatabeatManager {
             if (databeatGenerationLock.tryLock(1L, TimeUnit.SECONDS)) {
                 LOGGER.info("Generating Databeat");
                 final long start = System.currentTimeMillis();
-                final List<ObjectMetaInfo> objectMetaInfos = audiobookStreamResolver.allObjectsMetaInfo();
+                final List<ObjectMetaInfo> objectMetaInfos = audiobookStreamResolver.objectsMetaInfo();
                 final Long usedBytes = objectMetaInfos.stream()
                         .map(ObjectMetaInfo::getLength)
                         .reduce(0L, Long::sum);
@@ -139,14 +145,15 @@ class DatabeatManagerImpl implements DatabeatManager {
                 final long availableBytes = availableBytes();
                 final long stop = System.currentTimeMillis();
                 final long delta = stop - start;
-                LOGGER.info("Generating Databeat took {} ms = {} s = {} min", delta, delta / 1_000L, delta / 1_000L / 60L);
                 final Databeat myDatabeat = new Databeat(ZonedDateTime.now().toInstant(), myShardName,
                         availableBytes, usedBytes, shardAudiobooks, consentHash());
+                LOGGER.info("Generating Databeat with {} entries took {} ms = {} s = {} min",
+                        myDatabeat.numberOfObjects(), delta, delta / 1_000L, delta / 1_000L / 60L);
                 databeatMap.put(myShardName, myDatabeat);
                 persistDatabeat(myDatabeat);
                 databeatGenerationLock.unlock();
             } else {
-                LOGGER.warn("Could not acquire lock");
+                LOGGER.warn("Could not acquire lock, generation already running");
             }
         } catch (InterruptedException e) {
             LOGGER.error("", e);
@@ -154,9 +161,10 @@ class DatabeatManagerImpl implements DatabeatManager {
         }
     }
 
-    private void persistDatabeat(final Databeat myDatabeat) {
+    void persistDatabeat(final Databeat myDatabeat) {
         try (final OutputStream outputStream = Files.newOutputStream(databeatJson)) {
             objectMapper.writeValue(outputStream, myDatabeat);
+            LOGGER.info("Persisted Databeat with {} entries", myDatabeat.numberOfObjects());
         } catch (IOException e) {
             LOGGER.error("Cannot persist Databeat", e);
         }

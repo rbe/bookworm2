@@ -35,7 +35,6 @@ public class DatabeatController {
     public HttpResponse<Boolean> generateDatabeat() {
         LOGGER.info("Databeat generation requested");
         shardService.generateDatabeat();
-        LOGGER.info("Databeat generation started");
         return HttpResponse.ok(true);
     }
 
