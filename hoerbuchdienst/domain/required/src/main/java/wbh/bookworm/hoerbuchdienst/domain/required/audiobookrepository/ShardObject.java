@@ -22,13 +22,11 @@ public final class ShardObject implements Serializable {
     public ShardObject() {
     }
 
-    public ShardObject(final String objectId,
-                       final long size,
-                       final String hashValue) {
+    public ShardObject(final String objectId, final long size, final String hashValue) {
         Objects.requireNonNull(objectId);
         this.objectId = objectId;
         this.size = size;
-        Objects.requireNonNull(hashValue);
+        // TODO hashValue is null when listing directories only
         this.hashValue = hashValue;
     }
 
