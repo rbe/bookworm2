@@ -21,6 +21,8 @@ function mandant_wbh() {
   local n=""
   if [[ -d "${tmpdir}/${ident}Kapitel" ]]; then
     n="${tmpdir}/${ident}Kapitel"
+  elif [[ -d "${tmpdir}/${ident}kapitel" ]]; then
+    n="${tmpdir}/${ident}kapitel"
   elif [[ -d "${tmpdir}/${ident}" ]]; then
     n="${tmpdir}/${ident}"
   fi
