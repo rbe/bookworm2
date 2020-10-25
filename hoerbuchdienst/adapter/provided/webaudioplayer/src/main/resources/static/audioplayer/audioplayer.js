@@ -36,6 +36,7 @@ export class Audioplayer {
                 this.volumeControl = new VolumeControl(this.elementSelectors, this.audio);
                 onReadyCallback();
             });
+        this.downloadStatusText = document.querySelector(this.elementSelectors.downloadStatusTextSelector);
     }
 
     initElementSelectors() {
@@ -58,7 +59,8 @@ export class Audioplayer {
             'nextTrackButtonSelector': 'button.nextTrack',
             'volumeDownButtonSelector': 'button.volumeDown',
             'volumeUpButtonSelector': 'button.volumeUp',
-            'volumeSliderInputSelector': 'input.volumeSlider'
+            'volumeSliderInputSelector': 'input.volumeSlider',
+            'downloadStatusText': '#downloadStatusText'
         };
     }
 
@@ -330,6 +332,7 @@ export class Audioplayer {
 
     asyncDownloadOrder() {
         const url = new URL('bestellung/zip', this.audiobookURL).toString();
+        this.downloadStatusText.html('Bestellung aufgeben');
         fetch(url, {
             'method': 'POST',
             'mode': 'cors',
@@ -354,6 +357,7 @@ export class Audioplayer {
             .then(json => {
                 if (json) {
                     this.orderId = json.orderId;
+                    this.downloadStatusText.html('Bestellung ' + this.orderId);
                     console.log('asyncDownloadOrder(): orderId ' + this.orderId);
                     this.asyncDownloadStatus();
                 } else {
@@ -390,20 +394,27 @@ export class Audioplayer {
                     orderStatus = json.orderStatus;
                     console.log('asyncDownloadOrder(): Order status ' + this.orderId + ' is ' + orderStatus);
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
+                        switch (orderStatus) {
+                            case 'SUCCESS':
+                                this.downloadStatusText.html('Bestellung erfolgreich');
+                                this.asyncDownloadAudiobook();
+                                break;
+                            case 'FAILED':
+                                this.downloadStatusText.html('Bestellung fehlerhaft!');
+                                break;
+                            default:
+                                alert('Unbekannter Status!');
+                        }
                         if (this.asyncDownloadStatusTimeoutId.has(this.orderId)) {
-                            console.log('clearTimeout');
                             clearTimeout(this.asyncDownloadStatusTimeoutId.get(this.orderId));
                             this.asyncDownloadStatusTimeoutId.delete(this.orderId);
                         }
-                        if (orderStatus === 'SUCCESS') {
-                            this.asyncDownloadAudiobook();
-                        }
                     } else {
-                        console.log('setTimeout');
                         this.asyncDownloadStatusTimeoutId.set(this.orderId,
                             setTimeout(() => this.asyncDownloadStatus(), 1500));
                     }
                 } else {
+                    this.downloadStatusText.html('Keine Daten!');
                     console.log('asyncDownloadStatus(): Sorry, no JSON');
                 }
             })
@@ -415,8 +426,8 @@ export class Audioplayer {
     }
 
     asyncDownloadAudiobook() {
-        console.log('asyncDownloadAudiobook()');
         const url = new URL('bestellung/zip/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
+        console.log('asyncDownloadAudiobook(): Downloading ' + url);
         fetch(url, {
             'method': 'GET',
             'mode': 'cors',
@@ -430,10 +441,11 @@ export class Audioplayer {
                 }
             })
             .then(blob => {
+                this.downloadStatusText.html('Bestellung wird gespeichert!');
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = this.orderId + ".zip";
+                a.download = this.titelnummer + ".zip";
                 document.body.appendChild(a);
                 a.click();
                 a.remove();
