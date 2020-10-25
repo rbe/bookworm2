@@ -23,5 +23,7 @@ server {
         chunked_transfer_encoding off;
         proxy_pass http://hoerbuchdienst:8080;
     }
-    return 444;
+    location / {
+        return 444;
+    }
 }
