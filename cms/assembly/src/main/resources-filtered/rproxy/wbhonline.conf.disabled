@@ -56,13 +56,6 @@ server {
     }
 
     #
-    # HTTP Status Codes
-    #
-
-    location ~ /(.+).code$ {
-    }
-
-    #
     # Joomla
     #
 
