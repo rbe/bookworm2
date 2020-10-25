@@ -13,11 +13,8 @@ umask 0007
 TZ="Europe/Berlin"
 export TZ
 
-ls -l /usr/local/service.jar
-ls -la /var/local
-
+echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
-
 java \
   -Xms1536m -Xmx1536m \
   -XX:+UseCompressedOops \
@@ -32,5 +29,16 @@ java \
   -Dmicronaut.environments=prod \
   -Dmicronaut.config.files=/var/local/application-shard.yml \
   -jar /usr/local/service.jar
+
+if [ -x jstatd ]; then
+  echo "Starting jstatd"
+  jstatd \
+    -J-Djava.security.policy=all.policy \
+    -J-Djava.rmi.server.logCalls=true \
+    -p 8001 \
+    -n jstatdserver
+fi
+
+tail -f /dev/null
 
 exit 0

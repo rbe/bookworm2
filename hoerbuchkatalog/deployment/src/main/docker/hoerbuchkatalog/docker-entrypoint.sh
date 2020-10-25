@@ -13,11 +13,10 @@ umask 0007
 TZ="Europe/Berlin"
 export TZ
 
-ls -l /usr/local/service.jar
-ls -la /var/local
-
+echo "Removing all/old Lucene index directories"
 rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
 
+echo "Starting service"
 java \
   -Xms2048m -Xmx2048m \
   -XX:+UseCompressedOops \
