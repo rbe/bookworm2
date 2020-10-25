@@ -1,5 +1,5 @@
 hoerbuchkatalog:
-  directory: /var/local/wbh/hoerbuchkatalog
+  directory: ./var/wbh/hoerbuchkatalog
   cron:
     expression: 0 15 5 * * MON-FRI
   suchergebnisse:
@@ -16,13 +16,13 @@ hoerbuchkatalog:
       charset: ISO-8859-15
 
 hoererdaten:
-  directory: /var/local/wbh/nutzerdaten
+  directory: ./var/wbh/nutzerdaten
 
 cdlieferung:
-  directory: /var/local/wbh/nutzerdaten
+  directory: ./var/wbh/nutzerdaten
 
 repository:
-  path: /var/local
+  path: ./var
 
 blista:
   dls:
@@ -33,13 +33,13 @@ blista:
       port: 95
       bibliothek:
       bibkennwort:
-      directory: /var/local/blista/dls
+      directory: ./var/blista/dls
     rest:
       werkeurl: https://rest-dls-katalog.blista.de:443/v1/werke
       checkurl: https://rest-dls-katalog.blista.de:443/v1/check
       bibliothek:
       bibkennwort:
-      directory: /var/local/blista/dls
+      directory: ./var/blista/dls
 
 lucene:
   index:
