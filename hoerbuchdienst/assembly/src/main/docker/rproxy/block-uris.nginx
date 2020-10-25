@@ -1,0 +1,16 @@
+map $request_uri $block_request {
+    default 0;
+    include /etc/nginx/map/block-uris.map;
+}
+if ($block_request) {
+    return 444;
+}
+location ~* ^.*php.*$ {
+    return 444;
+}
+location ~* ^.*\.jsp$ {
+    return 444;
+}
+location ~* ^.*\.lua$ {
+    return 444;
+}
