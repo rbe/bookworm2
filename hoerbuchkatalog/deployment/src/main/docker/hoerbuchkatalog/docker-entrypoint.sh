@@ -27,7 +27,7 @@ java \
   -XX:+UnlockExperimentalVMOptions \
   -XX:+UseZGC \
   -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M \
-  -Xrunjdwp:transport=dt_socket,address=*:8000,server=y,suspend=n \
+  -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n \
   -Dlogback.configurationFile=/var/local/logback.xml \
   -jar /usr/local/service.jar \
   --spring.profiles.active=production \

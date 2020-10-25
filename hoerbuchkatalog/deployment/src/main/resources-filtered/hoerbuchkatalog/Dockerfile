@@ -24,6 +24,6 @@ RUN /usr/local/bin/perms.sh
 USER service:service
 VOLUME ["/var/local"]
 WORKDIR /var/local
-EXPOSE 8080/tcp 8000/tcp
+EXPOSE 8080/tcp 5005/tcp
 ENV HOERBUCHKATALOG_TEMPLATE /var/local/templates
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

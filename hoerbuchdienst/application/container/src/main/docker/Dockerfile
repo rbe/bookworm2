@@ -27,4 +27,4 @@ RUN find /var/local -type d -print0 | xargs -0 chown service:service \
 USER service:service
 VOLUME ["/var/local"]
 WORKDIR /var/local
-EXPOSE 8080/tcp 8000/tcp
+EXPOSE 8080/tcp 5005/tcp
