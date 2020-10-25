@@ -9,6 +9,9 @@ RUN apk update
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
+RUN addgroup -g 1000 service \
+    && adduser -u 100 -D -S -G service service
+RUN adduser -u 82 -D -S -G www-data www-data
 RUN apk --no-cache add bash
 RUN apk --no-cache add curl
 RUN apk add --no-cache git
@@ -16,7 +19,6 @@ RUN apk add --no-cache pwgen
 RUN apk --no-cache add openssl
 RUN apk --no-cache add certbot-nginx
 RUN rm /etc/nginx/conf.d/default.conf*
-RUN adduser -u 82 -D -S -G www-data www-data
 RUN echo "0 0 * * WED,SUN certbot renew" | crontab -
 #RUN apk add --no-cache make
 #RUN apk add --no-cache python3

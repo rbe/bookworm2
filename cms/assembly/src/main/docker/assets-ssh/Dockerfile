@@ -10,6 +10,10 @@ RUN apk --no-cache add coreutils
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
+RUN addgroup -g 1000 service \
+    && adduser -u 100 -D -S -G service service
+RUN addgroup -g 82 -S www-data \
+    && adduser -u 82 -D -S -G www-data www-data
 RUN apk --no-cache add openssh
 RUN sed -i'' -E \
         -e 's/^#(HostKey)/\1/' \
@@ -21,8 +25,6 @@ RUN sed -i'' -E \
         /etc/ssh/sshd_config
 RUN ssh-keygen -A \
     && ssh-keygen -t rsa -b 4096 -q -N "" -f /etc/ssh/ssh_host_key
-RUN addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -G www-data www-data
 VOLUME ["/etc/ssh"]
 
 FROM base

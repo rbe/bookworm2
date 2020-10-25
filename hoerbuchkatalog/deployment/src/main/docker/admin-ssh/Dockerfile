@@ -10,6 +10,8 @@ RUN apk --no-cache add coreutils
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
+RUN addgroup -g 1000 service \
+    && adduser -u 100 -D -S -G service service
 RUN apk --no-cache add openssh
 RUN sed -i'' -E \
         -e 's/^#(HostKey)/\1/' \

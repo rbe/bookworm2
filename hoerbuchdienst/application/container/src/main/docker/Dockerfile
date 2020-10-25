@@ -8,8 +8,8 @@ RUN apk update
 RUN apk --no-cache add tzdata \
     && cp /usr/share/zoneinfo/${TZ} /etc/localtime \
     && echo "${TZ}" >/etc/timezone
-RUN addgroup service \
-    && adduser -D -S -G service service
+RUN addgroup -g 1000 service \
+    && adduser -u 100 -D -S -G service service
 RUN apk --no-cache add bash
 COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x -- /usr/local/bin/*
