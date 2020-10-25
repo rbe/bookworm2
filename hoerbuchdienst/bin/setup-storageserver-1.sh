@@ -59,6 +59,16 @@ echo ",,L" | sfdisk --no-reread --force -a /dev/sda
 sfdisk --dump /dev/sda >sda.dump.2
 echo "done"
 
+echo "Creating users"
+groupadd admin
+useradd -m -s /bin/bash -g rbe rbe
+useradd -m -s /bin/bash -g cew cew
+cat >/etc/sudoers.d/admin <<EOF
+rbe ALL=(ALL) NOPASSWD: ALL
+cew ALL=(ALL) ALL
+EOF
+echo "done"
+
 echo "!!!"
 echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
