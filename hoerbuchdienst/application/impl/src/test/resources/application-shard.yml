@@ -1,9 +1,0 @@
-shard:
-  name:
-rabbitmq:
-  username:
-  password:
-objectstorage:
-  minio:
-    accessKey:
-    secureKey:
