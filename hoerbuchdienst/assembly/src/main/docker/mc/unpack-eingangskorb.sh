@@ -58,7 +58,11 @@ function unpack() {
     mc cp "${zip}" "${zipdownload}"
     echo "done"
     echo "Unpacking ${ident} in ${tmpdir}"
-    unzip -d "${tmpdir}" "${zipdownload}"
+    set +o errexit
+    unizp_log="${ident}_unzip.log"
+    unzip -d "${tmpdir}" "${zipdownload}" 2>"${unizp_log}" 1>&2
+    mc mv "${unizp_log}" minio/ausgangskorb
+    set -o errexit
     echo "done"
     mandant_wbh "${ident}" "${tmpdir}"
     num_files_in_zip="$(unzip -Z "${zipdownload}" | grep -cE "^(d|-).*")"
