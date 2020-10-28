@@ -27,7 +27,7 @@ function mandant_wbh() {
     n="${tmpdir}/${ident}"
   fi
   find "${n}" -type f -name \*.txt -print0 | xargs -r -0 rm
-  find "${n}" -type d -print0 | xargs -r -0 rm -rf
+  find "${n}" -type d -mindepth 1 -print0 | xargs -r -0 rm -rf
   mv "${n}" "${tmpdir}/${ident}DAISY"
 }
 
@@ -70,8 +70,7 @@ function unpack() {
     num_files_in_zip="$(unzip -Z "${zipdownload}" | grep -cE "^(d|-).*")"
     num_extracted_files="$(find "${tmpdir}/${ident}DAISY" | wc -l)"
     if [[ "${num_files_in_zip}" != "${num_extracted_files}" ]]; then
-      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})"
-      exit 1
+      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})" >>"${unizp_log}"
     fi
     if [[ -d "${tmpdir}/${daisydir}" ]]; then
       pushd "${tmpdir}" >/dev/null
