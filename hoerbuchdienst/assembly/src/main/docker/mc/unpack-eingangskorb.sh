@@ -26,6 +26,8 @@ function mandant_wbh() {
   elif [[ -d "${tmpdir}/${ident}" ]]; then
     n="${tmpdir}/${ident}"
   fi
+  find "${n}" -type f -name \*.txt -print0 | xargs -r -0 rm
+  find "${n}" -type d -print0 | xargs -r -0 rm -rf
   mv "${n}" "${tmpdir}/${ident}DAISY"
 }
 
