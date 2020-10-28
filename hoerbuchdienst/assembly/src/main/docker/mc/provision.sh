@@ -72,6 +72,8 @@ echo "Creating bucket 'hoerbuchdienst'"
 mc mb minio-admin/hoerbuchdienst
 echo "Creating bucket 'eingangskorb'"
 mc mb minio-admin/eingangskorb
+echo "Creating bucket 'ausgangskorb'"
+mc mb minio-admin/ausgangskorb
 echo "Creating bucket 'hoerbuchkatalog'"
 mc mb minio-admin/hoerbuchkatalog
 echo "Creating bucket 'hoererdaten'"
