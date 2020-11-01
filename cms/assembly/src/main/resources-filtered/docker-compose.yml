@@ -43,6 +43,7 @@ services:
       - assetssshconf:/etc/ssh:rw
       - joomladata:/var/www/html:rw
     networks:
+      - backend
       - frontend
     expose:
       - 22
