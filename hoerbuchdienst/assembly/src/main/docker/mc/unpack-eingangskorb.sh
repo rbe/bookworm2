@@ -26,9 +26,14 @@ function mandant_wbh() {
   elif [[ -d "${tmpdir}/${ident}" ]]; then
     n="${tmpdir}/${ident}"
   fi
-  find "${n}" -type f -name \*.txt -print0 | xargs -r -0 rm
-  find "${n}" -type d -mindepth 1 -print0 | xargs -r -0 rm -rf
-  mv "${n}" "${tmpdir}/${ident}DAISY"
+  # Remove unwanted files
+  # See below: copy tmpdir_1 to tmpdir_2
+  #find "${n}" -type f -name \*.txt -print0 | xargs -r -0 rm
+  #find "${n}" -type f -name \*.lnk -print0 | xargs -r -0 rm
+  #find "${n}" -type d -mindepth 1 -print0 | xargs -r -0 rm -rf
+  if [[ -d "${n}" ]]; then
+    mv "${n}" "${tmpdir}/${ident}DAISY"
+  fi
 }
 
 function unpack() {
@@ -36,16 +41,16 @@ function unpack() {
   local shard="$2"
   zip="minio/eingangskorb/${ident}.zip"
   zipdownload="/var/local/mc/${ident}.zip"
-  tmpdir="/var/local/mc/${ident}_zip"
+  tmpdir="/var/local/mc/${ident}_unpack"
   daisydir="${ident}DAISY"
   dst="${shard}/hoerbuchdienst"
   # shellcheck disable=SC2181
   if mc stat "${zip}"; then
     if [[ -d "${tmpdir}" || -f "${zipdownload}" ]]; then
-      echo "Please cleanup possibly existing directories or files:"
+      echo "Cleaning up possibly existing directories or files:"
       echo "  - ${tmpdir}"
       echo "  - ${zipdownload}"
-      exit 1
+      rm -rf "${ident}*zip"
     fi
     if mc stat "${dst}/${daisydir}" 2>/dev/null; then
       #echo "${ident} already exists at ${dst}/${daisydir}"
@@ -55,29 +60,39 @@ function unpack() {
       mc rm --force --recursive "${dst}/${daisydir}"
     fi
     echo "Moving ${t} to ${SHARD}"
-    mkdir "${tmpdir}"
+    mkdir "${tmpdir}_1"
     echo "Copying ${ident} to ${zipdownload}"
     mc cp "${zip}" "${zipdownload}"
     echo "done"
-    echo "Unpacking ${ident} in ${tmpdir}"
+    echo "Unpacking ${ident} in ${tmpdir}_1"
     set +o errexit
-    unizp_log="${ident}_unzip.log"
-    unzip -d "${tmpdir}" "${zipdownload}" 2>"${unizp_log}" 1>&2
+    unzip_log="${ident}_unzip.log"
+    unzip -d "${tmpdir}_1" "${zipdownload}" 2>"${unzip_log}" 1>&2
     set -o errexit
-    mc mv "${unizp_log}" minio/ausgangskorb
     echo "done"
-    mandant_wbh "${ident}" "${tmpdir}"
+    echo "Consolidating SMIL, HTML and MP3 files"
+    mkdir -p "${tmpdir}_2/${daisydir}"
+    find "${tmpdir}_1" -type f \( -name \*.mp3 -o -name \*.smil -o -name \*.html \) -print0 |
+      xargs -r -0 -I'{}' mv '{}' "${tmpdir}_2/${daisydir}"
+    echo "done"
+    mandant_wbh "${ident}" "${tmpdir}_2"
+    echo "Comparing number of files"
     num_files_in_zip="$(unzip -Z "${zipdownload}" | grep -cE "^(d|-).*")"
-    num_extracted_files="$(find "${tmpdir}/${ident}DAISY" | wc -l)"
+    num_extracted_files="$(find "${tmpdir}_2/${daisydir}" | wc -l)"
     if [[ "${num_files_in_zip}" != "${num_extracted_files}" ]]; then
-      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})" >>"${unizp_log}"
+      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})" >>"${unzip_log}"
     fi
-    if [[ -d "${tmpdir}/${daisydir}" ]]; then
-      pushd "${tmpdir}" >/dev/null
+    echo "done"
+    echo "Moving unpack report to ausgangskorb"
+    mc mv "${unzip_log}" minio/ausgangskorb
+    echo "done"
+    if [[ -d "${tmpdir}_2/${daisydir}" ]]; then
+      pushd "${tmpdir}_2" >/dev/null
       mc mv --recursive "${daisydir}" "${dst}"
       popd >/dev/null
       echo "Cleaning up temporary files"
-      rm -rf "${tmpdir}"
+      rm -rf "${tmpdir}_1"
+      rm -rf "${tmpdir}_2"
       rm "${zipdownload}"
       echo "done"
       if mc stat "${dst}/${daisydir}" 2>/dev/null; then
