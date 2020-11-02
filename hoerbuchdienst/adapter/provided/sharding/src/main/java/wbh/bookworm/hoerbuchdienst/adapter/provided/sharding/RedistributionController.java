@@ -19,6 +19,10 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,10 +31,19 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
 
 import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Shard",
+                version = "1.0.0",
+                description = "Hoerbuchdienst - Shard Redistribution",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 @Controller(RedistributionController.BASE_URL)
 public class RedistributionController {
 
-    static final String BASE_URL = "shard/redistribute";
+    static final String BASE_URL = "/shard/redistribute";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedistributionController.class);
 

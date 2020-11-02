@@ -7,7 +7,20 @@
 package wbh.bookworm.hoerbuchdienst.application.impl;
 
 import io.micronaut.runtime.Micronaut;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Hoerbuchdienst",
+                version = "1.0.0",
+                description = "Hoerbuchdienst",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 public class Hoerbuchdienst {
 
     public static void main(final String[] args) {

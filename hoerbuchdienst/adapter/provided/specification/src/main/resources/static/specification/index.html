@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <title>H&ouml;rbuchdienst Specification</title>
+    <link href="index.css" rel="stylesheet"/>
+</head>
+<body>
+<div class="row-container">
+    <div class="first-row view-selector">
+        <label for="swagger-view">Ansicht:</label>
+        <ul class="swagger-view" id="swagger-view">
+            <li id="swagger-ui">Swagger UI</li>
+            <li id="rapidoc">RapiDoc</li>
+            <li id="redoc">ReDoc</li>
+        </ul>
+        <label for="service">Dienst:</label>
+        <ul class="service" id="service">
+            <li id="katalog">Katalog</li>
+            <li id="bestellung">Bestellung</li>
+            <li id="shard">Shard</li>
+        </ul>
+    </div>
+    <iframe class="second-row" id="content"></iframe>
+</div>
+<script src="index.html.js"></script>
+</body>
+</html>

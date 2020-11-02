@@ -19,5 +19,13 @@
         <module>katalog</module>
         <module>stream</module>
         <module>webaudioplayer</module>
+        <module>specification</module>
     </modules>
+    <dependencies>
+        <!-- Swagger -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-annotations</artifactId>
+        </dependency>
+    </dependencies>
 </project>

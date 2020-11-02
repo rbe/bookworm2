@@ -13,7 +13,21 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.codec.MediaTypeCodec;
 import io.micronaut.http.codec.MediaTypeCodecRegistry;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Hello",
+                version = "1.0.0",
+                description = "Hoerbuchdienst",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 @Controller("/hello")
 public class HelloController {
 
@@ -25,6 +39,7 @@ public class HelloController {
     }
 
     @Get(uri = "/plain", produces = MediaType.TEXT_PLAIN)
+    @ApiResponse
     public String helloWorld() {
         return "Hello World";
     }

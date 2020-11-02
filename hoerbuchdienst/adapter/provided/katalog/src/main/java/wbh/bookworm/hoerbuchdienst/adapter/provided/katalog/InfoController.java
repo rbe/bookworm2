@@ -15,6 +15,11 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.Post;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -31,10 +36,19 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Katalog",
+                version = "1.0.0",
+                description = "Hoerbuchdienst - Katalog",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 @Controller(InfoController.BASE_URL)
 public class InfoController {
 
-    static final String BASE_URL = "info";
+    static final String BASE_URL = "/info";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(InfoController.class);
 
@@ -49,6 +63,7 @@ public class InfoController {
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
+    @Operation(hidden = true)
     @Options(uri = "audiobook")
     public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);
@@ -70,6 +85,7 @@ public class InfoController {
                 httpRequest);
     }
 
+    @Operation(hidden = true)
     @Options(uri = "playlist")
     public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);
@@ -91,6 +107,7 @@ public class InfoController {
                 httpRequest);
     }
 
+    @Operation(hidden = true)
     @Options(uri = "track")
     public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);

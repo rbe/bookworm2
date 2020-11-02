@@ -14,6 +14,10 @@ import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
 import org.mapstruct.Mapper;
 import org.mapstruct.factory.Mappers;
 import org.slf4j.Logger;
@@ -22,10 +26,19 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Katalog",
+                version = "1.0.0",
+                description = "Hoerbuchdienst - Katalog",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 @Controller(SuchindexController.BASE_URL)
 public class SuchindexController {
 
-    static final String BASE_URL = "search";
+    static final String BASE_URL = "/search";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SuchindexController.class);
 

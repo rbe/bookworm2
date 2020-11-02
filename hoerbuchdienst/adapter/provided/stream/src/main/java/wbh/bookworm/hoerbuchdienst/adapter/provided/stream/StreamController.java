@@ -20,6 +20,11 @@ import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.Post;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.info.Contact;
+import io.swagger.v3.oas.annotations.info.Info;
+import io.swagger.v3.oas.annotations.info.License;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,11 +36,19 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
-@OpenAPIDefinition()
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Bestellung",
+                version = "1.0.0",
+                description = "Hoerbuchdienst - Hörbücher bestellen",
+                license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
+                contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
+        )
+)
 @Controller(value = StreamController.BASE_URL)
 public class StreamController {
 
-    static final String BASE_URL = "stream";
+    static final String BASE_URL = "/stream";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
 
@@ -61,11 +74,14 @@ public class StreamController {
         this.mandantService = mandantService;
     }
 
+    @ApiResponse(description = "CORS")
     @Options(uri = "zip")
     public HttpResponse<String> optionsZippedAudiobookAsStream(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);
     }
 
+    @Operation(summary = "Hörbuch als DAISY-ZIP mit Wasserzeichen")
+    @ApiResponse(responseCode = "200", description = "Stream wird geliefert")
     @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookAsStream(final HttpRequest<?> httpRequest,
@@ -92,11 +108,13 @@ public class StreamController {
         }
     }
 
+    @Operation(summary = "CORS")
     @Options(uri = "track")
     public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);
     }
 
+    @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP mit Wasserzeichen")
     @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,

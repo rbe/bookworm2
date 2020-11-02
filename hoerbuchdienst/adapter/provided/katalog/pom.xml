@@ -28,11 +28,6 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.domain.ports</artifactId>
             <version>LocalBuild</version>
         </dependency>
-        <!-- Swagger -->
-        <dependency>
-            <groupId>io.swagger.core.v3</groupId>
-            <artifactId>swagger-annotations</artifactId>
-        </dependency>
         <!-- MapStruct -->
         <dependency>
             <groupId>org.mapstruct</groupId>
