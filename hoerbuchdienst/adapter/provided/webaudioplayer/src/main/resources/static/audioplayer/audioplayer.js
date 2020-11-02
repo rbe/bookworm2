@@ -60,7 +60,7 @@ export class Audioplayer {
             'volumeDownButtonSelector': 'button.volumeDown',
             'volumeUpButtonSelector': 'button.volumeUp',
             'volumeSliderInputSelector': 'input.volumeSlider',
-            'downloadStatusText': '#downloadStatusText'
+            'downloadStatusTextSelector': '#downloadStatusText'
         };
     }
 

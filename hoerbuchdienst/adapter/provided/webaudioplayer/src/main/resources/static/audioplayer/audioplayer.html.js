@@ -29,7 +29,7 @@ import {Audioplayer} from "./audioplayer.js";
     const downloadButton = document.querySelector('#downloadButton');
     downloadButton.style.display = 'none';
     const downloadStatusText = document.querySelector('#downloadStatus');
-    downloadStatusText.style.display = 'none';
+    downloadStatusText.style.display = 'block';
     const audioplayer = new Audioplayer();
     document.querySelector('#ladenButton')
         .addEventListener('click', event => {
