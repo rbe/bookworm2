@@ -1,4 +1,9 @@
+docker-ip() {
+    docker inspect --format '{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}' "$@"
+}
+
 export PATH=~/bookworm2:$PATH
+
 alias prodcms="cnt.sh prod cms"
 alias prodhbk="cnt.sh prod hbk"
 alias update-hbk="pushd ~/bookworm2 >/dev/null && git fetch origin && git checkout origin/master -- autoupdate.sh && autoupdate.sh prod hbk && popd >/dev/null"
