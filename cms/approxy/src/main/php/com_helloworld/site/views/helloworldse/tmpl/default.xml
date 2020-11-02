@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<metadata>
+    <layout title="COM_HELLOWORLD_MENUITEMTYPE_TITLE" option="COM_HELLOWORLD_MENUITEMTYPE_DESC">
+        <message>
+            <![CDATA[com_helloworld_helloworldse_view_default_desc]]>
+        </message>
+    </layout>
+</metadata>

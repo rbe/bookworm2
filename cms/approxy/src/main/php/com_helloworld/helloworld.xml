@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<extension type="component" version="3.0" method="upgrade">
+    <name>Hello World!</name>
+    <creationDate>October 2020</creationDate>
+    <author>Ralf Bensmann</author>
+    <authorEmail>ralf@art-of-coding.eu</authorEmail>
+    <authorUrl>http://www.art-of-coding.eu</authorUrl>
+    <copyright>art of coding UG</copyright>
+    <license>All rights reserved. Use is subject to license terms.</license>
+    <version>0.0.8</version>
+    <description>Description of the Hello World component ...</description>
+    <!--install>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/install.mysql.utf8.sql</file>
+        </sql>
+    </install-->
+    <!--update>
+        <schemas>
+            <schemapath type="mysql">sql/updates/mysql</schemapath>
+        </schemas>
+    </update-->
+    <!--uninstall>
+        <sql>
+            <file driver="mysql" charset="utf8">sql/uninstall.mysql.utf8.sql</file>
+        </sql>
+    </uninstall-->
+    <files folder="site">
+        <filename>index.html</filename>
+        <filename>helloworld.php</filename>
+        <filename>controller.php</filename>
+        <folder>language</folder>
+        <folder>models</folder>
+        <folder>views</folder>
+    </files>
+    <administration>
+        <!--menu link='index.php?option=com_helloworld'>Hello World!</menu-->
+        <menu>COM_HELLOWORLD_MENU</menu>
+        <files folder="admin">
+            <filename>index.html</filename>
+            <filename>helloworld.php</filename>
+            <!--folder>sql</folder-->
+            <folder>language</folder>
+        </files>
+        <languages folder="admin">
+            <language tag="de-DE">language/de-DE/de-DE.com_helloworld.ini</language>
+            <language tag="de-DE">language/de-DE/de-DE.com_helloworld.sys.ini</language>
+        </languages>
+    </administration>
+</extension>
