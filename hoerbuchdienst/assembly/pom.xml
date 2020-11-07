@@ -133,7 +133,7 @@
                 <executions>
                     <execution>
                         <id>prepare-docker-compose</id>
-                        <phase>prepare-package</phase>
+                        <phase>post-integration-test</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
@@ -189,7 +189,7 @@
                 <executions>
                     <execution>
                         <id>build-hbd-rproxy</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -205,7 +205,7 @@
                     </execution>
                     <execution>
                         <id>build-vault</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -221,7 +221,7 @@
                     </execution>
                     <execution>
                         <id>build-kes</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -237,7 +237,7 @@
                     </execution>
                     <execution>
                         <id>build-minio</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -253,7 +253,7 @@
                     </execution>
                     <execution>
                         <id>build-mc</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -269,7 +269,7 @@
                     </execution>
                     <execution>
                         <id>build-rabbitmq</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
@@ -285,7 +285,7 @@
                     </execution>
                     <!--<execution>
                         <id>build-virenscanner</id>
-                        <phase>package</phase>
+                        <phase>install</phase>
                         <goals>
                             <goal>build</goal>
                         </goals>
