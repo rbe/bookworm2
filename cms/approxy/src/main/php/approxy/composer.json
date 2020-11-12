@@ -1,9 +1,0 @@
-{
-  "name": "artofcoding/approxy",
-  "description": "Application Proxy",
-  "minimum-stability": "stable",
-  "license": "proprietary",
-  "require": {
-    "jenssegers/proxy": "v2.2.1"
-  }
-}
