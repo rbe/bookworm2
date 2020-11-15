@@ -5,13 +5,19 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-declare(strict_types=1);
+// Causes problems with other PHP code: declare(strict_types=1);
 
 namespace restbridge;
 
 final class Debugging
 {
 
+
+    /**
+     * Comment.
+     *
+     * @since 1.0
+     */
     static public function enable()
     {
         error_reporting(-1);
@@ -22,6 +28,7 @@ final class Debugging
         ini_set('log_errors', '1');
         ini_set('log_errors_max_length', '0');
         ini_set('report_memleaks', '1');
-    }
+    }//end enable()
 
-}
+
+}//end class

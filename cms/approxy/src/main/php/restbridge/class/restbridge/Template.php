@@ -5,38 +5,54 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-declare(strict_types=1);
+// Causes problems with other PHP code: declare(strict_types=1);
 
 namespace restbridge;
 
+/**
+ * @package     restbridge
+ *
+ * @since 1.0
+ */
 final class Template
 {
 
     /**
-     * Render a template with values.
+     * @var   string
+     * @since 1.0
+     */
+    private string $template;
+
+
+    /**
+     * Template constructor.
      *
      * @param string $template The template.
-     * @param string[][] $rowsWithValues Rows with values, e.g.
-     *                      Array (
-     *                         [0] => Array (
-     *                                [0] => {titelnummer}
-     *                                [1] => {name}
-     *                                )
-     *                         [1] => Array (
-     *                                [0] => titelnummer
-     *                                [1] => name
-     *                                )
-     *                      )
+     *
+     * @since 1.0
+     */
+    public function __construct(string $template)
+    {
+        $this->template = $template;
+
+    }//end __construct()
+
+
+    /**
+     * Render a template with values.
+     *
+     * @param array $rowsWithValues Rows with values.
      *
      * @return string Content: template with {placeholder} substituted with value.
+     * @since  version
      */
-    public static function renderTemplateToString(string $template, array $rowsWithValues): string
+    public function renderToString(array $rowsWithValues): string
     {
-        preg_match_all('/\{([A-Za-z_]+)*\}/', $template, $matches);
+        preg_match_all('/\{([A-Za-z_]+)*\}/', $this->template, $matches);
         $matches = $matches[1];
         $content = '';
         foreach ($rowsWithValues as $row) {
-            $c = $template;
+            $c = $this->template;
             foreach ($matches as $match) {
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
@@ -45,42 +61,15 @@ final class Template
                     error_log('No value found for ' . $key, 0);
                     $value = '';
                 }
+
                 $c = str_replace($key, $value, $c);
             }
+
             $content .= $c;
         }
+
         return $content;
-    }//end renderTemplate()
 
-    /**
-     * Analyze parameter string.
-     *
-     * @param string $commandName Name of command.
-     * @param string $parameterString Parameters, form: name:value.
-     * @param array $messages Messages.
-     *
-     * @return string[][]
-     */
-    public static function analyzeParameters(string $commandName, string $parameterString, array &$messages): array
-    {
-        // [2] => titelnummer:12345,name:Ralf
-        // [0] => titelnummer:12345
-        // [1] => name:Ralf
-        /* @var $parameters string[] */
-        $parameters = explode(',', $parameterString);
-        /* @var $parameterArray string[][] */
-        $parameterArray = [];
-        foreach ($parameters as $p) {
-            $keyValue = explode(':', $p);
-            if (isset($keyValue) === true && count($keyValue) === 2) {
-                $key = $keyValue[0];
-                $value = $keyValue[1];
-                $parameterArray[$key] = $value;
-            } else {
-                $messages[] = 'Command ' . $commandName . ': Error analyzing parameter ' . $keyValue;
-            }
-        }
-        return $parameterArray;
-    }//end analyzeParameters()
+    }//end renderToString()
 
-}
+}//end class

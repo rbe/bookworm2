@@ -5,46 +5,79 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-declare(strict_types=1);
+// Causes problems with other PHP code: declare(strict_types=1);
 
 defined('_JEXEC') || die('Restricted access');
 
-require_once __DIR__ . '/autoload.php';
+use restbridge\CmsAdapter;
+use restbridge\CommandExecutor;
+use restbridge\JoomlaCmsAdapterImpl;
+use restbridge\JsonHelper;
+
+require_once __DIR__ . '/restbridge_configuration.php';
 
 /**
  * Class plgContentRestbridge.
+ *
+ * @since 1.0
  */
-class plgContentRestbridge extends JPlugin
+final class plgContentRestbridge extends JPlugin
 {
+
+    /**
+     * Description.
+     *
+     * @var CommandExecutor Comment.
+     *
+     * @since 1.0
+     */
+    private CommandExecutor $commandExecutor;
+
+    /**
+     * Description.
+     *
+     * @var CmsAdapter|JoomlaCmsAdapterImpl Comment.
+     *
+     * @since 1.0
+     */
+    private CmsAdapter $cmsAdapter;
+
 
     /**
      * Constructor.
      *
      * @param $subject The subject.
-     * @param $params The params.
+     * @param $params  The params.
+     *
+     * @since 1.0
      */
     public function __construct(&$subject, $params)
     {
         parent::__construct($subject, $params);
+        $this->cmsAdapter = new JoomlaCmsAdapterImpl();
+        $this->commandExecutor = new CommandExecutor($this->cmsAdapter);
+
     }//end __construct()
+
 
     /**
      * Joomla! Event onContentPrepare.
      *
-     * @param $context The context.
-     * @param $article The article.
-     * @param $params The params.
-     * @param int $page The page.
+     * @param         $context The context.
+     * @param         $article The article.
+     * @param         $params  The params.
+     * @param integer $page The page.
      *
-     * @return bool True or false.
+     * @return boolean True or false.
+     *
+     * @since 1.0
      */
     public function onContentPrepare($context, &$article, &$params, $page = 0): bool
     {
-        $regex =
-            '/' .                      // delimiter
+        $regex = '/' .                 // delimiter
             '\\{' .                    // opening {
             '[\\s]*' .                 // skip whitespace
-            'Bookworm' .               // required identifier
+            'RestBridge' .             // required identifier
             '[\\s]*' .                 // skip whitespace
             ':' .                      // colon
             '[\\s]*' .                 // skip whitespace
@@ -56,7 +89,9 @@ class plgContentRestbridge extends JPlugin
             '/s';                      // delimiter
         $article->text = preg_replace_callback($regex, [$this, 'executeCommand'], $article->text);
         return true;
+
     }//end onContentPrepare()
+
 
     /**
      * Execute a command.
@@ -64,42 +99,51 @@ class plgContentRestbridge extends JPlugin
      * @param array $matches Command name and parameters.
      *
      * @return string Content.
+     *
+     * @since 1.0
      */
     private function executeCommand(array $matches): string
     {
-        $commands = new Commands();
-        return $commands->executeCommand($matches);
+        $commandName = trim($matches[1]);
+        $parameters = trim($matches[2]);
+        $restBridgePlugin = $GLOBALS['restBridge']['PLUGIN'];
+        if (isset($restBridgePlugin) === true) {
+            $restBridgePlugin->modifyParameters($commandName, $parameters);
+        }
+
+        $commandResult = $this->commandExecutor->executeCommand($commandName, $parameters);
+        //rbdebug('restbridge#executeCommand: $commandResult=' . print_r($commandResult, true));
+        $content = '';
+        $hasMergableResult = is_array($commandResult) === true && empty($commandResult) === false;
+        if ($hasMergableResult) {
+            $commandResult = $this->rowsWithValues($commandResult);
+            $content = $this->cmsAdapter->renderTemplate($commandName, $commandResult);
+        }
+
+        return $content;
+
     }//end executeCommand()
 
-    /**
-     * Get a value for a field from comprofiler's database for an user.
-     * @param $user
-     * @param $field
-     * @return string
-     */
-    private function getUserValueFromComprofiler(string $user, string $field): string
-    {
-        $db = JFactory::getDBO();
-        $query = 'SELECT ' . $field . ' FROM #__comprofiler WHERE user_id=' . $user->id;
-        $db->setQuery($query);
-        return $db->loadResult();
-    }
 
     /**
-     * Get user's data.
-     * @return string|null
-     * @throws Exception
+     * Description.
+     *
+     * @param array $commandResult Comment.
+     *
+     * @return array|array[]
+     *
+     * @since 1.0
      */
-    private function getHoerernummer(): string
+    private function rowsWithValues(array $commandResult): array
     {
-        $user = JFactory::getUser();
-        if (isset($user)) {
-            $hnr = getUserValueFromComprofiler($user, 'cb_hoerernummer');
-            if (isset($hnr)) {
-                return $hnr;
-            }
+        $jsonHelper = new JsonHelper($commandResult);
+        if ($jsonHelper->numberOfRows() === 1) {
+            $commandResult = [$commandResult];
         }
-        throw new Exception();
-    }
+
+        return $commandResult;
+
+    }//end rowsWithValues()
+
 
 }//end class

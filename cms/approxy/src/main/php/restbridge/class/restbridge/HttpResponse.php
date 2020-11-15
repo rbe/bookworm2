@@ -5,78 +5,118 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-declare(strict_types=1);
+// Causes problems with other PHP code: declare(strict_types=1);
 
 namespace restbridge;
 
 final class HttpResponse
 {
 
+    /**
+     * @var int
+     *
+     * @since 1.0
+     */
     private int $statusCode;
-    private string $body;
-    private object $json;
+
+    /**
+     * @var ?string
+     *
+     * @since 1.0
+     */
+    private ?string $body;
+
+    /**
+     * @var ?array
+     *
+     * @since 1.0
+     */
+    private ?array $json;
+
 
     /**
      * Response constructor.
      *
-     * @param int $statusCode
-     * @param string $body
+     * @param int $statusCode Comment.
+     * @param string|null $body Comment.
+     *
+     * @since 1.0
      */
-    public function __construct(int $statusCode, string $body)
+    public function __construct(int $statusCode, string $body = null)
     {
         $this->statusCode = $statusCode;
         $this->body = $body;
-    }
+    }//end __construct()
+
 
     /**
+     * Description.
      *
      * @return int
      *
-     * @since version
+     * @since 1.0
      */
     public function getStatusCode(): int
     {
         return $this->statusCode;
-    }
+    }//end getStatusCode()
+
 
     /**
+     * Description.
      *
      * @return bool
      *
-     * @since version
+     * @since 1.0
      */
     public function wasSuccessful(): bool
     {
-        $json = json_decode($this->body);
-        if ($json === false) {
-            error_log('Error decoding response body as JSON', 0);
-        } else {
-            $this->json = $json;
-        }
-        return $this->json
-            && $this->statusCode >= 200 && $this->statusCode < 400;
-    }
+        return $this->statusCode >= 200 && $this->statusCode < 400;
+
+    }//end wasSuccessful()
+
 
     /**
+     * Description.
      *
      * @return string
      *
-     * @since version
+     * @since 1.0
      */
     public function getBody(): string
     {
         return $this->body;
-    }
+
+    }//end getBody()
+
 
     /**
+     * Description.
      *
-     * @return object
+     * @return array
      *
-     * @since version
+     * @throws \JsonException
+     *
+     * @since 1.0
      */
-    public function getJson(): object
+    public function getJson(): array
     {
+        if ($this->wasSuccessful() === true && isset($this->json) === false) {
+            $jsonResponse = json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
+            if ($jsonResponse === false) {
+                showJsonError();
+                error_log('Error decoding response body as JSON: ' . json_last_error_msg(), 0);
+                $this->json = json_decode('');
+            } else {
+                $this->json = $jsonResponse;
+            }
+        } else {
+            error_log('No JSON response, request was not successful, HTTP status ' . $this->statusCode, 0);
+        }
+
         return $this->json;
-    }
+
+    }//end getJson()
+
 
 }//end class

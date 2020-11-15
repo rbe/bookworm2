@@ -12,45 +12,38 @@ require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
 use restbridge\ArrayHelper;
-use restbridge\RestRequestReply;
+use restbridge\RestRequestReplyCommandImpl;
 
-class RestRequestReplyTest extends TestCase
+class RestRequestReplyCommandImplTest extends TestCase
 {
 
 
     /**
-     * Test.
+     * Test REST request and reply.
      *
      * @return void
-     *
-     * @throws \JsonException
      *
      * @since version
      */
     public function testAudiobookInfo(): void
     {
-        $response = '';
-        try {
-            $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS']['AudiobookInfo'];
-            $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS']['AudiobookInfo'];
-            $restReqResp = new RestRequestReply($restEndpoint, $requestDto);
-            $response = $restReqResp->execute(
-                ['mandant' => '06', 'hoerernummer' => '80170', 'titelnummer' => '32901'],
-                function ($ch) use ($restEndpoint) {
+        $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS']['AudiobookInfo'];
+        $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS']['AudiobookInfo'];
+        $command = new RestRequestReplyCommandImpl(
+            [
+                'endpoint' => $restEndpoint,
+                'requestDto' => $requestDto,
+                'urlParameters' => ['mandant' => '06', 'hoerernummer' => '80170', 'titelnummer' => '32901'],
+                'preHttpPostCallback' => function ($ch) use ($restEndpoint) {
                     curl_setopt(
                         $ch,
                         CURLOPT_HTTPHEADER,
                         ArrayHelper::arrayCombineKeyValue($restEndpoint['headers'])
                     );
-                }
-            );
-        } catch (Exception $e) {
-            $this->fail($e->getMessage());
-        }
-
-        $this->assertNotNull($response);
-        $this->assertTrue($response->wasSuccessful());
-        $json = $response->getJson();
+                },
+            ]
+        );
+        $json = $command->execute();
         $this->assertNotNull($json);
         error_log(print_r($json, true), 0);
 

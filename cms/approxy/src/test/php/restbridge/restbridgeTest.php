@@ -7,33 +7,33 @@
 
 // Causes problems with other PHP code: declare(strict_types=1);
 
-use PHPUnit\Framework\TestCase;
-use restbridge\HttpClient;
-
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
 require_once '../../../main/php/restbridge/restbridge.php';
 
-class HttpClientTest extends TestCase
+use PHPUnit\Framework\TestCase;
+
+class restbridgeTest extends TestCase
 {
 
 
     /**
-     * Test simple HTTP GET.
+     * Test.
      *
      * @return void
      *
      * @since version
      */
-    public function testHttpsGET(): void
+    public function testOnContentPrepare(): void
     {
-        $httpClient = new HttpClient();
-        $result = $httpClient->httpGET('https://www.google.de');
-        $this->assertStringStartsWith(
-            '<!doctype html><html itemscope="" itemtype="http://schema.org/WebPage" lang="de">',
-            $result->getBody()
-        );
+        $subject = 'subject';
+        $params = [];
+        $plg = new plgContentRestbridge($subject, $params);
+        $context = '';
+        $article = new MockArticle();
+        $this->assertTrue($plg->onContentPrepare($context, $article, $params, 0));
+        echo 'text: ' . $article->text;
 
-    }//end testHttpsGetPage()
+    }//end testOnContentPrepare()
 
 
-}//end class
+}//end class//end class

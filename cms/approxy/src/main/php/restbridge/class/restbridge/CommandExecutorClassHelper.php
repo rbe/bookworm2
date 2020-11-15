@@ -5,28 +5,37 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-declare(strict_types=1);
+// Causes problems with other PHP code: declare(strict_types=1);
 
 namespace restbridge;
 
-final class ClassHelper
+/**
+ * Helper for dynamically executing methods.
+ *
+ * @since 1.0
+ */
+final class CommandExecutorClassHelper
 {
+
 
     /**
      * Dynamically call a method of an object.
      *
      * @param string $commandName Name of command.
      * @param string[][] $parameterArray Parameters (key/value).
-     * @param object $instance
+     * @param object $instance Object instance to call method on.
      *
      * @return string[]
+     * @since  version
      */
-    static function callMethod(string $commandName, array $parameterArray, object $instance): array
+    public static function callMethod(string $commandName, array $parameterArray, object $instance): array
     {
         $methodName = 'cmd' . $commandName;
         return method_exists($instance, $methodName) === true
             ? $instance->{$methodName}($parameterArray)
             : ['message' => 'Method ' . $methodName . ' not found'];
+
     }//end callMethod()
 
-}
+
+}//end class

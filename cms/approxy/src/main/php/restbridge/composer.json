@@ -1,6 +1,6 @@
 {
   "name": "artofcoding/restbridge",
-  "description": "Joomla! REST with JSON bridge",
+  "description": "REST with JSON bridge",
   "minimum-stability": "stable",
   "license": "proprietary",
   "require": {
