@@ -85,7 +85,7 @@ server {
         location ~* /configuration*.php {
             return 404;
         }
-        location ~* ^/(bin|cli|files_logs|files_temp|includes|language|layouts|libraries|logs|modules|plugins) {
+        location ~* ^/(bin|cli|files_logs|files_temp|logs|includes|language|layouts|libraries) {
             return 404;
         }
         location ~* \.(js|css)$ {
