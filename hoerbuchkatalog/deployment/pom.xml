@@ -123,7 +123,7 @@
                 <artifactId>docker-compose-maven-plugin</artifactId>
                 <version>4.0.0</version>
                 <configuration>
-                    <verbose>true</verbose>
+                    <verbose>false</verbose>
                     <host>unix:///var/run/docker.sock</host>
                     <composeFiles>
                         <composeFile>${docker-compose.file}</composeFile>
