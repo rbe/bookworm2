@@ -4,9 +4,9 @@ shard:
 
 micronaut:
   server:
-    max-request-size: 3072mb
+    max-request-size: 1mb
     multipart:
-      max-file-size: 3072mb
+      max-file-size: 1mb
 
 hoerbuchdienst:
   objectstorage:
@@ -15,7 +15,7 @@ hoerbuchdienst:
 rabbitmq:
   servers:
     default:
-      uri: amqp://bugs:bunny@localhost/hoerbuchdienst
+      uri: amqp://guest:guest@localhost
       #uri: amqps://nnn:nnn@rabbitmq.${shard.name}.${shard.domain}/hoerbuchdienst
       #uri: amqps://nnn:nnn@rabbitmq.shard2.audiobook.wbh-online.de/hoerbuchdienst
 
