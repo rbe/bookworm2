@@ -2,12 +2,12 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,27 +40,29 @@ public class WarenkorbRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                              @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+    //@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                          @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
                 xHoerernummer);
-        return warenkorbService.inDenCdWarenkorb(bestellungSessionId,
+        final boolean b = warenkorbService.inDenCdWarenkorb(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
+        return Map.of("result", b);
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                             @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                             @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+    public Map<String, Object> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                         @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                         @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
                 xHoerernummer);
         warenkorbService.ausDemCdWarenkorbEntfernen(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
-        return true;
+        return Map.of("result", true);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,12 +74,12 @@ public class WarenkorbRestService {
         return hoerbuchResolver.toHoerbuchAntwortDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
     }
 
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String bestellen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                            @RequestBody final BestellungAnfrageDTO bestellungAnfrageDTO) {
+    @PostMapping(value = "/bestellen", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> bestellen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                         @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                         @RequestBody final BestellungAnfrageDTO bestellungAnfrageDTO) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xHoerernummer);
-        return bestellungService.bestellungAufgeben(bestellungSessionId,
+        return Map.of("bestellungId", bestellungService.bestellungAufgeben(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 Hoerername.of(bestellungAnfrageDTO.getHoerername()),
                 new HoererEmail(bestellungAnfrageDTO.getHoereremail()),
@@ -85,7 +87,7 @@ public class WarenkorbRestService {
                 bestellungAnfrageDTO.getBestellkarteMischen(),
                 bestellungAnfrageDTO.getAlteBestellkarteLoeschen())
                 .orElseThrow()
-                .getValue();
+                .getValue());
     }
 
 }

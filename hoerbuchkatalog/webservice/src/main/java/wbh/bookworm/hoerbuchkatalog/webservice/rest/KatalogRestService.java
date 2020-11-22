@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.util.List;
 
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -29,7 +30,7 @@ public class KatalogRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
-    @GetMapping(value = "/stichwort/{stichwort}")
+    @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<HoerbuchAntwortDTO> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                           @PathVariable("stichwort") final String stichwort) {
@@ -40,7 +41,7 @@ public class KatalogRestService {
         return hoerbuchResolver.toHoerbuchAntwortDTO(suchergebnis.getTitelnummern());
     }
 
-    @GetMapping(value = "/titelnummer/{titelnummer}")
+    @GetMapping(value = "/titel/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Hoerbuch hole(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                          @PathVariable("titelnummer") final String titelnummer) {

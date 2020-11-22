@@ -2,11 +2,12 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,22 +31,23 @@ public class MerklisteRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
-    @PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                              @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+    //@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, String> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                          @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
         merklisteService.hinzufuegen(new Hoerernummer(xHoerernummer),
                 new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
-        return true;
+        return Map.of("result", "true");
     }
 
     @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public boolean entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                             @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                             @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+    public Map<String, String> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                         @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                         @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
         merklisteService.entfernen(new Hoerernummer(xHoerernummer),
                 new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
-        return true;
+        return Map.of("result", "true");
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
