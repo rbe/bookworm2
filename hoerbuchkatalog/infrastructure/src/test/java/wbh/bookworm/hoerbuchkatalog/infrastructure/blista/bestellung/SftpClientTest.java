@@ -19,6 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @SpringBootTest(classes = {DlsBestellungTestAppConfig.class})
 @SpringBootConfiguration
 @ExtendWith(SpringExtension.class)
+@Disabled
 class SftpClientTest {
 
     @Autowired

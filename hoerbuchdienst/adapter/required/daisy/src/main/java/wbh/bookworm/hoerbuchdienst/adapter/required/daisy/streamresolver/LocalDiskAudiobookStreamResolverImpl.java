@@ -76,9 +76,10 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     @Override
     public InputStream nccHtmlStream(final String titelnummer) {
         try {
-            return Files.newInputStream(audiobookDirectory
+            final Path nccHtml = audiobookDirectory
                     .resolve(String.format("%sDAISY", titelnummer))
-                    .resolve("ncc.html"));
+                    .resolve("ncc.html");
+            return Files.newInputStream(nccHtml);
         } catch (IOException e) {
             throw new AudiobookStreamResolverException("", e);
         }

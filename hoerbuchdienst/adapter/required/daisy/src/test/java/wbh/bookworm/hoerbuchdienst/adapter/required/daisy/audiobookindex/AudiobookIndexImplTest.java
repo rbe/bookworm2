@@ -8,7 +8,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookindex;
 
 import javax.inject.Inject;
 
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -22,6 +23,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @MicronautTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+@Disabled
 class AudiobookIndexImplTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookIndexImpl.class);

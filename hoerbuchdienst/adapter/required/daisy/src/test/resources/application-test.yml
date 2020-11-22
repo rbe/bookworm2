@@ -9,10 +9,12 @@ shard:
   name: shard0
 
 hoerbuchdienst:
+  objectstorage:
+    path: /Users
   repository:
-    type: objectstorage
+    type: localdisk
     localdisk:
-      uri: ../../../Buecher-WBH
+      uri: src/test/resources
     objectstorage:
       name: minio
   temporary:
@@ -20,16 +22,16 @@ hoerbuchdienst:
 
 objectstorage:
   minio:
-    url: http://minio.${shard.name}.local
-    access_key: AKIAIOSFODNN7EXAMPLE
-    secure_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    url: http://localhost:9000
+    access_key: minioadmin
+    secure_key: minioadmin
     bucketName: hoerbuchdienst
     serversideencryption: atRest
 
 rabbitmq:
   servers:
     default:
-      uri: amqps://bugs:bunny@rabbitmq.${shard.name}.local/hoerbuchdienst
+      uri: amqp://guest:guest@localhost
       nio-params:
         enableHostnameVerification: true
 

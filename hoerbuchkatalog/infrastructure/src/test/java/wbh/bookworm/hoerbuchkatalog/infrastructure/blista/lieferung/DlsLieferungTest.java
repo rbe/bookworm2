@@ -6,8 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
-
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -17,9 +16,12 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.DlsRestConfig;
+
 @SpringBootTest(classes = {DlsLieferungTestAppConfig.class})
 @SpringBootConfiguration
 @ExtendWith(SpringExtension.class)
+@Disabled
 class DlsLieferungTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DlsLieferungTest.class);

@@ -41,6 +41,12 @@ public final class BestellungService {
         this.bestellungRepository = bestellungRepository;
     }
 
+    public BestellungSessionId bestellungSessionId(final String hoerernummer) {
+        final BestellungSessionId bestellungSessionId = new BestellungSessionId(hoerernummer);
+        LOGGER.debug("Hörer {} hat BestellungSessionId {} bekommen", hoerernummer, bestellungSessionId);
+        return bestellungSessionId;
+    }
+
     public BestellungSessionId bestellungSessionId(final Hoerernummer hoerernummer) {
         final BestellungSessionId bestellungSessionId = new BestellungSessionId();
         LOGGER.debug("Hörer {} hat BestellungSessionId {} bekommen", hoerernummer, bestellungSessionId);

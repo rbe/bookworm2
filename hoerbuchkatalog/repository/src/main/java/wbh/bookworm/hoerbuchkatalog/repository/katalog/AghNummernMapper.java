@@ -85,7 +85,7 @@ class AghNummernMapper {
             final Path downloadPath = DownloadHelper.getAndSave(url);
             if (Files.exists(downloadPath)) {
                 final Path isofilesZip = downloadPath.getParent().resolve("isofiles.zip");
-                Files.move(downloadPath, isofilesZip);
+                Files.move(downloadPath, isofilesZip, StandardCopyOption.REPLACE_EXISTING);
                 return hoerbuchkatalogArchiv.archiviereKatalog(isofilesZip);
             } else {
                 final String message =

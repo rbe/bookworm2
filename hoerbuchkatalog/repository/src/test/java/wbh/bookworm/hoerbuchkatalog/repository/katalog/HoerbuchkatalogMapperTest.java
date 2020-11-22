@@ -6,12 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-
-import org.junit.jupiter.api.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.text.NumberFormat;
@@ -20,18 +14,38 @@ import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.Set;
 
+import org.junit.jupiter.api.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.test.context.ActiveProfiles;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
+
+import aoc.mikrokosmos.ddd.repository.RepositoryArchive;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchiveException;
+
+@ActiveProfiles("test")
 class HoerbuchkatalogMapperTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogMapperTest.class);
 
+    private final RepositoryArchive repositoryArchive;
+
+    HoerbuchkatalogMapperTest() {
+        this.repositoryArchive = new RepositoryArchive(Path.of("var/wbh/hoerbuchkatalog"));
+    }
+
     @Test
     void shouldParseGesamtDat() {
         LocalDateTime start = LocalDateTime.now();
-        /* TODO Konfiguraiton */final Path path = Path.of("/Users/rbe/project/wbh.bookworm/hoerbuchkatalog/repository" +
-                "/src/test/var/wbh/hoerbuchkatalog/Gesamt-2018-12-19T13-23-53-53636.dat");
+        Path path = null;// = Path.of("var/wbh/hoerbuchkatalog/Gesamt.dat").toAbsolutePath();
+        try {
+            path = repositoryArchive.find(Path.of("Gesamt.dat")).orElseThrow();
+        } catch (RepositoryArchiveException e) {
+            LOGGER.error("", e);
+        }
         final HoerbuchkatalogMapper hoerbuchkatalogMapper = new HoerbuchkatalogMapper();
-        final Set<Hoerbuch> hoerbuecher = hoerbuchkatalogMapper.importiere(
-                path, StandardCharsets.ISO_8859_1);
+        final Set<Hoerbuch> hoerbuecher = hoerbuchkatalogMapper.importiere(path, StandardCharsets.ISO_8859_1);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("Importieren von {} Hörbüchern benötigte {}",
                     NumberFormat.getInstance(Locale.GERMANY).format(hoerbuecher.size()),

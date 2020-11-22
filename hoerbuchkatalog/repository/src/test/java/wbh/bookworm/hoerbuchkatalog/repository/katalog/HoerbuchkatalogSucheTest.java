@@ -6,9 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -17,10 +14,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
+
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
+import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 
 @SpringBootTest(classes = {KatalogTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 @SuppressWarnings({"squid:S1192"})
 class HoerbuchkatalogSucheTest {
 

@@ -6,14 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
-import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
+import java.nio.file.Path;
 
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -23,11 +16,20 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.thymeleaf.TemplateEngine;
 
-import java.nio.file.Path;
+import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
+import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
+import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.email.EmailTemplateRepository;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogConfig;
+
+import aoc.mikrokosmos.ddd.search.LuceneIndexConfig;
 
 @SpringBootApplication
 @SpringBootConfiguration
-@EnableConfigurationProperties
 @Import({
         RepositoryConfig.class,
         DomainConfig.class,
@@ -39,6 +41,7 @@ import java.nio.file.Path;
         EmailService.class,
         TemplateEngine.class
 })
+@EnableConfigurationProperties({LuceneIndexConfig.class, HoerbuchkatalogConfig.class})
 public class CdBestellungTestAppConfig {
 
     @Bean

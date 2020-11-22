@@ -6,20 +6,23 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import aoc.mikrokosmos.io.fs.FilesystemWatcher;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 
+import aoc.mikrokosmos.ddd.search.LuceneIndexConfig;
+import aoc.mikrokosmos.ddd.search.LuceneIndexFactory;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+
 @SpringBootApplication(scanBasePackageClasses = {
         FilesystemWatcher.class,
-        Hoerbuchkatalog.class
+        Hoerbuchkatalog.class,
+        LuceneIndexFactory.class
 })
 @SpringBootConfiguration
-@EnableConfigurationProperties
+@EnableConfigurationProperties(LuceneIndexConfig.class)
 public class KatalogTestAppConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(KatalogTestAppConfig.class);

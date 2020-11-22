@@ -65,6 +65,10 @@ class AudiobookMapperImpl implements AudiobookMapper {
         Audiobook audiobook;
         try {
             audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
+            // TODO Audiobook 'null' created
+            if (null == audiobook) {
+                throw new IllegalStateException();
+            }
             LOGGER.debug("Audiobook '{}' created", audiobook.getIdentifier());
         } catch (AudiobookMapperException e) {
             audiobook = null;

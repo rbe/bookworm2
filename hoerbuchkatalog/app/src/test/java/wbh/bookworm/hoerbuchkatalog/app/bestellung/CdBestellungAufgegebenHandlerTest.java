@@ -21,9 +21,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import wbh.bookworm.hoerbuchkatalog.app.config.TestAppConfig;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungAufgegeben;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
@@ -36,8 +36,9 @@ import wbh.bookworm.shared.domain.Titelnummer;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-@SpringBootTest(classes = {TestAppConfig.class})
+@SpringBootTest(classes = {CdBestellungTestAppConfig.class})
 @ExtendWith({SpringExtension.class})
+@ActiveProfiles("test")
 class CdBestellungAufgegebenHandlerTest {
 
     private final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler;

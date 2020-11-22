@@ -6,12 +6,8 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.lieferung;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
-import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
-
-import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,8 +18,14 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
+import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
+import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
+
+import aoc.mikrokosmos.ddd.search.LuceneIndexConfig;
+import aoc.mikrokosmos.ddd.search.LuceneIndexFactory;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 @Configuration
 @Import({DlsLieferungAppConfig.class})
@@ -33,9 +35,10 @@ import java.util.concurrent.Executors;
         DownloadsRepository.class,
         CdLieferungRepository.class,
         Hoerbuchkatalog.class,
-        DlsLieferung.class
+        DlsLieferung.class,
+        LuceneIndexFactory.class
 })
-@EnableConfigurationProperties
+@EnableConfigurationProperties(LuceneIndexConfig.class)
 public class LieferungAppConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(LieferungAppConfig.class);

@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
@@ -21,6 +22,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {LieferungAppConfig.class})
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 class ErledigteBestellkartenMapperTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ErledigteBestellkartenMapperTest.class);

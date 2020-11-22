@@ -6,16 +6,16 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import aoc.mikrokosmos.ddd.repository.RepositoryArchive;
-import aoc.mikrokosmos.ddd.repository.RepositoryArchiveException;
-import aoc.mikrokosmos.ddd.spring.Singleton;
+import java.nio.file.Path;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.nio.file.Path;
-import java.util.Optional;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchive;
+import aoc.mikrokosmos.ddd.repository.RepositoryArchiveException;
+import aoc.mikrokosmos.ddd.spring.Singleton;
 
 @Singleton
 final class HoerbuchkatalogArchiv {
@@ -26,8 +26,7 @@ final class HoerbuchkatalogArchiv {
 
     @Autowired
     HoerbuchkatalogArchiv(final HoerbuchkatalogConfig hoerbuchkatalogConfig) {
-        this.repositoryArchive = new RepositoryArchive(
-                hoerbuchkatalogConfig.getDirectory());
+        this.repositoryArchive = new RepositoryArchive(hoerbuchkatalogConfig.getDirectory());
     }
 
     Path archiviereKatalog(final Path katalogDatei) {

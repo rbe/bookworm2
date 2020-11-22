@@ -15,4 +15,8 @@ public final class BestellungSessionId extends DomainSingleValueObject<String, S
         super(RandomStringGenerator.next());
     }
 
+    BestellungSessionId(String id) {
+        super(id);
+    }
+
 }

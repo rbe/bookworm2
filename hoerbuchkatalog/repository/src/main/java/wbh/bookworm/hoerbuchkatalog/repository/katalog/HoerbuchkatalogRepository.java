@@ -53,7 +53,7 @@ public class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerb
 
     private final HoerbuchkatalogArchiv hoerbuchkatalogArchiv;
 
-    private AtomicReference<Hoerbuchkatalog> aktuellerHoerbuchkatalog;
+    private final AtomicReference<Hoerbuchkatalog> aktuellerHoerbuchkatalog;
 
     @Autowired
     HoerbuchkatalogRepository(final ApplicationContext applicationContext,

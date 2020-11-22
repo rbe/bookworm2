@@ -3,7 +3,8 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 import javax.inject.Inject;
 import java.util.concurrent.TimeUnit;
 
-import io.micronaut.test.annotation.MicronautTest;
+import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,6 +12,7 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.AudiobookRepository;
 
 @MicronautTest
+@Disabled
 class AudiobookRepositoryImplTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookRepositoryImplTest.class);

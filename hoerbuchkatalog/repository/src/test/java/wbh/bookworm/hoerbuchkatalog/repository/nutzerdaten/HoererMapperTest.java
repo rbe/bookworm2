@@ -11,12 +11,14 @@ import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
@@ -24,6 +26,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 @SpringBootTest(classes = {NutzerdatenAppConfig.class})
 @ExtendWith(SpringExtension.class)
+@ActiveProfiles("test")
 class HoererMapperTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoererMapperTest.class);
@@ -71,6 +74,7 @@ class HoererMapperTest {
     */
 
     @Test
+    @Disabled("Test-Hörerdaten hinterlegen")
     void shouldAlleHoererdatenImportieren() {
         final Hoerernummer hoerer80170 = new Hoerernummer("80170");
         final Hoerer hoerer = hoererMapper.hoerer(hoerer80170);
