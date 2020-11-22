@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>wbh.bookworm</groupId>
+        <artifactId>wbh.bookworm.hoerbuchkatalog</artifactId>
+        <version>LocalBuild</version>
+    </parent>
+    <artifactId>wbh.bookworm.hoerbuchkatalog.webservice</artifactId>
+    <packaging>jar</packaging>
+    <dependencies>
+        <!-- Bookworm -->
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.app</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>wbh.bookworm</groupId>
+                    <artifactId>wbh.bookworm.hoerbuchkatalog.repository</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.thymeleaf</groupId>
+                    <artifactId>thymeleaf-spring5</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-thymeleaf</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-mail</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.domain</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.shared.domain</artifactId>
+        </dependency>
+        <!-- Mikrokosmos -->
+        <dependency>
+            <groupId>aoc.mikrokosmos</groupId>
+            <artifactId>aoc.mikrokosmos.ddd</artifactId>
+        </dependency>
+        <!-- Spring Boot -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jetty</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+        <!-- Spring -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-web</artifactId>
+        </dependency>
+    </dependencies>
+</project>

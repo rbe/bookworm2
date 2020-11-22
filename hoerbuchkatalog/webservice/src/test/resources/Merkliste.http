@@ -1,0 +1,27 @@
+PUT {{host}}/{{context}}/{{api-version}}/merkliste
+Content-Type: application/json
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+{
+    "titelnummer": "21052"
+}
+
+###
+
+GET {{host}}/{{context}}/{{api-version}}/merkliste
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
+
+DELETE {{host}}/{{context}}/{{api-version}}/merkliste
+Content-Type: application/json
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+{
+    "titelnummer": "21052"
+}
+
+###

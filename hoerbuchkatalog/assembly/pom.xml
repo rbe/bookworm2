@@ -18,7 +18,7 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.ui</artifactId>
+            <artifactId>wbh.bookworm.hoerbuchkatalog.webservice</artifactId>
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>

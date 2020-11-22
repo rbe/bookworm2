@@ -63,16 +63,18 @@ public class WarenkorbService {
     /**
      * Command
      */
-    public void inDenCdWarenkorb(final BestellungSessionId bestellungSessionId,
-                                 final Hoerernummer hoerernummer,
-                                 final Titelnummer titelnummer) {
+    public boolean inDenCdWarenkorb(final BestellungSessionId bestellungSessionId,
+                                    final Hoerernummer hoerernummer,
+                                    final Titelnummer titelnummer) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, warenkorbId);
             cdWarenkorb.hinzufuegen(titelnummer);
+            return true;
         } else {
             LOGGER.error("Unbekanntes Hörbuch #{} wurde nicht für Hörer {} in den CD-Warenkorb gelegt",
                     titelnummer, hoerernummer);
+            return false;
         }
     }
 
