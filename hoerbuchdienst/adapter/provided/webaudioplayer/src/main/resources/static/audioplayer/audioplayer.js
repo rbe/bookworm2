@@ -60,7 +60,7 @@ export class Audioplayer {
             'volumeDownButtonSelector': 'button.volumeDown',
             'volumeUpButtonSelector': 'button.volumeUp',
             'volumeSliderInputSelector': 'input.volumeSlider',
-            'downloadStatusTextSelector': '#downloadStatusText'
+            'downloadStatusTextSelector': '#downloadStatus'
         };
     }
 
@@ -332,7 +332,7 @@ export class Audioplayer {
 
     asyncDownloadOrder() {
         const url = new URL('bestellung/zip', this.audiobookURL).toString();
-        this.downloadStatusText.html('Bestellung aufgeben');
+        this.downloadStatusText.innerHTML = 'Bestellung aufgeben';
         fetch(url, {
             'method': 'POST',
             'mode': 'cors',
