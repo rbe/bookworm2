@@ -357,7 +357,7 @@ export class Audioplayer {
             .then(json => {
                 if (json) {
                     this.orderId = json.orderId;
-                    this.downloadStatusText.html('Bestellung ' + this.orderId);
+                    this.downloadStatusText.innerHTML = 'Bestellung ' + this.orderId;
                     console.log('asyncDownloadOrder(): orderId ' + this.orderId);
                     this.asyncDownloadStatus();
                 } else {
@@ -396,11 +396,11 @@ export class Audioplayer {
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
-                                this.downloadStatusText.html('Bestellung erfolgreich');
+                                this.downloadStatusText.innerHTML = 'Bestellung erfolgreich';
                                 this.asyncDownloadAudiobook();
                                 break;
                             case 'FAILED':
-                                this.downloadStatusText.html('Bestellung fehlerhaft!');
+                                this.downloadStatusText.innerHTML = 'Bestellung fehlerhaft!';
                                 break;
                             default:
                                 alert('Unbekannter Status!');
@@ -414,7 +414,7 @@ export class Audioplayer {
                             setTimeout(() => this.asyncDownloadStatus(), 1500));
                     }
                 } else {
-                    this.downloadStatusText.html('Keine Daten!');
+                    this.downloadStatusText.innerHTML = 'Keine Daten!';
                     console.log('asyncDownloadStatus(): Sorry, no JSON');
                 }
             })
@@ -441,7 +441,7 @@ export class Audioplayer {
                 }
             })
             .then(blob => {
-                this.downloadStatusText.html('Bestellung wird gespeichert!');
+                this.downloadStatusText.innerHTML = 'Bestellung wird gespeichert!';
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
