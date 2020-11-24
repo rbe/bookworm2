@@ -14,6 +14,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
 import wbh.bookworm.shared.domain.Hoerernummer;
+import wbh.bookworm.shared.domain.Sachgebiet;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 @RestController
@@ -48,7 +49,10 @@ public class KatalogRestService {
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
         final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwort(hoerbuch);
-        hoerbuchAntwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
+        final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
+        if (null != sachgebiet) {
+            hoerbuchAntwortDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
+        }
         return hoerbuchAntwortDTO;
     }
 
