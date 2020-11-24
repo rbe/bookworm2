@@ -13,7 +13,7 @@ alpinelinux_setup_user() {
   echo "Trying to add ${name}"
   if ! getent passwd "${name}" >/dev/null; then
     echo "Adding user ${name}"
-    adduser -DHh /tmp -s /bin/false -G bookworm "${name}"
+    adduser -DHh /tmp -s /bin/false -G service "${name}"
     echo "done"
   fi
   echo "Setting password for ${name}"
@@ -21,8 +21,8 @@ alpinelinux_setup_user() {
   echo "done"
 }
 
-echo "Adding group bookworm"
-addgroup bookworm
+echo "Adding group service"
+addgroup service
 
 if [[ $# -eq 0 ]]; then
   echo "usage: $0 user1[ user2 ... userN]"
