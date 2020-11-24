@@ -3,7 +3,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class HoerbuchAntwortDTO {
+public final class HoerbuchAntwortDTO {
 
     private final String titelnummer;
 

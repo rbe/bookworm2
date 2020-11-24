@@ -1,0 +1,5 @@
+GET {{host}}/{{context}}/{{api-version}}/hoererdaten
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###

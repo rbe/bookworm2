@@ -24,7 +24,7 @@ import wbh.bookworm.shared.domain.Titelnummer;
 
 @RestController
 @RequestMapping("/v1/warenkorb")
-public class WarenkorbRestService {
+public final class WarenkorbRestService {
 
     private final WarenkorbService warenkorbService;
 

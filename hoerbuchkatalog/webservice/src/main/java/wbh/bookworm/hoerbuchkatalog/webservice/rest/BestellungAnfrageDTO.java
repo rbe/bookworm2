@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class BestellungAnfrageDTO implements Serializable {
+public final class BestellungAnfrageDTO implements Serializable {
 
     private final String hoerername;
 
