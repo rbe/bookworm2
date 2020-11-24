@@ -20,7 +20,7 @@ public class AuthenticationFilter implements HttpServerFilter {
                                                       final ServerFilterChain chain) {
         final String mandant = request.getHeaders().get("X-Bookworm-Mandant");
         final String hoerer = request.getHeaders().get("X-Bookworm-Hoerer");
-        LOGGER.info("mandant={} hoerer={}", mandant, hoerer);
+        LOGGER.info("X-Bookworm-Mandant={} X-Bookworm-Hoerer={}", mandant, hoerer);
         return chain.proceed(request);
     }
 

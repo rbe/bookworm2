@@ -338,7 +338,9 @@ export class Audioplayer {
             'mode': 'cors',
             'headers': {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Hoerernummer': this.hoerernummer
             },
             'redirect': 'follow',
             'body': JSON.stringify({
@@ -378,7 +380,9 @@ export class Audioplayer {
             'method': 'GET',
             'mode': 'cors',
             'headers': {
-                'Accept': 'application/json'
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Hoerernummer': this.hoerernummer
             },
             'redirect': 'follow'
         })
@@ -431,6 +435,11 @@ export class Audioplayer {
         fetch(url, {
             'method': 'GET',
             'mode': 'cors',
+            'headers': {
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            },
             'redirect': 'follow'
         })
             .then(response => {
