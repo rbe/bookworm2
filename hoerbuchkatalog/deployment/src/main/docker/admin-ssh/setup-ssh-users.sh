@@ -21,9 +21,6 @@ alpinelinux_setup_user() {
   echo "done"
 }
 
-echo "Adding group service"
-addgroup service
-
 if [[ $# -eq 0 ]]; then
   echo "usage: $0 user1[ user2 ... userN]"
   exit 1
