@@ -22,12 +22,12 @@ public class KatalogRestService {
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    private final HoerbuchResolver hoerbuchResolver;
+    private final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver;
 
     public KatalogRestService(final HoerbuchkatalogService hoerbuchkatalogService,
-                              final HoerbuchResolver hoerbuchResolver) {
+                              final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.hoerbuchResolver = hoerbuchResolver;
+        this.titelnummerHoerbuchResolver = titelnummerHoerbuchResolver;
     }
 
     @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -38,15 +38,18 @@ public class KatalogRestService {
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
-        return hoerbuchResolver.toHoerbuchAntwortDTO(suchergebnis.getTitelnummern());
+        return titelnummerHoerbuchResolver.toHoerbuchAntwortDTO(suchergebnis.getTitelnummern());
     }
 
-    @GetMapping(value = "/titel/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Hoerbuch hole(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                         @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                         @PathVariable("titelnummer") final String titelnummer) {
-        return hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
+    @GetMapping(value = "/details/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HoerbuchAntwortDTO hole(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                   @PathVariable("titelnummer") final String titelnummer) {
+        final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
+        final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convert(hoerbuch);
+        hoerbuchAntwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
+        return hoerbuchAntwortDTO;
     }
 
 }

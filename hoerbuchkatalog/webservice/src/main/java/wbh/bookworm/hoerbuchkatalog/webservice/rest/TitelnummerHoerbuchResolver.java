@@ -10,20 +10,19 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 @Component
-class HoerbuchResolver {
+class TitelnummerHoerbuchResolver {
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    HoerbuchResolver(final HoerbuchkatalogService hoerbuchkatalogService) {
+    TitelnummerHoerbuchResolver(final HoerbuchkatalogService hoerbuchkatalogService) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 
     List<HoerbuchAntwortDTO> toHoerbuchAntwortDTO(final List<Titelnummer> titelnummern) {
         final Hoerernummer hoerernummer = new Hoerernummer("00000");
         return titelnummern.stream()
-                .map(t -> hoerbuchkatalogService.hole(hoerernummer, t))
-                .map(h -> new HoerbuchAntwortDTO(h.getTitelnummer().getValue(),
-                        h.getTitel(), h.getAutor()))
+                .map(titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer))
+                .map(HoerbuchMapper.INSTANCE::convert)
                 .collect(Collectors.toUnmodifiableList());
     }
 
