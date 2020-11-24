@@ -16,7 +16,7 @@ public abstract class BelastungMapper {
     abstract List<BelastungAntwortDTO> convert(List<Belastung> belastungen);
 
     String map(Titelnummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
 }

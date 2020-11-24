@@ -31,14 +31,14 @@ public class KatalogRestService {
     }
 
     @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<HoerbuchAntwortDTO> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                          @PathVariable("stichwort") final String stichwort) {
+    public List<HoerbuchAntwortKurzDTO> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                              @PathVariable("stichwort") final String stichwort) {
         final Suchparameter suchparameter = new Suchparameter();
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
-        return titelnummerHoerbuchResolver.toHoerbuchAntwortDTO(suchergebnis.getTitelnummern());
+        return titelnummerHoerbuchResolver.toHoerbuchAntwortKurzDTO(suchergebnis.getTitelnummern());
     }
 
     @GetMapping(value = "/details/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -47,7 +47,7 @@ public class KatalogRestService {
                                    @PathVariable("titelnummer") final String titelnummer) {
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
-        final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convert(hoerbuch);
+        final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwort(hoerbuch);
         hoerbuchAntwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
         return hoerbuchAntwortDTO;
     }

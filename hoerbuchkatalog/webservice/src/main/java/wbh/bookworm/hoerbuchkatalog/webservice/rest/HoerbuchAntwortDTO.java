@@ -1,6 +1,7 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public final class HoerbuchAntwortDTO {
 
@@ -28,11 +29,11 @@ public final class HoerbuchAntwortDTO {
 
     private String sprecher2;
 
-    private String spieldauer; // 52 Stunde, Minuten
+    private String spieldauer;
 
-    private String prodOrt;
+    private String produktionsort;
 
-    private String prodJahr;
+    private String produktionsjahr;
 
     private String suchwoerter;
 
@@ -150,20 +151,20 @@ public final class HoerbuchAntwortDTO {
         this.spieldauer = spieldauer;
     }
 
-    public String getProdOrt() {
-        return prodOrt;
+    public String getProduktionsort() {
+        return produktionsort;
     }
 
-    public void setProdOrt(final String prodOrt) {
-        this.prodOrt = prodOrt;
+    public void setProduktionsort(final String produktionsort) {
+        this.produktionsort = produktionsort;
     }
 
-    public String getProdJahr() {
-        return prodJahr;
+    public String getProduktionsjahr() {
+        return produktionsjahr;
     }
 
-    public void setProdJahr(final String prodJahr) {
-        this.prodJahr = prodJahr;
+    public void setProduktionsjahr(final String produktionsjahr) {
+        this.produktionsjahr = produktionsjahr;
     }
 
     public String getSuchwoerter() {
@@ -196,6 +197,12 @@ public final class HoerbuchAntwortDTO {
 
     public void setEinstelldatum(final LocalDate einstelldatum) {
         this.einstelldatum = einstelldatum;
+    }
+
+    public String getEinstelldatumAufDeutsch() {
+        return null != einstelldatum
+                ? einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public String getAghNummer() {

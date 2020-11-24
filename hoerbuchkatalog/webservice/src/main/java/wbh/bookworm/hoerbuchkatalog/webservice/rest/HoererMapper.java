@@ -17,19 +17,19 @@ public abstract class HoererMapper {
     abstract HoererAntwortDTO convert(Hoerer hoerer);
 
     String map(Hoerernummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
     String map(Vorname value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
     String map(Nachname value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
     String map(HoererEmail value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
 }

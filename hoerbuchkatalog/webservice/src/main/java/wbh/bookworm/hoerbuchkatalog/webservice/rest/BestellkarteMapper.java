@@ -17,11 +17,11 @@ public abstract class BestellkarteMapper {
     abstract List<BestellkarteAntwortDTO> convert(List<Bestellkarte> belastungen);
 
     String map(Hoerernummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
     String map(Titelnummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
 }

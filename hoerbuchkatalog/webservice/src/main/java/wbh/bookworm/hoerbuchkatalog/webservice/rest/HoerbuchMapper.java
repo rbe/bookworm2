@@ -13,18 +13,20 @@ public abstract class HoerbuchMapper {
 
     public static final HoerbuchMapper INSTANCE = Mappers.getMapper(HoerbuchMapper.class);
 
-    abstract HoerbuchAntwortDTO convert(Hoerbuch hoerbuch);
+    abstract HoerbuchAntwortDTO convertToHoerbuchAntwort(Hoerbuch hoerbuch);
+
+    abstract HoerbuchAntwortKurzDTO convertToHoerbuchAntwortKurz(Hoerbuch hoerbuch);
 
     String map(Titelnummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
     String map(Sachgebiet value) {
-        return value.getName();
+        return null != value ? value.getName() : "";
     }
 
     String map(AghNummer value) {
-        return value.getValue();
+        return null != value ? value.getValue() : "";
     }
 
 }

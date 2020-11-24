@@ -22,7 +22,15 @@ class TitelnummerHoerbuchResolver {
         final Hoerernummer hoerernummer = new Hoerernummer("00000");
         return titelnummern.stream()
                 .map(titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer))
-                .map(HoerbuchMapper.INSTANCE::convert)
+                .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwort)
+                .collect(Collectors.toUnmodifiableList());
+    }
+
+    List<HoerbuchAntwortKurzDTO> toHoerbuchAntwortKurzDTO(final List<Titelnummer> titelnummern) {
+        final Hoerernummer hoerernummer = new Hoerernummer("00000");
+        return titelnummern.stream()
+                .map(titelnummer -> hoerbuchkatalogService.hole(hoerernummer, titelnummer))
+                .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortKurz)
                 .collect(Collectors.toUnmodifiableList());
     }
 
