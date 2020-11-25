@@ -85,7 +85,8 @@ public class StreamController {
 
     @Operation(hidden = true)
     @Options(uri = "{titelnummer}/zip")
-    public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest) {
+    public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
+                                                                            @PathVariable final String aghNummer) {
         return optionsResponse(httpRequest);
     }
 
@@ -106,7 +107,8 @@ public class StreamController {
 
     @Operation(hidden = true)
     @Options(uri = "agh/{aghNummer}/zip")
-    public HttpResponse<String> optionsZippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest) {
+    public HttpResponse<String> optionsZippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest,
+                                                                          @PathVariable final String aghNummer) {
         return optionsResponse(httpRequest);
     }
 
@@ -141,8 +143,10 @@ public class StreamController {
     }
 
     @Operation(summary = "CORS")
-    @Options(uri = "track")
-    public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest) {
+    @Options(uri = "{titelnummer}/track/{ident}")
+    public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest,
+                                                     @PathVariable final String titelnummer,
+                                                     @PathVariable final String ident) {
         return optionsResponse(httpRequest);
     }
 
