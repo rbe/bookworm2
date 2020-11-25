@@ -17,6 +17,10 @@ public final class BelastungAntwortDTO {
 
     private String titelnummer;
 
+    private String autor;
+
+    private String titel;
+
     public LocalDate getBelastungsdatum() {
         return belastungsdatum;
     }
@@ -45,6 +49,22 @@ public final class BelastungAntwortDTO {
 
     public void setTitelnummer(final String titelnummer) {
         this.titelnummer = titelnummer;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(final String autor) {
+        this.autor = autor;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public void setTitel(final String titel) {
+        this.titel = titel;
     }
 
 }

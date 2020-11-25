@@ -23,12 +23,12 @@ public class KatalogRestService {
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    private final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver;
+    private final TitelnummerResolver titelnummerResolver;
 
     public KatalogRestService(final HoerbuchkatalogService hoerbuchkatalogService,
-                              final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver) {
+                              final TitelnummerResolver titelnummerResolver) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.titelnummerHoerbuchResolver = titelnummerHoerbuchResolver;
+        this.titelnummerResolver = titelnummerResolver;
     }
 
     @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -39,7 +39,7 @@ public class KatalogRestService {
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
-        return titelnummerHoerbuchResolver.toHoerbuchAntwortKurzDTO(suchergebnis.getTitelnummern());
+        return titelnummerResolver.toHoerbuchAntwortKurzDTO(suchergebnis.getTitelnummern());
     }
 
     @GetMapping(value = "/details/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -48,7 +48,7 @@ public class KatalogRestService {
                                    @PathVariable("titelnummer") final String titelnummer) {
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
-        final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwort(hoerbuch);
+        final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortDto(hoerbuch);
         final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
         if (null != sachgebiet) {
             hoerbuchAntwortDTO.setSachgebietBezeichnung(sachgebiet.getDescription());

@@ -13,9 +13,9 @@ public abstract class HoerbuchMapper {
 
     public static final HoerbuchMapper INSTANCE = Mappers.getMapper(HoerbuchMapper.class);
 
-    abstract HoerbuchAntwortDTO convertToHoerbuchAntwort(Hoerbuch hoerbuch);
+    abstract HoerbuchAntwortDTO convertToHoerbuchAntwortDto(Hoerbuch hoerbuch);
 
-    abstract HoerbuchAntwortKurzDTO convertToHoerbuchAntwortKurz(Hoerbuch hoerbuch);
+    abstract HoerbuchAntwortKurzDTO convertToHoerbuchAntwortKurzDto(Hoerbuch hoerbuch);
 
     String map(Titelnummer value) {
         return null != value ? value.getValue() : "";

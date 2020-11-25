@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public final class HoererAntwortDTO implements Serializable {
 
@@ -153,12 +154,24 @@ public final class HoererAntwortDTO implements Serializable {
         this.sperrTerminVon = sperrTerminVon;
     }
 
+    public String getSperrTerminVonAufDeutsch() {
+        return null != sperrTerminVon
+                ? sperrTerminVon.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     public LocalDate getSperrTerminBis() {
         return sperrTerminBis;
     }
 
     public void setSperrTerminBis(final LocalDate sperrTerminBis) {
         this.sperrTerminBis = sperrTerminBis;
+    }
+
+    public String getSperrTerminBisAufDeutsch() {
+        return null != sperrTerminBis
+                ? sperrTerminBis.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public LocalDate getUrlaubVon() {
@@ -169,12 +182,24 @@ public final class HoererAntwortDTO implements Serializable {
         this.urlaubVon = urlaubVon;
     }
 
+    public String getUrlaubVonAufDeutsch() {
+        return null != urlaubVon
+                ? urlaubVon.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     public LocalDate getUrlaubBis() {
         return urlaubBis;
     }
 
     public void setUrlaubBis(final LocalDate urlaubBis) {
         this.urlaubBis = urlaubBis;
+    }
+
+    public String getUrlaubBisAufDeutsch() {
+        return null != urlaubBis
+                ? urlaubBis.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public String getUrlaubName2() {
@@ -233,6 +258,12 @@ public final class HoererAntwortDTO implements Serializable {
         this.geburtsdatum = geburtsdatum;
     }
 
+    public String getGeburtsdatumAufDeutsch() {
+        return null != geburtsdatum
+                ? geburtsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
     public String getTelefonnummer() {
         return telefonnummer;
     }
@@ -263,6 +294,12 @@ public final class HoererAntwortDTO implements Serializable {
 
     public void setRueckbuchungsdatum(final LocalDate rueckbuchungsdatum) {
         this.rueckbuchungsdatum = rueckbuchungsdatum;
+    }
+
+    public String getRueckbuchungsdatumAufDeutsch() {
+        return null != rueckbuchungsdatum
+                ? rueckbuchungsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
 }

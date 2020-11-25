@@ -15,6 +15,10 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     private String titelnummer;
 
+    private String autor;
+
+    private String titel;
+
     private LocalDate ausleihdatum;
 
     public String getHoerernummer() {
@@ -31,6 +35,22 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     public void setTitelnummer(final String titelnummer) {
         this.titelnummer = titelnummer;
+    }
+
+    public String getAutor() {
+        return autor;
+    }
+
+    public void setAutor(final String autor) {
+        this.autor = autor;
+    }
+
+    public String getTitel() {
+        return titel;
+    }
+
+    public void setTitel(final String titel) {
+        this.titel = titel;
     }
 
     public LocalDate getAusleihdatum() {

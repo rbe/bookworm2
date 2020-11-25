@@ -24,11 +24,11 @@ public class MerklisteRestService {
 
     private final MerklisteService merklisteService;
 
-    private final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver;
+    private final TitelnummerResolver titelnummerResolver;
 
-    public MerklisteRestService(final MerklisteService merklisteService, final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver) {
+    public MerklisteRestService(final MerklisteService merklisteService, final TitelnummerResolver titelnummerResolver) {
         this.merklisteService = merklisteService;
-        this.titelnummerHoerbuchResolver = titelnummerHoerbuchResolver;
+        this.titelnummerResolver = titelnummerResolver;
     }
 
     //@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -54,7 +54,7 @@ public class MerklisteRestService {
     public List<HoerbuchAntwortDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return titelnummerHoerbuchResolver.toHoerbuchAntwortDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        return titelnummerResolver.toHoerbuchAntwortDTO(new ArrayList<>(merkliste.getTitelnummern()));
     }
 
 }

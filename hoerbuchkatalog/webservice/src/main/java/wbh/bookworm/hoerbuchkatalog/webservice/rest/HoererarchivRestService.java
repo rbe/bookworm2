@@ -20,29 +20,33 @@ public class HoererarchivRestService {
 
     private final CdLieferungService cdLieferungService;
 
-    public HoererarchivRestService(final CdLieferungService cdLieferungService) {
+    private final TitelnummerResolver titelnummerResolver;
+
+    public HoererarchivRestService(final CdLieferungService cdLieferungService,
+                                   final TitelnummerResolver titelnummerResolver) {
         this.cdLieferungService = cdLieferungService;
+        this.titelnummerResolver = titelnummerResolver;
     }
 
     @GetMapping(value = "/belastungen", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BelastungAntwortDTO> belastungen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                  @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<Belastung> belastungen = cdLieferungService.belastungen(new Hoerernummer(xHoerernummer));
-        return BelastungMapper.INSTANCE.convert(belastungen);
+        return titelnummerResolver.toBelastungenAntwortDTO(belastungen);
     }
 
     @GetMapping(value = "/bestellkarten", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<BestellkarteAntwortDTO> bestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(new Hoerernummer(xHoerernummer));
-        return BestellkarteMapper.INSTANCE.convert(bestellkarten);
+        return titelnummerResolver.toBestellkarteAntwortDTO(bestellkarten);
     }
 
     @GetMapping(value = "/erledigteBestellkarten", produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ErledigteBestellkarteAntwortDTO> erledigteBestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                         @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<ErledigteBestellkarte> erledigteBestellkarten = cdLieferungService.erledigteBestellkarten(new Hoerernummer(xHoerernummer));
-        return ErledigteBestellkarteMapper.INSTANCE.convert(erledigteBestellkarten);
+        return titelnummerResolver.toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
     }
 
 }

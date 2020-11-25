@@ -30,14 +30,14 @@ public final class WarenkorbRestService {
 
     private final BestellungService bestellungService;
 
-    private final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver;
+    private final TitelnummerResolver titelnummerResolver;
 
     public WarenkorbRestService(final WarenkorbService warenkorbService,
                                 final BestellungService bestellungService,
-                                final TitelnummerHoerbuchResolver titelnummerHoerbuchResolver) {
+                                final TitelnummerResolver titelnummerResolver) {
         this.warenkorbService = warenkorbService;
         this.bestellungService = bestellungService;
-        this.titelnummerHoerbuchResolver = titelnummerHoerbuchResolver;
+        this.titelnummerResolver = titelnummerResolver;
     }
 
     //@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -71,7 +71,7 @@ public final class WarenkorbRestService {
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungService.bestellungSessionId(xHoerernummer),
                 new Hoerernummer(xHoerernummer));
-        return titelnummerHoerbuchResolver.toHoerbuchAntwortDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
+        return titelnummerResolver.toHoerbuchAntwortDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
     }
 
     @PostMapping(value = "/bestellen", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
