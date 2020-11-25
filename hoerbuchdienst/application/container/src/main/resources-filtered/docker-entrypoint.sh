@@ -16,7 +16,7 @@ export TZ
 echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
 java \
-  -Xms1536m -Xmx1536m \
+  -Xms3072m -Xmx3072m \
   -XX:+UseCompressedOops \
   -XX:+HeapDumpOnOutOfMemoryError \
   -XX:HeapDumpPath=/var/local/java_debug \
