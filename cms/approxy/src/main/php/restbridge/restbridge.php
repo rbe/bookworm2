@@ -106,18 +106,22 @@ final class plgContentRestbridge extends JPlugin
     {
         $commandName = trim($matches[1]);
         $parameters = trim($matches[2]);
+        /** @var $restBridgePlugin RestBridgePlugin */
         $restBridgePlugin = $GLOBALS['restBridge']['PLUGIN'];
         if (isset($restBridgePlugin) === true) {
-            $restBridgePlugin->modifyParameters($commandName, $parameters);
+            $restBridgePlugin->customizeParameters($commandName, $parameters);
         }
 
         $commandResult = $this->commandExecutor->executeCommand($commandName, $parameters);
-        //rbdebug('restbridge#executeCommand: $commandResult=' . print_r($commandResult, true));
-        $content = '';
-        $hasMergableResult = is_array($commandResult) === true && empty($commandResult) === false;
-        if ($hasMergableResult) {
-            $commandResult = $this->rowsWithValues($commandResult);
-            $content = $this->cmsAdapter->renderTemplate($commandName, $commandResult);
+        if (is_array($commandResult) === true && array_key_exists('error', $commandResult)) {
+            return $commandResult['error'];
+        } else {
+            $content = '';
+            $hasMergableResult = is_array($commandResult) === true && empty($commandResult) === false;
+            if ($hasMergableResult) {
+                $commandResult = $this->rowsWithValues($commandResult);
+                $content = $this->cmsAdapter->renderTemplate($commandName, $commandResult);
+            }
         }
 
         return $content;

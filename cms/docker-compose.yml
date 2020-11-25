@@ -11,7 +11,7 @@ services:
       - MYSQL_USER=joomla
       - MYSQL_PASSWORD=joomla
     volumes:
-      - ./mysqldata:/var/lib/mysql:rw
+      - ./tmp/mysqldata:/var/lib/mysql:rw
     expose:
       - 3306
   joomla:
@@ -27,6 +27,6 @@ services:
       - JOOMLA_DB_USER=joomla
       - JOOMLA_DB_PASSWORD=joomla
     volumes:
-      - ~/project/joomla3.9.22:/var/www/html:rw
+      - ./tmp/joomla3.9.22:/var/www/html:rw
     expose:
       - 9000

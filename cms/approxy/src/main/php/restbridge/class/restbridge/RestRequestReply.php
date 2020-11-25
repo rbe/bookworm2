@@ -75,7 +75,11 @@ final class RestRequestReply
         $httpClient = new HttpClient();
         $method = strtoupper($this->restEndpoint['method']);
 
-        return $httpClient->{"http$method"}($url . $urlParameter, $body, $preHttpPostCallback);
+        if ($method === 'GET') {
+            return $httpClient->{"http$method"}($url.$urlParameter, $preHttpPostCallback);
+        } else if ($method === 'POST' || $method === 'PUT' || $method === 'DELETE') {
+            return $httpClient->{"http$method"}($url.$urlParameter, $body, $preHttpPostCallback);
+        }
 
     }//end restRequestReply()
 
@@ -93,12 +97,14 @@ final class RestRequestReply
      */
     private function encodeJsonBody(array $parameters): string
     {
-        try {
-            $json = json_encode($this->requestDto, JSON_THROW_ON_ERROR);
-            $jsonTemplate = new Template($json);
-            $body = $jsonTemplate->renderToString([$parameters]);
-        } catch (\JsonException $e) {
-            throw new \Exception('Encoding body as JSON failed', 0, $e);
+        if (isset($this->requestDto) === true) {
+            try {
+                $json = json_encode($this->requestDto, JSON_THROW_ON_ERROR);
+                $jsonTemplate = new Template($json);
+                $body = $jsonTemplate->renderToString([$parameters]);
+            } catch (\JsonException $e) {
+                throw new \Exception('Encoding body as JSON failed', 0, $e);
+            }
         }
 
         return isset($body) === true ? $body : '';

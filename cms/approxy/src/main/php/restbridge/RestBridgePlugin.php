@@ -35,15 +35,24 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
      * @param string $commandName Comment.
      * @param string $parameters Comment.
      *
-     * @return mixed|void
+     * @return void
      *
      * @since 1.0
      */
-    public function modifyParameters(string $commandName, string &$parameters)
+    public function customizeParameters(string $commandName, string &$parameters)
     {
         $hoerernummer = $this->cmsAdapter->getUserValue('cb_hoerernummer');
-        $parameters .= ',mandant:06,hoerernummer:' . $hoerernummer; // TODO Move into 'configuration'
-        error_log('#modifyParameters: $parameters=' . print_r($parameters, true), 0);
+        if (isset($hoerernummer) === false || $hoerernummer === '') {
+            $hoerernummer = '00000';
+        }
+
+        if (strlen($parameters) > 0) {
+            $parameters .= ',';
+        }
+
+        global $mandant;
+        $parameters .= 'mandant:'.$mandant.',hoerernummer:'.$hoerernummer;
+        error_log('#customizeParameters: $parameters='.print_r($parameters, true), 0);
 
     }//end modifyParameters()
 

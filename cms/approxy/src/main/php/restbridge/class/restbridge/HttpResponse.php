@@ -106,12 +106,17 @@ final class HttpResponse
             if ($jsonResponse === false) {
                 showJsonError();
                 error_log('Error decoding response body as JSON: ' . json_last_error_msg(), 0);
-                $this->json = json_decode('');
+                $this->json = json_decode('[false]');
             } else {
-                $this->json = $jsonResponse;
+                if (is_bool($jsonResponse) === true) {
+                    $this->json = ['result' => $jsonResponse];
+                } else {
+                    $this->json = $jsonResponse;
+                }
             }
         } else {
             error_log('No JSON response, request was not successful, HTTP status ' . $this->statusCode, 0);
+            $this->json = json_decode('[false]');
         }
 
         return $this->json;

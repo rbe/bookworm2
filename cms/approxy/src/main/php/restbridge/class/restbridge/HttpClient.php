@@ -34,7 +34,7 @@ final class HttpClient
 
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
-            throw new \Exception();
+            throw new \Exception('Empty response body');
         }
 
         $info = $this->responseInfo($ch);
@@ -68,10 +68,11 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        error_log(sprintf("POST %s", $url), 0);
+        error_log(sprintf("POST %s\n%s", $url, $requestBody), 0);
         $responseBody = curl_exec($ch);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
         if ($responseBody === false) {
-            throw new \Exception();
+            throw new \Exception('Empty response body');
         }
 
         $info = $this->responseInfo($ch);
@@ -79,6 +80,82 @@ final class HttpClient
         return new HttpResponse($info['statuscode'], $responseBody);
 
     }//end httpPOST()
+
+
+    /**
+     * Description.
+     *
+     * @param string $url Comment.
+     * @param string|null $requestBody Comment.
+     * @param callable|null $preCallback Comment.
+     *
+     * @return HttpResponse
+     *
+     * @throws \Exception
+     *
+     * @since 1.0
+     */
+    public function httpPUT(string $url, string $requestBody = null, callable $preCallback = null): HttpResponse
+    {
+        $ch = $this->initCurl($url);
+        curl_setopt($ch, CURLOPT_PUT, true);
+        if (isset($requestBody) === true) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+        }
+        if (isset($preCallback) === true) {
+            $preCallback($ch);
+        }
+
+        error_log(sprintf("PUT %s\n%s", $url, $requestBody), 0);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $responseBody = curl_exec($ch);
+        if ($responseBody === false) {
+            throw new \Exception('Empty response body');
+        }
+
+        $info = $this->responseInfo($ch);
+        curl_close($ch);
+        return new HttpResponse($info['statuscode'], $responseBody);
+
+    }//end httpPUT()
+
+
+    /**
+     * Description.
+     *
+     * @param string $url Comment.
+     * @param string|null $requestBody Comment.
+     * @param callable|null $preCallback Comment.
+     *
+     * @return HttpResponse
+     *
+     * @throws \Exception
+     *
+     * @since 1.0
+     */
+    public function httpDELETE(string $url, string $requestBody = null, callable $preCallback = null): HttpResponse
+    {
+        $ch = $this->initCurl($url);
+        curl_setopt($ch, CURLOPT_CUSTOMREQUEST, 'DELETE');
+        if (isset($requestBody) === true) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+        }
+        if (isset($preCallback) === true) {
+            $preCallback($ch);
+        }
+
+        error_log(sprintf("DELETE %s\n%s", $url, $requestBody), 0);
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $responseBody = curl_exec($ch);
+        if ($responseBody === false) {
+            throw new \Exception('Empty response body');
+        }
+
+        $info = $this->responseInfo($ch);
+        curl_close($ch);
+        return new HttpResponse($info['statuscode'], $responseBody);
+
+    }//end httpDELETE()
 
 
     /**

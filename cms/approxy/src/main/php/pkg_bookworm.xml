@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="package" version="1.6" method="upgrade">
+    <name>Bookworm Package</name>
+    <author>art of coding UG, Hamburg</author>
+    <creationDate>October 2020</creationDate>
+    <packagename>bookworm</packagename>
+    <version>0.0.1</version>
+    <url>https://www.art-of-coding.eu/</url>
+    <packager>art of coding UG, Hamburg</packager>
+    <packagerurl>http://www.art-of.com/</packagerurl>
+    <description>Bookworm package</description>
+    <update>https://beta.wbh-online.de/update</update>
+    <scriptfile>pkg_script.php</scriptfile>
+    <files folder="packages">
+        <!--file type="component" id="com_helloworld">com_helloworld.zip</file-->
+        <!--file type="module" id="helloworld" client="site">mod_helloworld.zip</file-->
+        <!--file type="library" id="helloworld">lib_helloworld.zip</file-->
+        <file type="plugin" id="helloworld" group="system">plg_restbridge.zip</file>
+        <!--file type="template" id="helloworld" client="site">tpl_helloworld.zip</file-->
+    </files>
+</extension>

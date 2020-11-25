@@ -60,12 +60,13 @@ final class CommandExecutor
         $parameterArray = [];
         foreach ($parameters as $p) {
             $keyValue = explode(':', $p);
-            $isValidKeyValuePair = isset($keyValue) === true && count($keyValue) === 2;
-            if ($isValidKeyValuePair) {
+            $isKeyWithValue = isset($keyValue) === true && count($keyValue) === 2;
+            if ($isKeyWithValue) {
                 $key = $keyValue[0];
                 $value = $keyValue[1];
                 $parameterArray[$key] = $value;
             } else {
+                // TODO param:, -> no value -> lookup per JoomlaCmsAdapter/JInput
                 error_log('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
             }
         }
@@ -88,17 +89,43 @@ final class CommandExecutor
     public function executeCommand(string $commandName, string $parameters): array
     {
         $parameterArray = $this->analyzeParameters($commandName, $parameters);
+        /** @var $restEndpoint array */
         $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS'][$commandName];
+        if (isset($restEndpoint) === false) {
+            $result = 'CommandExecutor#executeCommand: REST endpoint ' . $commandName . ' not found';
+            error_log($result, 0);
+            return ['error' => $result];
+        }
+
+        $headers = $restEndpoint['headers'];
+        foreach ($headers as $k => $v) {
+            $template = new Template($v);
+            $headers[$k] = $template->renderToString([$parameterArray]);
+        }
+        error_log('HTTP Headers: ' . print_r($headers, true), 0);
+        /** @var $requestDto array */
+        $requestDto = $restEndpoint['requestDto'];
+        if (isset($requestDto) === false) {
+            $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS'][$commandName];
+        }
+        if (isset($requestDto) === false) {
+            $requestDto = [];
+        } else {
+            foreach ($requestDto as $k => $v) {
+                $template = new Template($v);
+                $requestDto[$k] = $template->renderToString([$parameterArray]);
+            }
+        }
         $command = new RestRequestReplyCommandImpl(
             [
                 'endpoint' => $restEndpoint,
-                'requestDto' => $GLOBALS['restBridge']['REQUEST_DTOS'][$commandName],
+                'requestDto' => $requestDto,
                 'urlParameters' => $parameterArray,
-                'preHttpPostCallback' => function ($ch) use ($restEndpoint) {
+                'preHttpPostCallback' => function ($ch) use ($headers) {
                     curl_setopt(
                         $ch,
                         CURLOPT_HTTPHEADER,
-                        ArrayHelper::arrayCombineKeyValue($restEndpoint['headers'])
+                        ArrayHelper::arrayCombineKeyValue($headers)
                     );
                 },
             ]

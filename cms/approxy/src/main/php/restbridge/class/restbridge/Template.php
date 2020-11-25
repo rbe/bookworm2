@@ -48,7 +48,7 @@ final class Template
      */
     public function renderToString(array $rowsWithValues): string
     {
-        preg_match_all('/\{([A-Za-z_]+)*\}/', $this->template, $matches);
+        preg_match_all('/\{([A-Za-z0-9_]+)*\}/', $this->template, $matches);
         $matches = $matches[1];
         $content = '';
         foreach ($rowsWithValues as $row) {

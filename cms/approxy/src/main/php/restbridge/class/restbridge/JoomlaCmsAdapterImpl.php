@@ -87,6 +87,10 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             }
         }
 
+        if (isset($value) === false) {
+            $value = '';
+        }
+
         return $value;
 
     }//end getUserValue()

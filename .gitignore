@@ -32,7 +32,8 @@ out/
 #
 
 dependency-reduced-pom.xml
-var/
+/hoerbuchkatalog/var/
+/hoerbuchkatalog/app/src/test/var/
 /hoerbuchkatalog/assembly/src/main/resources/application-secrets.yml
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/app/
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/css/
@@ -42,6 +43,8 @@ var/
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/bootstrap*.js
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/js/jquery*.js
 /hoerbuchkatalog/ui/src/main/resources/META-INF/resources/templates/
-/cms/approxy/composer.phar
-/cms/approxy/src/main/php/approxy/composer.lock
 /cms/approxy/src/main/php/approxy/vendor/
+/cms/approxy/src/main/php/*.zip
+/cms/vendor/
+/cms/tmp/
+/cms/.*.cache

@@ -44,7 +44,7 @@ abstract class AbstractRestBridgePlugin
      *
      * @since 1.0
      */
-    abstract public function modifyParameters(string $commandName, string &$parameters);
+    abstract public function customizeParameters(string $commandName, string &$parameters);
 
 
 }//end class
