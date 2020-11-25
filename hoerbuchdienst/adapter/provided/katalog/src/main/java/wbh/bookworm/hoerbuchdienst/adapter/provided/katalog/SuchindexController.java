@@ -38,7 +38,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 @Controller(SuchindexController.BASE_URL)
 public class SuchindexController {
 
-    static final String BASE_URL = "/search";
+    static final String BASE_URL = "/v1/suche";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(SuchindexController.class);
 

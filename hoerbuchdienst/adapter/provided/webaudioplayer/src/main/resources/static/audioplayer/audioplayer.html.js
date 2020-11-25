@@ -33,12 +33,14 @@ import {Audioplayer} from "./audioplayer.js";
     const audioplayer = new Audioplayer();
     document.querySelector('#ladenButton')
         .addEventListener('click', event => {
-            document.querySelector('.playlistContainer .loading').style.display = 'block';
+            document.querySelector('.playlistContainer .notfound').style.display = 'none';
             document.querySelector('.audioplayer .panel').style.display = 'none';
+            document.querySelector('.audioplayer .notfound').style.display = 'none';
+            document.querySelector('.playlistContainer .loading').style.display = 'block';
             document.querySelector('.audioplayer .loading').style.display = 'block';
             audioplayer.reset();
             const b = window.location;
-            const url = new URL(b.protocol + '//' + b.host + '/');
+            const url = new URL(b.protocol + '//' + b.host + '/v1/');
             const hoerernummer = document.querySelector('#hoerernummer').value;
             const titelnummer = document.querySelector('#titelnummer').value;
             audioplayer.init(url, hoerernummer, titelnummer, () => {
