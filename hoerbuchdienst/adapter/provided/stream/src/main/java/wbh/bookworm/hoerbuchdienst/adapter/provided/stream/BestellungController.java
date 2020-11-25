@@ -49,7 +49,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
 public class BestellungController {
 
-    static final String BASE_URL = "/bestellung";
+    static final String BASE_URL = "/v1/bestellung";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungController.class);
 

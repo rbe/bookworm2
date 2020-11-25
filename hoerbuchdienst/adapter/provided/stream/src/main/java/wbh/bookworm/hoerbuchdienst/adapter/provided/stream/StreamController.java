@@ -15,9 +15,11 @@ import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
+import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -30,7 +32,10 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookStreamService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.MandantService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -48,7 +53,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 @Controller(value = StreamController.BASE_URL)
 public class StreamController {
 
-    static final String BASE_URL = "/stream";
+    static final String BASE_URL = "/v1/stream";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(StreamController.class);
 
@@ -65,31 +70,58 @@ public class StreamController {
 
     private final MandantService mandantService;
 
+    private final KatalogService katalogService;
+
     @Inject
     public StreamController(final AudiobookShardRedirector audiobookShardRedirector,
                             final AudiobookStreamService audiobookStreamService,
-                            final MandantService mandantService) {
+                            final MandantService mandantService,
+                            final KatalogService katalogService) {
         this.audiobookShardRedirector = audiobookShardRedirector;
         this.audiobookStreamService = audiobookStreamService;
         this.mandantService = mandantService;
+        this.katalogService = katalogService;
     }
 
-    @ApiResponse(description = "CORS")
-    @Options(uri = "zip")
-    public HttpResponse<String> optionsZippedAudiobookAsStream(final HttpRequest<?> httpRequest) {
+    @Operation(hidden = true)
+    @Options(uri = "{titelnummer}/zip")
+    public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest) {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "Hörbuch als DAISY-ZIP mit Wasserzeichen")
-    @ApiResponse(responseCode = "200", description = "Stream wird geliefert")
-    @Post(uri = "zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP mit Wasserzeichen")
+    @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
+    @Post(uri = "{titelnummer}/zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
-    public HttpResponse<byte[]> zippedAudiobookAsStream(final HttpRequest<?> httpRequest,
-                                                        @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
-                () -> makeZippedAudiobook(audiobookAnfrageDTO.getMandant(), audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer()),
+    public HttpResponse<byte[]> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
+                                                                     @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                     @PathVariable("titelnummer") final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
+                () -> makeZippedAudiobook(xMandant, xHoerernummer, titelnummer),
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%s/zip", BASE_URL),
+                String.format("%s/%s/zip", BASE_URL, titelnummer),
+                httpRequest);
+    }
+
+    @Operation(hidden = true)
+    @Options(uri = "agh/{aghNummer}/zip")
+    public HttpResponse<String> optionsZippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest) {
+        return optionsResponse(httpRequest);
+    }
+
+    @Operation(summary = "Hörbuch (AGH Nummer) als DAISY-ZIP mit Wasserzeichen", tags = {"ALPHA"})
+    @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
+    @Post(uri = "agh/{aghNummer}/zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Blocking
+    public HttpResponse<byte[]> zippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest,
+                                                                   @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                   @PathVariable("aghNummer") final String aghNummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(/* TODO */aghNummer,
+                () -> makeZippedAudiobook(xMandant, xHoerernummer, /* TOOD */aghNummer),
+                dto -> CORS.response(httpRequest, dto),
+                String.format("%s/agh/%s/zip", BASE_URL, aghNummer),
                 httpRequest);
     }
 
@@ -115,30 +147,71 @@ public class StreamController {
     }
 
     @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP mit Wasserzeichen")
-    @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,
-                                              @Body final TrackAnfrageDTO trackAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
-                () -> makeTrackAsStream(trackAnfrageDTO),
+                                              @Header("X-Bookworm-Mandant") final String xMandant,
+                                              @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                              @PathVariable("titelnummer") final String titelnummer,
+                                              @PathVariable("ident") final String trackIdent) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
+                () -> makeTrackAsStream(xMandant, xHoerernummer, titelnummer, trackIdent),
+                body -> CORS.response(httpRequest, body)
+                        .header("Accept-Ranges", "bytes"),
+                String.format("%s/%s/track/%s", BASE_URL, titelnummer, trackIdent),
+                httpRequest);
+    }
+
+    private byte[] makeTrackAsStream(final String xMandant, final String xHoerernummer,
+                                     final String titelnummer, final String trackIdent) {
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Track '{}' mit Wasserzeichen",
+                xHoerernummer, titelnummer, trackIdent);
+        try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
+                xHoerernummer, titelnummer, trackIdent)) {
+            LOGGER.info("Hörer '{}' Hörbuch '{}': Track '{}' mit Wasserzeichen erstellt",
+                    xHoerernummer, titelnummer, trackIdent);
+            return track.readAllBytes();
+        } catch (Exception e) {
+            throw new BusinessException(EMPTY_STRING, e);
+        }
+    }
+
+    @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
+    @Get(uri = "{titelnummer}/hoerprobe", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Blocking
+    public HttpResponse<byte[]> hoerprobeAsStream(final HttpRequest<?> httpRequest,
+                                                  @Header("X-Bookworm-Mandant") final String xMandant,
+                                                  @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                  @PathVariable("titelnummer") final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
+                () -> makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer, 5),
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
                 String.format("%s/track", BASE_URL),
                 httpRequest);
     }
 
-    private byte[] makeTrackAsStream(final TrackAnfrageDTO trackAnfrageDTO) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Track '{}' mit Wasserzeichen",
-                trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
-                trackAnfrageDTO.getIdent());
-        try (final InputStream track = audiobookStreamService.trackAsStream(trackAnfrageDTO.getMandant(),
-                trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent())) {
-            LOGGER.info("Hörer '{}' Hörbuch '{}': Track '{}' mit Wasserzeichen erstellt",
-                    trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(),
-                    trackAnfrageDTO.getIdent());
-            return track.readAllBytes();
-        } catch (Exception e) {
-            throw new BusinessException(EMPTY_STRING, e);
+    private byte[] makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
+                                         final String titelnummer, final int trackIndex) {
+        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
+        final boolean hasEnoughTracks = playlist.getEntries().size() >= trackIndex;
+        final PlaylistEntryDTO playlistEntryDTO;
+        if (hasEnoughTracks) {
+            playlistEntryDTO = playlist.getEntries().get(trackIndex);
+            LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}' mit Wasserzeichen",
+                    xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
+            try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
+                    xHoerernummer, titelnummer, playlistEntryDTO.getIdent())) {
+                LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' mit Wasserzeichen erstellt",
+                        xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
+                return track.readAllBytes();
+            } catch (Exception e) {
+                throw new BusinessException(EMPTY_STRING, e);
+            }
+        } else {
+            LOGGER.error("Hörer '{}' Hörbuch '{}': Hörprobe kann nicht geliefert werden",
+                    xHoerernummer, titelnummer);
+            return new byte[0];
         }
     }
 

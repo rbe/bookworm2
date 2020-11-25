@@ -47,6 +47,10 @@ class TitelnummerResolver {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());
                     antwortDTO.setTitel(hoerbuch.getTitel());
+                    antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
+                    antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
+                    antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -60,6 +64,10 @@ class TitelnummerResolver {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());
                     antwortDTO.setTitel(hoerbuch.getTitel());
+                    antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
+                    antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
+                    antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toUnmodifiableList());
     }
@@ -73,6 +81,10 @@ class TitelnummerResolver {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());
                     antwortDTO.setTitel(hoerbuch.getTitel());
+                    antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
+                    antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
+                    antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toUnmodifiableList());
     }

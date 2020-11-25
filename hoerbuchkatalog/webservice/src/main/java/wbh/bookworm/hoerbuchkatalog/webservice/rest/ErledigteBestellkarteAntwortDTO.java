@@ -13,11 +13,19 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     private String hoerernummer;
 
+    private String sachgebiet;
+
+    private String sachgebietBezeichnung;
+
     private String titelnummer;
 
     private String autor;
 
     private String titel;
+
+    private String sprecher1;
+
+    private String spieldauer;
 
     private LocalDate ausleihdatum;
 
@@ -27,6 +35,22 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     public void setHoerernummer(final String hoerernummer) {
         this.hoerernummer = hoerernummer;
+    }
+
+    public String getSachgebiet() {
+        return sachgebiet;
+    }
+
+    public void setSachgebiet(final String sachgebiet) {
+        this.sachgebiet = sachgebiet;
+    }
+
+    public String getSachgebietBezeichnung() {
+        return sachgebietBezeichnung;
+    }
+
+    public void setSachgebietBezeichnung(final String sachgebietBezeichnung) {
+        this.sachgebietBezeichnung = sachgebietBezeichnung;
     }
 
     public String getTitelnummer() {
@@ -51,6 +75,22 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     public void setTitel(final String titel) {
         this.titel = titel;
+    }
+
+    public String getSprecher1() {
+        return sprecher1;
+    }
+
+    public void setSprecher1(final String sprecher1) {
+        this.sprecher1 = sprecher1;
+    }
+
+    public String getSpieldauer() {
+        return spieldauer;
+    }
+
+    public void setSpieldauer(final String spieldauer) {
+        this.spieldauer = spieldauer;
     }
 
     public LocalDate getAusleihdatum() {

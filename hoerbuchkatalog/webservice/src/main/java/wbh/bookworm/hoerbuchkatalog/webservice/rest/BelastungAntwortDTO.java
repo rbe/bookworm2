@@ -15,11 +15,19 @@ public final class BelastungAntwortDTO {
 
     private String boxnummer;
 
+    private String sachgebiet;
+
+    private String sachgebietBezeichnung;
+
     private String titelnummer;
 
     private String autor;
 
     private String titel;
+
+    private String sprecher1;
+
+    private String spieldauer;
 
     public LocalDate getBelastungsdatum() {
         return belastungsdatum;
@@ -41,6 +49,22 @@ public final class BelastungAntwortDTO {
 
     public void setBoxnummer(final String boxnummer) {
         this.boxnummer = boxnummer;
+    }
+
+    public String getSachgebiet() {
+        return sachgebiet;
+    }
+
+    public void setSachgebiet(final String sachgebiet) {
+        this.sachgebiet = sachgebiet;
+    }
+
+    public String getSachgebietBezeichnung() {
+        return sachgebietBezeichnung;
+    }
+
+    public void setSachgebietBezeichnung(final String sachgebietBezeichnung) {
+        this.sachgebietBezeichnung = sachgebietBezeichnung;
     }
 
     public String getTitelnummer() {
@@ -65,6 +89,22 @@ public final class BelastungAntwortDTO {
 
     public void setTitel(final String titel) {
         this.titel = titel;
+    }
+
+    public String getSprecher1() {
+        return sprecher1;
+    }
+
+    public void setSprecher1(final String sprecher1) {
+        this.sprecher1 = sprecher1;
+    }
+
+    public String getSpieldauer() {
+        return spieldauer;
+    }
+
+    public void setSpieldauer(final String spieldauer) {
+        this.spieldauer = spieldauer;
     }
 
 }
