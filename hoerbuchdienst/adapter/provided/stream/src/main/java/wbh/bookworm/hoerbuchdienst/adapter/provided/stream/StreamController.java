@@ -86,7 +86,7 @@ public class StreamController {
     @Operation(hidden = true)
     @Options(uri = "{titelnummer}/zip")
     public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
-                                                                            @PathVariable final String aghNummer) {
+                                                                            @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
