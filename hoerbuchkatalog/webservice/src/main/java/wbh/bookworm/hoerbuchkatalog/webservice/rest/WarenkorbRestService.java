@@ -41,9 +41,8 @@ public final class WarenkorbRestService {
         this.titelnummerResolver = titelnummerResolver;
     }
 
-    //@PutMapping(value = "{titelnummer}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(value = "{titelnummer}",
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //@PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                           @PathVariable final String titelnummer) {
@@ -55,8 +54,7 @@ public final class WarenkorbRestService {
         return Map.of("result", b);
     }
 
-    @DeleteMapping(value = "{titelnummer}",
-            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                          @PathVariable final String titelnummer) {
