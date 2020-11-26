@@ -46,14 +46,14 @@ $restBridge = [
         'MerklisteHinzufuegen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'POST',
-            'parameter_template' => '/hoerbuchkatalog/v1/merkliste',
+            'parameter_template' => '/hoerbuchkatalog/v1/merkliste/{titelnummer}',
             'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'MerklisteLoeschen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'DELETE',
-            'parameter_template' => '/hoerbuchkatalog/v1/merkliste',
+            'parameter_template' => '/hoerbuchkatalog/v1/merkliste/{titelnummer}',
             'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
@@ -68,14 +68,14 @@ $restBridge = [
         'WarenkorbHinzufuegen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'POST',
-            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
+            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'DELETE',
-            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
+            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
@@ -134,28 +134,21 @@ $restBridge = [
     'REQUEST_DTOS' => [
         // Suche
         'Stichwortsuche' => [
-            'stichwort' => '{stichwort}'
         ],
         // Hörbuchdetails
         'HoerbuchdetailsAnzeigen' => [
-            // TODO 'aghNummer' => '{aghNummer}',
-            'titelnummer' => '{titelnummer}',
         ],
         // Merkliste
         'MerklisteHinzufuegen' => [ // wird per JavaScript erledigt
-            'titelnummer' => '{titelnummer}'
         ],
         'MerklisteLoeschen' => [ // wird per JavaScript erledigt
-            'titelnummer' => '{titelnummer}'
         ],
         'MerklisteAnzeigen' => [
         ],
         // Warenkorb
         'WarenkorbHinzufuegen' => [ // wird per JavaScript erledigt
-            'titelnummer' => '{titelnummer}'
         ],
         'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
-            'titelnummer' => '{titelnummer}'
         ],
         'WarenkorbAnzeigen' => [
         ],
