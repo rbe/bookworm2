@@ -1,11 +1,7 @@
-PUT {{host}}/{{context}}/{{api-version}}/warenkorb
+POST {{host}}/{{context}}/{{api-version}}/warenkorb/21052
 Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
-
-{
-    "titelnummer": "21052"
-}
 
 ###
 
@@ -15,25 +11,21 @@ X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
-DELETE {{host}}/{{context}}/{{api-version}}/warenkorb
+DELETE {{host}}/{{context}}/{{api-version}}/warenkorb/21052
 Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
-
-{
-    "titelnummer": "21052"
-}
 
 ###
 
-POST {{host}}/{{context}}/{{api-version}}/warenkorb
+POST {{host}}/{{context}}/{{api-version}}/warenkorb/bestellen
 Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 {
-    "hoerername": "",
-    "hoereremail": "ralf@bensmann.com",
+    "hoerername": "Herbert Hörer",
+    "hoereremail": "herbert@example.com",
     "bemerkung": "",
     "bestellkarteMischen": false,
     "alteBestellkarteLoeschen": false

@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -40,28 +41,30 @@ public final class WarenkorbRestService {
         this.titelnummerResolver = titelnummerResolver;
     }
 
-    //@PutMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    //@PutMapping(value = "{titelnummer}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "{titelnummer}",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                          @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+                                          @PathVariable final String titelnummer) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
                 xHoerernummer);
         final boolean b = warenkorbService.inDenCdWarenkorb(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
-                new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
+                new Titelnummer(titelnummer));
         return Map.of("result", b);
     }
 
-    @DeleteMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "{titelnummer}",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                         @RequestBody final HoerbuchAnfrageDTO hoerbuchAnfrageDTO) {
+                                         @PathVariable final String titelnummer) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
                 xHoerernummer);
         warenkorbService.ausDemCdWarenkorbEntfernen(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
-                new Titelnummer(hoerbuchAnfrageDTO.getTitelnummer()));
+                new Titelnummer(titelnummer));
         return Map.of("result", true);
     }
 
@@ -74,7 +77,8 @@ public final class WarenkorbRestService {
         return titelnummerResolver.toHoerbuchAntwortDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
     }
 
-    @PostMapping(value = "/bestellen", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @PostMapping(value = "/bestellen",
+            consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> bestellen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                          @RequestBody final BestellungAnfrageDTO bestellungAnfrageDTO) {
