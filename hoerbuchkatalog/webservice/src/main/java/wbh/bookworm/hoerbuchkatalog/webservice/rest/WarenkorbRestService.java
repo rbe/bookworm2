@@ -67,12 +67,12 @@ public final class WarenkorbRestService {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<HoerbuchAntwortDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                               @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungService.bestellungSessionId(xHoerernummer),
                 new Hoerernummer(xHoerernummer));
-        return titelnummerResolver.toHoerbuchAntwortDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
+        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
     }
 
     @PostMapping(value = "/bestellen",

@@ -4,7 +4,7 @@ X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
-GET {{host}}/{{context}}/{{api-version}}/katalog/details/21052
+GET {{host}}/{{context}}/{{api-version}}/katalog/21052/details
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
 

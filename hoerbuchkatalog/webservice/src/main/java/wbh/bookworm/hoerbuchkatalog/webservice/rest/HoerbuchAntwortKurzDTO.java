@@ -4,6 +4,10 @@ public final class HoerbuchAntwortKurzDTO {
 
     private String titelnummer;
 
+    private String sachgebiet;
+
+    private String sachgebietBezeichnung;
+
     private String autor;
 
     private String titel;
@@ -18,6 +22,22 @@ public final class HoerbuchAntwortKurzDTO {
 
     public void setTitelnummer(final String titelnummer) {
         this.titelnummer = titelnummer;
+    }
+
+    public String getSachgebiet() {
+        return sachgebiet;
+    }
+
+    public void setSachgebiet(final String sachgebiet) {
+        this.sachgebiet = sachgebiet;
+    }
+
+    public String getSachgebietBezeichnung() {
+        return sachgebietBezeichnung;
+    }
+
+    public void setSachgebietBezeichnung(final String sachgebietBezeichnung) {
+        this.sachgebietBezeichnung = sachgebietBezeichnung;
     }
 
     public String getAutor() {

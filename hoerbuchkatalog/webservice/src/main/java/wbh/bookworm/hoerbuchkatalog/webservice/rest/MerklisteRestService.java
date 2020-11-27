@@ -52,10 +52,19 @@ public class MerklisteRestService {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<HoerbuchAntwortDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                               @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return titelnummerResolver.toHoerbuchAntwortDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+    }
+
+    @GetMapping(value = "datumab/{datumab}/suchbegriff/{suchbegriff}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public List<HoerbuchAntwortKurzDTO> inhaltGefiltert(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                        @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                        @PathVariable final String datumab,
+                                                        @PathVariable final String suchbegriff) {
+        final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
+        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
     }
 
 }

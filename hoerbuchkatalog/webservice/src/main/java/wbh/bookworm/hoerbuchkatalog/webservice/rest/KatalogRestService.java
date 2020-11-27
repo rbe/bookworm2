@@ -1,5 +1,6 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.http.MediaType;
@@ -39,13 +40,39 @@ public class KatalogRestService {
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
-        return titelnummerResolver.toHoerbuchAntwortKurzDTO(suchergebnis.getTitelnummern());
+        final List<HoerbuchAntwortKurzDTO> antwort = new ArrayList<>();
+        for (Titelnummer titelnummer : suchergebnis.getTitelnummern()) {
+            final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, titelnummer);
+            final HoerbuchAntwortKurzDTO hoerbuchAntwortKurzDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
+            final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
+            if (null != sachgebiet) {
+                hoerbuchAntwortKurzDTO.setSachgebiet(sachgebiet.getName());
+                hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
+            }
+            antwort.add(hoerbuchAntwortKurzDTO);
+        }
+        return antwort;
     }
 
-    @GetMapping(value = "/details/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HoerbuchAntwortDTO hole(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                   @PathVariable("titelnummer") final String titelnummer) {
+    @GetMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HoerbuchAntwortKurzDTO info(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                       @PathVariable("titelnummer") final String titelnummer) {
+        final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
+                new Titelnummer(titelnummer));
+        final HoerbuchAntwortKurzDTO hoerbuchAntwortKurzDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
+        final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
+        if (null != sachgebiet) {
+            hoerbuchAntwortKurzDTO.setSachgebiet(sachgebiet.getName());
+            hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
+        }
+        return hoerbuchAntwortKurzDTO;
+    }
+
+    @GetMapping(value = "/{titelnummer}/details", produces = MediaType.APPLICATION_JSON_VALUE)
+    public HoerbuchAntwortDTO details(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                      @PathVariable("titelnummer") final String titelnummer) {
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
         final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortDto(hoerbuch);
