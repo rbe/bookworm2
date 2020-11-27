@@ -84,15 +84,15 @@ public class StreamController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/zip")
+    @Options(uri = "{titelnummer}")
     public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                             @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP mit Wasserzeichen")
+    @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Post(uri = "{titelnummer}/zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Post(uri = "{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                      @Header("X-Bookworm-Mandant") final String xMandant,
@@ -102,28 +102,6 @@ public class StreamController {
                 () -> makeZippedAudiobook(xMandant, xHoerernummer, titelnummer),
                 dto -> CORS.response(httpRequest, dto),
                 String.format("%s/%s/zip", BASE_URL, titelnummer),
-                httpRequest);
-    }
-
-    @Operation(hidden = true)
-    @Options(uri = "agh/{aghNummer}/zip")
-    public HttpResponse<String> optionsZippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest,
-                                                                          @PathVariable final String aghNummer) {
-        return optionsResponse(httpRequest);
-    }
-
-    @Operation(summary = "Hörbuch (AGH Nummer) als DAISY-ZIP mit Wasserzeichen", tags = {"ALPHA"})
-    @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Post(uri = "agh/{aghNummer}/zip", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
-    @Blocking
-    public HttpResponse<byte[]> zippedAudiobookByAghNummerAsStream(final HttpRequest<?> httpRequest,
-                                                                   @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                   @PathVariable("aghNummer") final String aghNummer) {
-        return audiobookShardRedirector.withLocalOrRedirect(/* TODO */aghNummer,
-                () -> makeZippedAudiobook(xMandant, xHoerernummer, /* TOOD */aghNummer),
-                dto -> CORS.response(httpRequest, dto),
-                String.format("%s/agh/%s/zip", BASE_URL, aghNummer),
                 httpRequest);
     }
 
@@ -142,7 +120,7 @@ public class StreamController {
         }
     }
 
-    @Operation(summary = "CORS")
+    @Operation(hidden = true)
     @Options(uri = "{titelnummer}/track/{ident}")
     public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest,
                                                      @PathVariable final String titelnummer,
@@ -150,7 +128,7 @@ public class StreamController {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP mit Wasserzeichen")
+    @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP")
     @Get(uri = "{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,

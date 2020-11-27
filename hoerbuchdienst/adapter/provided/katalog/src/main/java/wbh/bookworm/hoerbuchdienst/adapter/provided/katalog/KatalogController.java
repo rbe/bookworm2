@@ -11,10 +11,11 @@ import javax.inject.Inject;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
-import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -45,39 +46,45 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
                 contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
         )
 )
-@Controller(InfoController.BASE_URL)
-public class InfoController {
+@Controller(KatalogController.BASE_URL)
+public class KatalogController {
 
-    static final String BASE_URL = "/v1/info";
+    static final String BASE_URL = "/v1/katalog";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(InfoController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(KatalogController.class);
 
     private final KatalogService katalogService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
 
     @Inject
-    public InfoController(final KatalogService katalogService,
-                          final AudiobookShardRedirector audiobookShardRedirector) {
+    public KatalogController(final KatalogService katalogService,
+                             final AudiobookShardRedirector audiobookShardRedirector) {
         this.katalogService = katalogService;
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
     @Operation(hidden = true)
-    @Options(uri = "audiobook")
-    public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest) {
+    @Options(uri = "{titelnummer}")
+    public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest,
+                                                     @Header("X-Bookworm-Mandant") final String xMandant,
+                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Post(uri = "audiobook", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+    @Operation(summary = "Informationen über Hörbuch abfragen")
+    @Get(uri = "{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest,
+                                                               @Header("X-Bookworm-Mandant") final String xMandant,
+                                                               @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                               @PathVariable final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     try {
-                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(audiobookAnfrageDTO.getTitelnummer());
+                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(titelnummer);
                         return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
                     } catch (Exception e) {
-                        throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", audiobookAnfrageDTO.getTitelnummer()), e);
+                        throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", titelnummer), e);
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
@@ -86,17 +93,22 @@ public class InfoController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "playlist")
-    public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest) {
+    @Options(uri = "{titelnummer}/playlist")
+    public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest,
+                                                @Header("X-Bookworm-Mandant") final String xMandant,
+                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Post(uri = "playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest, @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+    @Get(uri = "{titelnummer}/playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest,
+                                                     @Header("X-Bookworm-Mandant") final String xMandant,
+                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @PathVariable final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     try {
-                        final PlaylistDTO playlist = katalogService.playlist(audiobookAnfrageDTO.getTitelnummer());
+                        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
                         return PlaylistMapper.INSTANCE.convert(playlist);
                     } catch (Exception e) {
                         throw new BusinessException("", e);
@@ -108,20 +120,25 @@ public class InfoController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "track")
-    public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest) {
+    @Options(uri = "{titelnummer}/track/{ident}")
+    public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest,
+                                             @Header("X-Bookworm-Mandant") final String xMandant,
+                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Post(uri = "track", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest, @Body final TrackAnfrageDTO trackAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(trackAnfrageDTO.getTitelnummer(),
+    @Get(uri = "{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest,
+                                                   @Header("X-Bookworm-Mandant") final String xMandant,
+                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                   @PathVariable final String titelnummer,
+                                                   @PathVariable final String ident) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     LOGGER.debug("Hörer '{}' Hörbuch '{}': Rufe Track-Info '{}' mit Wasserzeichen ab",
-                            trackAnfrageDTO.getHoerernummer(), trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
+                            xHoerernummer, titelnummer, ident);
                     try {
-                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(trackAnfrageDTO.getHoerernummer(),
-                                trackAnfrageDTO.getTitelnummer(), trackAnfrageDTO.getIdent());
+                        final TrackInfoDTO trackInfoDTO = katalogService.trackInfo(xHoerernummer, titelnummer, ident);
                         return TrackMapper.INSTANCE.convert(trackInfoDTO);
                     } catch (Exception e) {
                         throw new BusinessException("", e);

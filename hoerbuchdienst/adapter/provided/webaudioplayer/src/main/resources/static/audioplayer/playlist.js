@@ -24,40 +24,8 @@ export class Playlist {
         this.updatePlaylist(onReadyCallback);
     }
 
-    updatePlaylist(onReadyCallback) {
-        fetch(new URL('info/playlist', this.audiobookURL).toString(),
-            {
-                'method': 'POST',
-                'headers': {
-                    'Content-Type': 'application/json'
-                },
-                'body': JSON.stringify({
-                    mandant: 'WBH',
-                    hoerernummer: this.hoerernummer,
-                    aghNummer: 'TODO',
-                    titelnummer: this.titelnummer
-                })
-            })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    FetchErrorHandler.handle(response);
-                }
-            })
-            .then(json => {
-                if (json) {
-                    this.playlist = json.entries;
-                    this.highestTrackIndex = this.playlist.length - 1;
-                    this.render();
-                    if (onReadyCallback) {
-                        onReadyCallback();
-                    }
-                }
-            })
-            .catch(reason => {
-                console.log('Playlist#init,fetch,catch: ' + reason);
-            });
+    static makeClipId(playlistElementId, clip) {
+        return playlistElementId + '-' + clip.toString().replace('.', '--');
     }
 
     render() {
@@ -172,9 +140,36 @@ export class Playlist {
         return {track, second};
     }
 
-    static makeClipId(playlistElementId, clip) {
-        return playlistElementId + '-'
-            + clip.toString().replace('.', '--');
+    updatePlaylist(onReadyCallback) {
+        fetch(new URL('v1/katalog/' + this.titelnummer + '/playlist', this.audiobookURL).toString(),
+            {
+                'method': 'GET',
+                'headers': {
+                    'Accept': 'application/json',
+                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Hoerernummer': this.hoerernummer
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json) {
+                    this.playlist = json.entries;
+                    this.highestTrackIndex = this.playlist.length - 1;
+                    this.render();
+                    if (onReadyCallback) {
+                        onReadyCallback();
+                    }
+                }
+            })
+            .catch(reason => {
+                console.log('Playlist#init,fetch,catch: ' + reason);
+            });
     }
 
 }

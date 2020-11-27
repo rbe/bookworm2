@@ -1,0 +1,20 @@
+// Informationen über ein Hörbuch abrufen
+GET {{host}}/{{api-version}}/katalog/{{titelnummer}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
+
+// Playlist eines Hörbuchs abrufen
+GET {{host}}/{{api-version}}/katalog/{{titelnummer}}/playlist
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
+
+// Informationen über einen Track eines Hörbuchs abrufen
+GET {{host}}/{{api-version}}/katalog/{{titelnummer}}/track/01_Halt_die_Wolken_fest.mp3
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###

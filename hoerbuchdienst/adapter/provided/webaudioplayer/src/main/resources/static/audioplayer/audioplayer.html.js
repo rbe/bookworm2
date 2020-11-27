@@ -40,7 +40,7 @@ import {Audioplayer} from "./audioplayer.js";
             document.querySelector('.audioplayer .loading').style.display = 'block';
             audioplayer.reset();
             const b = window.location;
-            const url = new URL(b.protocol + '//' + b.host + '/v1/');
+            const url = new URL(b.protocol + '//' + b.host);
             const hoerernummer = document.querySelector('#hoerernummer').value;
             const titelnummer = document.querySelector('#titelnummer').value;
             audioplayer.init(url, hoerernummer, titelnummer, () => {

@@ -15,9 +15,9 @@ import java.util.UUID;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Body;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
@@ -69,22 +69,25 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "zip")
-    public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest) {
+    @Options(uri = "{titelnummer}")
+    public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                            @Header("X-Bookworm-Mandant") final String xMandant,
+                                                            @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                            @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "DAISY-ZIP mit Wasserzeichen bestellen")
-    @Post(uri = "zip")
+    @Operation(summary = "Hörbuch als DAISY-ZIP bestellen")
+    @Post(uri = "{titelnummer}")
     public HttpResponse<Map<String, String>> orderZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                  @Body final AudiobookAnfrageDTO audiobookAnfrageDTO) {
-        return audiobookShardRedirector.withLocalOrRedirect(audiobookAnfrageDTO.getTitelnummer(),
+                                                                  @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                  @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                  @PathVariable final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final UUID orderId = UUID.randomUUID();
-                    audiobookOrderService.orderZip(audiobookAnfrageDTO.getMandant(), audiobookAnfrageDTO.getHoerernummer(),
-                            audiobookAnfrageDTO.getTitelnummer(), orderId.toString());
-                    LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben",
-                            audiobookAnfrageDTO.getHoerernummer(), audiobookAnfrageDTO.getTitelnummer());
+                    audiobookOrderService.orderZip(xMandant, xHoerernummer, titelnummer, orderId.toString());
+                    LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben", xHoerernummer, titelnummer);
                     return Map.of("orderId", orderId.toString());
                 },
                 body -> CORS.response(httpRequest, body),
@@ -93,16 +96,20 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "zip/{titelnummer}/status/{orderId}")
+    @Options(uri = "{titelnummer}/status/{orderId}")
     public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                                    @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                    @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                     @PathVariable final String titelnummer,
                                                                     @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "Status einer Bestellung DAISY-ZIP mit Wasserzeichen abrufen")
-    @Get(uri = "zip/{titelnummer}/status/{orderId}", headRoute = false)
+    @Operation(summary = "Status einer Bestellung DAISY-ZIP abrufen")
+    @Get(uri = "{titelnummer}/status/{orderId}", headRoute = false)
     public HttpResponse<Map<String, String>> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                                          @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                          @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                           @PathVariable final String titelnummer,
                                                                           @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
@@ -117,16 +124,20 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "zip/{titelnummer}/fetch/{orderId}")
+    @Options(uri = "{titelnummer}/fetch/{orderId}")
     public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                            @Header("X-Bookworm-Mandant") final String xMandant,
+                                                            @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                             @PathVariable final String titelnummer,
                                                             @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "DAISY-ZIP mit Wasserzeichen abholen")
-    @Get(uri = "zip/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
+    @Operation(summary = "Bestellung DAISY-ZIP abholen")
+    @Get(uri = "{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                     @Header("X-Bookworm-Mandant") final String xMandant,
+                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @PathVariable final String titelnummer,
                                                      @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,

@@ -72,18 +72,14 @@ export class Audioplayer {
     }
 
     displayAudiobookInfo() {
-        fetch(new URL('info/audiobook', this.audiobookURL).toString(),
+        fetch(new URL('v1/katalog/' + this.titelnummer, this.audiobookURL).toString(),
             {
-                'method': 'POST',
+                'method': 'GET',
                 'headers': {
-                    'Content-Type': 'application/json'
-                },
-                'body': JSON.stringify({
-                    mandant: 'WBH',
-                    hoerernummer: this.hoerernummer,
-                    aghNummer: 'TODO',
-                    titelnummer: this.titelnummer
-                })
+                    'Accept': 'application/json',
+                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Hoerernummer': this.hoerernummer
+                }
             })
             .then(response => {
                 if (response.ok) {
@@ -174,18 +170,14 @@ export class Audioplayer {
         const track = this.playlist.trackInfo(trackIndex);
         this.currentTrackTitle.innerText = track.title || track.ident;
         const init1 = {
-            'method': 'POST',
+            'method': 'GET',
             'headers': {
-                'Content-Type': 'application/json'
-            },
-            'body': JSON.stringify({
-                'mandant': '06',
-                'hoerernummer': this.hoerernummer,
-                'titelnummer': this.titelnummer,
-                'ident': track.ident
-            })
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            }
         };
-        fetch(new URL('info/track', this.audiobookURL).toString(), init1)
+        fetch(new URL('v1/katalog/' + this.titelnummer + '/track/' + track.ident, this.audiobookURL).toString(), init1)
             .then(response => {
                 if (response.ok) {
                     return response.json();
@@ -206,12 +198,11 @@ export class Audioplayer {
             });
         const trackId = track.playlistElementId;
         document.querySelector('#' + trackId).classList.add('currently-playing');
-        //const url = new URL('track/' + track.ident, this.audiobookURL);
-        const url = new URL('stream/track', this.audiobookURL);
+        const url = new URL('v1/stream/' + this.titelnummer + '/track/' + track.ident, this.audiobookURL);
         fetch(url.toString(), init1)
             .then(response => {
                 if (this.DEBUG) {
-                    console.log('selectTrack: POST audio.src=' + url.toString());
+                    console.log('selectTrack: GET audio.src=' + url.toString());
                 }
                 return response.blob();
             })
@@ -293,18 +284,16 @@ export class Audioplayer {
     }
 
     syncDownload() {
-        fetch(new URL('stream/zip', this.audiobookURL).toString(),
+        fetch(new URL('v1/stream/' + this.titelnummer, this.audiobookURL).toString(),
             {
                 'method': 'POST',
                 'headers': {
-                    'Content-Type': 'application/json'
+                    'Accept': 'application/zip',
+                    'Content-Type': 'application/json',
+                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Hoerernummer': this.hoerernummer
                 },
-                'redirect': 'follow',
-                'body': JSON.stringify({
-                    'mandant': '06',
-                    'hoerernummer': this.hoerernummer,
-                    'titelnummer': this.titelnummer
-                })
+                'redirect': 'follow'
             })
             .then(response => {
                 if (response.ok) {
@@ -331,7 +320,7 @@ export class Audioplayer {
     }
 
     asyncDownloadOrder() {
-        const url = new URL('bestellung/zip', this.audiobookURL).toString();
+        const url = new URL('v1/bestellung/' + this.titelnummer, this.audiobookURL).toString();
         this.downloadStatusText.innerHTML = 'Bestellung aufgeben';
         fetch(url, {
             'method': 'POST',
@@ -342,12 +331,7 @@ export class Audioplayer {
                 'X-Bookworm-Mandant': '06',
                 'X-Bookworm-Hoerernummer': this.hoerernummer
             },
-            'redirect': 'follow',
-            'body': JSON.stringify({
-                'mandant': '06',
-                'hoerernummer': this.hoerernummer,
-                'titelnummer': this.titelnummer
-            })
+            'redirect': 'follow'
         })
             .then(response => {
                 if (response.ok) {
@@ -375,7 +359,7 @@ export class Audioplayer {
 
     asyncDownloadStatus() {
         let orderStatus = "";
-        const url = new URL('bestellung/zip/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
+        const url = new URL('v1/bestellung/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
         fetch(url, {
             'method': 'GET',
             'mode': 'cors',
@@ -430,13 +414,13 @@ export class Audioplayer {
     }
 
     asyncDownloadAudiobook() {
-        const url = new URL('bestellung/zip/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
+        const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
         console.log('asyncDownloadAudiobook(): Downloading ' + url);
         fetch(url, {
             'method': 'GET',
             'mode': 'cors',
             'headers': {
-                'Accept': 'application/json',
+                'Accept': 'application/zip',
                 'X-Bookworm-Mandant': '06',
                 'X-Bookworm-Hoerernummer': this.hoerernummer
             },
