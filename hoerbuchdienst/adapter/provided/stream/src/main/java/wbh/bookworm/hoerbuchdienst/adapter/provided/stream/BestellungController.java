@@ -69,7 +69,7 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}")
+    @Options(uri = "/{titelnummer}")
     public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest,
                                                             @Header("X-Bookworm-Mandant") final String xMandant,
                                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -78,7 +78,7 @@ public class BestellungController {
     }
 
     @Operation(summary = "Hörbuch als DAISY-ZIP bestellen")
-    @Post(uri = "{titelnummer}")
+    @Post(uri = "/{titelnummer}")
     public HttpResponse<Map<String, String>> orderZippedAudiobook(final HttpRequest<?> httpRequest,
                                                                   @Header("X-Bookworm-Mandant") final String xMandant,
                                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -96,7 +96,7 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/status/{orderId}")
+    @Options(uri = "/{titelnummer}/status/{orderId}")
     public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
                                                                     @Header("X-Bookworm-Mandant") final String xMandant,
                                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -106,7 +106,7 @@ public class BestellungController {
     }
 
     @Operation(summary = "Status einer Bestellung DAISY-ZIP abrufen")
-    @Get(uri = "{titelnummer}/status/{orderId}", headRoute = false)
+    @Get(uri = "/{titelnummer}/status/{orderId}", headRoute = false)
     public HttpResponse<Map<String, String>> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
                                                                           @Header("X-Bookworm-Mandant") final String xMandant,
                                                                           @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -124,7 +124,7 @@ public class BestellungController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/fetch/{orderId}")
+    @Options(uri = "/{titelnummer}/fetch/{orderId}")
     public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                             @Header("X-Bookworm-Mandant") final String xMandant,
                                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -134,7 +134,7 @@ public class BestellungController {
     }
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
-    @Get(uri = "{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
+    @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                      @Header("X-Bookworm-Mandant") final String xMandant,
                                                      @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,

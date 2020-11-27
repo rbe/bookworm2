@@ -84,7 +84,7 @@ public class StreamController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}")
+    @Options(uri = "/{titelnummer}")
     public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                             @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
@@ -92,7 +92,7 @@ public class StreamController {
 
     @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Post(uri = "{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Post(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                      @Header("X-Bookworm-Mandant") final String xMandant,
@@ -121,7 +121,7 @@ public class StreamController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/track/{ident}")
+    @Options(uri = "/{titelnummer}/track/{ident}")
     public HttpResponse<String> optionsTrackAsStream(final HttpRequest<?> httpRequest,
                                                      @PathVariable final String titelnummer,
                                                      @PathVariable final String ident) {
@@ -129,7 +129,7 @@ public class StreamController {
     }
 
     @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP")
-    @Get(uri = "{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "/{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,
                                               @Header("X-Bookworm-Mandant") final String xMandant,
@@ -159,7 +159,7 @@ public class StreamController {
     }
 
     @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
-    @Get(uri = "{titelnummer}/hoerprobe", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "/{titelnummer}/hoerprobe", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> hoerprobeAsStream(final HttpRequest<?> httpRequest,
                                                   @Header("X-Bookworm-Mandant") final String xMandant,

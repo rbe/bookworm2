@@ -65,15 +65,16 @@ public class KatalogController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}")
+    @Options(uri = "/{titelnummer}")
     public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest,
                                                      @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Informationen über Hörbuch abfragen")
-    @Get(uri = "{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "/{titelnummer}", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest,
                                                                @Header("X-Bookworm-Mandant") final String xMandant,
                                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -93,14 +94,15 @@ public class KatalogController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/playlist")
+    @Options(uri = "/{titelnummer}/playlist")
     public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest,
                                                 @Header("X-Bookworm-Mandant") final String xMandant,
-                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
-    @Get(uri = "{titelnummer}/playlist", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "/{titelnummer}/playlist", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest,
                                                      @Header("X-Bookworm-Mandant") final String xMandant,
                                                      @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -120,14 +122,16 @@ public class KatalogController {
     }
 
     @Operation(hidden = true)
-    @Options(uri = "{titelnummer}/track/{ident}")
+    @Options(uri = "/{titelnummer}/track/{ident}")
     public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest,
                                              @Header("X-Bookworm-Mandant") final String xMandant,
-                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                             @PathVariable final String titelnummer,
+                                             @PathVariable final String ident) {
         return optionsResponse(httpRequest);
     }
 
-    @Get(uri = "{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "/{titelnummer}/track/{ident}", produces = MediaType.APPLICATION_JSON)
     public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest,
                                                    @Header("X-Bookworm-Mandant") final String xMandant,
                                                    @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,

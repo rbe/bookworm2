@@ -15,7 +15,7 @@ server {
     location ~* "^/(audioplayer|specification)/$" {
         return 301 ${request_uri}index.html;
     }
-    location ~* "^/(info|search|shard|bestellung|stream|audioplayer|specification|swagger)/.+$" {
+    location ~* "^/v./(shard|katalog|suche|bestellung|stream|audioplayer|specification|swagger)/.+$" {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
