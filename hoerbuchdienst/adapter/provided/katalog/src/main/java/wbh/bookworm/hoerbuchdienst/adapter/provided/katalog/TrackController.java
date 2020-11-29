@@ -27,10 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.adapter.provided.api.HoerbuchNichtGefundenException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
@@ -46,79 +44,22 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
                 contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
         )
 )
-@Controller(KatalogController.BASE_URL)
-public class KatalogController {
+@Controller(TrackController.BASE_URL)
+public class TrackController {
 
     static final String BASE_URL = "/v1/katalog";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(KatalogController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(TrackController.class);
 
     private final KatalogService katalogService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
 
     @Inject
-    public KatalogController(final KatalogService katalogService,
-                             final AudiobookShardRedirector audiobookShardRedirector) {
+    public TrackController(final KatalogService katalogService,
+                           final AudiobookShardRedirector audiobookShardRedirector) {
         this.katalogService = katalogService;
         this.audiobookShardRedirector = audiobookShardRedirector;
-    }
-
-    @Operation(hidden = true)
-    @Options(uri = "/{titelnummer}")
-    public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest,
-                                                     @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                     @PathVariable final String titelnummer) {
-        return optionsResponse(httpRequest);
-    }
-
-    @Operation(summary = "Informationen über Hörbuch abfragen")
-    @Get(uri = "/{titelnummer}", produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest,
-                                                               @Header("X-Bookworm-Mandant") final String xMandant,
-                                                               @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                               @PathVariable final String titelnummer) {
-        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> {
-                    try {
-                        final AudiobookInfoDTO audiobookInfoDTO = katalogService.audiobookInfo(titelnummer);
-                        return AudiobookMapper.INSTANCE.convert(audiobookInfoDTO);
-                    } catch (Exception e) {
-                        throw new HoerbuchNichtGefundenException(String.format("Hörbuch %s nicht gefunden", titelnummer), e);
-                    }
-                },
-                dto -> CORS.response(httpRequest, dto),
-                String.format("%s/%s", BASE_URL, titelnummer),
-                httpRequest);
-    }
-
-    @Operation(hidden = true)
-    @Options(uri = "/{titelnummer}/playlist")
-    public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest,
-                                                @Header("X-Bookworm-Mandant") final String xMandant,
-                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                @PathVariable final String titelnummer) {
-        return optionsResponse(httpRequest);
-    }
-
-    @Get(uri = "/{titelnummer}/playlist", produces = MediaType.APPLICATION_JSON)
-    public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest,
-                                                     @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                     @PathVariable final String titelnummer) {
-        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> {
-                    try {
-                        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-                        return PlaylistMapper.INSTANCE.convert(playlist);
-                    } catch (Exception e) {
-                        throw new BusinessException("", e);
-                    }
-                },
-                dto -> CORS.response(httpRequest, dto),
-                String.format("%s/%s/playlist", titelnummer, BASE_URL),
-                httpRequest);
     }
 
     @Operation(hidden = true)
@@ -159,15 +100,6 @@ public class KatalogController {
         AudiobookMapper INSTANCE = Mappers.getMapper(AudiobookMapper.class);
 
         AudiobookInfoAntwortDTO convert(AudiobookInfoDTO audiobookInfoDTO);
-
-    }
-
-    @Mapper
-    public interface PlaylistMapper {
-
-        PlaylistMapper INSTANCE = Mappers.getMapper(PlaylistMapper.class);
-
-        PlaylistAntwortDTO convert(PlaylistDTO playlistDTO);
 
     }
 

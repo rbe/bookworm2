@@ -93,7 +93,7 @@ class KatalogServiceImpl implements KatalogService {
                 .map(t -> {
                     final Double[] clips = Arrays.stream(t.getAudioclips())
                             .filter(clip -> 0L < clip.getBegin().toMillis())
-                            .map(clip -> clip.getBegin().toMillis() / 1000.0d)
+                            .map(clip -> clip.getBegin().toMillis() / 1_000.0d)
                             .collect(Collectors.toUnmodifiableList())
                             .toArray(Double[]::new);
                     return new PlaylistEntryDTO(t.getTitle(),

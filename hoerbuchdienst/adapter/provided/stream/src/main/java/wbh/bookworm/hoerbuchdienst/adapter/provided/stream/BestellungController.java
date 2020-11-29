@@ -91,7 +91,7 @@ public class BestellungController {
                     return Map.of("orderId", orderId.toString());
                 },
                 body -> CORS.response(httpRequest, body),
-                String.format("%s/zip", BASE_URL),
+                String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }
 
@@ -119,7 +119,7 @@ public class BestellungController {
                     return Map.of("orderStatus", status);
                 },
                 body -> CORS.response(httpRequest, body),
-                String.format("%s/zip/%s/status/%s", BASE_URL, titelnummer, orderId),
+                String.format("%s/%s/status/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 
@@ -151,7 +151,7 @@ public class BestellungController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
-                String.format("%s/zip/%s/fetch/%s", BASE_URL, titelnummer, orderId),
+                String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 

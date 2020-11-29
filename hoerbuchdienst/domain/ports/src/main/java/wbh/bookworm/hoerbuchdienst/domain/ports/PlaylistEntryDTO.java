@@ -14,11 +14,11 @@ public final class PlaylistEntryDTO implements Serializable {
 
     private static final Double[] NO_CLIPS = {};
 
-    private String title;
+    private final String title;
 
-    private String ident;
+    private final String ident;
 
-    private Double[] clips;
+    private final Double[] clips;
 
     public PlaylistEntryDTO(final String title, final String ident) {
         this.title = title;

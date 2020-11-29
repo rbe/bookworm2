@@ -14,7 +14,7 @@ public final class PlaylistDTO implements Serializable {
 
     private static final long serialVersionUID = -8820698782758681073L;
 
-    private List<PlaylistEntryDTO> entries;
+    private final List<PlaylistEntryDTO> entries;
 
     public PlaylistDTO() {
         entries = new ArrayList<>();
