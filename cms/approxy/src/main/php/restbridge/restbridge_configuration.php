@@ -30,7 +30,6 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/katalog/stichwort/{stichwort}',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörbuchdetails
@@ -38,7 +37,6 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/katalog/{titelnummer}/details',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Merkliste
@@ -60,7 +58,6 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/merkliste',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Warenkorb
@@ -82,14 +79,12 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbBestellerAnzeigen' => [ // Hörerdaten im Bestellformular
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererdaten',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbBestellen' => [ // wird per JavaScript erledigt
@@ -104,7 +99,6 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererdaten',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörerarchiv
@@ -112,21 +106,18 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/belastungen',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'BestellkarteAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/bestellkarten',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'ErledigteBestellkartenAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/erledigteBestellkarten',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
     ],

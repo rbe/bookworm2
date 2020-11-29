@@ -56,7 +56,18 @@ final class Template
             foreach ($matches as $match) {
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
-                    $value = $row[$match];
+                    $rowValue = $row[$match];
+                    if (is_bool($rowValue) === true) {
+                        if ($rowValue === true) {
+                            $value = 'true';
+                        } else {
+                            $value = 'false';
+                        }
+
+                    } else {
+                        $value = $rowValue;
+                    }
+
                 } else {
                     restBridgeDebugLog('No value found for "' . $key . '" in ' . print_r($row, true));
                     $value = '';

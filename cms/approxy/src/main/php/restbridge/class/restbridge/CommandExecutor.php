@@ -109,7 +109,7 @@ final class CommandExecutor
         /** @var $requestDto array */
         $requestDto = $restEndpoint['requestDto'];
         if (isset($requestDto) === false) {
-            $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS'][$commandName];
+            $requestDto = $restBridge['REQUEST_DTOS'][$commandName];
         }
         if (isset($requestDto) === false) {
             $requestDto = [];

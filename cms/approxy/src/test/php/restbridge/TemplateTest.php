@@ -27,8 +27,8 @@ class TemplateTest extends TestCase
     public function test1Row(): void
     {
         echo "test1Row\n";
-        $template = new Template("This template shows: {key}\n");
-        $rowsWithValues = [['key' => 'value']];
+        $template = new Template("This template shows: {key}\n{bool}\n");
+        $rowsWithValues = [['key' => 'value', 'bool' => true]];
         print_r($rowsWithValues);
         $result = $template->renderToString($rowsWithValues);
         $this->assertNotNull($result);
