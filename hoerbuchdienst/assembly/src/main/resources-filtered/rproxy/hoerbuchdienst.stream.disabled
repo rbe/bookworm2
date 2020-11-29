@@ -1,11 +1,11 @@
 stream {
 
     upstream java_debug {
-        server hoerbuchdienst:8000;
+        server hoerbuchdienst:5005;
     }
 
     server {
-        listen 8000;
+        listen 5005;
         proxy_pass java_debug;
     }
 
