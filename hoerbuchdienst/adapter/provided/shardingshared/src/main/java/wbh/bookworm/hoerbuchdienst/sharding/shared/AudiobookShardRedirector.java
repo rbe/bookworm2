@@ -54,10 +54,10 @@ public final class AudiobookShardRedirector {
             result = HttpResponse.<String>notFound()
                     .header(X_SHARD_LOCATION, shardName)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
-                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, "GET, POST, OPTIONS")
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, CORS.ALLOWED_METHODS)
                     .body("");
         } else {
-            final String shardURI = String.format("https://%s/%s", shardName, serviceUri);
+            final String shardURI = String.format("https://%s%s", shardName, serviceUri);
             LOGGER.info("Hörbuch '{}': Redirecting to {}", objectId, shardURI);
             result = CORS.temporaryRedirect(httpRequest, URI.create(shardURI))
                     .header(X_SHARD_LOCATION, shardName);

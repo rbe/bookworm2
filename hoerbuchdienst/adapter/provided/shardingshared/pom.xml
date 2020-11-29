@@ -3,6 +3,14 @@
          xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>wbh.bookworm</groupId>
+        <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided</artifactId>
+        <version>LocalBuild</version>
+    </parent>
+    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.sharding.shared</artifactId>
+    <name>wbh-online.de Hörbuchdienst Sharding Shared</name>
+    <packaging>jar</packaging>
     <dependencies>
         <dependency>
             <groupId>wbh.bookworm</groupId>
@@ -14,13 +22,9 @@
             <groupId>io.micronaut</groupId>
             <artifactId>micronaut-http</artifactId>
         </dependency>
+        <dependency>
+            <groupId>io.reactivex.rxjava2</groupId>
+            <artifactId>rxjava</artifactId>
+        </dependency>
     </dependencies>
-    <parent>
-        <groupId>wbh.bookworm</groupId>
-        <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided</artifactId>
-        <version>LocalBuild</version>
-    </parent>
-    <artifactId>wbh.bookworm.hoerbuchdienst.adapter.provided.sharding.shared</artifactId>
-    <name>wbh-online.de Hörbuchdienst Sharding Shared</name>
-    <packaging>jar</packaging>
 </project>
