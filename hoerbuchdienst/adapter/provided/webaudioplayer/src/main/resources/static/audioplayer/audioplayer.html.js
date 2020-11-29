@@ -41,9 +41,10 @@ import {Audioplayer} from "./audioplayer.js";
             audioplayer.reset();
             const b = window.location;
             const url = new URL(b.protocol + '//' + b.host);
+            const mandant = document.querySelector('#mandant').value;
             const hoerernummer = document.querySelector('#hoerernummer').value;
             const titelnummer = document.querySelector('#titelnummer').value;
-            audioplayer.init(url, hoerernummer, titelnummer, () => {
+            audioplayer.init(url, mandant, hoerernummer, titelnummer, () => {
                 document.querySelector('.playlistContainer .loading').style.display = 'none';
                 document.querySelector('.playlistContainer .notfound').style.display = 'none';
                 document.querySelector('.audioplayer .loading').style.display = 'none';

@@ -20,8 +20,9 @@ export class Audioplayer {
         this.asyncDownloadStatusTimeoutId = new Map();
     }
 
-    init(audiobookURL, hoerernummer, titelnummer, onReadyCallback) {
+    init(audiobookURL, mandant, hoerernummer, titelnummer, onReadyCallback) {
         this.audiobookURL = audiobookURL;
+        this.mandant = mandant;
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
         this.playButton = document.querySelector(this.elementSelectors.playButtonSelector);
@@ -77,7 +78,7 @@ export class Audioplayer {
                 'method': 'GET',
                 'headers': {
                     'Accept': 'application/json',
-                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Mandant': this.mandant,
                     'X-Bookworm-Hoerernummer': this.hoerernummer
                 }
             })
@@ -284,13 +285,14 @@ export class Audioplayer {
     }
 
     syncDownload() {
-        fetch(new URL('v1/stream/' + this.titelnummer, this.audiobookURL).toString(),
+        this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen';
+        fetch(new URL('v1/hoerbuch/' + this.titelnummer, this.audiobookURL).toString(),
             {
                 'method': 'POST',
                 'headers': {
                     'Accept': 'application/zip',
                     'Content-Type': 'application/json',
-                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Mandant': this.mandant,
                     'X-Bookworm-Hoerernummer': this.hoerernummer
                 },
                 'redirect': 'follow'
@@ -321,14 +323,13 @@ export class Audioplayer {
 
     asyncDownloadOrder() {
         const url = new URL('v1/bestellung/' + this.titelnummer, this.audiobookURL).toString();
-        this.downloadStatusText.innerHTML = 'Bestellung aufgeben';
         fetch(url, {
             'method': 'POST',
             'mode': 'cors',
             'headers': {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
-                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer
             },
             'redirect': 'follow'
@@ -343,7 +344,7 @@ export class Audioplayer {
             .then(json => {
                 if (json) {
                     this.orderId = json.orderId;
-                    this.downloadStatusText.innerHTML = 'Bestellung ' + this.orderId;
+                    this.downloadStatusText.innerHTML = 'Bestellung ' + this.orderId + ' aufgegeben';
                     console.log('asyncDownloadOrder(): orderId ' + this.orderId);
                     this.asyncDownloadStatus();
                 } else {
@@ -358,6 +359,7 @@ export class Audioplayer {
     }
 
     asyncDownloadStatus() {
+        this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird erzeugt...';
         let orderStatus = "";
         const url = new URL('v1/bestellung/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
         fetch(url, {
@@ -365,7 +367,7 @@ export class Audioplayer {
             'mode': 'cors',
             'headers': {
                 'Accept': 'application/json',
-                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer
             },
             'redirect': 'follow'
@@ -415,13 +417,13 @@ export class Audioplayer {
 
     asyncDownloadAudiobook() {
         const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
-        console.log('asyncDownloadAudiobook(): Downloading ' + url);
+        this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen!';
         fetch(url, {
             'method': 'GET',
             'mode': 'cors',
             'headers': {
                 'Accept': 'application/zip',
-                'X-Bookworm-Mandant': '06',
+                'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer
             },
             'redirect': 'follow'
@@ -434,7 +436,7 @@ export class Audioplayer {
                 }
             })
             .then(blob => {
-                this.downloadStatusText.innerHTML = 'Bestellung wird gespeichert!';
+                this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird im Downloads-Ordner gespeichert!';
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
