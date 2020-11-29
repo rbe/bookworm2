@@ -11,4 +11,16 @@
         </deployment>
         <method v="2"/>
     </configuration>
+    <configuration default="false" name="mc" type="docker-deploy" factoryName="docker-image" server-name="Docker">
+        <deployment type="docker-image">
+            <settings>
+                <option name="imageTag" value="minio/mc:latest"/>
+                <option name="command" value=""/>
+                <option name="containerName" value="mc"/>
+                <option name="entrypoint" value="tail -f /dev/null"/>
+                <option name="commandLineOptions" value=""/>
+            </settings>
+        </deployment>
+        <method v="2"/>
+    </configuration>
 </component>
