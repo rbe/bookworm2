@@ -47,7 +47,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 @Controller(value = HoerbuchController.BASE_URL)
 public class HoerbuchController {
 
-    static final String BASE_URL = "/v1/stream";
+    static final String BASE_URL = "/v1/hoerbuch";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchController.class);
 

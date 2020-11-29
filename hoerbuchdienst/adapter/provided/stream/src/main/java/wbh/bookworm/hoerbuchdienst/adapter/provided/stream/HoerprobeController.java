@@ -45,7 +45,7 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 @Controller(value = HoerprobeController.BASE_URL)
 public class HoerprobeController {
 
-    static final String BASE_URL = "/v1/stream";
+    static final String BASE_URL = "/v1/hoerprobe";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
 
@@ -69,7 +69,7 @@ public class HoerprobeController {
     }
 
     @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
-    @Get(uri = "/{titelnummer}/hoerprobe", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> hoerprobeAsStream(final HttpRequest<?> httpRequest,
                                                   @Header("X-Bookworm-Mandant") final String xMandant,

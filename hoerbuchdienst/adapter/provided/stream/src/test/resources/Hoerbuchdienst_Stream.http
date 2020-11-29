@@ -1,5 +1,5 @@
 // Ein Hörbuch mit Wasserzeichen direkt abrufen
-POST {{host}}/stream/zip
+GET {{host}}/stream/zip
 Content-Type: application/json
 
 {
