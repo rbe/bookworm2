@@ -105,7 +105,7 @@ final class HttpResponse
             $jsonResponse = json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
             if ($jsonResponse === false) {
                 showJsonError();
-                error_log('Error decoding response body as JSON: ' . json_last_error_msg(), 0);
+                restBridgeDebugLog('Error decoding response body as JSON: ' . json_last_error_msg());
                 $this->json = json_decode('[false]');
             } else {
                 if (is_bool($jsonResponse) === true) {
@@ -115,7 +115,7 @@ final class HttpResponse
                 }
             }
         } else {
-            error_log('No JSON response, request was not successful, HTTP status ' . $this->statusCode, 0);
+            restBridgeDebugLog('No JSON response, request was not successful, HTTP status ' . $this->statusCode);
             $this->json = json_decode('[false]');
         }
 

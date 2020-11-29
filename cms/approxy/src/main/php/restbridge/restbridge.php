@@ -13,8 +13,31 @@ use restbridge\CmsAdapter;
 use restbridge\CommandExecutor;
 use restbridge\JoomlaCmsAdapterImpl;
 use restbridge\JsonHelper;
+use restbridge\Debugging;
+use restbridge\Environment;
 
 require_once __DIR__ . '/restbridge_configuration.php';
+
+//
+// DO NOT MODIFY CODE BELOW THIS COMMENT.
+//
+
+// Check environment.
+$environment = new Environment();
+$environment->checkPhpVersion();
+// Enable debugging?
+global $restBridge;
+if ($restBridge['DEBUG'] === true) {
+    Debugging::enable();
+}
+
+function restBridgeDebugLog($msg)
+{
+    global $restBridge;
+    if ($restBridge['DEBUG'] === true) {
+        error_log($msg, 0);
+    }
+}//end restBridgeDebugLog()
 
 /**
  * Class plgContentRestbridge.

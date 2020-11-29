@@ -171,27 +171,3 @@ $restBridge = [
     ],
     'PLUGIN' => new RestBridgePlugin(),
 ];
-
-//
-// DO NOT MODIFY CODE BELOW THIS COMMENT.
-//
-
-// Check environment.
-use restbridge\Debugging;
-use restbridge\Environment;
-
-$environment = new Environment();
-$environment->checkPhpVersion();
-// Enable debugging?
-if ($restBridge['DEBUG'] === true) {
-    Debugging::enable();
-    //error_log('restbridge_configuration: ' . print_r($restBridge, true), 0);
-}
-
-function rbdebug($msg)
-{
-    global $restBridge;
-    if ($restBridge['DEBUG'] === true) {
-        error_log($msg, 0);
-    }
-}//end rbdebug()

@@ -33,17 +33,17 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $app = Factory::getApplication();
             $input = $app->input;
         } catch (\Exception $e) {
-            error_log('Exception while retrieving JInput: ' . $e->getMessage(), 0);
+            restBridgeDebugLog('Exception while retrieving JInput: ' . $e->getMessage());
         }
         if (isset($input) === true) {
             foreach ($array as $key => $value) {
-                if ($value === 'JInput') {
+                if ($value === 'HttpRequest') {
                     $array[$key] = $input->get($key, '', 'ALNUM');
                 }
 
             }
         } else {
-            error_log('Could not get JInput', 0);
+            restBridgeDebugLog('Could not get JInput');
         }
 
         return $array;
@@ -64,7 +64,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     {
         $customTemplateModule = self::customModule($customTemplateModuleName);
         $template = new Template($customTemplateModule->content);
-        //error_log('Rendering values into template: ' . print_r($rowsWithValues, true), 0);
+        restBridgeDebugLog('Rendering values into template: ' . print_r($rowsWithValues, true));
         return $template->renderToString($rowsWithValues);
 
     }//end renderTemplate()
@@ -87,7 +87,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             && is_object($customModule) === true
             && empty($customModule->content) === false;
         if ($customModuleExists === false) {
-            error_log('Command ' . $commandName . ': Custom module title=' . $customModuleTitle . ' not found');
+            restBridgeDebugLog('Command ' . $commandName . ': Custom module title=' . $customModuleTitle . ' not found');
         }
 
         return $customModule;
@@ -113,11 +113,11 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $query = 'SELECT ' . $field . ' FROM #__comprofiler WHERE user_id=' . $user->id;
             $db->setQuery($query);
             $result = $db->loadResult();
-            error_log('User [' . $user->id . ']: field ' . $field . ' has value [' . $result . ']', 0);
+            restBridgeDebugLog('User [' . $user->id . ']: field ' . $field . ' has value [' . $result . ']');
             if (isset($value) === true) {
                 $value = $result;
             } else {
-                error_log('User [' . $user->id . ']: no value for field ' . $field, 0);
+                restBridgeDebugLog('User [' . $user->id . ']: no value for field ' . $field);
             }
         }
 

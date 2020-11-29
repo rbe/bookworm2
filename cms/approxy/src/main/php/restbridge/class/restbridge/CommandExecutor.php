@@ -66,8 +66,7 @@ final class CommandExecutor
                 $value = $keyValue[1];
                 $parameterArray[$key] = $value;
             } else {
-                // TODO param:, -> no value -> lookup per JoomlaCmsAdapter/JInput
-                error_log('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
+                restBridgeDebugLog('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
             }
         }
 
@@ -89,15 +88,15 @@ final class CommandExecutor
     public function executeCommand(string $commandName, string $parameters): array
     {
         $parameterArray = $this->analyzeParameters($commandName, $parameters);
-        error_log('Parameters before JInput: ' . print_r($parameterArray, true), 0);
+        restBridgeDebugLog('Parameters before JInput: ' . print_r($parameterArray, true));
         $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
-        error_log('Parameters after JInput: ' . print_r($parameterArray, true), 0);
+        restBridgeDebugLog('Parameters after JInput: ' . print_r($parameterArray, true));
         global $restBridge;
         /** @var $restEndpoint array */
         $restEndpoint = $restBridge['REST_ENDPOINTS'][$commandName];
         if (isset($restEndpoint) === false) {
             $result = 'CommandExecutor#executeCommand: REST endpoint ' . $commandName . ' not found';
-            error_log($result, 0);
+            restBridgeDebugLog($result);
             return ['error' => $result];
         }
 
@@ -106,8 +105,7 @@ final class CommandExecutor
             $template = new Template($v);
             $headers[$k] = $template->renderToString([$parameterArray]);
         }
-        error_log('CommandExecutor#executeCommand: HTTP Headers: '
-            . print_r($headers, true), 0);
+        restBridgeDebugLog('CommandExecutor#executeCommand: HTTP Headers: ' . print_r($headers, true));
         /** @var $requestDto array */
         $requestDto = $restEndpoint['requestDto'];
         if (isset($requestDto) === false) {

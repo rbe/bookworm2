@@ -52,7 +52,7 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
 
         global $mandant;
         $parameters .= 'mandant:'.$mandant.',hoerernummer:'.$hoerernummer;
-        error_log('#customizeParameters: $parameters='.print_r($parameters, true), 0);
+        restBridgeDebugLog('#customizeParameters: $parameters='.print_r($parameters, true));
 
     }//end modifyParameters()
 

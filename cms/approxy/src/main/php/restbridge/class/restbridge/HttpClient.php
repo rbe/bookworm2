@@ -69,7 +69,7 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        error_log(sprintf("POST %s\n%s", $url, $requestBody), 0);
+        restBridgeDebugLog(sprintf("POST %s\n%s", $url, $requestBody));
         curl_setopt($ch, CURLOPT_VERBOSE, true);
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
@@ -107,7 +107,7 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        error_log(sprintf("PUT %s\n%s", $url, $requestBody), 0);
+        restBridgeDebugLog(sprintf("PUT %s\n%s", $url, $requestBody));
         curl_setopt($ch, CURLOPT_VERBOSE, true);
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
@@ -145,7 +145,7 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        error_log(sprintf("DELETE %s\n%s", $url, $requestBody), 0);
+        restBridgeDebugLog(sprintf("DELETE %s\n%s", $url, $requestBody));
         curl_setopt($ch, CURLOPT_VERBOSE, true);
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {

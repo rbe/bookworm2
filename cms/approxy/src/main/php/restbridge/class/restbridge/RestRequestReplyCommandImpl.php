@@ -24,7 +24,7 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
     {
         $restEndpoint = $this->parameters['endpoint'];
         if (isset($restEndpoint) === false) {
-            error_log('Cannot execute, no REST endpoint', 0);
+            restBridgeDebugLog('Cannot execute, no REST endpoint');
             return [];
         }
 
@@ -34,9 +34,9 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
         }
 
         $response = null;
-        error_log('RestRequestReplyCommandImpl#execute:'
+        restBridgeDebugLog('RestRequestReplyCommandImpl#execute:'
             .' restEndpoint='.print_r($restEndpoint, true)
-            .' requestDto='.print_r($requestDto, true), 0);
+            .' requestDto='.print_r($requestDto, true));
         try {
             $restReqResp = new RestRequestReply($restEndpoint, $requestDto);
             $response = $restReqResp->execute(
@@ -44,9 +44,9 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
                 $this->parameters['preHttpPostCallback']
             );
             $responseBody = $response->getJson();
-            //error_log('Response: '.print_r($responseBody, true), 0);
+            restBridgeDebugLog('Response: '.print_r($responseBody, true));
         } catch (\Exception $e) {
-            error_log('Exception: ' . $e->getMessage(), 0);
+            restBridgeDebugLog('Exception: ' . $e->getMessage());
             $responseBody = [];
         }
 
