@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -24,12 +25,13 @@ public class MerklisteRestService {
 
     private final MerklisteService merklisteService;
 
-    private final TitelnummerResolver titelnummerResolver;
+    private final HoerbuchResolver hoerbuchResolver;
 
+    @Autowired
     public MerklisteRestService(final MerklisteService merklisteService,
-                                final TitelnummerResolver titelnummerResolver) {
+                                final HoerbuchResolver hoerbuchResolver) {
         this.merklisteService = merklisteService;
-        this.titelnummerResolver = titelnummerResolver;
+        this.hoerbuchResolver = hoerbuchResolver;
     }
 
     //@PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -55,7 +57,7 @@ public class MerklisteRestService {
     public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
     }
 
     @GetMapping(value = "datumab/{datumab}/suchbegriff/{suchbegriff}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -64,7 +66,7 @@ public class MerklisteRestService {
                                                         @PathVariable final String datumab,
                                                         @PathVariable final String suchbegriff) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
     }
 
 }

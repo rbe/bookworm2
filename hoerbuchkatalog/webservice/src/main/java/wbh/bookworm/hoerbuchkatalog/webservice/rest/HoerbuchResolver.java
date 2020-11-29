@@ -14,13 +14,13 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 @Component
-class TitelnummerResolver {
+class HoerbuchResolver {
 
     private static final Hoerernummer HOERERNUMMER = new Hoerernummer("00000");
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    TitelnummerResolver(final HoerbuchkatalogService hoerbuchkatalogService) {
+    HoerbuchResolver(final HoerbuchkatalogService hoerbuchkatalogService) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 

@@ -1,6 +1,8 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
@@ -23,6 +25,11 @@ public abstract class HoerbuchMapper {
 
     String map(Sachgebiet value) {
         return null != value ? value.getName() : "";
+    }
+
+    @AfterMapping
+    void setSachgebietBezeichnung(@MappingTarget HoerbuchAntwortKurzDTO dto, Hoerbuch hoerbuch) {
+        dto.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
     }
 
     String map(AghNummer value) {

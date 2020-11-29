@@ -3,6 +3,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,12 +25,9 @@ public class KatalogRestService {
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
-    private final TitelnummerResolver titelnummerResolver;
-
-    public KatalogRestService(final HoerbuchkatalogService hoerbuchkatalogService,
-                              final TitelnummerResolver titelnummerResolver) {
+    @Autowired
+    public KatalogRestService(final HoerbuchkatalogService hoerbuchkatalogService) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
-        this.titelnummerResolver = titelnummerResolver;
     }
 
     @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)

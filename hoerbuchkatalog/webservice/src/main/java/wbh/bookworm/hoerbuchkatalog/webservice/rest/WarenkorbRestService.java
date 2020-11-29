@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -31,14 +32,15 @@ public final class WarenkorbRestService {
 
     private final BestellungService bestellungService;
 
-    private final TitelnummerResolver titelnummerResolver;
+    private final HoerbuchResolver hoerbuchResolver;
 
+    @Autowired
     public WarenkorbRestService(final WarenkorbService warenkorbService,
                                 final BestellungService bestellungService,
-                                final TitelnummerResolver titelnummerResolver) {
+                                final HoerbuchResolver hoerbuchResolver) {
         this.warenkorbService = warenkorbService;
         this.bestellungService = bestellungService;
-        this.titelnummerResolver = titelnummerResolver;
+        this.hoerbuchResolver = hoerbuchResolver;
     }
 
     //@PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -72,7 +74,7 @@ public final class WarenkorbRestService {
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungService.bestellungSessionId(xHoerernummer),
                 new Hoerernummer(xHoerernummer));
-        return titelnummerResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
+        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
     }
 
     @PostMapping(value = "/bestellen",

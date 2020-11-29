@@ -31,6 +31,10 @@ public final class Belastung extends DomainValueObject {
         this.titelnummer = titelnummer;
     }
 
+    public Belastung(final LocalDate belastungsdatum, final String boxnummer, final String titelnummer) {
+        this(belastungsdatum, boxnummer, new Titelnummer(titelnummer));
+    }
+
     public LocalDate getBelastungsdatum() {
         return belastungsdatum;
     }
