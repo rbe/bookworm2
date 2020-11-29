@@ -27,10 +27,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -87,17 +85,8 @@ public class PlaylistController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%s/%s/playlist", titelnummer, BASE_URL),
+                String.format("%s/%s/playlist", BASE_URL, titelnummer),
                 httpRequest);
-    }
-
-    @Mapper
-    public interface AudiobookMapper {
-
-        AudiobookMapper INSTANCE = Mappers.getMapper(AudiobookMapper.class);
-
-        AudiobookInfoAntwortDTO convert(AudiobookInfoDTO audiobookInfoDTO);
-
     }
 
     @Mapper
@@ -106,15 +95,6 @@ public class PlaylistController {
         PlaylistMapper INSTANCE = Mappers.getMapper(PlaylistMapper.class);
 
         PlaylistAntwortDTO convert(PlaylistDTO playlistDTO);
-
-    }
-
-    @Mapper
-    public interface TrackMapper {
-
-        TrackMapper INSTANCE = Mappers.getMapper(TrackMapper.class);
-
-        TrackInfoAntwortDTO convert(TrackInfoDTO trackInfoDTO);
 
     }
 
