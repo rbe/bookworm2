@@ -15,7 +15,18 @@ server {
     location ~* "^/(audioplayer|specification)/$" {
         return 301 ${request_uri}index.html;
     }
-    location ~* "^/v./(shard|katalog|suche|bestellung|stream|audioplayer|specification|swagger)/.+$" {
+    location ~* "^/(audioplayer|specification)/.+\.(html|css|js)" {
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_set_header Host $http_host;
+        proxy_connect_timeout 300;
+        proxy_http_version 1.1;
+        proxy_set_header Connection "";
+        chunked_transfer_encoding off;
+        proxy_pass http://hoerbuchdienst:8080;
+    }
+    location ~* "^/v./(shard|katalog|suche|bestellung|hoerbuch|hoerprobe)/.+$" {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
