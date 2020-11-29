@@ -104,10 +104,13 @@ final class plgContentRestbridge extends JPlugin
      */
     private function executeCommand(array $matches): string
     {
+        /** @var $commandName string */
         $commandName = trim($matches[1]);
+        /** @var $parameters string */
         $parameters = trim($matches[2]);
+        global $restBridge;
         /** @var $restBridgePlugin RestBridgePlugin */
-        $restBridgePlugin = $GLOBALS['restBridge']['PLUGIN'];
+        $restBridgePlugin = $restBridge['PLUGIN'];
         if (isset($restBridgePlugin) === true) {
             $restBridgePlugin->customizeParameters($commandName, $parameters);
         }

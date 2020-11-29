@@ -89,8 +89,12 @@ final class CommandExecutor
     public function executeCommand(string $commandName, string $parameters): array
     {
         $parameterArray = $this->analyzeParameters($commandName, $parameters);
+        error_log('Parameters before JInput: ' . print_r($parameterArray, true), 0);
+        $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
+        error_log('Parameters after JInput: ' . print_r($parameterArray, true), 0);
+        global $restBridge;
         /** @var $restEndpoint array */
-        $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS'][$commandName];
+        $restEndpoint = $restBridge['REST_ENDPOINTS'][$commandName];
         if (isset($restEndpoint) === false) {
             $result = 'CommandExecutor#executeCommand: REST endpoint ' . $commandName . ' not found';
             error_log($result, 0);

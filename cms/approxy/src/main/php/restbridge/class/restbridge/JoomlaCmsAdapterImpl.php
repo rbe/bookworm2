@@ -11,10 +11,43 @@ namespace restbridge;
 
 use JFactory;
 use Joomla;
+use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
 
 class JoomlaCmsAdapterImpl implements CmsAdapter
 {
+
+
+    /**
+     * Description.
+     *
+     * @param array $array Comment.
+     *
+     * @return array
+     *
+     * @since 1.0
+     */
+    public function resolveParameters(array $array): array
+    {
+        try {
+            $app = Factory::getApplication();
+            $input = $app->input;
+        } catch (\Exception $e) {
+            error_log('Exception while retrieving JInput: ' . $e->getMessage(), 0);
+        }
+        if (isset($input) === true) {
+            foreach ($array as $key => $value) {
+                if ($value === 'JInput') {
+                    $array[$key] = $input->get($key, '', 'ALNUM');
+                }
+
+            }
+        } else {
+            error_log('Could not get JInput', 0);
+        }
+
+        return $array;
+    }//end resolveParameters()
 
 
     /**
