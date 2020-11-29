@@ -89,7 +89,7 @@ public class KatalogController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%s/audiobook", BASE_URL),
+                String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }
 
@@ -117,7 +117,7 @@ public class KatalogController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%s/playlist", BASE_URL),
+                String.format("%s/%s/playlist", titelnummer, BASE_URL),
                 httpRequest);
     }
 
@@ -149,7 +149,7 @@ public class KatalogController {
                     }
                 },
                 dto -> CORS.response(httpRequest, dto),
-                String.format("%s/track", BASE_URL),
+                String.format("%s/%s/track/%s", BASE_URL, titelnummer, ident),
                 httpRequest);
     }
 
