@@ -32,8 +32,10 @@ class JsonHelperTest extends TestCase
         $this->assertThat($json, self::isJson());
         $array = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
         $this->assertIsArray($array);
+        print_r($array);
         $this->assertCount(2, $array);
         $jsonHelper = new JsonHelper($array);
+        $this->assertTrue($jsonHelper->isSingleRow());
         $this->assertEquals(1, $jsonHelper->numberOfRows());
 
     }//end testJsonMap()
@@ -51,11 +53,10 @@ class JsonHelperTest extends TestCase
     public function testJsonArrayWith1Map(): void
     {
         $json = '[{"row1-a":1}]';
-        print_r($json);
         $this->assertThat($json, self::isJson());
         $array = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
-        print_r($array);
         $this->assertIsArray($array);
+        print_r($array);
         $this->assertCount(1, $array);
         $jsonHelper = new JsonHelper($array);
         $this->assertEquals(1, $jsonHelper->numberOfRows());

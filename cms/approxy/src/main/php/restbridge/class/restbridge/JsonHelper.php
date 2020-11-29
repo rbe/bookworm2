@@ -36,6 +36,48 @@ final class JsonHelper
 
 
     /**
+     * Description.
+     *
+     * @param array $array
+     * @return array|array[]
+     *
+     * @since 1.0
+     */
+    public function rowsWithValues(): array
+    {
+        if ($this->isSingleRow() === true) {
+            return [$this->json];
+        }
+
+        return $this->json;
+
+    }//end rowsWithValues()
+
+
+    /**
+     * Description.
+     *
+     * @param array $array Comment.
+     *
+     * @return bool
+     *
+     * @since 1.0
+     */
+    public function isSingleRow(): bool
+    {
+        // if any value of this array does NOT contain an array
+        $nestedArrayFound = false;
+        foreach ($this->json as $value) {
+            if (is_array($value)) {
+                $nestedArrayFound = true;
+            }
+        }
+        return !$nestedArrayFound;
+
+    }//end isSingleRow()
+
+
+    /**
      * Determine if JSON as array contains a single or multiple rows.
      *
      * @return int Number of rows in this JSON.

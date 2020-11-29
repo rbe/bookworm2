@@ -31,6 +31,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     {
         $customTemplateModule = self::customModule($customTemplateModuleName);
         $template = new Template($customTemplateModule->content);
+        //error_log('Rendering values into template: ' . print_r($rowsWithValues, true), 0);
         return $template->renderToString($rowsWithValues);
 
     }//end renderTemplate()

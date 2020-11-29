@@ -119,35 +119,14 @@ final class plgContentRestbridge extends JPlugin
             $content = '';
             $hasMergableResult = is_array($commandResult) === true && empty($commandResult) === false;
             if ($hasMergableResult) {
-                $commandResult = $this->rowsWithValues($commandResult);
-                $content = $this->cmsAdapter->renderTemplate($commandName, $commandResult);
+                $jsonHelper = new JsonHelper($commandResult);
+                $content = $this->cmsAdapter->renderTemplate($commandName, $jsonHelper->rowsWithValues());
             }
         }
 
         return $content;
 
     }//end executeCommand()
-
-
-    /**
-     * Description.
-     *
-     * @param array $commandResult Comment.
-     *
-     * @return array|array[]
-     *
-     * @since 1.0
-     */
-    private function rowsWithValues(array $commandResult): array
-    {
-        $jsonHelper = new JsonHelper($commandResult);
-        if ($jsonHelper->numberOfRows() === 1) {
-            $commandResult = [$commandResult];
-        }
-
-        return $commandResult;
-
-    }//end rowsWithValues()
 
 
 }//end class
