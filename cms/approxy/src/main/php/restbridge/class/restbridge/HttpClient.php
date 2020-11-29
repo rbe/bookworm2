@@ -32,6 +32,7 @@ final class HttpClient
             $preCallback($ch);
         }
 
+        curl_setopt($ch, CURLOPT_VERBOSE, true);
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
             throw new \Exception('Empty response body');
@@ -69,8 +70,8 @@ final class HttpClient
         }
 
         error_log(sprintf("POST %s\n%s", $url, $requestBody), 0);
-        $responseBody = curl_exec($ch);
         curl_setopt($ch, CURLOPT_VERBOSE, true);
+        $responseBody = curl_exec($ch);
         if ($responseBody === false) {
             throw new \Exception('Empty response body');
         }
@@ -171,21 +172,6 @@ final class HttpClient
     {
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
-        $this->stdCurlOpt($ch);
-        return $ch;
-
-    }//end httpPost()
-
-
-    /**
-     * Description.
-     *
-     * @param $ch Comment.
-     *
-     * @since 1.0
-     */
-    private function stdCurlOpt($ch): void
-    {
         curl_setopt($ch, CURLOPT_USERAGENT, 'restbridge/1.0 (+https://www.art-of-coding.eu/restbridge.html)');
         curl_setopt($ch, CURLOPT_HTTP_VERSION, '1.1');
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
@@ -193,7 +179,9 @@ final class HttpClient
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
-    }//end responseInfo()
+        return $ch;
+
+    }//end httpPost()
 
 
     /**

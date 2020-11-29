@@ -57,8 +57,9 @@ final class Template
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
                     $value = $row[$match];
+                    //error_log('Using value "' . print_r($value, true) . '" for "' . $key . '"', 0);
                 } else {
-                    error_log('No value found for ' . $key, 0);
+                    error_log('No value found for "' . $key . '" in ' . print_r($row, true), 0);
                     $value = '';
                 }
 

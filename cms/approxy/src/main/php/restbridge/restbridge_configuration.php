@@ -12,7 +12,6 @@ require_once __DIR__ . '/RestBridgePlugin.php';
 $HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
 $HOERBUCHKATALOG_HEADERS = [
     'Accept' => 'application/json',
-    'Content-Type' => 'application/json',
     'Origin' => 'audiobook.wbh-online.de',
     'X-Bookworm-Mandant' => '{mandant}',
     'X-Bookworm-Hoerernummer' => '{hoerernummer}',
@@ -38,7 +37,7 @@ $restBridge = [
         'HoerbuchdetailsAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
-            'parameter_template' => '/hoerbuchkatalog/v1/katalog/details/{titelnummer}',
+            'parameter_template' => '/hoerbuchkatalog/v1/katalog/{titelnummer}/details',
             'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
@@ -191,7 +190,8 @@ if ($restBridge['DEBUG'] === true) {
 
 function rbdebug($msg)
 {
-    if ($GLOBALS['$restBridge']['DEBUG'] === true) {
+    global $restBridge;
+    if ($restBridge['DEBUG'] === true) {
         error_log($msg, 0);
     }
 }//end rbdebug()

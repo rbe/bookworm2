@@ -5,12 +5,13 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-// Causes problems with other PHP code: declare(strict_types=1);
+declare(strict_types=1);
 
 use PHPUnit\Framework\TestCase;
 use restbridge\JsonHelper;
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/JsonHelper.php';
 
 class JsonHelperTest extends TestCase
 {
@@ -21,7 +22,7 @@ class JsonHelperTest extends TestCase
      *
      * @return void
      *
-     * @throws \JsonException
+     * @throws JsonException
      *
      * @since version
      */
@@ -47,7 +48,31 @@ class JsonHelperTest extends TestCase
      *
      * @since version
      */
-    public function testJsonArrayWithMaps(): void
+    public function testJsonArrayWith1Map(): void
+    {
+        $json = '[{"row1-a":1}]';
+        print_r($json);
+        $this->assertThat($json, self::isJson());
+        $array = json_decode($json, true, 512, JSON_THROW_ON_ERROR);
+        print_r($array);
+        $this->assertIsArray($array);
+        $this->assertCount(1, $array);
+        $jsonHelper = new JsonHelper($array);
+        $this->assertEquals(1, $jsonHelper->numberOfRows());
+
+    }//end testJsonArrayWith1Map()
+
+
+    /**
+     * Test a JSON array containing maps: rows with values.
+     *
+     * @return void
+     *
+     * @throws JsonException
+     *
+     * @since version
+     */
+    public function testJsonArrayWith2Maps(): void
     {
         $json = '[{"row1-a":1,"row1-b":2}, {"row2-a":3,"row2-b":4}]';
         $this->assertThat($json, self::isJson());
@@ -57,7 +82,7 @@ class JsonHelperTest extends TestCase
         $jsonHelper = new JsonHelper($array);
         $this->assertEquals(2, $jsonHelper->numberOfRows());
 
-    }//end testHttpsPostPage()
+    }//end testJsonArrayWith2Maps()
 
 
 }//end class

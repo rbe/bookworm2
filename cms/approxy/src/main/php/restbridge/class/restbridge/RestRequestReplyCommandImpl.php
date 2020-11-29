@@ -44,6 +44,7 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
                 $this->parameters['preHttpPostCallback']
             );
             $responseBody = $response->getJson();
+            //error_log('Response: '.print_r($responseBody, true), 0);
         } catch (\Exception $e) {
             error_log('Exception: ' . $e->getMessage(), 0);
             $responseBody = [];

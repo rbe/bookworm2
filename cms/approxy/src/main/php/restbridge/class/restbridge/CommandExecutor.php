@@ -102,7 +102,8 @@ final class CommandExecutor
             $template = new Template($v);
             $headers[$k] = $template->renderToString([$parameterArray]);
         }
-        error_log('HTTP Headers: ' . print_r($headers, true), 0);
+        error_log('CommandExecutor#executeCommand: HTTP Headers: '
+            . print_r($headers, true), 0);
         /** @var $requestDto array */
         $requestDto = $restEndpoint['requestDto'];
         if (isset($requestDto) === false) {

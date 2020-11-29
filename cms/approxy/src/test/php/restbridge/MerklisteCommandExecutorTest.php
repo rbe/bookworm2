@@ -5,7 +5,7 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-// Causes problems with other PHP code: declare(strict_types=1);
+declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
