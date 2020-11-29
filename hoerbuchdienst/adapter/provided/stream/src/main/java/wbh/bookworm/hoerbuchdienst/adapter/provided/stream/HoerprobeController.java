@@ -79,7 +79,7 @@ public class HoerprobeController {
                 () -> makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer, 5),
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
-                String.format("%s/%s/hoerprobe", BASE_URL, titelnummer),
+                String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }
 
