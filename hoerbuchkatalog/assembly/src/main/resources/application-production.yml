@@ -101,7 +101,7 @@ server:
       persistent: false
       timeout: 1h
   http2:
-    enabled: false
+    enabled: true
 
 logging:
   config: classpath:logback-production.xml
