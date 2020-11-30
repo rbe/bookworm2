@@ -38,7 +38,7 @@ public final class CORS {
                                                                 final URI uri) {
         return with(httpRequest,
                 origin -> HttpResponse.<String>redirect(uri)
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .body(""));
     }
@@ -46,9 +46,9 @@ public final class CORS {
     public static MutableHttpResponse<String> optionsResponse(final HttpRequest<?> httpRequest) {
         return with(httpRequest,
                 origin -> HttpResponse.<String>noContent()
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Accept,Content-Type,Range")
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Origin,Accept,Content-Type,Range")
                         .header(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "86400")
                         .contentType(MediaType.TEXT_PLAIN_TYPE)
                         .contentLength(0L)
@@ -69,7 +69,7 @@ public final class CORS {
 
     private static <T> void maybeAddOrigin(final String origin, final MutableHttpResponse<T> response) {
         if (null != origin) {
-            response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
+            response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS);
         }
     }

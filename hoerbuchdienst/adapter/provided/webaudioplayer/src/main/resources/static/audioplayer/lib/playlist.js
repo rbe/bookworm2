@@ -145,7 +145,6 @@ export class Playlist {
         fetch(new URL('v1/katalog/' + this.titelnummer + '/playlist', this.audiobookURL).toString(),
             {
                 'method': 'GET',
-                'mode': 'no-cors',
                 'headers': {
                     'Accept': 'application/json',
                     'X-Bookworm-Mandant': this.mandant,

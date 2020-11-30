@@ -49,7 +49,7 @@ public final class AudiobookShardRedirector {
                                                           final HttpRequest<?> httpRequest) {
         final HttpResponse<String> result;
         final String shardName = audiobookLocationService.shardLocation(objectId);
-        final String origin = httpRequest.getHeaders().get("Origin");
+        final String origin = "*"; //httpRequest.getHeaders().get("Origin");
         if ("unknown".equals(shardName)) {
             result = HttpResponse.<String>notFound()
                     .header(X_SHARD_LOCATION, shardName)

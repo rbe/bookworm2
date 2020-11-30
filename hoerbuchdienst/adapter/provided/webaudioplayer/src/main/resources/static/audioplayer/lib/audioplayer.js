@@ -77,7 +77,6 @@ export class Audioplayer {
         fetch(new URL('v1/katalog/' + this.titelnummer, this.audiobookURL).toString(),
             {
                 'method': 'GET',
-                'mode': 'no-cors',
                 'headers': {
                     'Accept': 'application/json',
                     'X-Bookworm-Mandant': this.mandant,
@@ -174,7 +173,6 @@ export class Audioplayer {
         this.currentTrackTitle.innerText = track.title || track.ident;
         const init1 = {
             'method': 'GET',
-            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/json',
                 'X-Bookworm-Mandant': '06',
@@ -292,7 +290,6 @@ export class Audioplayer {
         fetch(new URL('v1/hoerbuch/' + this.titelnummer, this.audiobookURL).toString(),
             {
                 'method': 'POST',
-                'mode': 'no-cors',
                 'headers': {
                     'Accept': 'application/zip',
                     'Content-Type': 'application/json',
@@ -329,7 +326,6 @@ export class Audioplayer {
         const url = new URL('v1/bestellung/' + this.titelnummer, this.audiobookURL).toString();
         fetch(url, {
             'method': 'POST',
-            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -368,7 +364,6 @@ export class Audioplayer {
         const url = new URL('v1/bestellung/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
         fetch(url, {
             'method': 'GET',
-            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/json',
                 'X-Bookworm-Mandant': this.mandant,
@@ -424,7 +419,6 @@ export class Audioplayer {
         this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen!';
         fetch(url, {
             'method': 'GET',
-            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/zip',
                 'X-Bookworm-Mandant': this.mandant,
