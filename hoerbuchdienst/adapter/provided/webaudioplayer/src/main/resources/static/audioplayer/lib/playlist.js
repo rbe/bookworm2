@@ -10,10 +10,11 @@ import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Playlist {
 
-    constructor(elementSelectors, audioplayer, audiobookURL, hoerernummer, titelnummer, onReadyCallback) {
+    constructor(elementSelectors, audioplayer, audiobookURL, mandant, hoerernummer, titelnummer, onReadyCallback) {
         this.elementSelectors = elementSelectors;
         this.audioplayer = audioplayer;
         this.audiobookURL = audiobookURL;
+        this.mandant = mandant;
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
         this.playlist = [];
@@ -144,9 +145,10 @@ export class Playlist {
         fetch(new URL('v1/katalog/' + this.titelnummer + '/playlist', this.audiobookURL).toString(),
             {
                 'method': 'GET',
+                'mode': 'no-cors',
                 'headers': {
                     'Accept': 'application/json',
-                    'X-Bookworm-Mandant': '06',
+                    'X-Bookworm-Mandant': this.mandant,
                     'X-Bookworm-Hoerernummer': this.hoerernummer
                 }
             })
