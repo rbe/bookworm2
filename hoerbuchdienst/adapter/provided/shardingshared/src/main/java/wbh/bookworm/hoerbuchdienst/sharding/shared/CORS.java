@@ -13,11 +13,13 @@ import org.slf4j.LoggerFactory;
 
 public final class CORS {
 
+    static final String ALLOWED_METHODS = "OPTIONS, GET, POST";
+
+    private static final String ALLOWED_HEADERS = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Origin,Accept,Content-Type,Range,X-Bookworm-Mandant,X-Bookworm-Hoerernummer";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(CORS.class);
 
     private static final String ALLOWED_DOMAIN = "*";
-
-    static final String ALLOWED_METHODS = "OPTIONS, GET, POST";
 
     private CORS() {
         throw new AssertionError();
@@ -47,7 +49,7 @@ public final class CORS {
                 origin -> HttpResponse.<String>noContent()
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Origin,Accept,Content-Type,Range,X-Bookworm-Mandant,X-Bookworm-Hoerernummer")
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
                         .header(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "86400")
                         .contentType(MediaType.TEXT_PLAIN_TYPE)
                         .contentLength(0L)
