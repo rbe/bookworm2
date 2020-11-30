@@ -24,14 +24,13 @@ public final class CORS {
     }
 
     public static <T> MutableHttpResponse<T> response(final HttpRequest<?> httpRequest, final T dto) {
-        return with(httpRequest,
-                origin -> {
-                    final MutableHttpResponse<T> response = HttpResponse.ok();
-                    maybeAddOrigin(origin, response);
-                    return response
-                            .contentType(MediaType.APPLICATION_JSON_TYPE)
-                            .body(dto);
-                });
+        return with(httpRequest, origin -> {
+            final MutableHttpResponse<T> response = HttpResponse.ok();
+            maybeAddOrigin(origin, response);
+            return response
+                    .contentType(MediaType.APPLICATION_JSON_TYPE)
+                    .body(dto);
+        });
     }
 
     public static MutableHttpResponse<String> temporaryRedirect(final HttpRequest<?> httpRequest,
@@ -57,14 +56,15 @@ public final class CORS {
 
     private static <T> MutableHttpResponse<T> with(final HttpRequest<?> httpRequest,
                                                    final Function<? super String, ? extends MutableHttpResponse<T>> supplier) {
-        httpRequest.getHeaders().forEach(entry -> LOGGER.trace("{}: {}", entry.getKey(), entry.getValue()));
+        return supplier.apply("");
+        /*httpRequest.getHeaders().forEach(entry -> LOGGER.trace("{}: {}", entry.getKey(), entry.getValue()));
         final String origin = httpRequest.getHeaders().get("Origin");
         if (null == origin || origin.endsWith(ALLOWED_DOMAIN)) {
             return supplier.apply(null != origin ? origin : "");
         } else {
             LOGGER.error("HTTP header 'Origin' == {} != {}", origin, ALLOWED_DOMAIN);
             return HttpResponse.unauthorized();
-        }
+        }*/
     }
 
     private static <T> void maybeAddOrigin(final String origin, final MutableHttpResponse<T> response) {

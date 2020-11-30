@@ -52,7 +52,6 @@ public final class AudiobookShardRedirector {
         final String origin = "*"; //httpRequest.getHeaders().get("Origin");
         if ("unknown".equals(shardName)) {
             result = HttpResponse.<String>notFound()
-                    .header(X_SHARD_LOCATION, shardName)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, CORS.ALLOWED_METHODS)
                     .body("");
