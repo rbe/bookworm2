@@ -6,8 +6,8 @@
 
 "use strict";
 
-import {Time} from "./lib/time.js";
-import {FetchErrorHandler} from "./lib/fetchErrorHandler.js";
+import {Time} from "./time.js";
+import {FetchErrorHandler} from "./fetchErrorHandler.js";
 import {Playlist} from "./playlist.js";
 import {VolumeControl} from "./volumeControl.js";
 
@@ -325,7 +325,7 @@ export class Audioplayer {
         const url = new URL('v1/bestellung/' + this.titelnummer, this.audiobookURL).toString();
         fetch(url, {
             'method': 'POST',
-            'mode': 'cors',
+            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
@@ -364,7 +364,7 @@ export class Audioplayer {
         const url = new URL('v1/bestellung/' + this.titelnummer + '/status/' + this.orderId, this.audiobookURL).toString();
         fetch(url, {
             'method': 'GET',
-            'mode': 'cors',
+            'mode': 'no_cors',
             'headers': {
                 'Accept': 'application/json',
                 'X-Bookworm-Mandant': this.mandant,
@@ -420,7 +420,7 @@ export class Audioplayer {
         this.downloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen!';
         fetch(url, {
             'method': 'GET',
-            'mode': 'cors',
+            'mode': 'no-cors',
             'headers': {
                 'Accept': 'application/zip',
                 'X-Bookworm-Mandant': this.mandant,

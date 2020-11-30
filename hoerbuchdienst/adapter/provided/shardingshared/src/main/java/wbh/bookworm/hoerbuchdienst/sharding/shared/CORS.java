@@ -15,7 +15,7 @@ public final class CORS {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CORS.class);
 
-    private static final String ALLOWED_DOMAIN = "audiobook.wbh-online.de";
+    private static final String ALLOWED_DOMAIN = "*";
 
     static final String ALLOWED_METHODS = "OPTIONS, GET, POST";
 
@@ -37,7 +37,7 @@ public final class CORS {
     public static MutableHttpResponse<String> temporaryRedirect(final HttpRequest<?> httpRequest,
                                                                 final URI uri) {
         return with(httpRequest,
-                origin -> HttpResponse.<String>temporaryRedirect(uri)
+                origin -> HttpResponse.<String>redirect(uri)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, origin)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .body(""));

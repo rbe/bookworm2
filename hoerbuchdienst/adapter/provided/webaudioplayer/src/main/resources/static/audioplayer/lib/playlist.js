@@ -6,7 +6,7 @@
 
 "use strict";
 
-import {FetchErrorHandler} from "./lib/fetchErrorHandler.js";
+import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Playlist {
 

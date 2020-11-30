@@ -7,7 +7,7 @@
 "use strict";
 
 import {DomEventBus} from "./lib/domEventBus.js";
-import {Audioplayer} from "./audioplayer.js";
+import {Audioplayer} from "./lib/audioplayer.js";
 
 (function () {
     const events = [

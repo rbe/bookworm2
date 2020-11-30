@@ -19,7 +19,7 @@ public final class AudiobookShardRedirector {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookShardRedirector.class);
 
-    private static final String X_SHARD_LOCATION = "X-Shard-Location";
+    private static final String X_SHARD_LOCATION = "X-Bookworm-ShardLocation";
 
     private final AudiobookLocationService audiobookLocationService;
 
