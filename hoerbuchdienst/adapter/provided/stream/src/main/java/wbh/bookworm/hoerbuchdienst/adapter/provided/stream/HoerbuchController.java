@@ -15,10 +15,10 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
-import io.micronaut.http.annotation.Post;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -76,7 +76,7 @@ public class HoerbuchController {
 
     @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Post(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Get(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                      @Header("X-Bookworm-Mandant") final String xMandant,
@@ -84,7 +84,8 @@ public class HoerbuchController {
                                                                      @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> makeZippedAudiobook(xMandant, xHoerernummer, titelnummer),
-                dto -> CORS.response(httpRequest, dto),
+                dto -> CORS.response(httpRequest, dto)
+                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }

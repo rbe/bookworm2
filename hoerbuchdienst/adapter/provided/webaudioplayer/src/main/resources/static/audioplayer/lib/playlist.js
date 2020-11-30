@@ -149,7 +149,8 @@ export class Playlist {
                     'Accept': 'application/json',
                     'X-Bookworm-Mandant': this.mandant,
                     'X-Bookworm-Hoerernummer': this.hoerernummer
-                }
+                },
+                'redirect': 'follow'
             })
             .then(response => {
                 if (response.ok) {
