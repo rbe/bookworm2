@@ -6,46 +6,30 @@
 
 "use strict";
 
-import {Audioplayer} from "./lib/audioplayer.js";
-
-const bookworm = {
-
-    audioplayer: new Audioplayer('https://hoerbuchdienst.shard4.audiobook.wbh-online.de', '06', '00000'),
-
-    fuegeZuMerklisteHinzu: function (titelnummer) {
-    },
-
-    entferneVonMerkliste: function (titelnummer) {
-    },
-
-    fuegeZuWarenkorbHinzu: function (titelnummer) {
-    },
-
-    entferneVonWarenkorb: function (titelnummer) {
-    },
-
-    hoerprobe: function (titelnummer) {
-        this.audioplayer.hoerprobe(titelnummer);
-    },
-
-    bestelleDownload: function (titelnummer) {
-    }
-
-};
+import {Bookworm} from "./lib/bookworm.js";
 
 window.onload = function () {
-    document.querySelector('#hoerprobeAbrufen').addEventListener('click', () => {
+    const bookworm = new Bookworm();
+    // Hörprobe
+    const hoerprobeButton = document.querySelector('.button .hoerprobe');
+    hoerprobeButton.addEventListener('click', () => {
         const titelnummer = document.querySelector('#titelnummer').value;
-        bookworm.audioplayer.hoerprobe(titelnummer);
+        bookworm.hoerprobe(titelnummer);
     });
-    /*
-    document.querySelector('.button .order-cd').addEventListener('click', function (e) {
+    // Merkliste
+    const merklisteButton = document.querySelector('.button .watchlist-false');
+    merklisteButton.addEventListener('click', function (e) {
         console.log(e);
         console.log(this);
     });
-    document.querySelector('.button .order-download-true').addEventListener('click', () => {
+    // CD Bestellung
+    const cdBestellenButton = document.querySelector('.button .order-cd-false');
+    cdBestellenButton.addEventListener('click', function (e) {
+        console.log(e);
+        console.log(this);
     });
-    document.querySelector('.button .watchlist').addEventListener('click', () => {
+    // Download
+    const downloadButton = document.querySelector('.button .order-download-true');
+    downloadButton.addEventListener('click', () => {
     });
-    */
 };

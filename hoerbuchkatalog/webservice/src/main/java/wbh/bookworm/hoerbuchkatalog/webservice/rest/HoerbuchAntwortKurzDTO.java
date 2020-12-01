@@ -16,6 +16,10 @@ public final class HoerbuchAntwortKurzDTO {
 
     private boolean downloadbar;
 
+    private boolean aufDerMerkliste;
+
+    private boolean imWarenkorb;
+
     public String getTitelnummer() {
         return titelnummer;
     }
@@ -70,6 +74,22 @@ public final class HoerbuchAntwortKurzDTO {
 
     public void setDownloadbar(final boolean downloadbar) {
         this.downloadbar = downloadbar;
+    }
+
+    public boolean isAufDerMerkliste() {
+        return aufDerMerkliste;
+    }
+
+    public void setAufDerMerkliste(final boolean aufDerMerkliste) {
+        this.aufDerMerkliste = aufDerMerkliste;
+    }
+
+    public boolean isImWarenkorb() {
+        return imWarenkorb;
+    }
+
+    public void setImWarenkorb(final boolean imWarenkorb) {
+        this.imWarenkorb = imWarenkorb;
     }
 
 }
