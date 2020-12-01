@@ -19,16 +19,22 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
     // Merkliste
-    const merklisteHinzufuegenButton = document.querySelector('.button.watchlist-false');
-    merklisteHinzufuegenButton.addEventListener('click', function (e) {
-        const titelnummer = e.target.parentElement.id.split('-')[1];
-        bookworm.fuegeZuMerklisteHinzu(titelnummer);
-    });
-    const merklisteEntfernenButton = document.querySelector('.button.watchlist-true');
-    if (merklisteEntfernenButton) {
-        merklisteEntfernenButton.addEventListener('click', function (e) {
+    const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
+    for (const merklisteButton of merklisteButton) {
+        merklisteButton.addEventListener('click', (e) => {
             const titelnummer = e.target.parentElement.id.split('-')[1];
-            bookworm.entferneVonMerkliste(titelnummer);
+            const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
+            if (aufMerkliste) {
+                bookworm.entferneVonMerkliste(titelnummer, () => {
+                    merklisteButton.classList.remove('watchlist-true');
+                    merklisteButton.classList.add('watchlist-false');
+                });
+            } else {
+                bookworm.fuegeZuMerklisteHinzu(titelnummer, () => {
+                    merklisteButton.classList.remove('watchlist-false');
+                    merklisteButton.classList.add('watchlist-true');
+                });
+            }
         });
     }
     // Warenkorb

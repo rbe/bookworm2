@@ -8,7 +8,7 @@
 
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-export class Hoerprobe {
+export class Audioplayer {
 
     constructor(audiobookURL, mandant, hoerernummer) {
         this.audiobookURL = audiobookURL;
