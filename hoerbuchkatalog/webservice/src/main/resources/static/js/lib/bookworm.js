@@ -9,7 +9,7 @@
 import {Hoerprobe} from "./hoerprobe.js";
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de/hoerbuchkatalog';
+const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de';
 const shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
 export class Bookworm {
@@ -21,7 +21,7 @@ export class Bookworm {
     }
 
     fuegeZuMerklisteHinzu(titelnummer) {
-        const url = new URL('v1/merkliste/' + titelnummer, hoerbuchkatalogURL);
+        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, hoerbuchkatalogURL);
         fetch(url.toString(), {
             'method': 'POST',
             'headers': {
@@ -29,8 +29,7 @@ export class Bookworm {
                 'Content-Type': 'application/json',
                 'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer
-            },
-            'redirect': 'follow'
+            }
         })
             .then(response => {
                 if (response.ok) {
