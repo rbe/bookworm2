@@ -120,33 +120,7 @@ server {
         }
     }
 
-    location ~* ^/app/(customer|catalog|download)/.*$ {
-        return 404;
-    }
-    location ~* ^/approxy/.*$ {
-        return 404;
-    }
-    location /bookworm/ {
-        return 301 /hoerbuchkatalog/;
-    }
-    location /catalog/ {
-        location ~ /catalog/.+\.xhtml\;SESSIONID=.* {
-            return 404;
-        }
-        return 301 /hoerbuchkatalog/katalogsuche.xhtml;
-    }
     location /hoerbuchkatalog/ {
-        # CSS, Bilder vom CMS
-        location ~* \.(css|png|jpe?g|gif|ico)$ {
-            try_files $uri =404;
-            expires 24h;
-        }
-        #rewrite /(.+) /approxy/joomla_approxy.php/$1 break;
-        #include /etc/nginx/fastcgi_params;
-        #fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
-        #fastcgi_connect_timeout 5s;
-        #fastcgi_ignore_client_abort on;
-        #fastcgi_pass joomla:9000;
         proxy_pass http://hoerbuchkatalog:8080;
     }
 
