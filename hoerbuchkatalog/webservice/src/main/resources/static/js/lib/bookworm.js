@@ -9,7 +9,7 @@
 import {Hoerprobe} from "./hoerprobe.js";
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de';
+const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de/hoerbuchkatalog';
 const shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
 export class Bookworm {
