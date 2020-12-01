@@ -71,8 +71,6 @@ public class BestellungController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}")
     public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                            @Header("X-Bookworm-Mandant") final String xMandant,
-                                                            @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                             @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
@@ -98,8 +96,6 @@ public class BestellungController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/status/{orderId}")
     public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                    @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                    @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                     @PathVariable final String titelnummer,
                                                                     @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
@@ -126,8 +122,6 @@ public class BestellungController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/fetch/{orderId}")
     public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                            @Header("X-Bookworm-Mandant") final String xMandant,
-                                                            @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                             @PathVariable final String titelnummer,
                                                             @PathVariable final String orderId) {
         return optionsResponse(httpRequest);

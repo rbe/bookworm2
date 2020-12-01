@@ -64,8 +64,6 @@ public class PlaylistController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/playlist")
     public HttpResponse<String> optionsPlaylist(final HttpRequest<?> httpRequest,
-                                                @Header("X-Bookworm-Mandant") final String xMandant,
-                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                 @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }

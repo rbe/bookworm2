@@ -27,7 +27,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookInfoDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.TrackInfoDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
@@ -65,8 +64,6 @@ public class TrackController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/track/{ident}")
     public HttpResponse<String> optionsTrack(final HttpRequest<?> httpRequest,
-                                             @Header("X-Bookworm-Mandant") final String xMandant,
-                                             @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                              @PathVariable final String titelnummer,
                                              @PathVariable final String ident) {
         return optionsResponse(httpRequest);
@@ -92,15 +89,6 @@ public class TrackController {
                 dto -> CORS.response(httpRequest, dto),
                 String.format("%s/%s/track/%s", BASE_URL, titelnummer, ident),
                 httpRequest);
-    }
-
-    @Mapper
-    public interface AudiobookMapper {
-
-        AudiobookMapper INSTANCE = Mappers.getMapper(AudiobookMapper.class);
-
-        AudiobookInfoAntwortDTO convert(AudiobookInfoDTO audiobookInfoDTO);
-
     }
 
     @Mapper

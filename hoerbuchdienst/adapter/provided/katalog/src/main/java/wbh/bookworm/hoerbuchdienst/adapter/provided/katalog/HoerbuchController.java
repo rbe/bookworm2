@@ -64,8 +64,6 @@ public class HoerbuchController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}")
     public HttpResponse<String> optionsAudiobookInfo(final HttpRequest<?> httpRequest,
-                                                     @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }

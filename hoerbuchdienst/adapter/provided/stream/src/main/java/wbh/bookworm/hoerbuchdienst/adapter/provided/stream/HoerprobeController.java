@@ -73,8 +73,6 @@ public class HoerprobeController {
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}")
     public MutableHttpResponse<String> optionsHoerprobeAsStream(final HttpRequest<?> httpRequest,
-                                                                @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                 @PathVariable("titelnummer") final String titelnummer) {
         return CORS.optionsResponse(httpRequest);
     }
