@@ -13,9 +13,11 @@ import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.MutableHttpResponse;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
+import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -66,6 +68,15 @@ public class HoerprobeController {
         this.audiobookShardRedirector = audiobookShardRedirector;
         this.audiobookStreamService = audiobookStreamService;
         this.katalogService = katalogService;
+    }
+
+    @Operation(hidden = true)
+    @Options(uri = "/{titelnummer}")
+    public MutableHttpResponse<String> optionsHoerprobeAsStream(final HttpRequest<?> httpRequest,
+                                                                @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                @PathVariable("titelnummer") final String titelnummer) {
+        return CORS.optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
