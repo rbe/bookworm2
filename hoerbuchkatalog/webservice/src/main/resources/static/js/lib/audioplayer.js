@@ -10,56 +10,13 @@ import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Audioplayer {
 
-    constructor() {
-        this.audio = this.createAudioElement();
-        this.initElementSelectors();
-        this.DEBUG = true;
-        this.asyncDownloadStatusTimeoutId = new Map();
-    }
-
-    init(audiobookURL, mandant, hoerernummer, titelnummer, onReadyCallback) {
+    constructor(audiobookURL, mandant, hoerernummer) {
         this.audiobookURL = audiobookURL;
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
-        this.titelnummer = titelnummer;
-        this.playButton = document.querySelector(this.elementSelectors.playButtonSelector);
-        this.currentTrackTitle = document.querySelector(this.elementSelectors.currentTrackTitleSelector);
-        this.displayAudiobookInfo();
-        this.playlist = new Playlist(this.elementSelectors, this,
-            this.audiobookURL, this.hoerernummer, this.titelnummer,
-            () => {
-                this.currentTrack = -1;
-                this.initAudioEvents();
-                this.initPlayerControls();
-                this.volumeControl = new VolumeControl(this.elementSelectors, this.audio);
-                onReadyCallback();
-            });
-        this.downloadStatusText = document.querySelector(this.elementSelectors.downloadStatusTextSelector);
-    }
-
-    initElementSelectors() {
-        this.elementSelectors = {
-            'playlistSelector': 'div.playlist',
-            'playlistEntriesSelector': 'div.playlist ul',
-            'titleTextSelector': 'div.titel > span',
-            'titelnummerTextSelector': 'div.titelnummer > span',
-            'authorTextSelector': 'div.author > span',
-            'narratorTextSelector': 'div.narrator > span',
-            'currentTrackTitleSelector': 'div.title > span',
-            'trackInfoTextSelector': 'div.trackInfo > pre',
-            'currentTimeSelector': '#currentTime',
-            'maxTimeSelector': '#maxTime',
-            'progressBarSelector': 'div.progressbar',
-            'previousTrackButtonSelector': 'button.previousTrack',
-            'prev10TrackButtonSelector': 'button.prev10',
-            'playButtonSelector': 'button.play',
-            'next10TrackButtonSelector': 'button.next10',
-            'nextTrackButtonSelector': 'button.nextTrack',
-            'volumeDownButtonSelector': 'button.volumeDown',
-            'volumeUpButtonSelector': 'button.volumeUp',
-            'volumeSliderInputSelector': 'input.volumeSlider',
-            'downloadStatusTextSelector': '#downloadStatus'
-        };
+        this.audio = document.querySelector('#audio');
+        this.audio = this.createAudioElement();
+        this.asyncDownloadStatusTimeoutId = new Map();
     }
 
     createAudioElement() {
@@ -67,6 +24,26 @@ export class Audioplayer {
         audio.id = 'audio';
         audio.load();
         return audio;
+    }
+
+    hoerprobe(titelnummer) {
+        const url = new URL('v1/hoerprobe/' + titelnummer, this.audiobookURL);
+        fetch(url.toString(), {
+            'method': 'GET',
+            'headers': {
+                'Accept': 'audio/mp3',
+                'X-Bookworm-Mandant': this.mandant,
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            },
+            'redirect': 'follow'
+        })
+            .then(response => {
+                return response.blob();
+            })
+            .then(blob => {
+                this.audio.src = URL.createObjectURL(blob);
+                this.audio.load();
+            })
     }
 
     asyncDownloadOrder() {

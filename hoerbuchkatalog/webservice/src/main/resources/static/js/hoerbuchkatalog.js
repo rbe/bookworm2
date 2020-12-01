@@ -6,14 +6,26 @@
 
 "use strict";
 
-import {Audioplayer} from "./lib/audioplayer";
+import {Audioplayer} from "./lib/audioplayer.js";
 
 const bookworm = {
+
+    audioplayer: new Audioplayer('https://hoerbuchdienst.shard4.audiobook.wbh-online.de', '06', '00000'),
 
     fuegeZuMerklisteHinzu: function (titelnummer) {
     },
 
+    entferneVonMerkliste: function (titelnummer) {
+    },
+
     fuegeZuWarenkorbHinzu: function (titelnummer) {
+    },
+
+    entferneVonWarenkorb: function (titelnummer) {
+    },
+
+    hoerprobe: function (titelnummer) {
+        this.audioplayer.hoerprobe(titelnummer);
     },
 
     bestelleDownload: function (titelnummer) {
@@ -22,9 +34,11 @@ const bookworm = {
 };
 
 window.onload = function () {
-    const audioplayer = new Audioplayer();
-    const hoerbuchdienstUrl = new URL('https://hoerbuchdienst.shard4.audiobook.wbh-online.de');
-    audioplayer.init(hoerbuchdienstUrl, '06', '00000');
+    document.querySelector('#hoerprobeAbrufen').addEventListener('click', () => {
+        const titelnummer = document.querySelector('#titelnummer').value;
+        bookworm.audioplayer.hoerprobe(titelnummer);
+    });
+    /*
     document.querySelector('.button .order-cd').addEventListener('click', function (e) {
         console.log(e);
         console.log(this);
@@ -33,4 +47,5 @@ window.onload = function () {
     });
     document.querySelector('.button .watchlist').addEventListener('click', () => {
     });
+    */
 };
