@@ -2,11 +2,39 @@
 <html lang="de">
 <head>
     <title></title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-<label for="titelnummer">Titelnummer:</label><input id="titelnummer" type="text" value="21052"/>
-<button id="hoerprobeAbrufen">H&ouml;rprobe</button>
-<audio controls id="audio" src=""></audio>
+<div class="container">
+    <div class="row no-gutters">
+        <div class="col-sm-12 column action">
+            <a aria-label="H&ouml;rprobe" class="button hoerprobe-true"
+               href="#"
+               id="hoerprobe-21052" title="H&ouml;rprobe">
+                <i class="fas fa-volume-up fa"></i>
+            </a>
+            <a aria-label="H&ouml;rbuch als CD bestellen" class="button order-cd-false"
+               href="#"
+               id="warenkorb-21052" title="H&ouml;rbuch als CD bestellen">
+                <i class="fas fa-compact-disc"></i>
+            </a>
+            <a aria-label="H&ouml;rbuch herunterladen" class="button order-download-true"
+               href="#"
+               id="download-21052" title="H&ouml;rbuch herunterladen">
+                <i class="fas fa-book-reader"></i>
+            </a>
+            <a aria-label="H&ouml;rbuch auf die Merkliste setzen" class="button watchlist-false"
+               href="#"
+               id="merkliste-21052" title="H&ouml;rbuch auf die Merkliste setzen">
+                <i class="fas fa-bookmark"></i>
+            </a>
+        </div>
+    </div>
+    <div class="hoerprobe">
+        <audio controls id="audio" src=""></audio>
+    </div>
+</div>
 <script src="js/hoerbuchkatalog.js" type="module"></script>
 </body>
 </html>

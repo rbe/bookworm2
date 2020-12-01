@@ -8,28 +8,50 @@
 
 import {Bookworm} from "./lib/bookworm.js";
 
-window.onload = function () {
-    const bookworm = new Bookworm();
+document.addEventListener("DOMContentLoaded", function () {
+    const bookworm = new Bookworm('06', '00000');
     // Hörprobe
-    const hoerprobeButton = document.querySelector('.button .hoerprobe');
-    hoerprobeButton.addEventListener('click', () => {
-        const titelnummer = document.querySelector('#titelnummer').value;
-        bookworm.hoerprobe(titelnummer);
-    });
+    const hoerprobeButton = document.querySelector('.button.hoerprobe-true');
+    if (hoerprobeButton) {
+        hoerprobeButton.addEventListener('click', (e) => {
+            const titelnummer = e.target.parentElement.id.split('-')[1];
+            bookworm.hoerprobe(titelnummer);
+        });
+    }
     // Merkliste
-    const merklisteButton = document.querySelector('.button .watchlist-false');
-    merklisteButton.addEventListener('click', function (e) {
-        console.log(e);
-        console.log(this);
+    const merklisteHinzufuegenButton = document.querySelector('.button.watchlist-false');
+    merklisteHinzufuegenButton.addEventListener('click', function (e) {
+        const titelnummer = e.target.parentElement.id.split('-')[1];
+        bookworm.fuegeZuMerklisteHinzu(titelnummer);
     });
-    // CD Bestellung
-    const cdBestellenButton = document.querySelector('.button .order-cd-false');
-    cdBestellenButton.addEventListener('click', function (e) {
-        console.log(e);
-        console.log(this);
-    });
+    const merklisteEntfernenButton = document.querySelector('.button.watchlist-true');
+    if (merklisteEntfernenButton) {
+        merklisteEntfernenButton.addEventListener('click', function (e) {
+            const titelnummer = e.target.parentElement.id.split('-')[1];
+            bookworm.entferneVonMerkliste(titelnummer);
+        });
+    }
+    // Warenkorb
+    const warenkorbHinzufuegenButton = document.querySelector('.button.order-cd-false');
+    if (warenkorbHinzufuegenButton) {
+        warenkorbHinzufuegenButton.addEventListener('click', function (e) {
+            console.log(e);
+            bookworm.fuegeZuWarenkorbHinzu();
+        });
+    }
+    const warenkorbEntfernenButton = document.querySelector('.button.order-cd-true');
+    if (warenkorbEntfernenButton) {
+        warenkorbEntfernenButton.addEventListener('click', function (e) {
+            const titelnummer = e.target.parentElement.id.split('-')[1];
+            bookworm.entferneAusWarenkorb(titelnummer);
+        });
+    }
     // Download
     const downloadButton = document.querySelector('.button .order-download-true');
-    downloadButton.addEventListener('click', () => {
-    });
-};
+    if (downloadButton) {
+        downloadButton.addEventListener('click', () => {
+            const titelnummer = e.target.parentElement.id.split('-')[1];
+            bookworm.bestelleDownload(titelnummer);
+        });
+    }
+});
