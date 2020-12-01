@@ -6,10 +6,10 @@
 
 "use strict";
 
-import {Bookworm} from "./lib/bookworm.js";
+import {BookwormRestClient} from "./lib/bookwormRestClient.js";
 
 document.addEventListener("DOMContentLoaded", function () {
-    const bookworm = new Bookworm('06', '00000');
+    const bookworm = new BookwormRestClient('06', '00000');
     // Hörprobe
     const hoerprobeButton = document.querySelector('.button.hoerprobe-true');
     if (hoerprobeButton) {
@@ -20,7 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     // Merkliste
     const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
-    for (const merklisteButton of merklisteButton) {
+    for (const merklisteButton of merklisteButtons) {
         merklisteButton.addEventListener('click', (e) => {
             const titelnummer = e.target.parentElement.id.split('-')[1];
             const aufMerkliste = merklisteButton.classList.contains('watchlist-true');

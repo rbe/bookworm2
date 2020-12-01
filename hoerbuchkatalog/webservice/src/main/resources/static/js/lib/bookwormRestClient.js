@@ -12,7 +12,7 @@ import {FetchErrorHandler} from "./fetchErrorHandler.js";
 const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de';
 const shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
-export class Bookworm {
+export class BookwormRestClient {
 
     constructor(mandant, hoerernummer = '00000') {
         this.mandant = mandant;
