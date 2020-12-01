@@ -46,7 +46,7 @@ public final class CORS {
 
     public static MutableHttpResponse<String> optionsResponse(final HttpRequest<?> httpRequest) {
         return with(httpRequest,
-                origin -> HttpResponse.<String>noContent()
+                origin -> HttpResponse.<String>ok()
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
