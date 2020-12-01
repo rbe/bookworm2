@@ -15,7 +15,6 @@ export class Audioplayer {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
         this.audio = document.querySelector('#audio');
-        this.audio = this.createAudioElement();
         this.asyncDownloadStatusTimeoutId = new Map();
     }
 
@@ -43,6 +42,7 @@ export class Audioplayer {
             .then(blob => {
                 this.audio.src = URL.createObjectURL(blob);
                 this.audio.load();
+                this.audio.play();
             })
     }
 

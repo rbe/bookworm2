@@ -85,7 +85,7 @@ public class HoerprobeController {
                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                   @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer, 5),
+                () -> makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer, 6),
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
                 String.format("%s/%s", BASE_URL, titelnummer),
