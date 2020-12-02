@@ -17,8 +17,8 @@ export class Wbhonline {
     hoerprobeButtons() {
         const hoerprobeButtons = document.querySelectorAll('.button.hoerprobe-true');
         for (const hoerprobeButton of hoerprobeButtons) {
-            hoerprobeButton.addEventListener('click', (e) => {
-                const titelnummer = e.target.parentElement.id.split('-')[1];
+            hoerprobeButton.addEventListener('click', (event) => {
+                const titelnummer = event.target.parentElement.id.split('-')[1];
                 this.bookworm.hoerprobe(titelnummer);
             });
         }
@@ -27,8 +27,8 @@ export class Wbhonline {
     merklisteButtons() {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
         for (const merklisteButton of merklisteButtons) {
-            merklisteButton.addEventListener('click', (e) => {
-                const titelnummer = e.target.parentElement.id.split('-')[1];
+            merklisteButton.addEventListener('click', (event) => {
+                const titelnummer = event.target.parentElement.id.split('-')[1];
                 const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
                 if (aufMerkliste) {
                     this.bookworm.entferneVonMerkliste(titelnummer, () => {
@@ -48,8 +48,8 @@ export class Wbhonline {
     warenkorbButton() {
         const warenkorbButtons = document.querySelectorAll('a[id^="order-cd-"]');
         for (const warenkorbButton of warenkorbButtons) {
-            warenkorbButton.addEventListener('click', (e) => {
-                const titelnummer = e.target.parentElement.id.split('-')[1];
+            warenkorbButton.addEventListener('click', (event) => {
+                const titelnummer = event.target.parentElement.id.split('-')[1];
                 const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
                 if (imWarenkorb) {
                     this.bookworm.entferneAusWarenkorb(titelnummer, () => {
@@ -67,10 +67,10 @@ export class Wbhonline {
     }
 
     downloadButtons() {
-        const downloadButtons = document.querySelectorAll('a[id^="download-"]');
+        const downloadButtons = document.querySelectorAll('a[id^="order-download-"]');
         for (const downloadButton of downloadButtons) {
-            downloadButton.addEventListener('click', () => {
-                const titelnummer = e.target.parentElement.id.split('-')[1];
+            downloadButton.addEventListener('click', (event) => {
+                const titelnummer = event.target.parentElement.id.split('-')[1];
                 this.bookworm.bestelleDownload(titelnummer);
             });
         }
