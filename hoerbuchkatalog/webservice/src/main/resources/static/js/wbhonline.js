@@ -45,7 +45,7 @@ export class Wbhonline {
         }
     }
 
-    warenkorbButton() {
+    warenkorbButtons() {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
             warenkorbButton.addEventListener('click', (event) => {

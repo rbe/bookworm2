@@ -8,10 +8,10 @@
 
 import {Wbhonline} from "./js/wbhonline.js";
 
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener('DOMContentLoaded', function () {
     const wbhonline = new Wbhonline('80170');
     wbhonline.hoerprobeButtons();
     wbhonline.merklisteButtons();
-    wbhonline.warenkorbButton();
+    wbhonline.warenkorbButtons();
     wbhonline.downloadButtons();
 });
