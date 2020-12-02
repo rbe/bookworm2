@@ -31,12 +31,12 @@ export class Wbhonline {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
                 const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
                 if (aufMerkliste) {
-                    bookworm.entferneVonMerkliste(titelnummer, () => {
+                    this.bookworm.entferneVonMerkliste(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-true');
                         merklisteButton.classList.add('watchlist-false');
                     });
                 } else {
-                    bookworm.fuegeZuMerklisteHinzu(titelnummer, () => {
+                    this.bookworm.fuegeZuMerklisteHinzu(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-false');
                         merklisteButton.classList.add('watchlist-true');
                     });
@@ -52,12 +52,12 @@ export class Wbhonline {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
                 const imWarenkorb = merklisteButton.classList.contains('order-cd-true');
                 if (imWarenkorb) {
-                    bookworm.entferneAusWarenkorb(titelnummer, () => {
+                    this.bookworm.entferneAusWarenkorb(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-true');
                         warenkorbButton.classList.add('order-cd-false');
                     });
                 } else {
-                    bookworm.fuegeZuWarenkorbHinzu(titelnummer, () => {
+                    this.bookworm.fuegeZuWarenkorbHinzu(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-false');
                         warenkorbButton.classList.add('order-cd-true');
                     });
@@ -71,7 +71,7 @@ export class Wbhonline {
         for (const downloadButton of downloadButtons) {
             downloadButton.addEventListener('click', () => {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
-                bookworm.bestelleDownload(titelnummer);
+                this.bookworm.bestelleDownload(titelnummer);
             });
         }
     }
