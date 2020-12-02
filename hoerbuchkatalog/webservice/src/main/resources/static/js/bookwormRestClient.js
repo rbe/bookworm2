@@ -9,20 +9,22 @@
 import {Audioplayer} from "./audioplayer.js";
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-const hoerbuchkatalogURL = 'https://www.beta.wbh-online.de';
-const shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
+const HOERBUCHKATALOG_URL = 'https://www.beta.wbh-online.de';
+const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
+const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
 export class BookwormRestClient {
 
     constructor(mandant, hoerernummer) {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
-        this.audioplayer = new Audioplayer(shardURL, mandant, hoerernummer);
+        this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
+        this.asyncDownloadStatusTimeoutId = new Map();
         this.orderId = '';
     }
 
     fuegeZuMerklisteHinzu(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, hoerbuchkatalogURL);
+        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'POST',
             'headers': {
@@ -40,7 +42,7 @@ export class BookwormRestClient {
                 }
             })
             .then(json => {
-                if (json.result === 'true' && successCallback) {
+                if (json.result === true && successCallback) {
                     successCallback();
                 }
             })
@@ -50,7 +52,7 @@ export class BookwormRestClient {
     }
 
     entferneVonMerkliste(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, hoerbuchkatalogURL);
+        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'DELETE',
             'headers': {
@@ -67,7 +69,7 @@ export class BookwormRestClient {
                 }
             })
             .then(json => {
-                if (json.result === 'true' && successCallback) {
+                if (json.result === true && successCallback) {
                     successCallback();
                 }
             })
@@ -77,7 +79,7 @@ export class BookwormRestClient {
     }
 
     fuegeZuWarenkorbHinzu(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, hoerbuchkatalogURL);
+        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'POST',
             'headers': {
@@ -95,7 +97,7 @@ export class BookwormRestClient {
                 }
             })
             .then(json => {
-                if (json.result === 'true' && successCallback) {
+                if (json.result === true && successCallback) {
                     successCallback();
                 }
             })
@@ -105,7 +107,7 @@ export class BookwormRestClient {
     }
 
     entferneAusWarenkorb(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, hoerbuchkatalogURL);
+        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'DELETE',
             'headers': {
@@ -122,7 +124,7 @@ export class BookwormRestClient {
                 }
             })
             .then(json => {
-                if (json.result === 'true' && successCallback) {
+                if (json.result === true && successCallback) {
                     successCallback();
                 }
             })
@@ -136,7 +138,7 @@ export class BookwormRestClient {
     }
 
     bestelleDownload(titelnummer, successCallback) {
-        const url = new URL('v1/bestellung/' + titelnummer, shardURL).toString();
+        const url = new URL('v1/bestellung/' + titelnummer, SHARD_URL).toString();
         fetch(url, {
             'method': 'POST',
             'mode': 'cors',
@@ -170,7 +172,7 @@ export class BookwormRestClient {
     }
 
     warteAufDownload(titelnummer) {
-        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + this.orderId, shardURL);
+        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + this.orderId, SHARD_URL);
         fetch(url.toString(), {
             'method': 'GET',
             'mode': 'cors',
@@ -195,10 +197,10 @@ export class BookwormRestClient {
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
-                                this.asyncDownloadAudiobook();
+                                this.downloadHoerbuch();
                                 break;
                             case 'FAILED':
-                                alert('Entschuldigung, die Bestellung konnte nicht bearbeitet werden');
+                                alert('Entschuldigung, das Hörbuch konnte nicht bereitgestellt werden');
                                 break;
                             default:
                                 alert('Unbekannter Status!');
@@ -209,10 +211,8 @@ export class BookwormRestClient {
                         }
                     } else {
                         this.asyncDownloadStatusTimeoutId.set(this.orderId,
-                            setTimeout(() => this.warteAufDownload(), 1500));
+                            setTimeout(() => this.warteAufDownload(), DOWNLOAD_STATUS_TIMEOUT));
                     }
-                } else {
-                    console.log('asyncDownloadStatus(): Sorry, no JSON');
                 }
             })
             .catch(reason => {
@@ -220,5 +220,9 @@ export class BookwormRestClient {
             });
     }
 
+    downloadHoerbuch(titelnummer) {
+        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + this.orderId, SHARD_URL);
+        const newWindow = window.open(url, 'daisyHoerbuchDownload');
+    }
 
 }
