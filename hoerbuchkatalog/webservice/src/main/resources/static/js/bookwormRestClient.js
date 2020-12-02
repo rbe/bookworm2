@@ -14,7 +14,7 @@ const shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
 export class BookwormRestClient {
 
-    constructor(mandant, hoerernummer = '00000') {
+    constructor(mandant, hoerernummer) {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
         this.audioplayer = new Audioplayer(shardURL, mandant, hoerernummer);
@@ -75,7 +75,7 @@ export class BookwormRestClient {
             });
     }
 
-    fuegeZuWarenkorbHinzu(titelnummer) {
+    fuegeZuWarenkorbHinzu(titelnummer, successCallback) {
         const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, hoerbuchkatalogURL);
         fetch(url.toString(), {
             'method': 'POST',
@@ -103,7 +103,7 @@ export class BookwormRestClient {
             });
     }
 
-    entferneAusWarenkorb(titelnummer) {
+    entferneAusWarenkorb(titelnummer, successCallback) {
         const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, hoerbuchkatalogURL);
         fetch(url.toString(), {
             'method': 'DELETE',
@@ -134,7 +134,7 @@ export class BookwormRestClient {
         this.audioplayer.hoerprobe(titelnummer);
     }
 
-    bestelleDownload(titelnummer) {
+    bestelleDownload(titelnummer, successCallback) {
     }
 
 }
