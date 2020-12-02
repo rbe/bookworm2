@@ -147,7 +147,7 @@ public class BestellungController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
-                String.format("%s/%s/fetch/%s/s/s", BASE_URL, titelnummer, orderId, xMandant, xHoerernummer),
+                String.format("%s/%s/fetch/%s/%s/%s", BASE_URL, titelnummer, orderId, xMandant, xHoerernummer),
                 httpRequest);
     }
 
