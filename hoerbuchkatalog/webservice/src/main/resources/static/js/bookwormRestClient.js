@@ -211,7 +211,7 @@ export class BookwormRestClient {
                         }
                     } else {
                         this.asyncDownloadStatusTimeoutId.set(this.orderId,
-                            setTimeout(() => this.warteAufDownload(), DOWNLOAD_STATUS_TIMEOUT));
+                            setTimeout(() => this.warteAufDownload(titelnummer), DOWNLOAD_STATUS_TIMEOUT));
                     }
                 }
             })
