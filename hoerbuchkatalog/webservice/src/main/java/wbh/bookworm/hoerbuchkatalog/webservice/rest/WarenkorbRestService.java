@@ -62,10 +62,10 @@ public final class WarenkorbRestService {
                                          @PathVariable final String titelnummer) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
                 xHoerernummer);
-        warenkorbService.ausDemCdWarenkorbEntfernen(bestellungSessionId,
+        final boolean b = warenkorbService.ausDemCdWarenkorbEntfernen(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
-        return Map.of("result", true);
+        return Map.of("result", b);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)

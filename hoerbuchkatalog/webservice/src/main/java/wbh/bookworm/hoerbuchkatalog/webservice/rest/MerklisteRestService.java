@@ -36,21 +36,21 @@ public class MerklisteRestService {
 
     //@PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     @PostMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+    public Map<String, Object> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                           @PathVariable final String titelnummer) {
-        merklisteService.hinzufuegen(new Hoerernummer(xHoerernummer),
+        final boolean b = merklisteService.hinzufuegen(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
-        return Map.of("result", "true");
+        return Map.of("result", b);
     }
 
     @DeleteMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public Map<String, String> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+    public Map<String, Object> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                          @PathVariable final String titelnummer) {
-        merklisteService.entfernen(new Hoerernummer(xHoerernummer),
+        final boolean b = merklisteService.entfernen(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
-        return Map.of("result", "true");
+        return Map.of("result", b);
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
