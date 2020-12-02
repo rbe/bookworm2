@@ -159,9 +159,8 @@ export class BookwormRestClient {
             })
             .then(json => {
                 if (json) {
-                    this.orderId = json.orderId;
-                    console.log('orderId ist ' + this.orderId);
-                    this.warteAufDownload(titelnummer);
+                    console.log('orderId ist ' + json.orderId);
+                    this.warteAufDownload(titelnummer, json.orderId);
                 } else {
                     console.log('asyncDownloadOrder(): Sorry, no JSON');
                 }
@@ -171,8 +170,8 @@ export class BookwormRestClient {
             });
     }
 
-    warteAufDownload(titelnummer) {
-        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + this.orderId, SHARD_URL);
+    warteAufDownload(titelnummer, orderId) {
+        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + orderId, SHARD_URL);
         fetch(url.toString(), {
             'method': 'GET',
             'mode': 'cors',
@@ -197,7 +196,7 @@ export class BookwormRestClient {
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
-                                this.downloadHoerbuch();
+                                this.downloadHoerbuch(titelnummer, orderId);
                                 break;
                             case 'FAILED':
                                 alert('Entschuldigung, das Hörbuch konnte nicht bereitgestellt werden');
@@ -205,13 +204,13 @@ export class BookwormRestClient {
                             default:
                                 alert('Unbekannter Status!');
                         }
-                        if (this.asyncDownloadStatusTimeoutId.has(this.orderId)) {
-                            clearTimeout(this.asyncDownloadStatusTimeoutId.get(this.orderId));
-                            this.asyncDownloadStatusTimeoutId.delete(this.orderId);
+                        if (this.asyncDownloadStatusTimeoutId.has(orderId)) {
+                            clearTimeout(this.asyncDownloadStatusTimeoutId.get(orderId));
+                            this.asyncDownloadStatusTimeoutId.delete(orderId);
                         }
                     } else {
-                        this.asyncDownloadStatusTimeoutId.set(this.orderId,
-                            setTimeout(() => this.warteAufDownload(titelnummer), DOWNLOAD_STATUS_TIMEOUT));
+                        this.asyncDownloadStatusTimeoutId.set(orderId,
+                            setTimeout(() => this.warteAufDownload(titelnummer, orderId), DOWNLOAD_STATUS_TIMEOUT));
                     }
                 }
             })
@@ -220,9 +219,15 @@ export class BookwormRestClient {
             });
     }
 
-    downloadHoerbuch(titelnummer) {
-        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + this.orderId, SHARD_URL);
-        const newWindow = window.open(url, 'daisyHoerbuchDownload');
+    downloadHoerbuch(titelnummer, orderId) {
+        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId, SHARD_URL);
+        // X-Bookworm-Header fehlen const newWindow = window.open(url, 'daisyHoerbuchDownload');
+        const anchor = document.createElement('a');
+        anchor.href = url.toString();
+        anchor.download = titelnummer + '.zip';
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
     }
 
 }
