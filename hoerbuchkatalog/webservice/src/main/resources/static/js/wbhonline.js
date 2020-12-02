@@ -19,7 +19,7 @@ export class Wbhonline {
         for (const hoerprobeButton of hoerprobeButtons) {
             hoerprobeButton.addEventListener('click', (e) => {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
-                bookworm.hoerprobe(titelnummer);
+                this.bookworm.hoerprobe(titelnummer);
             });
         }
     }
@@ -50,7 +50,7 @@ export class Wbhonline {
         for (const warenkorbButton of warenkorbButtons) {
             warenkorbButton.addEventListener('click', (e) => {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
-                const imWarenkorb = merklisteButton.classList.contains('order-cd-true');
+                const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
                 if (imWarenkorb) {
                     this.bookworm.entferneAusWarenkorb(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-true');
