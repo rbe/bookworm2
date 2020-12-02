@@ -38,7 +38,7 @@ public final class CORS {
     public static MutableHttpResponse<String> temporaryRedirect(final HttpRequest<?> httpRequest,
                                                                 final URI uri) {
         return with(httpRequest,
-                origin -> HttpResponse.<String>redirect(uri)
+                origin -> HttpResponse.<String>temporaryRedirect(uri)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .body(""));
