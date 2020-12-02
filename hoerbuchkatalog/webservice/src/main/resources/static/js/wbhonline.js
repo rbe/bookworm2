@@ -11,7 +11,7 @@ import {BookwormRestClient} from "./bookwormRestClient.js";
 export class Wbhonline {
 
     constructor(hoerernummer) {
-        this.bookworm = new BookwormRestClient('06', hoerernummer);
+        this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
     }
 
     hoerprobeButtons() {
@@ -19,7 +19,7 @@ export class Wbhonline {
         for (const hoerprobeButton of hoerprobeButtons) {
             hoerprobeButton.addEventListener('click', (event) => {
                 const titelnummer = event.target.parentElement.id.split('-')[1];
-                this.bookworm.hoerprobe(titelnummer);
+                this.bookwormRestClient.hoerprobe(titelnummer);
             });
         }
     }
@@ -31,12 +31,12 @@ export class Wbhonline {
                 const titelnummer = event.target.parentElement.id.split('-')[1];
                 const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
                 if (aufMerkliste) {
-                    this.bookworm.entferneVonMerkliste(titelnummer, () => {
+                    this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-true');
                         merklisteButton.classList.add('watchlist-false');
                     });
                 } else {
-                    this.bookworm.fuegeZuMerklisteHinzu(titelnummer, () => {
+                    this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-false');
                         merklisteButton.classList.add('watchlist-true');
                     });
@@ -46,18 +46,18 @@ export class Wbhonline {
     }
 
     warenkorbButton() {
-        const warenkorbButtons = document.querySelectorAll('a[id^="order-cd-"]');
+        const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.target.parentElement.id.split('-')[1];
                 const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
                 if (imWarenkorb) {
-                    this.bookworm.entferneAusWarenkorb(titelnummer, () => {
+                    this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-true');
                         warenkorbButton.classList.add('order-cd-false');
                     });
                 } else {
-                    this.bookworm.fuegeZuWarenkorbHinzu(titelnummer, () => {
+                    this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-false');
                         warenkorbButton.classList.add('order-cd-true');
                     });
@@ -67,11 +67,11 @@ export class Wbhonline {
     }
 
     downloadButtons() {
-        const downloadButtons = document.querySelectorAll('a[id^="order-download-"]');
+        const downloadButtons = document.querySelectorAll('a[id^="download-"]');
         for (const downloadButton of downloadButtons) {
             downloadButton.addEventListener('click', (event) => {
                 const titelnummer = event.target.parentElement.id.split('-')[1];
-                this.bookworm.bestelleDownload(titelnummer);
+                this.bookwormRestClient.bestelleDownload(titelnummer);
             });
         }
     }

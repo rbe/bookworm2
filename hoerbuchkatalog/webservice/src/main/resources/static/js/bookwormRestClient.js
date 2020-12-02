@@ -18,6 +18,7 @@ export class BookwormRestClient {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
         this.audioplayer = new Audioplayer(shardURL, mandant, hoerernummer);
+        this.orderId = '';
     }
 
     fuegeZuMerklisteHinzu(titelnummer, successCallback) {
@@ -135,6 +136,89 @@ export class BookwormRestClient {
     }
 
     bestelleDownload(titelnummer, successCallback) {
+        const url = new URL('v1/bestellung/' + titelnummer, shardURL).toString();
+        fetch(url, {
+            'method': 'POST',
+            'mode': 'cors',
+            'headers': {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                'X-Bookworm-Mandant': this.mandant,
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            },
+            'redirect': 'follow'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json) {
+                    this.orderId = json.orderId;
+                    console.log('orderId ist ' + this.orderId);
+                    this.warteAufDownload(titelnummer);
+                } else {
+                    console.log('asyncDownloadOrder(): Sorry, no JSON');
+                }
+            })
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+            });
     }
+
+    warteAufDownload(titelnummer) {
+        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + this.orderId, shardURL);
+        fetch(url.toString(), {
+            'method': 'GET',
+            'mode': 'cors',
+            'headers': {
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': this.mandant,
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            },
+            'redirect': 'follow'
+        })
+            .then(response => {
+                if (response.ok) {
+                    return response.json();
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .then(json => {
+                if (json && json.orderStatus) {
+                    const orderStatus = json.orderStatus;
+                    console.log(this.orderId + ': Status ist ' + orderStatus);
+                    if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
+                        switch (orderStatus) {
+                            case 'SUCCESS':
+                                this.asyncDownloadAudiobook();
+                                break;
+                            case 'FAILED':
+                                alert('Entschuldigung, die Bestellung konnte nicht bearbeitet werden');
+                                break;
+                            default:
+                                alert('Unbekannter Status!');
+                        }
+                        if (this.asyncDownloadStatusTimeoutId.has(this.orderId)) {
+                            clearTimeout(this.asyncDownloadStatusTimeoutId.get(this.orderId));
+                            this.asyncDownloadStatusTimeoutId.delete(this.orderId);
+                        }
+                    } else {
+                        this.asyncDownloadStatusTimeoutId.set(this.orderId,
+                            setTimeout(() => this.warteAufDownload(), 1500));
+                    }
+                } else {
+                    console.log('asyncDownloadStatus(): Sorry, no JSON');
+                }
+            })
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+            });
+    }
+
 
 }
