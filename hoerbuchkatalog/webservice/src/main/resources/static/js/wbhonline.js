@@ -46,7 +46,7 @@ export class Wbhonline {
     }
 
     warenkorbButton() {
-        const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
+        const warenkorbButtons = document.querySelectorAll('a[id^="order-cd-"]');
         for (const warenkorbButton of warenkorbButtons) {
             warenkorbButton.addEventListener('click', (e) => {
                 const titelnummer = e.target.parentElement.id.split('-')[1];
