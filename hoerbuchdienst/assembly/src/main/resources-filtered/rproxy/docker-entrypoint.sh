@@ -34,6 +34,7 @@ then
   if [[ "${tld}" == "local" ]]
   then
     echo "Creating self-signed TLS server certificates"
+    selfsigned-openssl.sh "${nginx.hostname}"
     selfsigned-openssl.sh "${vault.hostname}"
     selfsigned-openssl.sh "${kes.hostname}"
     selfsigned-openssl.sh "${minio.hostname}"
@@ -50,6 +51,8 @@ then
         --staple-ocsp --must-staple
         -n"
       [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
+      [[ ! -d /etc/letsencrypt/live/"${nginx.hostname}" ]] \
+          && certbot certonly ${certonly_args} -d "${nginx.hostname}"
       [[ ! -d /etc/letsencrypt/live/"${vault.hostname}" ]] \
           && certbot certonly ${certonly_args} -d "${vault.hostname}"
       [[ ! -d /etc/letsencrypt/live/"${kes.hostname}" ]] \

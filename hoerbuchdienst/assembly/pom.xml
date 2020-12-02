@@ -15,7 +15,7 @@
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
         <domain/>
         <nginx.release>1.17-alpine</nginx.release>
-        <nginx.hostname>nginx.${domain}</nginx.hostname>
+        <nginx.hostname>${domain}</nginx.hostname>
         <portainer.hostname>portainer.${domain}</portainer.hostname>
         <vault.release>1.4.0</vault.release>
         <vault.hostname>vault.${domain}</vault.hostname>
