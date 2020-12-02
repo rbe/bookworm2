@@ -154,6 +154,7 @@ export class BookwormRestClient {
                 if (response.ok) {
                     return response.json();
                 } else {
+                    // TODO HTTP 404 Buch nicht gefunden (Databeat noch nicht vollständig)
                     FetchErrorHandler.handle(response);
                 }
             })
