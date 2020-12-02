@@ -16,9 +16,11 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.HttpStatus;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -41,6 +43,8 @@ import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
         )
 )
 @Controller(RedistributionController.BASE_URL)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class RedistributionController {
 
     static final String BASE_URL = "/shard/redistribute";
@@ -57,8 +61,7 @@ public class RedistributionController {
         this.audiobookLocationService = audiobookLocationService;
     }
 
-    @Post(uri = "zip/{titelnummer}/{sHashValue}", consumes = MediaType.APPLICATION_OCTET_STREAM,
-            produces = MediaType.APPLICATION_JSON)
+    @Post(uri = "zip/{titelnummer}/{sHashValue}")
     public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
                                                   @PathVariable final String sHashValue,
                                                   @Body final byte[] bytes) {

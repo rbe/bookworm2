@@ -14,11 +14,13 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.MutableHttpResponse;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -35,6 +37,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
+import static wbh.bookworm.hoerbuchdienst.adapter.provided.stream.HoerprobeController.AUDIO_MP3;
+
 @OpenAPIDefinition(
         info = @Info(
                 title = "Bestellung",
@@ -45,13 +49,15 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
         )
 )
 @Controller(value = HoerprobeController.BASE_URL)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(AUDIO_MP3)
 public class HoerprobeController {
 
     static final String BASE_URL = "/v1/hoerprobe";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
 
-    private static final String AUDIO_MP3 = "audio/mp3";
+    static final String AUDIO_MP3 = "audio/mp3";
 
     private static final String EMPTY_STRING = "";
 

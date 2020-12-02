@@ -12,6 +12,7 @@ import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -31,6 +32,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.ShardService;
         )
 )
 @Controller(DatabeatController.BASE_URL)
+@Produces(MediaType.APPLICATION_JSON)
 public class DatabeatController {
 
     static final String BASE_URL = "/shard/databeat";
@@ -44,7 +46,7 @@ public class DatabeatController {
         this.shardService = shardService;
     }
 
-    @Get(uri = "generate", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "generate")
     public HttpResponse<Boolean> generateDatabeat() {
         LOGGER.info("Databeat generation requested");
         shardService.generateDatabeat();

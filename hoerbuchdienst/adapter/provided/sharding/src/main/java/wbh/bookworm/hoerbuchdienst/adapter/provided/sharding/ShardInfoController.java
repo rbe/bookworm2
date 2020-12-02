@@ -9,9 +9,11 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.sharding;
 import javax.inject.Inject;
 
 import io.micronaut.http.HttpResponse;
+import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Head;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -32,6 +34,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
         )
 )
 @Controller(ShardInfoController.SHARD)
+@Produces(MediaType.APPLICATION_JSON)
 public class ShardInfoController {
 
     static final String SHARD = "/shard/info";

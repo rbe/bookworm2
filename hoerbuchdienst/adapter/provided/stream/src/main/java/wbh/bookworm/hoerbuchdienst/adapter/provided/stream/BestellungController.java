@@ -15,12 +15,14 @@ import java.util.UUID;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -47,6 +49,8 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 )
 @Controller(value = BestellungController.BASE_URL,
         consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class BestellungController {
 
     static final String BASE_URL = "/v1/bestellung";
@@ -77,6 +81,7 @@ public class BestellungController {
 
     @Operation(summary = "Hörbuch als DAISY-ZIP bestellen")
     @Post(uri = "/{titelnummer}")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Map<String, String>> orderZippedAudiobook(final HttpRequest<?> httpRequest,
                                                                   @Header("X-Bookworm-Mandant") final String xMandant,
                                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -103,6 +108,7 @@ public class BestellungController {
 
     @Operation(summary = "Status einer Bestellung DAISY-ZIP abrufen")
     @Get(uri = "/{titelnummer}/status/{orderId}", headRoute = false)
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Map<String, String>> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
                                                                           @Header("X-Bookworm-Mandant") final String xMandant,
                                                                           @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -128,7 +134,8 @@ public class BestellungController {
     }
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
-    @Get(uri = "/{titelnummer}/fetch/{orderId}/{mandant}/{hoerernummer}", headRoute = false, produces = APPLICATION_ZIP)
+    @Get(uri = "/{titelnummer}/fetch/{orderId}/{mandant}/{hoerernummer}", headRoute = false)
+    @Produces(APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                      //@Header("X-Bookworm-Mandant") final String xMandant,
                                                      //@Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -146,7 +153,8 @@ public class BestellungController {
                     }
                 },
                 body -> CORS.response(httpRequest, body)
-                        .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
+                        .contentType(APPLICATION_ZIP)
+                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s/fetch/%s/%s/%s", BASE_URL, titelnummer, orderId, xMandant, xHoerernummer),
                 httpRequest);
     }

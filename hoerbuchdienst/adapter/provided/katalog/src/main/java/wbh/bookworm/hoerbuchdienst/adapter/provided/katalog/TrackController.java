@@ -16,6 +16,7 @@ import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -44,6 +45,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         )
 )
 @Controller(TrackController.BASE_URL)
+@Produces(MediaType.APPLICATION_JSON)
 public class TrackController {
 
     static final String BASE_URL = "/v1/katalog";
@@ -69,7 +71,7 @@ public class TrackController {
         return optionsResponse(httpRequest);
     }
 
-    @Get(uri = "/{titelnummer}/track/{ident}", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "/{titelnummer}/track/{ident}")
     public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest,
                                                    @Header("X-Bookworm-Mandant") final String xMandant,
                                                    @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,

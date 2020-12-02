@@ -11,9 +11,11 @@ import java.util.List;
 
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Body;
+import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Post;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
 import io.swagger.v3.oas.annotations.info.Info;
@@ -36,6 +38,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
         )
 )
 @Controller(SuchindexController.BASE_URL)
+@Consumes(MediaType.APPLICATION_JSON)
+@Produces(MediaType.APPLICATION_JSON)
 public class SuchindexController {
 
     static final String BASE_URL = "/v1/suche";
@@ -50,12 +54,12 @@ public class SuchindexController {
     }
 
     // TODO Automatisieren; hier nur für Testzwecke
-    @Get(uri = "index", produces = MediaType.APPLICATION_JSON)
+    @Get(uri = "index")
     public boolean index() {
         return katalogService.index();
     }
 
-    @Post(consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
+    @Post
     public List<SuchindexAntwortDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
         final List<AudiobookInfoDTO> result = katalogService.findAll(suchindexAnfrageDTO.getKeywords());
         return AntwortMapper.INSTANCE.convert(result);
