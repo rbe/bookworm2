@@ -128,12 +128,14 @@ public class BestellungController {
     }
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
-    @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP)
+    @Get(uri = "/{titelnummer}/fetch/{orderId}/{mandant}/{hoerernummer}", headRoute = false, produces = APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                     @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     //@Header("X-Bookworm-Mandant") final String xMandant,
+                                                     //@Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @PathVariable final String titelnummer,
-                                                     @PathVariable final String orderId) {
+                                                     @PathVariable final String orderId,
+                                                     @PathVariable("mandant") final String xMandant,
+                                                     @PathVariable("hoerernummer") final String xHoerernummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
@@ -145,7 +147,7 @@ public class BestellungController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .header("Content-Disposition", String.format("inline; filename=\"%s.zip\"", titelnummer)),
-                String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
+                String.format("%s/%s/fetch/%s/s/s", BASE_URL, titelnummer, orderId, xMandant, xHoerernummer),
                 httpRequest);
     }
 

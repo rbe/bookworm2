@@ -137,7 +137,7 @@ export class BookwormRestClient {
         this.audioplayer.hoerprobe(titelnummer);
     }
 
-    bestelleDownload(titelnummer, successCallback) {
+    bestelleDownload(titelnummer) {
         const url = new URL('v1/bestellung/' + titelnummer, SHARD_URL).toString();
         fetch(url, {
             'method': 'POST',
@@ -158,11 +158,11 @@ export class BookwormRestClient {
                 }
             })
             .then(json => {
-                if (json) {
+                if (json && json.orderId) {
                     console.log('orderId ist ' + json.orderId);
                     this.warteAufDownload(titelnummer, json.orderId);
                 } else {
-                    console.log('asyncDownloadOrder(): Sorry, no JSON');
+                    console.log('Kein JSON oder keine orderId bekommen');
                 }
             })
             .catch(reason => {
@@ -192,7 +192,7 @@ export class BookwormRestClient {
             .then(json => {
                 if (json && json.orderStatus) {
                     const orderStatus = json.orderStatus;
-                    console.log(this.orderId + ': Status ist ' + orderStatus);
+                    console.log(orderId + ': Status ist ' + orderStatus);
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
@@ -220,8 +220,9 @@ export class BookwormRestClient {
     }
 
     downloadHoerbuch(titelnummer, orderId) {
-        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId, SHARD_URL);
-        // X-Bookworm-Header fehlen const newWindow = window.open(url, 'daisyHoerbuchDownload');
+        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId
+            + '/' + this.mandant + '/' + this.hoerernummer, SHARD_URL);
+        //const newWindow = window.open(url, 'daisyHoerbuchDownload');
         const anchor = document.createElement('a');
         anchor.href = url.toString();
         anchor.download = titelnummer + '.zip';
