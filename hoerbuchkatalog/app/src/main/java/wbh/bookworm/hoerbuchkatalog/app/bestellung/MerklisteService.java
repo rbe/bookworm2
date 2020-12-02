@@ -46,10 +46,15 @@ public class MerklisteService {
     /**
      * Command
      */
-    public void hinzufuegen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+    public boolean hinzufuegen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         final Merkliste merkliste = merkliste(hoerernummer);
         merkliste.hinzufuegen(titelnummer);
-        merklisteRepository.save(merkliste);
+        if (merkliste.enthalten(titelnummer)) {
+            merklisteRepository.save(merkliste);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     public boolean enthalten(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
@@ -58,11 +63,17 @@ public class MerklisteService {
 
     /**
      * Command
+     * @return
      */
-    public void entfernen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
+    public boolean entfernen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         final Merkliste merkliste = merkliste(hoerernummer);
         merkliste.entfernen(titelnummer);
-        merklisteRepository.save(merkliste);
+        if (!merkliste.enthalten(titelnummer)) {
+            merklisteRepository.save(merkliste);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

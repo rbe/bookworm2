@@ -94,16 +94,18 @@ public class WarenkorbService {
     /**
      * Command
      */
-    public void ausDemCdWarenkorbEntfernen(final BestellungSessionId bestellungSessionId,
-                                           final Hoerernummer hoerernummer,
-                                           final Titelnummer titelnummer) {
+    public boolean ausDemCdWarenkorbEntfernen(final BestellungSessionId bestellungSessionId,
+                                              final Hoerernummer hoerernummer,
+                                              final Titelnummer titelnummer) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
         if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
             final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, warenkorbId);
             cdWarenkorb.entfernen(titelnummer);
+            return true;
         } else {
             LOGGER.error("Unbekanntes Hörbuch #{} wurde nicht für Hörer {} aus dem CD-Warenkorb entfernt",
                     titelnummer, hoerernummer);
+            return false;
         }
     }
 
