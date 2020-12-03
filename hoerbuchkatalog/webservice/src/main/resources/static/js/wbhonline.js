@@ -18,7 +18,7 @@ export class Wbhonline {
         const hoerprobeButtons = document.querySelectorAll('.button.hoerprobe-true');
         for (const hoerprobeButton of hoerprobeButtons) {
             hoerprobeButton.addEventListener('click', (event) => {
-                const titelnummer = event.target.parentElement.id.split('-')[1];
+                const titelnummer = event.currentTarget.id.split('-')[1];
                 this.bookwormRestClient.hoerprobe(titelnummer);
             });
         }
@@ -28,7 +28,7 @@ export class Wbhonline {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
         for (const merklisteButton of merklisteButtons) {
             merklisteButton.addEventListener('click', (event) => {
-                const titelnummer = event.target.parentElement.id.split('-')[1];
+                const titelnummer = event.currentTarget.id.split('-')[1];
                 const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
                 if (aufMerkliste) {
                     this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
@@ -49,7 +49,7 @@ export class Wbhonline {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
             warenkorbButton.addEventListener('click', (event) => {
-                const titelnummer = event.target.parentElement.id.split('-')[1];
+                const titelnummer = event.currentTarget.id.split('-')[1];
                 const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
                 if (imWarenkorb) {
                     this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
@@ -70,7 +70,7 @@ export class Wbhonline {
         const downloadButtons = document.querySelectorAll('a[id^="download-"]');
         for (const downloadButton of downloadButtons) {
             downloadButton.addEventListener('click', (event) => {
-                const titelnummer = event.target.parentElement.id.split('-')[1];
+                const titelnummer = event.currentTarget.id.split('-')[1];
                 this.bookwormRestClient.bestelleDownload(titelnummer);
             });
         }
