@@ -73,9 +73,10 @@ export class Audioplayer {
             });
     }
 
-    pausiereHoerprobe() {
+    pausiereHoerprobe(callback) {
         if (this.audio) {
             this.audio.pause();
+            callback();
         }
     }
 
