@@ -76,4 +76,13 @@ export class Wbhonline {
         }
     }
 
+    onDomReady() {
+        document.addEventListener('DOMContentLoaded', () => {
+            this.hoerprobeButtons();
+            this.merklisteButtons();
+            this.warenkorbButtons();
+            this.downloadButtons();
+        });
+    }
+
 }

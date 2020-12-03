@@ -6,12 +6,6 @@
 
 "use strict";
 
-import {Wbhonline} from "./js/wbhonline.js";
+import {Wbhonline} from './js/wbhonline.js';
 
-document.addEventListener('DOMContentLoaded', function () {
-    const wbhonline = new Wbhonline('80170');
-    wbhonline.hoerprobeButtons();
-    wbhonline.merklisteButtons();
-    wbhonline.warenkorbButtons();
-    wbhonline.downloadButtons();
-});
+new Wbhonline('80170').onDomReady();
