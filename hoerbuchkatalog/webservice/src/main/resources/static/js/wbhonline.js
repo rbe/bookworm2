@@ -63,9 +63,9 @@ export class Wbhonline {
         for (const merklisteButton of merklisteButtons) {
             const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
             if (aufMerkliste) {
-                this.vonMerklisteEntfernt(merklisteButton);
-            } else {
                 this.zurMerklisteHinzugefuegt(merklisteButton);
+            } else {
+                this.vonMerklisteEntfernt(merklisteButton);
             }
             merklisteButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
@@ -106,9 +106,9 @@ export class Wbhonline {
         for (const warenkorbButton of warenkorbButtons) {
             const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
             if (imWarenkorb) {
-                this.inDenWarenkorbGelegt(warenkorbButton);
-            } else {
                 this.ausDemWarenkorbEntfernt(warenkorbButton);
+            } else {
+                this.inDenWarenkorbGelegt(warenkorbButton);
             }
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
