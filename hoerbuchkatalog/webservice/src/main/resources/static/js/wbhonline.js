@@ -106,9 +106,9 @@ export class Wbhonline {
         for (const warenkorbButton of warenkorbButtons) {
             const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
             if (imWarenkorb) {
-                this.ausDemWarenkorbEntfernt(warenkorbButton);
-            } else {
                 this.inDenWarenkorbGelegt(warenkorbButton);
+            } else {
+                this.ausDemWarenkorbEntfernt(warenkorbButton);
             }
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
