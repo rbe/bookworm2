@@ -17,11 +17,27 @@ export class Wbhonline {
     hoerprobeButtons() {
         const hoerprobeButtons = document.querySelectorAll('a[id^="hoerprobe-"]');
         for (const hoerprobeButton of hoerprobeButtons) {
-            hoerprobeButton.addEventListener('click', (event) => {
-                const titelnummer = event.currentTarget.id.split('-')[1];
-                const audio = document.querySelector('audio[id="audio-' + titelnummer + '"]');
-                this.bookwormRestClient.hoerprobe(titelnummer, audio);
-            });
+            if (hoerprobeButton.classList.contains('hoerprobe-true')) {
+                hoerprobeButton.title = 'Hörprobe abspielen'
+                hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
+                hoerprobeButton.addEventListener('click', (event) => {
+                    const titelnummer = event.currentTarget.id.split('-')[1];
+                    //const audio = document.querySelector('audio[id="audio-' + titelnummer + '"]');
+                    const i = hoerprobeButton.querySelector('i');
+                    this.bookwormRestClient.hoerprobe(titelnummer, null,
+                        () => {
+                            ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
+                            ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
+                        },
+                        () => {
+                            ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
+                            ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
+                        });
+                });
+            } else {
+                hoerprobeButton.title = 'Hörprobe nicht verfügbar'
+                hoerprobeButton.ariaLabel = 'Hörprobe nicht verfügbar';
+            }
         }
     }
 
@@ -35,11 +51,15 @@ export class Wbhonline {
                     this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-true');
                         merklisteButton.classList.add('watchlist-false');
+                        merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
+                        merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
                     });
                 } else {
                     this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
                         merklisteButton.classList.remove('watchlist-false');
                         merklisteButton.classList.add('watchlist-true');
+                        merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
+                        merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
                     });
                 }
             });
@@ -56,11 +76,15 @@ export class Wbhonline {
                     this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-true');
                         warenkorbButton.classList.add('order-cd-false');
+                        warenkorbButton.title = 'CD aus der Bestellung entfernen';
+                        warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
                     });
                 } else {
                     this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
                         warenkorbButton.classList.remove('order-cd-false');
                         warenkorbButton.classList.add('order-cd-true');
+                        warenkorbButton.title = 'Hörbuch als CD bestellen';
+                        warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
                     });
                 }
             });
@@ -70,10 +94,17 @@ export class Wbhonline {
     downloadButtons() {
         const downloadButtons = document.querySelectorAll('a[id^="download-"]');
         for (const downloadButton of downloadButtons) {
-            downloadButton.addEventListener('click', (event) => {
-                const titelnummer = event.currentTarget.id.split('-')[1];
-                this.bookwormRestClient.bestelleDownload(titelnummer);
-            });
+            if (downloadButton.classList.contains('order-download-true')) {
+                downloadButton.title = 'Hörbuch herunterladen';
+                downloadButton.ariaLabel = 'Hörbuch herunterladen';
+                downloadButton.addEventListener('click', (event) => {
+                    const titelnummer = event.currentTarget.id.split('-')[1];
+                    this.bookwormRestClient.bestelleDownload(titelnummer);
+                });
+            } else {
+                downloadButton.title = 'Hörbuch nicht als Download verfügbar';
+                downloadButton.ariaLabel = 'Hörbuch nicht als Download verfügbar';
+            }
         }
     }
 

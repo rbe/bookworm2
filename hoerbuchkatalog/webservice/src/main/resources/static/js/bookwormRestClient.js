@@ -20,7 +20,6 @@ export class BookwormRestClient {
         this.hoerernummer = hoerernummer;
         this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
         this.asyncDownloadStatusTimeoutId = new Map();
-        this.orderId = '';
     }
 
     fuegeZuMerklisteHinzu(titelnummer, successCallback) {
@@ -133,8 +132,8 @@ export class BookwormRestClient {
             });
     }
 
-    hoerprobe(titelnummer, audio) {
-        this.audioplayer.hoerprobe(titelnummer, audio);
+    hoerprobe(titelnummer, audio, playCallback, pauseCallback) {
+        this.audioplayer.hoerprobe(titelnummer, audio, playCallback, pauseCallback);
     }
 
     bestelleDownload(titelnummer) {
