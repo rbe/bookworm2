@@ -46,7 +46,7 @@ export class Wbhonline {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
         for (const merklisteButton of merklisteButtons) {
             const titelnummer = merklisteButton.id.split('-')[1];
-            this.merklisteButton(titelnummer, aufMerkliste, merklisteButton);
+            this.merklisteButton(titelnummer, merklisteButton);
             merklisteButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
                 this.merklisteButton(titelnummer, merklisteButton);
@@ -77,7 +77,7 @@ export class Wbhonline {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
             const titelnummer = warenkorbButton.id.split('-')[1];
-            this.warenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
+            this.warenkorbButton(titelnummer, warenkorbButton);
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
                 this.warenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
