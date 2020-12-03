@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
@@ -32,14 +33,18 @@ public final class WarenkorbRestService {
 
     private final BestellungService bestellungService;
 
+    private final MerklisteService merklisteService;
+
     private final HoerbuchResolver hoerbuchResolver;
 
     @Autowired
     public WarenkorbRestService(final WarenkorbService warenkorbService,
                                 final BestellungService bestellungService,
+                                final MerklisteService merklisteService,
                                 final HoerbuchResolver hoerbuchResolver) {
         this.warenkorbService = warenkorbService;
         this.bestellungService = bestellungService;
+        this.merklisteService = merklisteService;
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
@@ -71,10 +76,16 @@ public final class WarenkorbRestService {
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungService.bestellungSessionId(xHoerernummer),
-                new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
+                hoerernummer);
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
+        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer,
+                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
+        });
+        return hoerbuchAntwortKurzDTOS;
     }
 
     @PostMapping(value = "/bestellen",

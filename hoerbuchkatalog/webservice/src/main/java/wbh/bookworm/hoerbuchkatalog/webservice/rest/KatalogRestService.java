@@ -82,7 +82,6 @@ public class KatalogRestService {
         final HoerbuchAntwortKurzDTO hoerbuchAntwortKurzDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
         final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
         if (null != sachgebiet) {
-            hoerbuchAntwortKurzDTO.setSachgebiet(sachgebiet.getName());
             hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
         hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));

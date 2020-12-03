@@ -14,7 +14,10 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
@@ -25,12 +28,20 @@ public class MerklisteRestService {
 
     private final MerklisteService merklisteService;
 
+    private final WarenkorbService warenkorbService;
+
+    private final BestellungService bestellungService;
+
     private final HoerbuchResolver hoerbuchResolver;
 
     @Autowired
     public MerklisteRestService(final MerklisteService merklisteService,
+                                final WarenkorbService warenkorbService,
+                                final BestellungService bestellungService,
                                 final HoerbuchResolver hoerbuchResolver) {
         this.merklisteService = merklisteService;
+        this.warenkorbService = warenkorbService;
+        this.bestellungService = bestellungService;
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
@@ -57,7 +68,15 @@ public class MerklisteRestService {
     public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
+                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
+        });
+        return hoerbuchAntwortKurzDTOS;
     }
 
     @GetMapping(value = "datumab/{datumab}/suchbegriff/{suchbegriff}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -66,7 +85,15 @@ public class MerklisteRestService {
                                                         @PathVariable final String datumab,
                                                         @PathVariable final String suchbegriff) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
+                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
+        });
+        return hoerbuchAntwortKurzDTOS;
     }
 
 }
