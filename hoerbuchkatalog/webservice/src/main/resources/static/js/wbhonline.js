@@ -15,11 +15,12 @@ export class Wbhonline {
     }
 
     hoerprobeButtons() {
-        const hoerprobeButtons = document.querySelectorAll('.button.hoerprobe-true');
+        const hoerprobeButtons = document.querySelectorAll('a[id^="hoerprobe-"]');
         for (const hoerprobeButton of hoerprobeButtons) {
             hoerprobeButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                this.bookwormRestClient.hoerprobe(titelnummer);
+                const audio = document.querySelector('#audio-' + titelnummer);
+                this.bookwormRestClient.hoerprobe(titelnummer, audio);
             });
         }
     }

@@ -133,8 +133,8 @@ export class BookwormRestClient {
             });
     }
 
-    hoerprobe(titelnummer) {
-        this.audioplayer.hoerprobe(titelnummer);
+    hoerprobe(titelnummer, audio) {
+        this.audioplayer.hoerprobe(titelnummer, audio);
     }
 
     bestelleDownload(titelnummer) {
