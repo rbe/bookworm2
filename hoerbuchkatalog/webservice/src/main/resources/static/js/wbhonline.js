@@ -10,6 +10,7 @@ import {BookwormRestClient} from "./bookwormRestClient.js";
 import {Audioplayer} from "./audioplayer.js";
 
 const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
+
 const PLAY_BUTTON = ['fas', 'fa-volume-up', 'fa'];
 const PAUSE_BUTTON = ['far', 'fa-pause-circle'];
 
