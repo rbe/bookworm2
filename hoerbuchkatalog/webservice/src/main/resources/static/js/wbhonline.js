@@ -22,7 +22,6 @@ export class Wbhonline {
                 hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
                 hoerprobeButton.addEventListener('click', (event) => {
                     const titelnummer = event.currentTarget.id.split('-')[1];
-                    //const audio = document.querySelector('audio[id="audio-' + titelnummer + '"]');
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
                         this.bookwormRestClient.hoerprobe(titelnummer, null,
@@ -46,24 +45,30 @@ export class Wbhonline {
     merklisteButtons() {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
         for (const merklisteButton of merklisteButtons) {
+            const titelnummer = merklisteButton.id.split('-')[1];
+            this.merklisteButton(titelnummer, aufMerkliste, merklisteButton);
             merklisteButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
-                if (aufMerkliste) {
-                    this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
-                        merklisteButton.classList.remove('watchlist-true');
-                        merklisteButton.classList.add('watchlist-false');
-                        merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
-                        merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
-                    });
-                } else {
-                    this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
-                        merklisteButton.classList.remove('watchlist-false');
-                        merklisteButton.classList.add('watchlist-true');
-                        merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
-                        merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
-                    });
-                }
+                this.merklisteButton(titelnummer, merklisteButton);
+            });
+        }
+    }
+
+    merklisteButton(titelnummer, merklisteButton) {
+        const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
+        if (aufMerkliste) {
+            this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
+                merklisteButton.classList.remove('watchlist-true');
+                merklisteButton.classList.add('watchlist-false');
+                merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
+                merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
+            });
+        } else {
+            this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
+                merklisteButton.classList.remove('watchlist-false');
+                merklisteButton.classList.add('watchlist-true');
+                merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
+                merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
             });
         }
     }
@@ -71,24 +76,30 @@ export class Wbhonline {
     warenkorbButtons() {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
+            const titelnummer = warenkorbButton.id.split('-')[1];
+            this.warenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
-                if (imWarenkorb) {
-                    this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
-                        warenkorbButton.classList.remove('order-cd-true');
-                        warenkorbButton.classList.add('order-cd-false');
-                        warenkorbButton.title = 'CD aus der Bestellung entfernen';
-                        warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
-                    });
-                } else {
-                    this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
-                        warenkorbButton.classList.remove('order-cd-false');
-                        warenkorbButton.classList.add('order-cd-true');
-                        warenkorbButton.title = 'Hörbuch als CD bestellen';
-                        warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
-                    });
-                }
+                this.warenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
+            });
+        }
+    }
+
+    warenkorbButton(titelnummer, warenkorbButton) {
+        const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
+        if (imWarenkorb) {
+            this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
+                warenkorbButton.classList.remove('order-cd-true');
+                warenkorbButton.classList.add('order-cd-false');
+                warenkorbButton.title = 'CD aus der Bestellung entfernen';
+                warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
+            });
+        } else {
+            this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
+                warenkorbButton.classList.remove('order-cd-false');
+                warenkorbButton.classList.add('order-cd-true');
+                warenkorbButton.title = 'Hörbuch als CD bestellen';
+                warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
             });
         }
     }

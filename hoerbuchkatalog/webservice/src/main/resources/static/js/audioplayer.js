@@ -54,12 +54,14 @@ export class Audioplayer {
                     }
                 });
                 audio.addEventListener('pause', () => {
+                    audio.remove();
                     if (pauseCallback) {
                         pauseCallback();
                     }
                 });
                 audio.addEventListener('ended', () => {
                     URL.revokeObjectURL(audio.src);
+                    audio.remove();
                     if (pauseCallback) {
                         pauseCallback();
                     }
