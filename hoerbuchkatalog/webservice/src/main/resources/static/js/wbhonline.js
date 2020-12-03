@@ -19,7 +19,7 @@ export class Wbhonline {
         for (const hoerprobeButton of hoerprobeButtons) {
             hoerprobeButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                const audio = document.querySelector('#audio-' + titelnummer);
+                const audio = document.querySelector('audio[id="audio-' + titelnummer + '"]');
                 this.bookwormRestClient.hoerprobe(titelnummer, audio);
             });
         }
