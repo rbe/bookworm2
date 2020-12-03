@@ -23,7 +23,12 @@ export class Audioplayer {
         return audio;
     }
 
-    hoerprobe(titelnummer, audio, playCallback, pauseCallback) {
+    cleanup(audio) {
+        URL.revokeObjectURL(audio.src);
+        audio.remove();
+    }
+
+    spieleHoerprobeAb(titelnummer, audio, playCallback, pauseCallback) {
         const url = new URL('v1/hoerprobe/' + titelnummer, this.shardURL);
         fetch(url.toString(), {
             'method': 'GET',
@@ -45,31 +50,33 @@ export class Audioplayer {
                 if (audio === undefined || audio === null) {
                     audio = this.createAudioElement(titelnummer);
                 }
+                this.audio = audio;
                 audio.src = URL.createObjectURL(blob);
                 audio.load();
-                audio.play();
                 audio.addEventListener('play', () => {
                     if (playCallback) {
                         playCallback();
                     }
                 });
                 audio.addEventListener('pause', () => {
-                    audio.remove();
                     if (pauseCallback) {
                         pauseCallback();
                     }
                 });
                 audio.addEventListener('ended', () => {
-                    URL.revokeObjectURL(audio.src);
-                    audio.remove();
-                    if (pauseCallback) {
-                        pauseCallback();
-                    }
+                    this.cleanup(audio);
                 });
+                audio.play();
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
             });
+    }
+
+    pausiereHoerprobe() {
+        if (this.audio) {
+            this.audio.pause();
+        }
     }
 
 }

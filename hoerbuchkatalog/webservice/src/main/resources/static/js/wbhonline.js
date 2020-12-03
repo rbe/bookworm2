@@ -7,11 +7,15 @@
 "use strict";
 
 import {BookwormRestClient} from "./bookwormRestClient.js";
+import {Audioplayer} from "./audioplayer";
+
+const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
 export class Wbhonline {
 
-    constructor(hoerernummer) {
+    constructor(mandant, hoerernummer) {
         this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
+        this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
     }
 
     hoerprobeButtons() {
@@ -24,15 +28,16 @@ export class Wbhonline {
                     const titelnummer = event.currentTarget.id.split('-')[1];
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
-                        this.bookwormRestClient.hoerprobe(titelnummer, null,
+                        this.audioplayer.spieleHoerprobeAb(titelnummer, null,
                             () => {
-                                ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
-                                ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
+                                this.hoerprobeSpielt(i);
                             },
                             () => {
-                                ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
-                                ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
+                                this.hoerprobePausiert(i);
                             });
+                    } else {
+                        this.audioplayer.pausiereHoerprobe();
+                        this.hoerprobePausiert(i);
                     }
                 });
             } else {
@@ -42,66 +47,100 @@ export class Wbhonline {
         }
     }
 
+    hoerprobeSpielt(i) {
+        ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
+        ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
+    }
+
+    hoerprobePausiert(i) {
+        ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
+        ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
+    }
+
     merklisteButtons() {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
         for (const merklisteButton of merklisteButtons) {
-            const titelnummer = merklisteButton.id.split('-')[1];
-            this.merklisteButton(titelnummer, merklisteButton);
+            const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
+            if (aufMerkliste) {
+                this.vonMerklisteEntfernt(merklisteButton);
+            } else {
+                this.zurMerklisteHinzugefuegt(merklisteButton);
+            }
             merklisteButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                this.merklisteButton(titelnummer, merklisteButton);
+                this.flipMerklisteButton(titelnummer, merklisteButton);
             });
         }
     }
 
-    merklisteButton(titelnummer, merklisteButton) {
+    flipMerklisteButton(titelnummer, merklisteButton) {
         const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
         if (aufMerkliste) {
             this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
-                merklisteButton.classList.remove('watchlist-true');
-                merklisteButton.classList.add('watchlist-false');
-                merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
-                merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
+                this.vonMerklisteEntfernt(merklisteButton);
             });
         } else {
             this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
-                merklisteButton.classList.remove('watchlist-false');
-                merklisteButton.classList.add('watchlist-true');
-                merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
-                merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
+                this.zurMerklisteHinzugefuegt(merklisteButton);
             });
         }
+    }
+
+    zurMerklisteHinzugefuegt(merklisteButton) {
+        merklisteButton.classList.remove('watchlist-false');
+        merklisteButton.classList.add('watchlist-true');
+        merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
+        merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
+    }
+
+    vonMerklisteEntfernt(merklisteButton) {
+        merklisteButton.classList.remove('watchlist-true');
+        merklisteButton.classList.add('watchlist-false');
+        merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
+        merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
     }
 
     warenkorbButtons() {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
-            const titelnummer = warenkorbButton.id.split('-')[1];
-            this.warenkorbButton(titelnummer, warenkorbButton);
+            const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
+            if (imWarenkorb) {
+                this.inDenWarenkorbGelegt(warenkorbButton);
+            } else {
+                this.ausDemWarenkorbEntfernt(warenkorbButton);
+            }
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                this.warenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
+                this.flipWarenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
             });
         }
     }
 
-    warenkorbButton(titelnummer, warenkorbButton) {
+    flipWarenkorbButton(titelnummer, warenkorbButton) {
         const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
         if (imWarenkorb) {
             this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
-                warenkorbButton.classList.remove('order-cd-true');
-                warenkorbButton.classList.add('order-cd-false');
-                warenkorbButton.title = 'CD aus der Bestellung entfernen';
-                warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
+                this.inDenWarenkorbGelegt(warenkorbButton);
             });
         } else {
             this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
-                warenkorbButton.classList.remove('order-cd-false');
-                warenkorbButton.classList.add('order-cd-true');
-                warenkorbButton.title = 'Hörbuch als CD bestellen';
-                warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
+                this.ausDemWarenkorbEntfernt(warenkorbButton);
             });
         }
+    }
+
+    ausDemWarenkorbEntfernt(warenkorbButton) {
+        warenkorbButton.classList.remove('order-cd-false');
+        warenkorbButton.classList.add('order-cd-true');
+        warenkorbButton.title = 'Hörbuch als CD bestellen';
+        warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
+    }
+
+    inDenWarenkorbGelegt(warenkorbButton) {
+        warenkorbButton.classList.remove('order-cd-true');
+        warenkorbButton.classList.add('order-cd-false');
+        warenkorbButton.title = 'CD aus der Bestellung entfernen';
+        warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
     }
 
     downloadButtons() {

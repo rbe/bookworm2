@@ -6,11 +6,9 @@
 
 "use strict";
 
-import {Audioplayer} from "./audioplayer.js";
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 const HOERBUCHKATALOG_URL = 'https://www.beta.wbh-online.de';
-const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
 export class BookwormRestClient {
@@ -18,7 +16,6 @@ export class BookwormRestClient {
     constructor(mandant, hoerernummer) {
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
-        this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
         this.asyncDownloadStatusTimeoutId = new Map();
     }
 
@@ -130,10 +127,6 @@ export class BookwormRestClient {
             .catch(reason => {
                 console.log('Fehler: ' + reason);
             });
-    }
-
-    hoerprobe(titelnummer, audio, playCallback, pauseCallback) {
-        this.audioplayer.hoerprobe(titelnummer, audio, playCallback, pauseCallback);
     }
 
     bestelleDownload(titelnummer) {
