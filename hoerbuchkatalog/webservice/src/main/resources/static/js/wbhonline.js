@@ -24,15 +24,17 @@ export class Wbhonline {
                     const titelnummer = event.currentTarget.id.split('-')[1];
                     //const audio = document.querySelector('audio[id="audio-' + titelnummer + '"]');
                     const i = hoerprobeButton.querySelector('i');
-                    this.bookwormRestClient.hoerprobe(titelnummer, null,
-                        () => {
-                            ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
-                            ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
-                        },
-                        () => {
-                            ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
-                            ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
-                        });
+                    if (i.classList.contains('fa-volume-up')) {
+                        this.bookwormRestClient.hoerprobe(titelnummer, null,
+                            () => {
+                                ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
+                                ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
+                            },
+                            () => {
+                                ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
+                                ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
+                            });
+                    }
                 });
             } else {
                 hoerprobeButton.title = 'Hörprobe nicht verfügbar'
