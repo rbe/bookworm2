@@ -10,12 +10,10 @@ import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Audioplayer {
 
-    constructor(audiobookURL, mandant, hoerernummer) {
-        this.audiobookURL = audiobookURL;
+    constructor(shardURL, mandant, hoerernummer) {
+        this.shardURL = shardURL;
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
-        this.audio = document.querySelector('#audio');
-        this.asyncDownloadStatusTimeoutId = new Map();
     }
 
     createAudioElement() {
@@ -25,8 +23,8 @@ export class Audioplayer {
         return audio;
     }
 
-    hoerprobe(titelnummer) {
-        const url = new URL('v1/hoerprobe/' + titelnummer, this.audiobookURL);
+    hoerprobe(titelnummer, audio) {
+        const url = new URL('v1/hoerprobe/' + titelnummer, this.shardURL);
         fetch(url.toString(), {
             'method': 'GET',
             'headers': {
@@ -44,9 +42,10 @@ export class Audioplayer {
                 }
             })
             .then(blob => {
-                this.audio.src = URL.createObjectURL(blob);
-                this.audio.load();
-                this.audio.play();
+                audio.src = URL.createObjectURL(blob);
+                audio.load();
+                audio.play();
+                URL.revokeObjectURL(audio.src);
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
