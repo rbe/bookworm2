@@ -112,7 +112,7 @@ export class Wbhonline {
             }
             warenkorbButton.addEventListener('click', (event) => {
                 const titelnummer = event.currentTarget.id.split('-')[1];
-                this.flipWarenkorbButton(titelnummer, imWarenkorb, warenkorbButton);
+                this.flipWarenkorbButton(titelnummer, warenkorbButton);
             });
         }
     }
