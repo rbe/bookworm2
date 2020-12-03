@@ -8,4 +8,5 @@
 
 import {Wbhonline} from './js/wbhonline.js';
 
-new Wbhonline('80170').onDomReady();
+const wbhonline = new Wbhonline('06', '80170');
+wbhonline.onDomReady();
