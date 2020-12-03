@@ -7,9 +7,11 @@
 "use strict";
 
 import {BookwormRestClient} from "./bookwormRestClient.js";
-import {Audioplayer} from "./audioplayer";
+import {Audioplayer} from "./audioplayer.js";
 
 const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
+const PLAY_BUTTON = ['fas', 'fa-volume-up', 'fa'];
+const PAUSE_BUTTON = ['far', 'fa-pause-circle'];
 
 export class Wbhonline {
 
@@ -36,8 +38,7 @@ export class Wbhonline {
                                 this.hoerprobePausiert(i);
                             });
                     } else {
-                        this.audioplayer.pausiereHoerprobe();
-                        this.hoerprobePausiert(i);
+                        this.audioplayer.pausiereHoerprobe(() => this.hoerprobePausiert(i));
                     }
                 });
             } else {
@@ -48,13 +49,13 @@ export class Wbhonline {
     }
 
     hoerprobeSpielt(i) {
-        ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.remove(value));
-        ['far', 'fa-pause-circle'].forEach(value => i.classList.add(value));
+        PLAY_BUTTON.forEach(value => i.classList.remove(value));
+        PAUSE_BUTTON.forEach(value => i.classList.add(value));
     }
 
     hoerprobePausiert(i) {
-        ['far', 'fa-pause-circle'].forEach(value => i.classList.remove(value));
-        ['fas', 'fa-volume-up', 'fa'].forEach(value => i.classList.add(value));
+        PAUSE_BUTTON.forEach(value => i.classList.remove(value));
+        PLAY_BUTTON.forEach(value => i.classList.add(value));
     }
 
     merklisteButtons() {
