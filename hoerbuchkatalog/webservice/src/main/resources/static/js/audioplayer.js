@@ -45,7 +45,7 @@ export class Audioplayer {
                 audio.src = URL.createObjectURL(blob);
                 audio.load();
                 audio.play();
-                URL.revokeObjectURL(audio.src);
+                //URL.revokeObjectURL(audio.src);
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
