@@ -195,8 +195,7 @@ export class Wbhonline {
                     });
                 });
             } else {
-                downloadButton.title = 'Hörbuch nicht als Download verfügbar';
-                downloadButton.ariaLabel = 'Hörbuch nicht als Download verfügbar';
+                this.setTitle(downloadButton, 'Hörbuch nicht als Download verfügbar');
             }
         }
     }
