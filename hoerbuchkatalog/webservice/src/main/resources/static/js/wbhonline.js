@@ -70,15 +70,13 @@ export class Wbhonline {
     zurMerklisteHinzugefuegt(merklisteButton) {
         merklisteButton.classList.remove('watchlist-false');
         merklisteButton.classList.add('watchlist-true');
-        merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
-        merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
+        this.setTitle(merklisteButton, 'Hörbuch von der Merkliste entfernen');
     }
 
     vonMerklisteEntfernt(merklisteButton) {
         merklisteButton.classList.remove('watchlist-true');
         merklisteButton.classList.add('watchlist-false');
-        merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
-        merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
+        this.setTitle(merklisteButton, 'Hörbuch auf die Merkliste setzen');
     }
 
     //
@@ -121,15 +119,13 @@ export class Wbhonline {
     ausDemWarenkorbEntfernt(warenkorbButton) {
         warenkorbButton.classList.remove('order-cd-true');
         warenkorbButton.classList.add('order-cd-false');
-        warenkorbButton.title = 'Hörbuch als CD bestellen';
-        warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
+        this.setTitle(warenkorbButton, 'Hörbuch als CD bestellen');
     }
 
     inDenWarenkorbGelegt(warenkorbButton) {
         warenkorbButton.classList.remove('order-cd-false');
         warenkorbButton.classList.add('order-cd-true');
-        warenkorbButton.title = 'CD aus der Bestellung entfernen';
-        warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
+        this.setTitle(warenkorbButton, 'CD aus der Bestellung entfernen');
     }
 
     //
@@ -140,19 +136,21 @@ export class Wbhonline {
         const hoerprobeButtons = document.querySelectorAll('a[id^="hoerprobe-"]');
         for (const hoerprobeButton of hoerprobeButtons) {
             if (hoerprobeButton.classList.contains('hoerprobe-true')) {
-                hoerprobeButton.title = 'Hörprobe abspielen'
-                hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
+                this.setTitle(hoerprobeButton, 'Hörprobe abspielen');
                 hoerprobeButton.addEventListener('click', (event) => {
-                    this.disableAllButtons([event.currentTarget]);
+                    this.disableAllButtons();
+                    this.activateSpinner(event.currentTarget);
                     const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null,
                             () => {
                                 this.hoerprobeSpielt(i);
+                                this.deactivateSpinner(event.currentTarget);
                             },
                             () => {
                                 this.hoerprobePausiert(i);
+                                this.enableAllButtons();
                             });
                     } else {
                         this.audioplayer.pausiereHoerprobe(() => {
@@ -162,8 +160,7 @@ export class Wbhonline {
                     }
                 });
             } else {
-                hoerprobeButton.title = 'Hörprobe nicht verfügbar'
-                hoerprobeButton.ariaLabel = 'Hörprobe nicht verfügbar';
+                this.setTitle(hoerprobeButton, 'Hörprobe nicht verfügbar');
             }
         }
     }
@@ -176,7 +173,6 @@ export class Wbhonline {
     hoerprobePausiert(i) {
         PAUSE_BUTTON.forEach(value => i.classList.remove(value));
         PLAY_BUTTON.forEach(value => i.classList.add(value));
-        this.enableAllButtons();
     }
 
     //
@@ -194,8 +190,8 @@ export class Wbhonline {
                     this.activateSpinner(event.currentTarget);
                     const titelnummer = this.titelnummer(event.currentTarget);
                     this.bookwormRestClient.bestelleDownload(titelnummer, () => {
-                        this.enableAllButtons();
                         this.deactivateSpinner(event.currentTarget);
+                        this.enableAllButtons();
                     });
                 });
             } else {
@@ -216,6 +212,11 @@ export class Wbhonline {
     //
     // Buttons
     //
+
+    setTitle(button, text) {
+        button.text = text;
+        button.ariaLabel = text;
+    }
 
     disableAllButtons(skip) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
