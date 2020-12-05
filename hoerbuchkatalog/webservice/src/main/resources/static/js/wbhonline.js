@@ -17,6 +17,8 @@ const SHARD_URLS = [
 ];
 const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 
+const ENABLE_SPINNER = ['fas', 'fa-spinner', 'fa-spin'];
+
 const PLAY_BUTTON = ['fas', 'fa-volume-up', 'fa'];
 const PAUSE_BUTTON = ['far', 'fa-pause-circle'];
 
@@ -25,6 +27,7 @@ export class Wbhonline {
     constructor(mandant, hoerernummer) {
         this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
         this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
+        this.previousClassList = new Map();
     }
 
     //
@@ -42,7 +45,7 @@ export class Wbhonline {
             }
             merklisteButton.addEventListener('click', (event) => {
                 this.disableAnchor(event.currentTarget);
-                const titelnummer = event.currentTarget.id.split('-')[1];
+                const titelnummer = this.titelnummer(event.currentTarget);
                 this.flipMerklisteButton(titelnummer, merklisteButton);
             });
         }
@@ -92,7 +95,7 @@ export class Wbhonline {
             }
             warenkorbButton.addEventListener('click', (event) => {
                 this.disableAnchor(event.currentTarget);
-                const titelnummer = event.currentTarget.id.split('-')[1];
+                const titelnummer = this.titelnummer(event.currentTarget);
                 this.flipWarenkorbButton(titelnummer, warenkorbButton);
             });
         }
@@ -139,7 +142,7 @@ export class Wbhonline {
                 hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
                 hoerprobeButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
-                    const titelnummer = event.currentTarget.id.split('-')[1];
+                    const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null,
@@ -185,7 +188,7 @@ export class Wbhonline {
                 downloadButton.ariaLabel = 'Hörbuch herunterladen';
                 downloadButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
-                    const titelnummer = event.currentTarget.id.split('-')[1];
+                    const titelnummer = this.titelnummer(event.currentTarget);
                     this.bookwormRestClient.bestelleDownload(titelnummer, () => {
                         this.enableAllButtons();
                     });
@@ -194,6 +197,13 @@ export class Wbhonline {
                 downloadButton.title = 'Hörbuch nicht als Download verfügbar';
                 downloadButton.ariaLabel = 'Hörbuch nicht als Download verfügbar';
             }
+        }
+    }
+
+    titelnummer(element) {
+        let titelnummer = element.id.split('-')[1];
+        if (titelnummer.length === 4) {
+            titelnummer = '0' + titelnummer;
         }
     }
 
@@ -215,11 +225,20 @@ export class Wbhonline {
 
     disableAnchor(anchor) {
         anchor.style.pointerEvents = 'none';
+        this.previousClassList.set(anchor.id, anchor.classList);
+        anchor.classList.forEach(value => anchor.classList.remove(value));
+        ENABLE_SPINNER.forEach(value => anchor.classList.add(value));
     }
 
     enableAnchor(anchor) {
+        anchor.classList.forEach(value => anchor.classList.remove(value));
+        this.previousClassList.get(anchor.id).forEach(value => anchor.classList.add(value));
         anchor.style.pointerEvents = '';
     }
+
+    //
+    // DOM
+    //
 
     onDomReady() {
         document.addEventListener('DOMContentLoaded', () => {
