@@ -9,6 +9,50 @@
 import {DomEventBus} from "./lib/domEventBus.js";
 import {Audioplayer} from "./lib/audioplayer.js";
 
+function hideElements() {
+    // Playlist
+    document.querySelector('.playlistContainer').style.display = 'none';
+    document.querySelector('.playlistContainer .loading').style.display = 'none';
+    document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    // Audioplayer
+    document.querySelector('.audioplayer').style.display = 'none';
+    document.querySelector('.audioplayer .loading').style.display = 'none';
+    document.querySelector('.audioplayer .notfound').style.display = 'none';
+    document.querySelector('.audioplayer .panel').style.display = 'none';
+    // sync download
+    document.querySelector('#syncDownloadButton').style.display = 'none';
+    document.querySelector('#syncDownloadStatus').style.display = 'none';
+    // async download
+    document.querySelector('#asyncDownloadButton').style.display = 'none';
+    document.querySelector('#asyncDownloadStatus').style.display = 'none';
+}
+
+function showElementsLoading() {
+    // Playlist
+    document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    document.querySelector('.playlistContainer').style.display = 'block';
+    // Audioplayer
+    document.querySelector('.audioplayer .panel').style.display = 'none';
+    document.querySelector('.audioplayer .notfound').style.display = 'none';
+    document.querySelector('.audioplayer .loading').style.display = 'block';
+    document.querySelector('.audioplayer').style.display = 'block';
+}
+
+function showElementsLoaded() {
+    // Playlist
+    document.querySelector('.playlistContainer .loading').style.display = 'none';
+    document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    // Audioplayer
+    document.querySelector('.audioplayer .loading').style.display = 'none';
+    document.querySelector('.audioplayer .notfound').style.display = 'none';
+    document.querySelector('.audioplayer .panel').style.display = 'block';
+    // sync download
+    document.querySelector('#syncDownloadButton').style.display = 'block';
+    // async download
+    document.querySelector('#asyncDownloadButton').style.display = 'block';
+}
+
 (function () {
     const events = [
         'audiobookSelected', 'audiobookLoaded',
@@ -21,45 +65,10 @@ import {Audioplayer} from "./lib/audioplayer.js";
         'phraseSelected'
     ];
     DomEventBus.setup(events);
-    document.querySelector('.playlistContainer .loading').style.display = 'none';
-    document.querySelector('.playlistContainer .notfound').style.display = 'none';
-    document.querySelector('.audioplayer .loading').style.display = 'none';
-    document.querySelector('.audioplayer .notfound').style.display = 'none';
-    document.querySelector('.audioplayer .panel').style.display = 'none';
-    // sync download
-    const syncDownloadButton = document.querySelector('#syncDownloadButton');
-    syncDownloadButton.style.display = 'none';
-    const syncDownloadStatusText = document.querySelector('#asyncDownloadStatus');
-    syncDownloadStatusText.style.display = 'block';
-    // async download
-    const asyncDownloadButton = document.querySelector('#asyncDownloadButton');
-    asyncDownloadButton.style.display = 'none';
-    const asyncDownloadStatusText = document.querySelector('#asyncDownloadStatus');
-    asyncDownloadStatusText.style.display = 'block';
+    hideElements();
     const audioplayer = new Audioplayer();
-    document.querySelector('#ladenButton').addEventListener('click', event => {
-        document.querySelector('.playlistContainer .notfound').style.display = 'none';
-        document.querySelector('.audioplayer .panel').style.display = 'none';
-        document.querySelector('.audioplayer .notfound').style.display = 'none';
-        document.querySelector('.playlistContainer .loading').style.display = 'block';
-        document.querySelector('.audioplayer .loading').style.display = 'block';
-        audioplayer.reset();
-        const b = window.location;
-        const url = new URL(b.protocol + '//' + b.host);
-        const mandant = document.querySelector('#mandant').value;
-        const hoerernummer = document.querySelector('#hoerernummer').value;
-        const titelnummer = document.querySelector('#titelnummer').value;
-        audioplayer.init(url, mandant, hoerernummer, titelnummer, () => {
-            document.querySelector('.playlistContainer .loading').style.display = 'none';
-            document.querySelector('.playlistContainer .notfound').style.display = 'none';
-            document.querySelector('.audioplayer .loading').style.display = 'none';
-            document.querySelector('.audioplayer .notfound').style.display = 'none';
-            document.querySelector('.audioplayer .panel').style.display = 'block';
-            asyncDownloadButton.style.display = 'block';
-        });
-    });
     // sync download
-    syncDownloadButton.addEventListener('click', event => {
+    document.querySelector('#syncDownloadButton').addEventListener('click', event => {
         if (audioplayer) {
             audioplayer.syncDownload();
         } else {
@@ -67,11 +76,23 @@ import {Audioplayer} from "./lib/audioplayer.js";
         }
     });
     // async download
-    asyncDownloadButton.addEventListener('click', event => {
+    document.querySelector('#asyncDownloadButton').addEventListener('click', event => {
         if (audioplayer) {
             audioplayer.asyncDownloadOrder();
         } else {
             console.log('Cannot download, Audioplayer not initialized');
         }
+    });
+    document.querySelector('#ladenButton').addEventListener('click', event => {
+        showElementsLoading();
+        audioplayer.reset();
+        const b = window.location;
+        const url = new URL(b.protocol + '//' + b.host);
+        const mandant = document.querySelector('#mandant').value;
+        const hoerernummer = document.querySelector('#hoerernummer').value;
+        const titelnummer = document.querySelector('#titelnummer').value;
+        audioplayer.init(url, mandant, hoerernummer, titelnummer, () => {
+            showElementsLoaded();
+        });
     });
 })();
