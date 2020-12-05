@@ -145,11 +145,13 @@ export class Wbhonline {
                     if (i.classList.contains('fa-volume-up')) {
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
                             (element) => {
-                                this.hoerprobeSpielt(i);
-                                this.deactivateSpinner(element.querySelector('i'));
+                                const i1 = element.querySelector('i');
+                                this.hoerprobeSpielt(i1);
+                                this.deactivateSpinner(i1);
                             },
                             (element) => {
-                                this.hoerprobePausiert(i);
+                                const i1 = element.querySelector('i');
+                                this.hoerprobePausiert(i1);
                                 this.enableAllButtons();
                             });
                     } else {
