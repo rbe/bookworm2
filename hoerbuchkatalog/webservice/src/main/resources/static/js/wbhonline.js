@@ -194,8 +194,8 @@ export class Wbhonline {
                     this.disableAllButtons();
                     this.activateSpinner(event.currentTarget.querySelector('i'));
                     const titelnummer = this.titelnummer(event.currentTarget);
-                    this.bookwormRestClient.bestelleDownload(titelnummer, () => {
-                        this.deactivateSpinner(event.currentTarget.querySelector('i'));
+                    this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget, (element) => {
+                        this.deactivateSpinner(element.querySelector('i'));
                         this.enableAllButtons();
                     });
                 });
