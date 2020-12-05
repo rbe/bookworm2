@@ -232,7 +232,9 @@ export class Wbhonline {
 
     enableAnchor(anchor) {
         anchor.classList.forEach(value => anchor.classList.remove(value));
-        this.previousClassList.get(anchor.id).forEach(value => anchor.classList.add(value));
+        if (this.previousClassList.has(anchor.id)) {
+            this.previousClassList.get(anchor.id).forEach(value => anchor.classList.add(value));
+        }
         anchor.style.pointerEvents = '';
     }
 
