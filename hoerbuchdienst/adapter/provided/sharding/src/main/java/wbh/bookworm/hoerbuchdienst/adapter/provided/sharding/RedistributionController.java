@@ -47,7 +47,7 @@ import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
 @Produces(MediaType.APPLICATION_JSON)
 public class RedistributionController {
 
-    static final String BASE_URL = "/shard/redistribute";
+    static final String BASE_URL = "/v1/shard/redistribute";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedistributionController.class);
 

@@ -35,7 +35,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.ShardService;
 @Produces(MediaType.APPLICATION_JSON)
 public class DatabeatController {
 
-    static final String BASE_URL = "/shard/databeat";
+    static final String BASE_URL = "/v1/shard/databeat";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DatabeatController.class);
 

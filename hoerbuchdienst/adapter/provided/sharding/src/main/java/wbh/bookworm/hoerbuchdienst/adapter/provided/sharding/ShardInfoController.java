@@ -37,7 +37,7 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
 @Produces(MediaType.APPLICATION_JSON)
 public class ShardInfoController {
 
-    static final String SHARD = "/shard/info";
+    static final String SHARD = "/v1/shard/info";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShardInfoController.class);
 
