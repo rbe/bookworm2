@@ -131,7 +131,7 @@ export class BookwormRestClient {
             });
     }
 
-    bestelleDownload(titelnummer) {
+    bestelleDownload(titelnummer, callback) {
         const url = new URL('v1/bestellung/' + titelnummer, SHARD_URL).toString();
         fetch(url, {
             'method': 'POST',
@@ -159,9 +159,15 @@ export class BookwormRestClient {
                 } else {
                     console.log('Kein JSON oder keine orderId bekommen');
                 }
+                if (callback) {
+                    callback();
+                }
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
+                if (callback) {
+                    callback();
+                }
             });
     }
 

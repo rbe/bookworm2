@@ -70,13 +70,18 @@ export class Audioplayer {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
+                if (pauseCallback) {
+                    pauseCallback();
+                }
             });
     }
 
     pausiereHoerprobe(callback) {
         if (this.audio) {
             this.audio.pause();
-            callback();
+            if (callback) {
+                callback();
+            }
         }
     }
 

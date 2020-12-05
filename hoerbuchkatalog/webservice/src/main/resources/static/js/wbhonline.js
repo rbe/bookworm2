@@ -119,15 +119,15 @@ export class Wbhonline {
     }
 
     ausDemWarenkorbEntfernt(warenkorbButton) {
-        warenkorbButton.classList.remove('order-cd-false');
-        warenkorbButton.classList.add('order-cd-true');
+        warenkorbButton.classList.remove('order-cd-true');
+        warenkorbButton.classList.add('order-cd-false');
         warenkorbButton.title = 'Hörbuch als CD bestellen';
         warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
     }
 
     inDenWarenkorbGelegt(warenkorbButton) {
-        warenkorbButton.classList.remove('order-cd-true');
-        warenkorbButton.classList.add('order-cd-false');
+        warenkorbButton.classList.remove('order-cd-false');
+        warenkorbButton.classList.add('order-cd-true');
         warenkorbButton.title = 'CD aus der Bestellung entfernen';
         warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
     }
@@ -176,6 +176,7 @@ export class Wbhonline {
     hoerprobePausiert(i) {
         PAUSE_BUTTON.forEach(value => i.classList.remove(value));
         PLAY_BUTTON.forEach(value => i.classList.add(value));
+        this.enableAllButtons();
     }
 
     //
