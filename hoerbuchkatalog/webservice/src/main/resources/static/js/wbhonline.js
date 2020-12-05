@@ -139,10 +139,10 @@ export class Wbhonline {
                 this.setTitle(hoerprobeButton, 'Hörprobe abspielen');
                 hoerprobeButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
-                    this.activateSpinner(event.currentTarget.querySelector('i'));
-                    const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
+                    const titelnummer = this.titelnummer(event.currentTarget);
                     if (i.classList.contains('fa-volume-up')) {
+                        this.activateSpinner(i);
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
                             (element) => {
                                 const i = element.querySelector('i');
@@ -188,8 +188,7 @@ export class Wbhonline {
         const downloadButtons = document.querySelectorAll('a[id^="download-"]');
         for (const downloadButton of downloadButtons) {
             if (downloadButton.classList.contains('order-download-true')) {
-                downloadButton.title = 'Hörbuch herunterladen';
-                downloadButton.ariaLabel = 'Hörbuch herunterladen';
+                this.setTitle(downloadButton, 'Hörbuch herunterladen');
                 downloadButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
                     this.activateSpinner(event.currentTarget.querySelector('i'));
@@ -203,14 +202,6 @@ export class Wbhonline {
                 this.setTitle(downloadButton, 'Hörbuch nicht als Download verfügbar');
             }
         }
-    }
-
-    titelnummer(element) {
-        let titelnummer = element.id.split('-')[1];
-        /*if (titelnummer.length === 4) {
-            titelnummer = '0' + titelnummer;
-        }*/
-        return titelnummer;
     }
 
     //
@@ -250,14 +241,14 @@ export class Wbhonline {
 
     activateSpinner(i) {
         i.style.pointerEvents = 'none';
-        this.previousClassList.set(i.id, i.classList);
-        i.classList.forEach(value => i.classList.remove(value));
+        this.previousClassList.set(i.id, [...i.classList]);
+        i.className = '';
         ENABLE_SPINNER.forEach(value => i.classList.add(value));
     }
 
     deactivateSpinner(i) {
-        i.classList.forEach(value => i.classList.remove(value));
         if (this.previousClassList.has(i.id)) {
+            i.className = '';
             this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
         }
         i.style.pointerEvents = '';
@@ -266,6 +257,14 @@ export class Wbhonline {
     //
     // DOM
     //
+
+    titelnummer(element) {
+        let titelnummer = element.id.split('-')[1];
+        /*if (titelnummer.length === 4) {
+            titelnummer = '0' + titelnummer;
+        }*/
+        return titelnummer;
+    }
 
     onDomReady() {
         document.addEventListener('DOMContentLoaded', () => {
