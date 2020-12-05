@@ -40,33 +40,39 @@ export class Audioplayer {
             'redirect': 'follow'
         })
             .then(response => {
-                if (response.ok) {
+                if (response.ok) { // Ok, kann aber leer sein!
                     return response.blob();
                 } else {
                     FetchErrorHandler.handle(response);
                 }
             })
             .then(blob => {
-                if (audio === undefined || audio === null) {
-                    audio = this.createAudioElement(titelnummer);
-                }
-                this.audio = audio;
-                audio.src = URL.createObjectURL(blob);
-                audio.load();
-                audio.addEventListener('play', () => {
-                    if (playCallback) {
-                        playCallback(element);
+                if (blob !== undefined && blob.size > 0) {
+                    if (audio === undefined || audio === null) {
+                        audio = this.createAudioElement(titelnummer);
                     }
-                });
-                audio.addEventListener('pause', () => {
+                    this.audio = audio;
+                    audio.src = URL.createObjectURL(blob);
+                    audio.load();
+                    audio.addEventListener('play', () => {
+                        if (playCallback) {
+                            playCallback(element);
+                        }
+                    });
+                    audio.addEventListener('pause', () => {
+                        if (pauseCallback) {
+                            pauseCallback(element);
+                        }
+                    });
+                    audio.addEventListener('ended', () => {
+                        this.cleanup(audio);
+                    });
+                    audio.play();
+                } else {
                     if (pauseCallback) {
                         pauseCallback(element);
                     }
-                });
-                audio.addEventListener('ended', () => {
-                    this.cleanup(audio);
-                });
-                audio.play();
+                }
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);

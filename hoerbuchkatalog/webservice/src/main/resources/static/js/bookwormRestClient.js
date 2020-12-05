@@ -155,12 +155,9 @@ export class BookwormRestClient {
             .then(json => {
                 if (json && json.orderId) {
                     console.log('orderId ist ' + json.orderId);
-                    this.warteAufDownload(titelnummer, json.orderId);
+                    this.warteAufDownload(titelnummer, json.orderId, element, callback);
                 } else {
                     console.log('Kein JSON oder keine orderId bekommen');
-                }
-                if (callback) {
-                    callback(element);
                 }
             })
             .catch(reason => {
@@ -171,7 +168,7 @@ export class BookwormRestClient {
             });
     }
 
-    warteAufDownload(titelnummer, orderId) {
+    warteAufDownload(titelnummer, orderId, element, callback) {
         const url = new URL('v1/bestellung/' + titelnummer + '/status/' + orderId, SHARD_URL);
         fetch(url.toString(), {
             'method': 'GET',
@@ -197,7 +194,7 @@ export class BookwormRestClient {
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
-                                this.downloadHoerbuch(titelnummer, orderId);
+                                this.downloadHoerbuch(titelnummer, orderId, element, callback);
                                 break;
                             case 'FAILED':
                                 alert('Entschuldigung, das Hörbuch konnte nicht bereitgestellt werden');
@@ -217,10 +214,13 @@ export class BookwormRestClient {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
+                if (callback) {
+                    callback(element);
+                }
             });
     }
 
-    downloadHoerbuch(titelnummer, orderId) {
+    downloadHoerbuch(titelnummer, orderId, element, callback) {
         const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId
             + '/' + this.mandant + '/' + this.hoerernummer, SHARD_URL);
         //const newWindow = window.open(url, 'daisyHoerbuchDownload');
@@ -230,6 +230,9 @@ export class BookwormRestClient {
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
+        if (callback) {
+            callback(element);
+        }
     }
 
 }

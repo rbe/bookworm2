@@ -24,9 +24,9 @@ const PAUSE_BUTTON = ['far', 'fa-pause-circle'];
 
 export class Wbhonline {
 
-    constructor(mandant, hoerernummer) {
+    constructor(hoerernummer) {
         this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
-        this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
+        this.audioplayer = new Audioplayer(SHARD_URL, '06', hoerernummer);
         this.previousClassList = new Map();
     }
 
@@ -138,7 +138,7 @@ export class Wbhonline {
             if (hoerprobeButton.classList.contains('hoerprobe-true')) {
                 this.setTitle(hoerprobeButton, 'Hörprobe abspielen');
                 hoerprobeButton.addEventListener('click', (event) => {
-                    this.disableAllButtons();
+                    this.disableButtons();
                     const i = hoerprobeButton.querySelector('i');
                     const titelnummer = this.titelnummer(event.currentTarget);
                     if (i.classList.contains('fa-volume-up')) {
@@ -153,14 +153,14 @@ export class Wbhonline {
                                 const i = element.querySelector('i');
                                 this.hoerprobePausiert(i);
                                 this.deactivateSpinner(i);
-                                this.enableAllButtons();
+                                this.enableButtons();
                             });
                     } else {
                         this.audioplayer.pausiereHoerprobe(event.currentTarget, (element) => {
                             const i = element.querySelector('i');
                             this.hoerprobePausiert(i);
                             this.deactivateSpinner(i);
-                            this.enableAllButtons();
+                            this.enableButtons();
                         });
                     }
                 });
@@ -190,12 +190,12 @@ export class Wbhonline {
             if (downloadButton.classList.contains('order-download-true')) {
                 this.setTitle(downloadButton, 'Hörbuch herunterladen');
                 downloadButton.addEventListener('click', (event) => {
-                    this.disableAllButtons();
+                    this.disableButtons();
                     this.activateSpinner(event.currentTarget.querySelector('i'));
                     const titelnummer = this.titelnummer(event.currentTarget);
                     this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget, (element) => {
                         this.deactivateSpinner(element.querySelector('i'));
-                        this.enableAllButtons();
+                        this.enableButtons();
                     });
                 });
             } else {
@@ -223,11 +223,11 @@ export class Wbhonline {
         });
     }
 
-    disableAllButtons(skipSelector = '', skipArray = []) {
+    disableButtons(skipSelector = '', skipArray = []) {
         this.withButtons('', [], (element) => this.disableAnchor(element));
     }
 
-    enableAllButtons(skipSelector = '', skipArray = []) {
+    enableButtons(skipSelector = '', skipArray = []) {
         this.withButtons('', [], (element) => this.enableAnchor(element));
     }
 
