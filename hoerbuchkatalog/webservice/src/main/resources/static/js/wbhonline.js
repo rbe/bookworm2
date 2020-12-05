@@ -143,12 +143,12 @@ export class Wbhonline {
                     const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
-                        this.audioplayer.spieleHoerprobeAb(titelnummer, null,
-                            () => {
+                        this.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
+                            (element) => {
                                 this.hoerprobeSpielt(i);
-                                this.deactivateSpinner(event.currentTarget.querySelector('i'));
+                                this.deactivateSpinner(element.querySelector('i'));
                             },
-                            () => {
+                            (element) => {
                                 this.hoerprobePausiert(i);
                                 this.enableAllButtons();
                             });
@@ -217,25 +217,22 @@ export class Wbhonline {
         button.ariaLabel = text;
     }
 
-    // TODO withButtons
-    disableAllButtons(skipSelector = '', skipArray = []) {
+    withButtons(skipSelector = '', skipArray = [], fun) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
             const matchesSkipSelector = skipSelector !== '' && element.matches(skipSelector);
             const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
             if (!matchesSkipSelector && !inSkipArray) {
-                this.disableAnchor(element);
+                fun(element);
             }
         });
     }
 
+    disableAllButtons(skipSelector = '', skipArray = []) {
+        this.withButtons(() => this.disableAnchor(element));
+    }
+
     enableAllButtons(skipSelector = '', skipArray = []) {
-        document.querySelectorAll('a[class*="button"]').forEach(element => {
-            const matchesSkipSelector = skipSelector !== '' && element.matches(skipSelector);
-            const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
-            if (!matchesSkipSelector && !inSkipArray) {
-                this.enableAnchor(element);
-            }
-        });
+        this.withButtons(() => this.enableAnchor(element));
     }
 
     disableAnchor(anchor) {

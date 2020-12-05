@@ -28,7 +28,7 @@ export class Audioplayer {
         audio.remove();
     }
 
-    spieleHoerprobeAb(titelnummer, audio, playCallback, pauseCallback) {
+    spieleHoerprobeAb(titelnummer, audio, element, playCallback, pauseCallback) {
         const url = new URL('v1/hoerprobe/' + titelnummer, this.shardURL);
         fetch(url.toString(), {
             'method': 'GET',
@@ -55,12 +55,12 @@ export class Audioplayer {
                 audio.load();
                 audio.addEventListener('play', () => {
                     if (playCallback) {
-                        playCallback();
+                        playCallback(element);
                     }
                 });
                 audio.addEventListener('pause', () => {
                     if (pauseCallback) {
-                        pauseCallback();
+                        pauseCallback(element);
                     }
                 });
                 audio.addEventListener('ended', () => {
@@ -71,7 +71,7 @@ export class Audioplayer {
             .catch(reason => {
                 console.log('Fehler: ' + reason);
                 if (pauseCallback) {
-                    pauseCallback();
+                    pauseCallback(element);
                 }
             });
     }
