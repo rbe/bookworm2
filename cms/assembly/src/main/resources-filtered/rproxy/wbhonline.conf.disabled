@@ -27,11 +27,11 @@ server {
     # General
     #
 
-    gzip on;
-    gzip_types      text/plain text/css application/javascript application/json application/xml;
-    gzip_proxied    no-cache no-store no_last_modified private expired auth;
-    gzip_min_length 256;
-    gzip_comp_level 6;
+    gzip off;
+    #gzip_types      text/plain text/css application/javascript application/json application/xml;
+    #gzip_proxied    no-cache no-store no_last_modified private expired auth;
+    #gzip_min_length 256;
+    #gzip_comp_level 6;
 
     add_header X-Powered-By "";
     # Joomla #add_header X-Frame-Options DENY;
