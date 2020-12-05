@@ -182,11 +182,11 @@ export class Wbhonline {
     }
 
     disableAnchor(anchor) {
-        anchor.classList.add('disabled');
+        anchor.style.pointerEvents = 'none';
     }
 
     enableAnchor(anchor) {
-        anchor.classList.remove('disabled');
+        anchor.style.pointerEvents = '';
     }
 
     onDomReady() {
