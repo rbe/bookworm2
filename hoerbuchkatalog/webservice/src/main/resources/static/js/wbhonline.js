@@ -217,9 +217,9 @@ export class Wbhonline {
         button.ariaLabel = text;
     }
 
-    disableAllButtons(skip) {
+    disableAllButtons(skipArray) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            if (!skip.includes(element)) {
+            if (typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element)) {
                 this.disableAnchor(element);
             }
         })
