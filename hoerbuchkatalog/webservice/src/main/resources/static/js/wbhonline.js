@@ -217,13 +217,13 @@ export class Wbhonline {
     //
 
     disableAllButtons() {
-        document.querySelectorAll('a').forEach(element => {
+        document.querySelectorAll('a[class*="button"]').forEach(element => {
             this.disableAnchor(element);
         })
     }
 
     enableAllButtons() {
-        document.querySelectorAll('a').forEach(element => {
+        document.querySelectorAll('a[class*="button"]').forEach(element => {
             this.enableAnchor(element);
         })
     }
