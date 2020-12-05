@@ -220,7 +220,7 @@ export class Wbhonline {
     // TODO withButtons
     disableAllButtons(skipSelector = '', skipArray = []) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            const matchesSkipSelector = element.matches(skipSelector);
+            const matchesSkipSelector = skipSelector !== '' && element.matches(skipSelector);
             const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
             if (!matchesSkipSelector && !inSkipArray) {
                 this.disableAnchor(element);
@@ -230,7 +230,7 @@ export class Wbhonline {
 
     enableAllButtons(skipSelector = '', skipArray = []) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            const matchesSkipSelector = element.matches(skipSelector);
+            const matchesSkipSelector = skipSelector !== '' && element.matches(skipSelector);
             const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
             if (!matchesSkipSelector && !inSkipArray) {
                 this.enableAnchor(element);
