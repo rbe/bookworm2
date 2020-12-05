@@ -202,9 +202,9 @@ export class Wbhonline {
 
     titelnummer(element) {
         let titelnummer = element.id.split('-')[1];
-        if (titelnummer.length === 4) {
+        /*if (titelnummer.length === 4) {
             titelnummer = '0' + titelnummer;
-        }
+        }*/
         return titelnummer;
     }
 
