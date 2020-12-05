@@ -139,14 +139,14 @@ export class Wbhonline {
                 this.setTitle(hoerprobeButton, 'Hörprobe abspielen');
                 hoerprobeButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
-                    this.activateSpinner(event.currentTarget);
+                    this.activateSpinner(event.currentTarget.querySelector('i'));
                     const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null,
                             () => {
                                 this.hoerprobeSpielt(i);
-                                this.deactivateSpinner(event.currentTarget);
+                                this.deactivateSpinner(event.currentTarget.querySelector('i'));
                             },
                             () => {
                                 this.hoerprobePausiert(i);
@@ -187,10 +187,10 @@ export class Wbhonline {
                 downloadButton.ariaLabel = 'Hörbuch herunterladen';
                 downloadButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
-                    this.activateSpinner(event.currentTarget);
+                    this.activateSpinner(event.currentTarget.querySelector('i'));
                     const titelnummer = this.titelnummer(event.currentTarget);
                     this.bookwormRestClient.bestelleDownload(titelnummer, () => {
-                        this.deactivateSpinner(event.currentTarget);
+                        this.deactivateSpinner(event.currentTarget.querySelector('i'));
                         this.enableAllButtons();
                     });
                 });
@@ -217,18 +217,25 @@ export class Wbhonline {
         button.ariaLabel = text;
     }
 
-    disableAllButtons(skipArray) {
+    // TODO withButtons
+    disableAllButtons(skipSelector = '', skipArray = []) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            if (typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element)) {
+            const matchesSkipSelector = element.matches(skipSelector);
+            const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
+            if (!matchesSkipSelector && !inSkipArray) {
                 this.disableAnchor(element);
             }
-        })
+        });
     }
 
-    enableAllButtons() {
+    enableAllButtons(skipSelector = '', skipArray = []) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            this.enableAnchor(element);
-        })
+            const matchesSkipSelector = element.matches(skipSelector);
+            const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
+            if (!matchesSkipSelector && !inSkipArray) {
+                this.enableAnchor(element);
+            }
+        });
     }
 
     disableAnchor(anchor) {
@@ -239,19 +246,19 @@ export class Wbhonline {
         anchor.style.pointerEvents = '';
     }
 
-    activateSpinner(anchor) {
-        anchor.style.pointerEvents = 'none';
-        this.previousClassList.set(anchor.id, anchor.classList);
-        anchor.classList.forEach(value => anchor.classList.remove(value));
-        ENABLE_SPINNER.forEach(value => anchor.classList.add(value));
+    activateSpinner(i) {
+        i.style.pointerEvents = 'none';
+        this.previousClassList.set(i.id, i.classList);
+        i.classList.forEach(value => i.classList.remove(value));
+        ENABLE_SPINNER.forEach(value => i.classList.add(value));
     }
 
-    deactivateSpinner(anchor) {
-        anchor.classList.forEach(value => anchor.classList.remove(value));
-        if (this.previousClassList.has(anchor.id)) {
-            this.previousClassList.get(anchor.id).forEach(value => anchor.classList.add(value));
+    deactivateSpinner(i) {
+        i.classList.forEach(value => i.classList.remove(value));
+        if (this.previousClassList.has(i.id)) {
+            this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
         }
-        anchor.style.pointerEvents = '';
+        i.style.pointerEvents = '';
     }
 
     //
