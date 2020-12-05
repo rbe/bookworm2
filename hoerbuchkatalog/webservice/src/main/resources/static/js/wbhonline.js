@@ -190,9 +190,11 @@ export class Wbhonline {
                 downloadButton.ariaLabel = 'Hörbuch herunterladen';
                 downloadButton.addEventListener('click', (event) => {
                     this.disableAllButtons();
+                    this.activateSpinner(event.currentTarget);
                     const titelnummer = this.titelnummer(event.currentTarget);
                     this.bookwormRestClient.bestelleDownload(titelnummer, () => {
                         this.enableAllButtons();
+                        this.deactivateSpinner(event.currentTarget);
                     });
                 });
             } else {
@@ -207,6 +209,7 @@ export class Wbhonline {
         if (titelnummer.length === 4) {
             titelnummer = '0' + titelnummer;
         }
+        return titelnummer;
     }
 
     //
