@@ -30,27 +30,35 @@ function hideElements() {
 function showElementsLoading() {
     // Playlist
     document.querySelector('.playlistContainer .notfound').style.display = 'none';
-    document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    document.querySelector('.playlistContainer .loading').style.display = 'block';
     document.querySelector('.playlistContainer').style.display = 'block';
     // Audioplayer
     document.querySelector('.audioplayer .panel').style.display = 'none';
     document.querySelector('.audioplayer .notfound').style.display = 'none';
     document.querySelector('.audioplayer .loading').style.display = 'block';
     document.querySelector('.audioplayer').style.display = 'block';
+    // sync download
+    document.querySelector('#syncDownloadButton').style.display = 'none';
+    document.querySelector('#syncDownloadStatus').style.display = 'none';
+    // async download
+    document.querySelector('#asyncDownloadButton').style.display = 'none';
+    document.querySelector('#asyncDownloadStatus').style.display = 'none';
 }
 
 function showElementsLoaded() {
     // Playlist
-    document.querySelector('.playlistContainer .loading').style.display = 'none';
     document.querySelector('.playlistContainer .notfound').style.display = 'none';
+    document.querySelector('.playlistContainer .loading').style.display = 'none';
     // Audioplayer
     document.querySelector('.audioplayer .loading').style.display = 'none';
     document.querySelector('.audioplayer .notfound').style.display = 'none';
     document.querySelector('.audioplayer .panel').style.display = 'block';
     // sync download
     document.querySelector('#syncDownloadButton').style.display = 'block';
+    document.querySelector('#syncDownloadStatus').style.display = 'block';
     // async download
     document.querySelector('#asyncDownloadButton').style.display = 'block';
+    document.querySelector('#asyncDownloadStatus').style.display = 'block';
 }
 
 (function () {

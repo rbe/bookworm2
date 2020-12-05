@@ -263,7 +263,7 @@ export class Audioplayer {
     }
 
     syncDownload() {
-        this.syncDownloadStatusText.innerHTML = 'DAISY Hörbuch wird erzeugt';
+        this.syncDownloadStatusText.innerHTML = 'DAISY Hörbuch wird erzeugt und heruntergeladen';
         fetch(new URL('v1/hoerbuch/' + this.titelnummer, this.audiobookURL).toString(),
             {
                 'method': 'GET',
@@ -385,9 +385,10 @@ export class Audioplayer {
     }
 
     asyncDownloadAudiobook() {
-        const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId, this.audiobookURL).toString();
+        const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId + '/' + this.mandant + '/' + this.hoerernummer,
+            this.audiobookURL);
         this.asyncDownloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen!';
-        fetch(url, {
+        fetch(url.toString(), {
             'method': 'GET',
             'headers': {
                 'Accept': 'application/zip',
