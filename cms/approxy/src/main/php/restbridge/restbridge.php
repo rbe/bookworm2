@@ -11,10 +11,10 @@ defined('_JEXEC') || die('Restricted access');
 
 use restbridge\CmsAdapter;
 use restbridge\CommandExecutor;
-use restbridge\JoomlaCmsAdapterImpl;
-use restbridge\JsonHelper;
 use restbridge\Debugging;
 use restbridge\Environment;
+use restbridge\JoomlaCmsAdapterImpl;
+use restbridge\JsonHelper;
 
 require_once __DIR__ . '/restbridge_configuration.php';
 
@@ -65,6 +65,15 @@ final class plgContentRestbridge extends JPlugin
      */
     private CmsAdapter $cmsAdapter;
 
+    /**
+     * Description.
+     *
+     * @var mixed|RestBridgePlugin
+     *
+     * @since 1.0
+     */
+    private RestBridgePlugin $restBridgePlugin;
+
 
     /**
      * Constructor.
@@ -79,6 +88,8 @@ final class plgContentRestbridge extends JPlugin
         parent::__construct($subject, $params);
         $this->cmsAdapter = new JoomlaCmsAdapterImpl();
         $this->commandExecutor = new CommandExecutor($this->cmsAdapter);
+        global $restBridge;
+        $this->restBridgePlugin = $restBridge['PLUGIN'];
 
     }//end __construct()
 
@@ -131,11 +142,8 @@ final class plgContentRestbridge extends JPlugin
         $commandName = trim($matches[1]);
         /** @var $parameters string */
         $parameters = trim($matches[2]);
-        global $restBridge;
-        /** @var $restBridgePlugin RestBridgePlugin */
-        $restBridgePlugin = $restBridge['PLUGIN'];
-        if (isset($restBridgePlugin) === true) {
-            $restBridgePlugin->customizeParameters($commandName, $parameters);
+        if (isset($this->restBridgePlugin) === true) {
+            $this->restBridgePlugin->customizeParameters($commandName, $parameters);
         }
 
         $commandResult = $this->commandExecutor->executeCommand($commandName, $parameters);
@@ -147,6 +155,9 @@ final class plgContentRestbridge extends JPlugin
             if ($hasMergableResult) {
                 $jsonHelper = new JsonHelper($commandResult);
                 $content = $this->cmsAdapter->renderTemplate($commandName, $jsonHelper->rowsWithValues());
+                if (isset($this->restBridgePlugin) === true) {
+                    $content .= $this->restBridgePlugin->afterContentPrepared();
+                }
             }
         }
 

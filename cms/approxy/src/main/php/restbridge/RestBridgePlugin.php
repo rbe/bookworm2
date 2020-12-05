@@ -51,10 +51,31 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
         }
 
         global $mandant;
-        $parameters .= 'mandant:'.$mandant.',hoerernummer:'.$hoerernummer;
-        restBridgeDebugLog('#customizeParameters: $parameters='.print_r($parameters, true));
+        $parameters .= 'mandant:' . $mandant . ',hoerernummer:' . $hoerernummer;
+        restBridgeDebugLog('#customizeParameters: $parameters=' . print_r($parameters, true));
 
     }//end modifyParameters()
+
+
+    /**
+     * Description.
+     *
+     * @return string
+     *
+     * @since 1.0
+     */
+    public function afterContentPrepared()
+    {
+        $hoerernummer = $this->cmsAdapter->getUserValue('cb_hoerernummer');
+        if (isset($hoerernummer) === false || $hoerernummer === '') {
+            $hoerernummer = '00000';
+        }
+        return "<script type='module'>\n"
+            . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
+            . "const wbhonline = new Wbhonline('06', '" . $hoerernummer . "');\n"
+            . "wbhonline.onDomReady();\n"
+            . "</script>\n";
+    }
 
 
 }//end class
