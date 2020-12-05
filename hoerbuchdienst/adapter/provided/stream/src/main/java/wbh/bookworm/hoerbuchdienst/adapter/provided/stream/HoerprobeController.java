@@ -133,7 +133,7 @@ public class HoerprobeController {
         final List<PlaylistEntryDTO> mp3s = playlist.getEntries().stream()
                 .filter(dto -> dto.getIdent().toLowerCase().endsWith("mp3"))
                 .filter(dto -> {
-                    boolean skipFound = true;
+                    boolean skipFound = false;
                     for (String s : MP3_IGNORIEREN) {
                         skipFound = dto.getIdent().contains(s);
                         if (skipFound) {
