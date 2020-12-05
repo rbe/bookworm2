@@ -45,7 +45,6 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         )
 )
 @Controller(HoerbuchController.BASE_URL)
-@Produces(MediaType.APPLICATION_JSON)
 public class HoerbuchController {
 
     static final String BASE_URL = "/v1/katalog";
@@ -72,6 +71,7 @@ public class HoerbuchController {
 
     @Operation(summary = "Informationen über Hörbuch abfragen")
     @Get(uri = "/{titelnummer}")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<AudiobookInfoAntwortDTO> audiobookInfo(final HttpRequest<?> httpRequest,
                                                                @Header("X-Bookworm-Mandant") final String xMandant,
                                                                @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,

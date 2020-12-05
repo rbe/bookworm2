@@ -45,7 +45,6 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         )
 )
 @Controller(TrackController.BASE_URL)
-@Produces(MediaType.APPLICATION_JSON)
 public class TrackController {
 
     static final String BASE_URL = "/v1/katalog";
@@ -72,6 +71,7 @@ public class TrackController {
     }
 
     @Get(uri = "/{titelnummer}/track/{ident}")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<TrackInfoAntwortDTO> track(final HttpRequest<?> httpRequest,
                                                    @Header("X-Bookworm-Mandant") final String xMandant,
                                                    @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,

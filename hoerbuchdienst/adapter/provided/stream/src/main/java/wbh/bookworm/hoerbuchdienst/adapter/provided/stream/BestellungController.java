@@ -15,7 +15,6 @@ import java.util.UUID;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
-import io.micronaut.http.annotation.Consumes;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
@@ -47,10 +46,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
                 contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
         )
 )
-@Controller(value = BestellungController.BASE_URL,
-        consumes = MediaType.APPLICATION_JSON, produces = MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
+@Controller(value = BestellungController.BASE_URL)
 public class BestellungController {
 
     static final String BASE_URL = "/v1/bestellung";

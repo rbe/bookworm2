@@ -32,7 +32,6 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.ShardService;
         )
 )
 @Controller(DatabeatController.BASE_URL)
-@Produces(MediaType.APPLICATION_JSON)
 public class DatabeatController {
 
     static final String BASE_URL = "/v1/shard/databeat";
@@ -47,6 +46,7 @@ public class DatabeatController {
     }
 
     @Get(uri = "generate")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> generateDatabeat() {
         LOGGER.info("Databeat generation requested");
         shardService.generateDatabeat();

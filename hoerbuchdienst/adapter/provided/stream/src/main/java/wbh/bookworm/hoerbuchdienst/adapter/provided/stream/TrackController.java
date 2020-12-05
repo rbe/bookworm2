@@ -12,12 +12,12 @@ import java.io.InputStream;
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
-import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
+import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -43,16 +43,14 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         )
 )
 @Controller(value = TrackController.BASE_URL)
+@Produces(TrackController.AUDIO_MP3)
 public class TrackController {
 
     static final String BASE_URL = "/v1/stream";
 
+    static final String AUDIO_MP3 = "audio/mp3";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(TrackController.class);
-
-    private static final String AUDIO_MP3 = "audio/mp3";
-
-    private static final String APPLICATION_ZIP = "application/zip";
-    //private static final MediaType APPLICATION_ZIP=MediaType.of("application/zip");
 
     private static final String EMPTY_STRING = "";
 
@@ -76,7 +74,7 @@ public class TrackController {
     }
 
     @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP")
-    @Get(uri = "/{titelnummer}/track/{ident}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "/{titelnummer}/track/{ident}", produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,
                                               @Header("X-Bookworm-Mandant") final String xMandant,

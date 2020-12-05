@@ -80,7 +80,8 @@ public class HoerbuchController {
 
     @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Get(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = APPLICATION_ZIP)
+    @Get(uri = "/{titelnummer}")
+    @Produces(APPLICATION_ZIP)
     @Blocking
     public HttpResponse<byte[]> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
                                                                      @Header("X-Bookworm-Mandant") final String xMandant,

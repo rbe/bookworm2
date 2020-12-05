@@ -38,8 +38,6 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
         )
 )
 @Controller(SuchindexController.BASE_URL)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class SuchindexController {
 
     static final String BASE_URL = "/v1/suche";
@@ -55,11 +53,14 @@ public class SuchindexController {
 
     // TODO Automatisieren; hier nur für Testzwecke
     @Get(uri = "index")
+    @Produces(MediaType.APPLICATION_JSON)
     public boolean index() {
         return katalogService.index();
     }
 
     @Post
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public List<SuchindexAntwortDTO> findAll(@Body final SuchindexAnfrageDTO suchindexAnfrageDTO) {
         final List<AudiobookInfoDTO> result = katalogService.findAll(suchindexAnfrageDTO.getKeywords());
         return AntwortMapper.INSTANCE.convert(result);

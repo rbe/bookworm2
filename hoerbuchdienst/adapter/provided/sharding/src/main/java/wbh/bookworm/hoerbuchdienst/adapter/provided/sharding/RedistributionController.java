@@ -43,16 +43,11 @@ import aoc.mikrokosmos.crypto.messagedigest.FastByteHash;
         )
 )
 @Controller(RedistributionController.BASE_URL)
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
 public class RedistributionController {
 
     static final String BASE_URL = "/v1/shard/redistribute";
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RedistributionController.class);
-
-    private static final String APPLICATION_ZIP = "application/zip";
-    //private static final MediaType APPLICATION_ZIP=MediaType.of("application/zip");
 
     private final AudiobookLocationService audiobookLocationService;
 
@@ -62,6 +57,8 @@ public class RedistributionController {
     }
 
     @Post(uri = "zip/{titelnummer}/{sHashValue}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> receiveAudiobook(@PathVariable final String titelnummer,
                                                   @PathVariable final String sHashValue,
                                                   @Body final byte[] bytes) {

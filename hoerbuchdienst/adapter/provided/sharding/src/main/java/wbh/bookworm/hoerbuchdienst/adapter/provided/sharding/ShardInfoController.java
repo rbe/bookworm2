@@ -34,7 +34,6 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
         )
 )
 @Controller(ShardInfoController.SHARD)
-@Produces(MediaType.APPLICATION_JSON)
 public class ShardInfoController {
 
     static final String SHARD = "/v1/shard/info";
@@ -52,6 +51,7 @@ public class ShardInfoController {
 
     @Operation(summary = "Ort/Shard eines Hörbuchs abfragen")
     @Head(uri = "location/{objectId}")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Object> location(@PathVariable final String objectId) {
         final String shardName = audiobookLocationService.shardLocation(objectId);
         LOGGER.info("Shard for object {} is {}", objectId, shardName);

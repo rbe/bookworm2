@@ -37,8 +37,6 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
-import static wbh.bookworm.hoerbuchdienst.adapter.provided.stream.HoerprobeController.AUDIO_MP3;
-
 @OpenAPIDefinition(
         info = @Info(
                 title = "Bestellung",
@@ -50,7 +48,7 @@ import static wbh.bookworm.hoerbuchdienst.adapter.provided.stream.HoerprobeContr
 )
 @Controller(value = HoerprobeController.BASE_URL)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(AUDIO_MP3)
+@Produces(HoerprobeController.AUDIO_MP3)
 public class HoerprobeController {
 
     static final String BASE_URL = "/v1/hoerprobe";
@@ -84,7 +82,7 @@ public class HoerprobeController {
     }
 
     @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
-    @Get(uri = "/{titelnummer}", consumes = MediaType.APPLICATION_JSON, produces = AUDIO_MP3)
+    @Get(uri = "/{titelnummer}")
     @Blocking
     public HttpResponse<byte[]> hoerprobeAsStream(final HttpRequest<?> httpRequest,
                                                   @Header("X-Bookworm-Mandant") final String xMandant,

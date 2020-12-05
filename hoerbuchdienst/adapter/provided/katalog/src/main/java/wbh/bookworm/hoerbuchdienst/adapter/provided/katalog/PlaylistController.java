@@ -45,7 +45,6 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
         )
 )
 @Controller(PlaylistController.BASE_URL)
-@Produces(MediaType.APPLICATION_JSON)
 public class PlaylistController {
 
     static final String BASE_URL = "/v1/katalog";
@@ -71,6 +70,7 @@ public class PlaylistController {
     }
 
     @Get(uri = "/{titelnummer}/playlist")
+    @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<PlaylistAntwortDTO> playlist(final HttpRequest<?> httpRequest,
                                                      @Header("X-Bookworm-Mandant") final String xMandant,
                                                      @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
