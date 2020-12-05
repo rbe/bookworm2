@@ -46,12 +46,12 @@ export class Wbhonline {
             merklisteButton.addEventListener('click', (event) => {
                 this.disableAnchor(event.currentTarget);
                 const titelnummer = this.titelnummer(event.currentTarget);
-                this.flipMerklisteButton(titelnummer, merklisteButton);
+                this.flipMerklisteButton(titelnummer, merklisteButton, () => this.enableAnchor(merklisteButton));
             });
         }
     }
 
-    flipMerklisteButton(titelnummer, merklisteButton) {
+    flipMerklisteButton(titelnummer, merklisteButton, callback) {
         const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
         if (aufMerkliste) {
             this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
@@ -62,6 +62,9 @@ export class Wbhonline {
                 this.zurMerklisteHinzugefuegt(merklisteButton);
             });
         }
+        if (callback) {
+            callback();
+        }
     }
 
     zurMerklisteHinzugefuegt(merklisteButton) {
@@ -69,7 +72,6 @@ export class Wbhonline {
         merklisteButton.classList.add('watchlist-true');
         merklisteButton.title = 'Hörbuch von der Merkliste entfernen';
         merklisteButton.ariaLabel = 'Hörbuch von der Merkliste entfernen';
-        this.enableAnchor(merklisteButton);
     }
 
     vonMerklisteEntfernt(merklisteButton) {
@@ -77,7 +79,6 @@ export class Wbhonline {
         merklisteButton.classList.add('watchlist-false');
         merklisteButton.title = 'Hörbuch auf die Merkliste setzen';
         merklisteButton.ariaLabel = 'Hörbuch auf die Merkliste setzen';
-        this.enableAnchor(merklisteButton);
     }
 
     //
@@ -96,12 +97,12 @@ export class Wbhonline {
             warenkorbButton.addEventListener('click', (event) => {
                 this.disableAnchor(event.currentTarget);
                 const titelnummer = this.titelnummer(event.currentTarget);
-                this.flipWarenkorbButton(titelnummer, warenkorbButton);
+                this.flipWarenkorbButton(titelnummer, warenkorbButton, () => this.enableAnchor(warenkorbButton));
             });
         }
     }
 
-    flipWarenkorbButton(titelnummer, warenkorbButton) {
+    flipWarenkorbButton(titelnummer, warenkorbButton, callback) {
         const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
         if (imWarenkorb) {
             this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
@@ -112,6 +113,9 @@ export class Wbhonline {
                 this.ausDemWarenkorbEntfernt(warenkorbButton);
             });
         }
+        if (callback) {
+            callback();
+        }
     }
 
     ausDemWarenkorbEntfernt(warenkorbButton) {
@@ -119,7 +123,6 @@ export class Wbhonline {
         warenkorbButton.classList.add('order-cd-true');
         warenkorbButton.title = 'Hörbuch als CD bestellen';
         warenkorbButton.ariaLabel = 'Hörbuch als CD bestellen';
-        this.enableAnchor(warenkorbButton);
     }
 
     inDenWarenkorbGelegt(warenkorbButton) {
@@ -127,7 +130,6 @@ export class Wbhonline {
         warenkorbButton.classList.add('order-cd-false');
         warenkorbButton.title = 'CD aus der Bestellung entfernen';
         warenkorbButton.ariaLabel = 'CD aus der Bestellung entfernen';
-        this.enableAnchor(warenkorbButton);
     }
 
     //
@@ -225,12 +227,20 @@ export class Wbhonline {
 
     disableAnchor(anchor) {
         anchor.style.pointerEvents = 'none';
+    }
+
+    enableAnchor(anchor) {
+        anchor.style.pointerEvents = '';
+    }
+
+    activateSpinner(anchor) {
+        anchor.style.pointerEvents = 'none';
         this.previousClassList.set(anchor.id, anchor.classList);
         anchor.classList.forEach(value => anchor.classList.remove(value));
         ENABLE_SPINNER.forEach(value => anchor.classList.add(value));
     }
 
-    enableAnchor(anchor) {
+    deactivateSpinner(anchor) {
         anchor.classList.forEach(value => anchor.classList.remove(value));
         if (this.previousClassList.has(anchor.id)) {
             this.previousClassList.get(anchor.id).forEach(value => anchor.classList.add(value));
