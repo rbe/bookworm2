@@ -76,11 +76,11 @@ export class Audioplayer {
             });
     }
 
-    pausiereHoerprobe(callback) {
+    pausiereHoerprobe(element, callback) {
         if (this.audio) {
             this.audio.pause();
             if (callback) {
-                callback();
+                callback(element);
             }
         }
     }

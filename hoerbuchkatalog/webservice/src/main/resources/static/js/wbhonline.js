@@ -155,8 +155,8 @@ export class Wbhonline {
                                 this.enableAllButtons();
                             });
                     } else {
-                        this.audioplayer.pausiereHoerprobe(() => {
-                            this.hoerprobePausiert(i);
+                        this.audioplayer.pausiereHoerprobe(event.currentTarget, (element) => {
+                            this.hoerprobePausiert(element.querySelector('i'));
                             this.enableAllButtons();
                         });
                     }
