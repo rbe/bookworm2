@@ -228,11 +228,11 @@ export class Wbhonline {
     }
 
     disableAllButtons(skipSelector = '', skipArray = []) {
-        this.withButtons('', [], () => this.disableAnchor(element));
+        this.withButtons('', [], (element) => this.disableAnchor(element));
     }
 
     enableAllButtons(skipSelector = '', skipArray = []) {
-        this.withButtons('', [], () => this.enableAnchor(element));
+        this.withButtons('', [], (element) => this.enableAnchor(element));
     }
 
     disableAnchor(anchor) {
