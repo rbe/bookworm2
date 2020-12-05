@@ -213,7 +213,7 @@ export class Wbhonline {
     //
 
     setTitle(button, text) {
-        button.text = text;
+        button.title = text;
         button.ariaLabel = text;
     }
 
