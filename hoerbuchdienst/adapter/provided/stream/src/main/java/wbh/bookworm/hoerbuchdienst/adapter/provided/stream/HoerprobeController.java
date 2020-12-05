@@ -8,6 +8,9 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.util.List;
+import java.util.Random;
+import java.util.stream.Collectors;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -53,11 +56,39 @@ public class HoerprobeController {
 
     static final String BASE_URL = "/v1/hoerprobe";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
-
     static final String AUDIO_MP3 = "audio/mp3";
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
+
     private static final String EMPTY_STRING = "";
+
+    private static final String[] MP3_IGNORIEREN = {
+            "Buch",
+            "DAISY",
+            "Urheberrecht",
+            "Eigentumsvermerk",
+            "Verfasser",
+            "Herausgeber",
+            "Produktion",
+            "Sprecher",
+            "Gesamtspieldauer",
+            "Gliederung",
+            "Abweichungen",
+            "Buchaufsprache",
+            "Bibliographische",
+            "Spieldauer",
+            "Struktur",
+            "Klappentexte",
+            "Buchinnenseite",
+            "Inhaltsverzeichnis",
+            "Glossar",
+            "Widmung",
+            "Nachwort",
+            "Buchzus",
+            "Literatur",
+            "Tips",
+            "Ende"
+    };
 
     private final AudiobookShardRedirector audiobookShardRedirector;
 
@@ -102,7 +133,18 @@ public class HoerprobeController {
         final boolean hasEnoughTracks = playlist.getEntries().size() >= trackIndex;
         final PlaylistEntryDTO playlistEntryDTO;
         if (hasEnoughTracks) {
-            playlistEntryDTO = playlist.getEntries().get(trackIndex);
+            final List<PlaylistEntryDTO> mp3s = playlist.getEntries().stream()
+                    .filter(dto -> dto.getIdent().toLowerCase().endsWith("mp3"))
+                    .filter(dto -> {
+                        boolean skipFound = true;
+                        for (String s : MP3_IGNORIEREN) {
+                            skipFound = dto.getIdent().contains(s);
+                        }
+                        return skipFound;
+                    })
+                    .collect(Collectors.toUnmodifiableList());
+            int random = new Random().nextInt(mp3s.size());
+            playlistEntryDTO = mp3s.get(random);
             LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}' mit Wasserzeichen",
                     xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
             try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
