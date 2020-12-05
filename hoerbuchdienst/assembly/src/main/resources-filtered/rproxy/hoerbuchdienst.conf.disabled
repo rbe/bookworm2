@@ -12,9 +12,16 @@ server {
     ignore_invalid_headers off;
     client_max_body_size 0;
     proxy_buffering off;
-    location ~* "^/(audioplayer|specification)/$" {
-        return 301 ${request_uri}index.html;
+
+    location ~ /\. {
+        deny all;
     }
+    location ~* "/(favicon.ico|robots.txt|index.html)" {
+        root /var/local/rproxy/;
+        log_not_found off;
+        access_log off;
+    }
+
     location ~* "^/(audioplayer|specification)/.+\.(html|css|js)" {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
@@ -26,7 +33,7 @@ server {
         chunked_transfer_encoding off;
         proxy_pass http://hoerbuchdienst:8080;
     }
-    location ~* "^/v./(shard|katalog|suche|bestellung|hoerbuch|hoerprobe)/.+$" {
+    location ~* "^/v./(shard|katalog|bestellung|hoerbuch|hoerprobe|stream)/.+$" {
         proxy_set_header X-Real-IP $remote_addr;
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
         proxy_set_header X-Forwarded-Proto $scheme;
@@ -37,7 +44,9 @@ server {
         chunked_transfer_encoding off;
         proxy_pass http://hoerbuchdienst:8080;
     }
+
     location / {
         return 444;
     }
+
 }

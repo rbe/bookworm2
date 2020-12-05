@@ -39,4 +39,5 @@ RUN mkdir /etc/nginx/stream.d
 COPY *.stream.disabled /etc/nginx/stream.d/
 COPY robots.txt /var/local/rproxy/
 COPY index.html /var/local/rproxy/
+COPY favicon.ico /var/local/rproxy/
 WORKDIR /etc/nginx
