@@ -106,11 +106,11 @@ export class Wbhonline {
         const imWarenkorb = warenkorbButton.classList.contains('order-cd-true');
         if (imWarenkorb) {
             this.bookwormRestClient.entferneAusWarenkorb(titelnummer, () => {
-                this.inDenWarenkorbGelegt(warenkorbButton);
+                this.ausDemWarenkorbEntfernt(warenkorbButton);
             });
         } else {
             this.bookwormRestClient.fuegeZuWarenkorbHinzu(titelnummer, () => {
-                this.ausDemWarenkorbEntfernt(warenkorbButton);
+                this.inDenWarenkorbGelegt(warenkorbButton);
             });
         }
         if (callback) {
@@ -143,7 +143,7 @@ export class Wbhonline {
                 hoerprobeButton.title = 'Hörprobe abspielen'
                 hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
                 hoerprobeButton.addEventListener('click', (event) => {
-                    this.disableAllButtons();
+                    this.disableAllButtons([event.currentTarget]);
                     const titelnummer = this.titelnummer(event.currentTarget);
                     const i = hoerprobeButton.querySelector('i');
                     if (i.classList.contains('fa-volume-up')) {
@@ -217,9 +217,11 @@ export class Wbhonline {
     // Buttons
     //
 
-    disableAllButtons() {
+    disableAllButtons(skip) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
-            this.disableAnchor(element);
+            if (!skip.includes(element)) {
+                this.disableAnchor(element);
+            }
         })
     }
 
