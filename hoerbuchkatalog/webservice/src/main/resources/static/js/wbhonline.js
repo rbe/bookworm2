@@ -27,47 +27,9 @@ export class Wbhonline {
         this.audioplayer = new Audioplayer(SHARD_URL, mandant, hoerernummer);
     }
 
-    hoerprobeButtons() {
-        const hoerprobeButtons = document.querySelectorAll('a[id^="hoerprobe-"]');
-        for (const hoerprobeButton of hoerprobeButtons) {
-            if (hoerprobeButton.classList.contains('hoerprobe-true')) {
-                hoerprobeButton.title = 'Hörprobe abspielen'
-                hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
-                hoerprobeButton.addEventListener('click', (event) => {
-                    this.disableAnchor(event.currentTarget);
-                    const titelnummer = event.currentTarget.id.split('-')[1];
-                    const i = hoerprobeButton.querySelector('i');
-                    if (i.classList.contains('fa-volume-up')) {
-                        this.audioplayer.spieleHoerprobeAb(titelnummer, null,
-                            () => {
-                                this.hoerprobeSpielt(i);
-                            },
-                            () => {
-                                this.hoerprobePausiert(i);
-                            });
-                    } else {
-                        this.audioplayer.pausiereHoerprobe(() => {
-                            this.hoerprobePausiert(i);
-                            this.enableAnchor(event.currentTarget);
-                        });
-                    }
-                });
-            } else {
-                hoerprobeButton.title = 'Hörprobe nicht verfügbar'
-                hoerprobeButton.ariaLabel = 'Hörprobe nicht verfügbar';
-            }
-        }
-    }
-
-    hoerprobeSpielt(i) {
-        PLAY_BUTTON.forEach(value => i.classList.remove(value));
-        PAUSE_BUTTON.forEach(value => i.classList.add(value));
-    }
-
-    hoerprobePausiert(i) {
-        PAUSE_BUTTON.forEach(value => i.classList.remove(value));
-        PLAY_BUTTON.forEach(value => i.classList.add(value));
-    }
+    //
+    // Merkliste
+    //
 
     merklisteButtons() {
         const merklisteButtons = document.querySelectorAll('a[id^="merkliste-"]');
@@ -115,6 +77,10 @@ export class Wbhonline {
         this.enableAnchor(merklisteButton);
     }
 
+    //
+    // Warenkorb
+    //
+
     warenkorbButtons() {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
         for (const warenkorbButton of warenkorbButtons) {
@@ -161,6 +127,56 @@ export class Wbhonline {
         this.enableAnchor(warenkorbButton);
     }
 
+    //
+    // Hörprobe
+    //
+
+    hoerprobeButtons() {
+        const hoerprobeButtons = document.querySelectorAll('a[id^="hoerprobe-"]');
+        for (const hoerprobeButton of hoerprobeButtons) {
+            if (hoerprobeButton.classList.contains('hoerprobe-true')) {
+                hoerprobeButton.title = 'Hörprobe abspielen'
+                hoerprobeButton.ariaLabel = 'Hörprobe abspielen';
+                hoerprobeButton.addEventListener('click', (event) => {
+                    this.disableAllButtons();
+                    const titelnummer = event.currentTarget.id.split('-')[1];
+                    const i = hoerprobeButton.querySelector('i');
+                    if (i.classList.contains('fa-volume-up')) {
+                        this.audioplayer.spieleHoerprobeAb(titelnummer, null,
+                            () => {
+                                this.hoerprobeSpielt(i);
+                            },
+                            () => {
+                                this.hoerprobePausiert(i);
+                            });
+                    } else {
+                        this.audioplayer.pausiereHoerprobe(() => {
+                            this.hoerprobePausiert(i);
+                            this.enableAllButtons();
+                        });
+                    }
+                });
+            } else {
+                hoerprobeButton.title = 'Hörprobe nicht verfügbar'
+                hoerprobeButton.ariaLabel = 'Hörprobe nicht verfügbar';
+            }
+        }
+    }
+
+    hoerprobeSpielt(i) {
+        PLAY_BUTTON.forEach(value => i.classList.remove(value));
+        PAUSE_BUTTON.forEach(value => i.classList.add(value));
+    }
+
+    hoerprobePausiert(i) {
+        PAUSE_BUTTON.forEach(value => i.classList.remove(value));
+        PLAY_BUTTON.forEach(value => i.classList.add(value));
+    }
+
+    //
+    // Download
+    //
+
     downloadButtons() {
         const downloadButtons = document.querySelectorAll('a[id^="download-"]');
         for (const downloadButton of downloadButtons) {
@@ -168,10 +184,10 @@ export class Wbhonline {
                 downloadButton.title = 'Hörbuch herunterladen';
                 downloadButton.ariaLabel = 'Hörbuch herunterladen';
                 downloadButton.addEventListener('click', (event) => {
-                    this.disableAnchor(event.currentTarget);
+                    this.disableAllButtons();
                     const titelnummer = event.currentTarget.id.split('-')[1];
                     this.bookwormRestClient.bestelleDownload(titelnummer, () => {
-                        this.enableAnchor(event.currentTarget);
+                        this.enableAllButtons();
                     });
                 });
             } else {
@@ -179,6 +195,22 @@ export class Wbhonline {
                 downloadButton.ariaLabel = 'Hörbuch nicht als Download verfügbar';
             }
         }
+    }
+
+    //
+    // Buttons
+    //
+
+    disableAllButtons() {
+        document.querySelectorAll('a').forEach(element => {
+            this.disableAnchor(element);
+        })
+    }
+
+    enableAllButtons() {
+        document.querySelectorAll('a').forEach(element => {
+            this.enableAnchor(element);
+        })
     }
 
     disableAnchor(anchor) {
