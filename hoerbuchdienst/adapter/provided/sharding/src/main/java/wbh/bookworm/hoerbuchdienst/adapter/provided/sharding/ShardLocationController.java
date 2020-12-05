@@ -33,24 +33,24 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
                 contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
         )
 )
-@Controller(ShardInfoController.SHARD)
-public class ShardInfoController {
+@Controller(ShardLocationController.SHARD)
+public class ShardLocationController {
 
-    static final String SHARD = "/v1/shard/info";
+    static final String SHARD = "/v1/shard/location";
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(ShardInfoController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ShardLocationController.class);
 
     private static final String X_SHARD_LOCATION = "X-Shard-Location";
 
     private final AudiobookLocationService audiobookLocationService;
 
     @Inject
-    public ShardInfoController(final AudiobookLocationService audiobookLocationService) {
+    public ShardLocationController(final AudiobookLocationService audiobookLocationService) {
         this.audiobookLocationService = audiobookLocationService;
     }
 
     @Operation(summary = "Ort/Shard eines Hörbuchs abfragen")
-    @Head(uri = "location/{objectId}")
+    @Head(uri = "/{objectId}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Object> location(@PathVariable final String objectId) {
         final String shardName = audiobookLocationService.shardLocation(objectId);

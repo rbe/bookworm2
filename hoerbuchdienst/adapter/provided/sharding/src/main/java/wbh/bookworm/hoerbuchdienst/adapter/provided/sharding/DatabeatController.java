@@ -11,7 +11,7 @@ import javax.inject.Inject;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Get;
+import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -45,7 +45,7 @@ public class DatabeatController {
         this.shardService = shardService;
     }
 
-    @Get(uri = "generate")
+    @Post
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> generateDatabeat() {
         LOGGER.info("Databeat generation requested");
