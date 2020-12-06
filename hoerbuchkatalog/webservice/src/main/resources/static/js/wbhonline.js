@@ -31,6 +31,22 @@ export class Wbhonline {
     }
 
     //
+    // Suche
+    //
+
+    suchFormulare() {
+        const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
+        for (const form of forms) {
+            const inputField = form.querySelectorAll('input[type="text"][class*="form-control"]');
+            const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
+            button.addEventListener('click', (event) => {
+                const url = new URL(window.location);
+                window.location = url.origin + '/' + url.pathname + '?stichwort=' + inputField.value;
+            });
+        }
+    }
+
+    //
     // Merkliste
     //
 
@@ -270,6 +286,7 @@ export class Wbhonline {
 
     onDomReady() {
         document.addEventListener('DOMContentLoaded', () => {
+            this.suchFormulare();
             this.merklisteButtons();
             this.warenkorbButtons();
             this.downloadButtons();
