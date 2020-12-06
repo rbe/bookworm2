@@ -41,10 +41,23 @@ export class Wbhonline {
             const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
             button.addEventListener('click', (event) => {
                 const searchParams = new URLSearchParams(window.location.search);
-                searchParams.set('stichwort', inputField.value);
+                searchParams.set('stichwort', encodeURIComponent(inputField.value));
                 const url = new URL(window.location);
                 window.location = url.origin + url.pathname + '?' + searchParams.toString();
             });
+        }
+    }
+
+    zeigeStichwortNachSuche() {
+        const searchParams = new URLSearchParams(window.location.search);
+        if (searchParams.has('stichwort')) {
+            const stichwort = decodeURIComponent(searchParams.get('stichwort'));
+            document.title = 'WBH: Suche nach ' + stichwort;
+            const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
+            for (const form of forms) {
+                const inputField = form.querySelector('input[type="text"][class*="form-control"]');
+                inputField.value = stichwort;
+            }
         }
     }
 
@@ -289,6 +302,7 @@ export class Wbhonline {
     onDomReady() {
         document.addEventListener('DOMContentLoaded', () => {
             this.suchFormulare();
+            this.zeigeStichwortNachSuche();
             this.merklisteButtons();
             this.warenkorbButtons();
             this.downloadButtons();
