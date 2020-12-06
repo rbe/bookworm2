@@ -155,10 +155,11 @@ final class plgContentRestbridge extends JPlugin
             if ($hasMergableResult) {
                 $jsonHelper = new JsonHelper($commandResult);
                 $content = $this->cmsAdapter->renderTemplate($commandName, $jsonHelper->rowsWithValues());
-                if (isset($this->restBridgePlugin) === true) {
-                    $content .= $this->restBridgePlugin->afterContentPrepared();
-                }
             }
+        }
+
+        if (isset($this->restBridgePlugin) === true) {
+            $content .= $this->restBridgePlugin->afterContentPrepared();
         }
 
         return $content;
