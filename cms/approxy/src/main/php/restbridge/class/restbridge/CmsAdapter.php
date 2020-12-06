@@ -22,10 +22,22 @@ interface CmsAdapter
      *
      * @param string $customTemplateModuleName The module = template.
      * @param string[][] $rowsWithValues Rows with values.
+     *
      * @return string Content: template with {placeholder} substituted with value.
+     *
      * @since  version
      */
     public function renderTemplate(string $customTemplateModuleName, array $rowsWithValues): string;
+
+    /**
+     * Just use a module for content.
+     *
+     * @param string $customModuleName The module = template.
+     * @return string Content: template with {placeholder} substituted with value.
+     *
+     * @since  version
+     */
+    public function getModuleContent(string $customModuleName): string;
 
     /**
      * Get user's data.

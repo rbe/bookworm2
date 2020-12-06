@@ -13,6 +13,7 @@ use JFactory;
 use Joomla;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
+use stdClass;
 
 class JoomlaCmsAdapterImpl implements CmsAdapter
 {
@@ -63,36 +64,69 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     public function renderTemplate(string $customTemplateModuleName, array $rowsWithValues): string
     {
         $customTemplateModule = self::customModule($customTemplateModuleName);
-        $template = new Template($customTemplateModule->content);
-        restBridgeDebugLog('Rendering values into template: ' . print_r($rowsWithValues, true));
-        return $template->renderToString($rowsWithValues);
+        if (is_null($customTemplateModule) === false) {
+            $template = new Template($customTemplateModule->content);
+            //restBridgeDebugLog('Rendering values into template: ' . print_r($rowsWithValues, true));
+            return $template->renderToString($rowsWithValues);
+        } else {
+            restBridgeDebugLog('Template "' . $customTemplateModuleName . '" not found');
+            return '';
+        }
 
     }//end renderTemplate()
 
 
     /**
-     * Retrieve custom Joomla module.
+     * Description.
      *
-     * @param string $commandName Name of command.
+     * @param string $customModuleName Description.
      *
-     * @return \stdClass
+     * @return string
      *
      * @since 1.0
      */
-    private static function customModule(string $commandName): \stdClass
+    public function getModuleContent(string $customModuleName): string
     {
-        $customModuleTitle = $GLOBALS['restBridge']['TEMPLATE_NAME_PREFIX'] . '_' . $commandName;
-        $customModule = ModuleHelper::getModule('mod_custom', $customModuleTitle);
-        $customModuleExists = isset($customModule) === true
-            && is_object($customModule) === true
-            && empty($customModule->content) === false;
-        if ($customModuleExists === false) {
-            restBridgeDebugLog('Command ' . $commandName . ': Custom module title=' . $customModuleTitle . ' not found');
+        $customModule = self::customModule($customModuleName);
+        if (is_null($customModule) === false) {
+            restBridgeDebugLog('Returning module content of "' . $customModuleName . '"');
+            return $customModule->content;
+        } else {
+            restBridgeDebugLog('Module "' . $customModuleName . '" has no content');
+            return '';
         }
 
-        return $customModule;
+    }//end getModuleContent()
 
-    }//end customModule()
+
+    /**
+     * Retrieve custom Joomla module.
+     *
+     * @param string $customModuleName Name of custom module.
+     *
+     * @return stdClass|null
+     *
+     * @since 1.0
+     */
+    private static function customModule(string $customModuleName): ?stdClass
+    {
+        global $restBridge;
+        $customModuleTitle = $restBridge['TEMPLATE_NAME_PREFIX'] . '_' . $customModuleName;
+        $customModule = ModuleHelper::getModule('mod_custom', $customModuleTitle);
+        restBridgeDebugLog('$customModule=' . print_r($customModule, true));
+        $customModuleExistsAndHasContent = /*isset($customModule) === true
+            &&*/ is_null($customModule) === false
+            && is_object($customModule) === true
+            && empty($customModule->content) === false;
+        if ($customModuleExistsAndHasContent === true) {
+            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" exists and has content');
+            return $customModule;
+        } else {
+            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" not found');
+            return null;
+        }
+
+    }//end getModuleContent()
 
 
     /**
