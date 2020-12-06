@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 public final class CORS {
 
-    static final String ALLOWED_METHODS = "OPTIONS, GET, POST";
+    static final String ALLOWED_METHODS = "OPTIONS, HEAD, GET, POST";
 
     private static final String ALLOWED_HEADERS = "DNT,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Origin,Accept,Content-Type,Range,X-Bookworm-Mandant,X-Bookworm-Hoerernummer";
 

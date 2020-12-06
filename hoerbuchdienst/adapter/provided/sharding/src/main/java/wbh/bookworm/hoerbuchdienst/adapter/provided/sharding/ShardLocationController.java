@@ -56,7 +56,7 @@ public class ShardLocationController {
     @Operation(hidden = true)
     @Options(uri = "/{objectId}")
     public HttpResponse<String> optionsLocation(final HttpRequest<?> httpRequest,
-                                                @PathVariable final String titelnummer) {
+                                                @PathVariable final String objectId) {
         return optionsResponse(httpRequest);
     }
 
