@@ -37,11 +37,13 @@ export class Wbhonline {
     suchFormulare() {
         const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
         for (const form of forms) {
-            const inputField = form.querySelectorAll('input[type="text"][class*="form-control"]');
+            const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
             button.addEventListener('click', (event) => {
                 const url = new URL(window.location);
-                window.location = url.origin + '/' + url.pathname + '?stichwort=' + inputField.value;
+                const searchParams = new URLSearchParams(window.location.search);
+                searchParams.set('stichwort', inputField.value);
+                window.location = url.origin + '/' + url.pathname + '?' + searchParams.toString();
             });
         }
     }
