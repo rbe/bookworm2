@@ -40,10 +40,10 @@ export class Wbhonline {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
             button.addEventListener('click', (event) => {
-                const url = new URL(window.location);
                 const searchParams = new URLSearchParams(window.location.search);
                 searchParams.set('stichwort', inputField.value);
-                window.location = url.origin + '/' + url.pathname + '?' + searchParams.toString();
+                const url = new URL(window.location);
+                window.location = url.origin + url.pathname + '?' + searchParams.toString();
             });
         }
     }
