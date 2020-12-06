@@ -221,6 +221,9 @@ export class BookwormRestClient {
     }
 
     downloadHoerbuch(titelnummer, orderId, element, callback) {
+        if (callback) {
+            callback(element);
+        }
         const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId
             + '/' + this.mandant + '/' + this.hoerernummer, SHARD_URL);
         //const newWindow = window.open(url, 'daisyHoerbuchDownload');
@@ -230,9 +233,6 @@ export class BookwormRestClient {
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
-        if (callback) {
-            callback(element);
-        }
     }
 
 }
