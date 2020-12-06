@@ -132,6 +132,8 @@ public class HoerprobeController {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
         final List<PlaylistEntryDTO> mp3s = playlist.getEntries().stream()
                 .filter(dto -> dto.getIdent().toLowerCase().endsWith("mp3"))
+                .collect(Collectors.toUnmodifiableList());
+        final List<PlaylistEntryDTO> filteredMp3s = mp3s.stream()
                 .filter(dto -> {
                     boolean skipFound = false;
                     for (String s : MP3_IGNORIEREN) {
@@ -143,10 +145,10 @@ public class HoerprobeController {
                     return skipFound;
                 })
                 .collect(Collectors.toUnmodifiableList());
-        LOGGER.debug("Kandiaten für eine Hörprobe: {}", mp3s);
-        if (!mp3s.isEmpty()) {
-            int random = new Random().nextInt(mp3s.size());
-            final PlaylistEntryDTO playlistEntryDTO = mp3s.get(random);
+        LOGGER.debug("Kandiaten für eine Hörprobe: {}, Gesamte MP3s {}", filteredMp3s, mp3s);
+        if (!filteredMp3s.isEmpty()) {
+            int random = new Random().nextInt(filteredMp3s.size());
+            final PlaylistEntryDTO playlistEntryDTO = filteredMp3s.get(random);
             LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}' mit Wasserzeichen",
                     xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
             try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
