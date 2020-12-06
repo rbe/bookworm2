@@ -235,4 +235,11 @@ export class BookwormRestClient {
         anchor.remove();
     }
 
+    shardLocation(titelnummer) {
+        return fetch('https://hoerbuchdienst.shard1.audiobook.wbh-online.de/v1/shard/location/21052',
+            {'method': 'HEAD'})
+            .then(response => response.headers)
+            .then(headers => headers.get('X-Bookworm-ShardLocation'));
+    }
+
 }
