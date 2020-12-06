@@ -9,6 +9,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -133,28 +134,19 @@ public class HoerprobeController {
         final List<PlaylistEntryDTO> mp3s = playlist.getEntries().stream()
                 .filter(dto -> dto.getIdent().toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());
-        final List<PlaylistEntryDTO> filteredMp3s = mp3s.stream()
-                .filter(dto -> {
-                    boolean skipFound = false;
-                    for (String s : MP3_IGNORIEREN) {
-                        skipFound = dto.getIdent().contains(s);
-                        if (skipFound) {
-                            break;
-                        }
-                    }
-                    return skipFound;
-                })
-                .collect(Collectors.toUnmodifiableList());
+        final Map<Boolean, List<String>> filteredMp3s = mp3s.stream()
+                .map(PlaylistEntryDTO::getIdent)
+                .collect(Collectors.partitioningBy(List.of(MP3_IGNORIEREN)::contains));
         LOGGER.debug("Kandiaten für eine Hörprobe: {}, Gesamte MP3s {}", filteredMp3s, mp3s);
         if (!filteredMp3s.isEmpty()) {
             int random = new Random().nextInt(filteredMp3s.size());
-            final PlaylistEntryDTO playlistEntryDTO = filteredMp3s.get(random);
+            final String ident = filteredMp3s.get(false).get(random);
             LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}' mit Wasserzeichen",
-                    xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
+                    xHoerernummer, titelnummer, ident);
             try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
-                    xHoerernummer, titelnummer, playlistEntryDTO.getIdent())) {
+                    xHoerernummer, titelnummer, ident)) {
                 LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' mit Wasserzeichen erstellt",
-                        xHoerernummer, titelnummer, playlistEntryDTO.getIdent());
+                        xHoerernummer, titelnummer, ident);
                 return track.readAllBytes();
             } catch (Exception e) {
                 throw new BusinessException(EMPTY_STRING, e);
