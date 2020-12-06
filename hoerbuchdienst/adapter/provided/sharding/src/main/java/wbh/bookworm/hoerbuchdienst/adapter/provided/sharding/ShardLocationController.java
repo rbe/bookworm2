@@ -8,10 +8,12 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.sharding;
 
 import javax.inject.Inject;
 
+import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
 import io.micronaut.http.annotation.Head;
+import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -23,6 +25,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
+
+import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition(
         info = @Info(
@@ -40,13 +44,20 @@ public class ShardLocationController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ShardLocationController.class);
 
-    private static final String X_SHARD_LOCATION = "X-Shard-Location";
+    private static final String X_SHARD_LOCATION = "X-Bookworm-ShardLocation";
 
     private final AudiobookLocationService audiobookLocationService;
 
     @Inject
     public ShardLocationController(final AudiobookLocationService audiobookLocationService) {
         this.audiobookLocationService = audiobookLocationService;
+    }
+
+    @Operation(hidden = true)
+    @Options(uri = "/{objectId}")
+    public HttpResponse<String> optionsLocation(final HttpRequest<?> httpRequest,
+                                                @PathVariable final String titelnummer) {
+        return optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Ort/Shard eines Hörbuchs abfragen")
