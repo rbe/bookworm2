@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -72,11 +73,14 @@ public class KatalogRestService {
     }
 
     @GetMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public HoerbuchAntwortKurzDTO info(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                       @PathVariable("titelnummer") final String titelnummer) {
+    public ResponseEntity<HoerbuchAntwortKurzDTO> info(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                       @PathVariable("titelnummer") final String titelnummer) {
         final Titelnummer titelnummer1 = new Titelnummer(titelnummer);
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer), titelnummer1);
+        if (hoerbuch.isUnbekannt()) {
+            return ResponseEntity.notFound().build();
+        }
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
         final HoerbuchAntwortKurzDTO hoerbuchAntwortKurzDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
@@ -86,7 +90,7 @@ public class KatalogRestService {
         }
         hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
         hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
-        return hoerbuchAntwortKurzDTO;
+        return ResponseEntity.ok(hoerbuchAntwortKurzDTO);
     }
 
     @GetMapping(value = "/{titelnummer}/details", produces = MediaType.APPLICATION_JSON_VALUE)
