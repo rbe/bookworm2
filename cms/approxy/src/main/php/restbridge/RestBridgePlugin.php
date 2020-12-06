@@ -54,7 +54,7 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
         $parameters .= 'mandant:' . $mandant . ',hoerernummer:' . $hoerernummer;
         restBridgeDebugLog('#customizeParameters: $parameters=' . print_r($parameters, true));
 
-    }//end modifyParameters()
+    }//end customizeParameters()
 
 
     /**
@@ -72,10 +72,10 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
         }
         return "<script type='module'>\n"
             . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
-            . "const wbhonline = new Wbhonline('06', '" . $hoerernummer . "');\n"
+            . "const wbhonline = new Wbhonline('" . $hoerernummer . "');\n"
             . "wbhonline.onDomReady();\n"
             . "</script>\n";
-    }
+    }//end afterContentPrepared()
 
 
 }//end class
