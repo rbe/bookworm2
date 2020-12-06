@@ -135,8 +135,9 @@ public class HoerprobeController {
                 .map(PlaylistEntryDTO::getIdent)
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());
+        final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
         final Map<Boolean, List<String>> filteredMp3s = mp3s.stream()
-                .collect(Collectors.partitioningBy(List.of(MP3_IGNORIEREN)::contains));
+                .collect(Collectors.partitioningBy(mp3 -> mp3Ignorieren.stream().anyMatch(mp3::contains)));
         LOGGER.debug("Kandiaten für eine Hörprobe: {}, Gesamte MP3s {}", filteredMp3s, mp3s);
         if (!filteredMp3s.isEmpty()) {
             final List<String> strings = filteredMp3s.get(false);

@@ -44,4 +44,9 @@ public final class PlaylistEntryDTO implements Serializable {
         return clips;
     }
 
+    @Override
+    public String toString() {
+        return String.format("PlaylistEntryDTO{title='%s', ident='%s'}", title, ident);
+    }
+
 }
