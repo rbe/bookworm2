@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
+import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
@@ -63,10 +64,12 @@ public class ShardLocationController {
     @Operation(summary = "Ort/Shard eines Hörbuchs abfragen")
     @Head(uri = "/{objectId}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Object> location(@PathVariable final String objectId) {
+    public HttpResponse<String> location(final HttpRequest<?> httpRequest,
+                                         @PathVariable final String objectId) {
         final String shardName = audiobookLocationService.shardLocation(objectId);
         LOGGER.info("Shard for object {} is {}", objectId, shardName);
-        return HttpResponse.ok().header(X_SHARD_LOCATION, shardName);
+        return CORS.response(httpRequest, "")
+                .header(X_SHARD_LOCATION, shardName);
     }
 
 }
