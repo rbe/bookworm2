@@ -177,13 +177,14 @@ export class Wbhonline {
                         this.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
                             (element) => {
                                 const i = element.querySelector('i');
-                                this.hoerprobeSpielt(i);
                                 this.deactivateSpinner(i);
+                                this.hoerprobeSpielt(i);
+                                this.enableAnchor(element);
                             },
                             (element) => {
                                 const i = element.querySelector('i');
-                                this.hoerprobePausiert(i);
                                 this.deactivateSpinner(i);
+                                this.hoerprobePausiert(i);
                                 this.enableButtons();
                             });
                     } else {
