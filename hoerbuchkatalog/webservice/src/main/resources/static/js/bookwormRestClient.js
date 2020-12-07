@@ -10,6 +10,12 @@ import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 const HOERBUCHKATALOG_URL = 'https://www.beta.wbh-online.de';
 
+const SHARD_URLS = [
+    'https://hoerbuchdienst.shard1.audiobook.wbh-online.de',
+    'https://hoerbuchdienst.shard2.audiobook.wbh-online.de',
+    'https://hoerbuchdienst.shard3.audiobook.wbh-online.de',
+    'https://hoerbuchdienst.shard4.audiobook.wbh-online.de'
+];
 const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
@@ -236,8 +242,13 @@ export class BookwormRestClient {
     }
 
     shardLocation(titelnummer) {
-        return fetch('https://hoerbuchdienst.shard1.audiobook.wbh-online.de/v1/shard/location/21052',
-            {'method': 'HEAD'})
+        function getRandomInt(max) {
+            return Math.floor(Math.random() * Math.floor(max));
+        }
+
+        const shardUrl = SHARD_URLS[getRandomInt(SHARD_URLS.length - 1)];
+        return fetch(shardUrl + '/v1/shard/location/' + titelnummer,
+            {'method': 'HEAD', 'mode': 'cors'})
             .then(response => response.headers)
             .then(headers => headers.get('X-Bookworm-ShardLocation'));
     }
