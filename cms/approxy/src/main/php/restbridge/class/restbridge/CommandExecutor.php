@@ -101,9 +101,9 @@ final class CommandExecutor
         }
 
         $headers = $restEndpoint['headers'];
-        foreach ($headers as $k => $v) {
-            $template = new Template($v);
-            $headers[$k] = $template->renderToString([$parameterArray]);
+        foreach ($headers as $key => $value) {
+            $template = new Template($value);
+            $headers[$key] = $template->renderToString([$parameterArray]);
         }
         restBridgeDebugLog('CommandExecutor#executeCommand: HTTP Headers: ' . print_r($headers, true));
         /** @var $requestDto array */
@@ -111,14 +111,16 @@ final class CommandExecutor
         if (isset($requestDto) === false) {
             $requestDto = $restBridge['REQUEST_DTOS'][$commandName];
         }
+
         if (isset($requestDto) === false) {
             $requestDto = [];
         } else {
-            foreach ($requestDto as $k => $v) {
-                $template = new Template($v);
-                $requestDto[$k] = $template->renderToString([$parameterArray]);
+            foreach ($requestDto as $key => $value) {
+                $template = new Template($value);
+                $requestDto[$key] = $template->renderToString([$parameterArray]);
             }
         }
+
         $command = new RestRequestReplyCommandImpl(
             [
                 'endpoint' => $restEndpoint,
@@ -133,7 +135,11 @@ final class CommandExecutor
                 },
             ]
         );
-        return $command->execute();
+        /** @var array result */
+        $result = $command->execute();
+        // Merge parameterArray into every row
+        $jsonHelper = new JsonHelper($result);
+        return $jsonHelper->merge($parameterArray);
 
     }//end executeCommand()
 

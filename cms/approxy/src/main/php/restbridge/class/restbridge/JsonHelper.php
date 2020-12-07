@@ -57,6 +57,29 @@ final class JsonHelper
     /**
      * Description.
      *
+     * @param array $array
+     * @return array|array[]
+     *
+     * @since 1.0
+     */
+    public function merge(array $array): array
+    {
+        if ($this->isSingleRow() === true) {
+            $this->json = array_merge($this->json, $array);
+        } else {
+            foreach ($this->json as $key => $value) {
+                $this->json[$key] = array_merge($value, $array);
+            }
+        }
+
+        return $this->json;
+
+    }//end merge()
+
+
+    /**
+     * Description.
+     *
      * @param array $array Comment.
      *
      * @return bool
