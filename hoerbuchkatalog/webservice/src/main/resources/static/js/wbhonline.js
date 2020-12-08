@@ -38,8 +38,8 @@ export class Wbhonline {
         const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-            const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
-            if (button !== undefined) {
+            const button = form.querySelector('button[class*="search"]');
+            if (button !== undefined && button !== null) {
                 button.addEventListener('click', (event) => {
                     const url = new URL(window.location);
                     url.pathname = '/konto/stichwortsuche.html';
@@ -58,7 +58,9 @@ export class Wbhonline {
             const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
             for (const form of forms) {
                 const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-                inputField.value = stichwort;
+                if (inputField !== undefined && inputField !== null) {
+                    inputField.value = stichwort;
+                }
             }
         }
     }
