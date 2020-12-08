@@ -82,7 +82,8 @@ public class WarenkorbService {
                                           final Hoerernummer hoerernummer,
                                           final Titelnummer titelnummer) {
         final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
-        return cdWarenkorb(hoerernummer, warenkorbId).enthalten(titelnummer);
+        final CdWarenkorb cdWarenkorb = cdWarenkorb(hoerernummer, warenkorbId);
+        return cdWarenkorb.enthalten(titelnummer);
     }
 
     public int anzahlHoerbuecherAlsCd(final BestellungSessionId bestellungSessionId,

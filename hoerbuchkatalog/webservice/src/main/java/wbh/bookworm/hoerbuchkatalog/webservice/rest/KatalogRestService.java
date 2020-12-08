@@ -54,7 +54,7 @@ public class KatalogRestService {
         final Suchparameter suchparameter = new Suchparameter();
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer.getValue());
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
         final List<HoerbuchAntwortKurzDTO> antwort = new ArrayList<>();
         for (Titelnummer titelnummer : suchergebnis.getTitelnummern()) {
@@ -82,7 +82,7 @@ public class KatalogRestService {
             return ResponseEntity.notFound().build();
         }
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer.getValue());
         final HoerbuchAntwortKurzDTO hoerbuchAntwortKurzDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
         final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
         if (null != sachgebiet) {
@@ -100,7 +100,7 @@ public class KatalogRestService {
         final Titelnummer titelnummer1 = new Titelnummer(titelnummer);
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer(xHoerernummer), titelnummer1);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer.getValue());
         final HoerbuchAntwortDTO hoerbuchAntwortDTO = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortDto(hoerbuch);
         final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
         if (null != sachgebiet) {

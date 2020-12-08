@@ -53,8 +53,7 @@ public final class WarenkorbRestService {
     public Map<String, Object> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                           @PathVariable final String titelnummer) {
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
-                xHoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xHoerernummer);
         final boolean b = warenkorbService.inDenCdWarenkorb(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
@@ -65,8 +64,7 @@ public final class WarenkorbRestService {
     public Map<String, Object> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                          @PathVariable final String titelnummer) {
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(
-                xHoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xHoerernummer);
         final boolean b = warenkorbService.ausDemCdWarenkorbEntfernen(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
@@ -77,6 +75,7 @@ public final class WarenkorbRestService {
     public List<HoerbuchAntwortKurzDTO> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xHoerernummer);
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(
                 bestellungService.bestellungSessionId(xHoerernummer),
                 hoerernummer);
@@ -84,6 +83,8 @@ public final class WarenkorbRestService {
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
             hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer,
                     new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId,
+                    hoerernummer, new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
         });
         return hoerbuchAntwortKurzDTOS;
     }
