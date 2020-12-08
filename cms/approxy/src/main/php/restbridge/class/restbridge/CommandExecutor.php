@@ -44,37 +44,6 @@ final class CommandExecutor
         $this->classHelper = new CommandExecutorClassHelper();
     }//end __construct()
 
-
-    /**
-     * Analyze parameter string.
-     *
-     * @param string $commandName Name of command.
-     * @param string $parameterString Parameters, form: name:value.
-     *
-     * @return string[][]
-     * @since  version
-     */
-    public function analyzeParameters(string $commandName, string $parameterString): array
-    {
-        $parameters = explode(',', $parameterString);
-        $parameterArray = [];
-        foreach ($parameters as $p) {
-            $keyValue = explode(':', $p);
-            $isKeyWithValue = isset($keyValue) === true && count($keyValue) === 2;
-            if ($isKeyWithValue) {
-                $key = $keyValue[0];
-                $value = $keyValue[1];
-                $parameterArray[$key] = $value;
-            } else {
-                restBridgeDebugLog('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
-            }
-        }
-
-        return $parameterArray;
-
-    }//end analyzeParameters()
-
-
     /**
      * Execute a command.
      *
@@ -136,10 +105,44 @@ final class CommandExecutor
             ]
         );
         /** @var array result */
-        $result = $command->execute();
-        // Merge parameterArray into every row
-        $jsonHelper = new JsonHelper($result);
-        return $jsonHelper->merge($parameterArray);
+        $result = $command->execute(); // TODO $result == CommandResult
+        if (is_array($result) === true && empty($result) === false) {
+            // Merge parameterArray into every row
+            $jsonHelper = new JsonHelper($result);
+            return $jsonHelper->merge($parameterArray);
+        } else {
+            return $result;
+        }
+
+    }//end analyzeParameters()
+
+
+    /**
+     * Analyze parameter string.
+     *
+     * @param string $commandName Name of command.
+     * @param string $parameterString Parameters, form: name:value.
+     *
+     * @return string[][]
+     * @since  version
+     */
+    public function analyzeParameters(string $commandName, string $parameterString): array
+    {
+        $parameters = explode(',', $parameterString);
+        $parameterArray = [];
+        foreach ($parameters as $p) {
+            $keyValue = explode(':', $p);
+            $isKeyWithValue = isset($keyValue) === true && count($keyValue) === 2;
+            if ($isKeyWithValue) {
+                $key = $keyValue[0];
+                $value = $keyValue[1];
+                $parameterArray[$key] = $value;
+            } else {
+                restBridgeDebugLog('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
+            }
+        }
+
+        return $parameterArray;
 
     }//end executeCommand()
 

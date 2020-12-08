@@ -77,6 +77,37 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
 
 
     /**
+     * Retrieve custom Joomla module.
+     *
+     * @param string $customModuleName Name of custom module.
+     *
+     * @return stdClass|null
+     *
+     * @since 1.0
+     */
+    private static function customModule(string $customModuleName): ?stdClass
+    {
+        global $restBridge;
+        $customModuleTitle = $restBridge['TEMPLATE_NAME_PREFIX'] . '_' . $customModuleName;
+        $customModule = ModuleHelper::getModule('mod_custom', $customModuleTitle);
+        //restBridgeDebugLog('$customModule=' . print_r($customModule, true));
+        $customModuleExistsAndHasContent = /*isset($customModule) === true
+            &&*/
+            is_null($customModule) === false
+            && is_object($customModule) === true
+            && empty($customModule->content) === false;
+        if ($customModuleExistsAndHasContent === true) {
+            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" exists and has content');
+            return $customModule;
+        } else {
+            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" not found');
+            return null;
+        }
+
+    }//end getModuleContent()
+
+
+    /**
      * Description.
      *
      * @param string $customModuleName Description.
@@ -94,36 +125,6 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         } else {
             restBridgeDebugLog('Module "' . $customModuleName . '" has no content');
             return '';
-        }
-
-    }//end getModuleContent()
-
-
-    /**
-     * Retrieve custom Joomla module.
-     *
-     * @param string $customModuleName Name of custom module.
-     *
-     * @return stdClass|null
-     *
-     * @since 1.0
-     */
-    private static function customModule(string $customModuleName): ?stdClass
-    {
-        global $restBridge;
-        $customModuleTitle = $restBridge['TEMPLATE_NAME_PREFIX'] . '_' . $customModuleName;
-        $customModule = ModuleHelper::getModule('mod_custom', $customModuleTitle);
-        restBridgeDebugLog('$customModule=' . print_r($customModule, true));
-        $customModuleExistsAndHasContent = /*isset($customModule) === true
-            &&*/ is_null($customModule) === false
-            && is_object($customModule) === true
-            && empty($customModule->content) === false;
-        if ($customModuleExistsAndHasContent === true) {
-            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" exists and has content');
-            return $customModule;
-        } else {
-            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" not found');
-            return null;
         }
 
     }//end getModuleContent()

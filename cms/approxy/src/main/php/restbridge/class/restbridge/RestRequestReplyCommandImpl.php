@@ -20,7 +20,7 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
      *
      * @since 1.0
      */
-    public function execute(): array
+    public function execute(): array // TODO Return CommandResult
     {
         $restEndpoint = $this->parameters['endpoint'];
         if (isset($restEndpoint) === false) {
@@ -33,21 +33,23 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
             $requestDto = [];
         }
 
-        $response = null;
-        restBridgeDebugLog('RestRequestReplyCommandImpl#execute:'
-            .' restEndpoint='.print_r($restEndpoint, true)
-            .' requestDto='.print_r($requestDto, true));
+        /*restBridgeDebugLog('RestRequestReplyCommandImpl#execute:'
+            . ' restEndpoint=' . print_r($restEndpoint, true)
+            . ' requestDto=' . print_r($requestDto, true));*/
+        $responseBody = [];
         try {
             $restReqResp = new RestRequestReply($restEndpoint, $requestDto);
-            $response = $restReqResp->execute(
+            $httpResponse = $restReqResp->execute(
                 $this->parameters['urlParameters'],
                 $this->parameters['preHttpPostCallback']
             );
-            $responseBody = $response->getJson();
-            restBridgeDebugLog('Response: '.print_r($responseBody, true));
+            $statusCode = $httpResponse->getStatusCode();
+            if ($statusCode >= 200 && $statusCode < 300) {
+                $responseBody = $httpResponse->getJson();
+                restBridgeDebugLog('Response: HTTP ' . $statusCode . ' Body=' . print_r($responseBody, true));
+            }
         } catch (\Exception $e) {
             restBridgeDebugLog('Exception: ' . $e->getMessage());
-            $responseBody = [];
         }
 
         return $responseBody;
