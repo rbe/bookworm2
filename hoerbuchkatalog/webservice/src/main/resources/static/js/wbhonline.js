@@ -9,14 +9,6 @@
 import {BookwormRestClient} from "./bookwormRestClient.js";
 import {Audioplayer} from "./audioplayer.js";
 
-const SHARD_URLS = [
-    'https://hoerbuchdienst.shard1.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard2.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard3.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard4.audiobook.wbh-online.de'
-];
-const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
-
 const ENABLE_SPINNER = ['fas', 'fa-spinner', 'fa-spin'];
 
 const PLAY_BUTTON = ['fas', 'fa-volume-up', 'fa'];
@@ -26,43 +18,8 @@ export class Wbhonline {
 
     constructor(hoerernummer) {
         this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
-        this.audioplayer = new Audioplayer(SHARD_URL, '06', hoerernummer);
+        this.audioplayer = new Audioplayer('06', hoerernummer);
         this.previousClassList = new Map();
-    }
-
-    //
-    // Suche
-    //
-
-    suchFormulare() {
-        const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
-        for (const form of forms) {
-            const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-            const button = form.querySelector('button[class*="search"]');
-            if (button !== undefined && button !== null) {
-                button.addEventListener('click', (event) => {
-                    const url = new URL(window.location);
-                    url.pathname = '/konto/stichwortsuche.html';
-                    url.searchParams.set('stichwort', inputField.value);
-                    window.location = url.toString();
-                });
-            }
-        }
-    }
-
-    zeigeStichwortNachSuche() {
-        const searchParams = new URLSearchParams(window.location.search);
-        if (searchParams.has('stichwort')) {
-            const stichwort = decodeURIComponent(searchParams.get('stichwort'));
-            document.title = 'WBH: Suche nach ' + stichwort;
-            const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
-            for (const form of forms) {
-                const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-                if (inputField !== undefined && inputField !== null) {
-                    inputField.value = stichwort;
-                }
-            }
-        }
     }
 
     //
@@ -304,15 +261,18 @@ export class Wbhonline {
         return titelnummer;
     }
 
-    onDomReady() {
-        document.addEventListener('DOMContentLoaded', () => {
-            this.suchFormulare();
-            this.zeigeStichwortNachSuche();
-            this.merklisteButtons();
-            this.warenkorbButtons();
-            this.downloadButtons();
-            this.hoerprobeButtons();
-        });
+    initialize() {
+        this.merklisteButtons();
+        this.warenkorbButtons();
+        this.downloadButtons();
+        this.hoerprobeButtons();
     }
 
 }
+
+/*
+document.addEventListener('DOMContentLoaded', (event) => {
+    const wbhonline = new Wbhonline();
+    wbhonline.initialize();
+});
+*/
