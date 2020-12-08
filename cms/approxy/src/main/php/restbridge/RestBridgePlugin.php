@@ -72,8 +72,10 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
         }
         return "<script type='module'>\n"
             . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
-            . "const wbhonline = new Wbhonline('" . $hoerernummer . "');\n"
-            . "wbhonline.onDomReady();\n"
+            . "document.addEventListener('DOMContentLoaded', (event) => {\n"
+            . "  const wbhonline = new Wbhonline('" . $hoerernummer . "');\n"
+            . "  wbhonline.initialize();\n"
+            . "});\n"
             . "</script>\n";
     }//end afterContentPrepared()
 
