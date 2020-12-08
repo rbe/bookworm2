@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import org.mapstruct.AfterMapping;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
@@ -15,6 +16,8 @@ public abstract class HoerbuchMapper {
 
     public static final HoerbuchMapper INSTANCE = Mappers.getMapper(HoerbuchMapper.class);
 
+    @Mapping(target = "produktionsjahr", source = "prodJahr")
+    @Mapping(target = "produktionsort", source = "prodOrt")
     abstract HoerbuchAntwortDTO convertToHoerbuchAntwortDto(Hoerbuch hoerbuch);
 
     abstract HoerbuchAntwortKurzDTO convertToHoerbuchAntwortKurzDto(Hoerbuch hoerbuch);
