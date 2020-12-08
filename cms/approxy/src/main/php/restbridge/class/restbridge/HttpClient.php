@@ -173,7 +173,7 @@ final class HttpClient
         $ch = curl_init();
         curl_setopt($ch, CURLOPT_URL, $url);
         curl_setopt($ch, CURLOPT_USERAGENT, 'restbridge/1.0 (+https://www.art-of-coding.eu/restbridge.html)');
-        curl_setopt($ch, CURLOPT_HTTP_VERSION, '1.1');
+        curl_setopt($ch, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, true);
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
