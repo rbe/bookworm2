@@ -12,7 +12,7 @@ import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
 import io.micronaut.http.annotation.Controller;
-import io.micronaut.http.annotation.Head;
+import io.micronaut.http.annotation.Get;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
@@ -62,13 +62,13 @@ public class ShardLocationController {
     }
 
     @Operation(summary = "Ort/Shard eines Hörbuchs abfragen")
-    @Head(uri = "/{objectId}")
+    @Get(uri = "/{objectId}")
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<String> location(final HttpRequest<?> httpRequest,
                                          @PathVariable final String objectId) {
         final String shardName = audiobookLocationService.shardLocation(objectId);
         LOGGER.info("Shard for object {} is {}", objectId, shardName);
-        return CORS.response(httpRequest, "")
+        return CORS.response(httpRequest, shardName)
                 .header(X_SHARD_LOCATION, shardName);
     }
 

@@ -248,9 +248,12 @@ export class BookwormRestClient {
 
         const shardUrl = SHARD_URLS[getRandomInt(SHARD_URLS.length - 1)];
         return fetch(shardUrl + '/v1/shard/location/' + titelnummer,
-            {'method': 'HEAD', 'mode': 'cors'})
+            {'method': 'GET', 'mode': 'cors'})
             .then(response => response.headers)
-            .then(headers => headers.get('X-Bookworm-ShardLocation'));
+            .then(headers => headers.get('X-Bookworm-ShardLocation'))
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+            });
     }
 
 }
