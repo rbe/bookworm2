@@ -6,14 +6,16 @@
 
 "use strict";
 
+import {BookwormRestClient} from "./bookwormRestClient.js";
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Audioplayer {
 
-    constructor(shardURL, mandant, hoerernummer) {
-        this.shardURL = shardURL;
+    constructor(mandant, hoerernummer) {
+        this.bookwormRestClient = new BookwormRestClient(mandant, hoerernummer);
         this.mandant = mandant;
         this.hoerernummer = hoerernummer;
+        this.shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
     }
 
     createAudioElement(titelnummer) {
