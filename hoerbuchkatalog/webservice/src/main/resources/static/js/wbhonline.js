@@ -39,12 +39,14 @@ export class Wbhonline {
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             const button = form.querySelector('form[id^="catalogsearch-"] button[class*="search"]');
-            button.addEventListener('click', (event) => {
-                const url = new URL(window.location);
-                url.pathname = '/konto/stichwortsuche.html';
-                url.searchParams.set('stichwort', inputField.value);
-                window.location = url.toString();
-            });
+            if (button !== undefined) {
+                button.addEventListener('click', (event) => {
+                    const url = new URL(window.location);
+                    url.pathname = '/konto/stichwortsuche.html';
+                    url.searchParams.set('stichwort', inputField.value);
+                    window.location = url.toString();
+                });
+            }
         }
     }
 
