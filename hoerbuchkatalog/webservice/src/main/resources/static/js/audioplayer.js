@@ -52,7 +52,7 @@ export class Audioplayer {
     pausiereHoerprobe(element, callback) {
         if (this.audio) {
             this.audio.pause();
-            this.cleanup(audio);
+            this.cleanup(this.audio);
             if (callback) {
                 callback(element);
             }
