@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.io.Serializable;
+import java.util.Arrays;
 
 public final class PlaylistEntryDTO implements Serializable {
 
@@ -42,6 +43,10 @@ public final class PlaylistEntryDTO implements Serializable {
 
     public Double[] getClips() {
         return clips;
+    }
+
+    public double getSeconds() {
+        return Arrays.stream(clips).mapToDouble(Double::doubleValue).sum();
     }
 
     @Override
