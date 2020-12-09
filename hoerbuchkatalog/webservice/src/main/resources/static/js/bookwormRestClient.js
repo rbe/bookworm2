@@ -16,7 +16,6 @@ const SHARD_URLS = [
     'https://hoerbuchdienst.shard3.audiobook.wbh-online.de',
     'https://hoerbuchdienst.shard4.audiobook.wbh-online.de'
 ];
-const SHARD_URL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
 const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
 export class BookwormRestClient {
