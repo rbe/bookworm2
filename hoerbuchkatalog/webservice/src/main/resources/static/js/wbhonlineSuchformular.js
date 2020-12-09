@@ -15,6 +15,7 @@ export class WbhonlineSuchformular {
             const button = form.querySelector('button[class*="search"]');
             if (button !== undefined && button !== null) {
                 button.addEventListener('click', (event) => {
+                    event.currentTarget.disabled = true;
                     const url = new URL(window.location);
                     url.pathname = '/konto/stichwortsuche.html';
                     url.searchParams.set('stichwort', inputField.value);
