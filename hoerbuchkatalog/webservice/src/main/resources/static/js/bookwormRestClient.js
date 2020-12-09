@@ -139,8 +139,8 @@ export class BookwormRestClient {
 
     bestelleHoerprobe(titelnummer, playCallback) {
         this.shardLocation(titelnummer)
-            .then(shardUrl => {
-                const url = new URL('v1/hoerprobe/' + titelnummer, shardUrl);
+            .then(shardName => {
+                const url = new URL('v1/hoerprobe/' + titelnummer, 'https://' + shardName);
                 fetch(url.toString(), {
                     'method': 'GET',
                     'headers': {
@@ -171,16 +171,13 @@ export class BookwormRestClient {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (pauseCallback) {
-                    pauseCallback(element);
-                }
             });
     }
 
-    bestelleDownload(titelnummer, element, callback) {
+    bestelleDownload(titelnummer, element, downloadFertigCallback) {
         this.shardLocation(titelnummer)
-            .then(shardUrl => {
-                const url = new URL('v1/bestellung/' + titelnummer, shardUrl);
+            .then(shardName => {
+                const url = new URL('v1/bestellung/' + titelnummer, 'https://' + shardName);
                 fetch(url.toString(), {
                     'method': 'POST',
                     'mode': 'cors',
@@ -203,28 +200,28 @@ export class BookwormRestClient {
                     .then(json => {
                         if (json && json.orderId) {
                             console.log('orderId ist ' + json.orderId);
-                            this.warteAufDownload(titelnummer, json.orderId, element, callback);
+                            this.warteAufDownload(shardName, titelnummer, json.orderId, element, downloadFertigCallback);
                         } else {
                             console.log('Kein JSON oder keine orderId bekommen');
                         }
                     })
                     .catch(reason => {
                         console.log('Fehler: ' + reason);
-                        if (callback) {
-                            callback(element);
+                        if (downloadFertigCallback) {
+                            downloadFertigCallback(element);
                         }
                     });
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (callback) {
-                    callback(element);
+                if (downloadFertigCallback) {
+                    downloadFertigCallback(element);
                 }
             });
     }
 
-    warteAufDownload(titelnummer, orderId, element, callback) {
-        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + orderId, SHARD_URL);
+    warteAufDownload(shardName, titelnummer, orderId, element, callback) {
+        const url = new URL('v1/bestellung/' + titelnummer + '/status/' + orderId, 'https://' + shardName);
         fetch(url.toString(), {
             'method': 'GET',
             'mode': 'cors',
@@ -249,7 +246,7 @@ export class BookwormRestClient {
                     if (orderStatus === 'SUCCESS' || orderStatus === 'FAILED') {
                         switch (orderStatus) {
                             case 'SUCCESS':
-                                this.downloadHoerbuch(titelnummer, orderId, element, callback);
+                                this.downloadHoerbuch(shardName, titelnummer, orderId, element, callback);
                                 break;
                             case 'FAILED':
                                 alert('Entschuldigung, das Hörbuch konnte nicht bereitgestellt werden');
@@ -263,7 +260,7 @@ export class BookwormRestClient {
                         }
                     } else {
                         this.asyncDownloadStatusTimeoutId.set(orderId,
-                            setTimeout(() => this.warteAufDownload(titelnummer, orderId, element, callback), DOWNLOAD_STATUS_TIMEOUT));
+                            setTimeout(() => this.warteAufDownload(shardName, titelnummer, orderId, element, callback), DOWNLOAD_STATUS_TIMEOUT));
                     }
                 }
             })
@@ -275,12 +272,12 @@ export class BookwormRestClient {
             });
     }
 
-    downloadHoerbuch(titelnummer, orderId, element, callback) {
+    downloadHoerbuch(shardName, titelnummer, orderId, element, callback) {
         if (callback) {
             callback(element);
         }
         const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId
-            + '/' + this.mandant + '/' + this.hoerernummer, SHARD_URL);
+            + '/' + this.mandant + '/' + this.hoerernummer, 'https://' + shardName);
         //const newWindow = window.open(url, 'daisyHoerbuchDownload');
         const anchor = document.createElement('a');
         anchor.href = url.toString();
