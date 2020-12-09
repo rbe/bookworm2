@@ -137,34 +137,83 @@ export class BookwormRestClient {
             });
     }
 
-    bestelleDownload(titelnummer, element, callback) {
-        const url = new URL('v1/bestellung/' + titelnummer, SHARD_URL).toString();
-        fetch(url, {
-            'method': 'POST',
-            'mode': 'cors',
-            'headers': {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                'X-Bookworm-Mandant': this.mandant,
-                'X-Bookworm-Hoerernummer': this.hoerernummer
-            },
-            'redirect': 'follow'
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    // TODO HTTP 404 Buch nicht gefunden (Databeat noch nicht vollständig)
-                    FetchErrorHandler.handle(response);
-                }
+    bestelleHoerprobe(titelnummer, playCallback) {
+        this.shardLocation(titelnummer)
+            .then(shardUrl => {
+                const url = new URL('v1/hoerprobe/' + titelnummer, shardUrl);
+                fetch(url.toString(), {
+                    'method': 'GET',
+                    'headers': {
+                        'Accept': 'audio/mp3',
+                        'X-Bookworm-Mandant': this.mandant,
+                        'X-Bookworm-Hoerernummer': this.hoerernummer
+                    },
+                    'redirect': 'follow'
+                })
+                    .then(response => {
+                        if (response.ok) { // Ok, kann aber leer sein!
+                            return response.blob();
+                        } else {
+                            FetchErrorHandler.handle(response);
+                        }
+                    })
+                    .then(blob => {
+                        if (blob !== undefined && blob.size > 0) {
+                            playCallback(blob);
+                        }
+                    })
+                    .catch(reason => {
+                        console.log('Fehler: ' + reason);
+                        if (pauseCallback) {
+                            pauseCallback(element);
+                        }
+                    });
             })
-            .then(json => {
-                if (json && json.orderId) {
-                    console.log('orderId ist ' + json.orderId);
-                    this.warteAufDownload(titelnummer, json.orderId, element, callback);
-                } else {
-                    console.log('Kein JSON oder keine orderId bekommen');
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+                if (pauseCallback) {
+                    pauseCallback(element);
                 }
+            });
+    }
+
+    bestelleDownload(titelnummer, element, callback) {
+        this.shardLocation(titelnummer)
+            .then(shardUrl => {
+                const url = new URL('v1/bestellung/' + titelnummer, shardUrl);
+                fetch(url.toString(), {
+                    'method': 'POST',
+                    'mode': 'cors',
+                    'headers': {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                        'X-Bookworm-Mandant': this.mandant,
+                        'X-Bookworm-Hoerernummer': this.hoerernummer
+                    },
+                    'redirect': 'follow'
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            // TODO HTTP 404 Buch nicht gefunden (Databeat noch nicht vollständig)
+                            FetchErrorHandler.handle(response);
+                        }
+                    })
+                    .then(json => {
+                        if (json && json.orderId) {
+                            console.log('orderId ist ' + json.orderId);
+                            this.warteAufDownload(titelnummer, json.orderId, element, callback);
+                        } else {
+                            console.log('Kein JSON oder keine orderId bekommen');
+                        }
+                    })
+                    .catch(reason => {
+                        console.log('Fehler: ' + reason);
+                        if (callback) {
+                            callback(element);
+                        }
+                    });
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
@@ -249,8 +298,7 @@ export class BookwormRestClient {
         const shardUrl = SHARD_URLS[getRandomInt(SHARD_URLS.length - 1)];
         return fetch(shardUrl + '/v1/shard/location/' + titelnummer,
             {'method': 'GET', 'mode': 'cors'})
-            .then(response => response.headers)
-            .then(headers => headers.get('X-Bookworm-ShardLocation'))
+            .then(response => response.text())
             .catch(reason => {
                 console.log('Fehler: ' + reason);
             });

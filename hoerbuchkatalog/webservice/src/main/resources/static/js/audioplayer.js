@@ -7,15 +7,11 @@
 "use strict";
 
 import {BookwormRestClient} from "./bookwormRestClient.js";
-import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
 export class Audioplayer {
 
     constructor(mandant, hoerernummer) {
         this.bookwormRestClient = new BookwormRestClient(mandant, hoerernummer);
-        this.mandant = mandant;
-        this.hoerernummer = hoerernummer;
-        this.shardURL = 'https://hoerbuchdienst.shard4.audiobook.wbh-online.de';
     }
 
     createAudioElement(titelnummer) {
@@ -31,62 +27,32 @@ export class Audioplayer {
     }
 
     spieleHoerprobeAb(titelnummer, audio, element, playCallback, pauseCallback) {
-        const url = new URL('v1/hoerprobe/' + titelnummer, this.shardURL);
-        fetch(url.toString(), {
-            'method': 'GET',
-            'headers': {
-                'Accept': 'audio/mp3',
-                'X-Bookworm-Mandant': this.mandant,
-                'X-Bookworm-Hoerernummer': this.hoerernummer
-            },
-            'redirect': 'follow'
-        })
-            .then(response => {
-                if (response.ok) { // Ok, kann aber leer sein!
-                    return response.blob();
-                } else {
-                    FetchErrorHandler.handle(response);
-                }
-            })
-            .then(blob => {
-                if (blob !== undefined && blob.size > 0) {
-                    if (audio === undefined || audio === null) {
-                        audio = this.createAudioElement(titelnummer);
-                    }
-                    this.audio = audio;
-                    audio.src = URL.createObjectURL(blob);
-                    audio.load();
-                    audio.addEventListener('play', () => {
-                        if (playCallback) {
-                            playCallback(element);
-                        }
-                    });
-                    audio.addEventListener('pause', () => {
-                        if (pauseCallback) {
-                            pauseCallback(element);
-                        }
-                    });
-                    audio.addEventListener('ended', () => {
-                        this.cleanup(audio);
-                    });
-                    audio.play();
-                } else {
-                    if (pauseCallback) {
-                        pauseCallback(element);
-                    }
-                }
-            })
-            .catch(reason => {
-                console.log('Fehler: ' + reason);
-                if (pauseCallback) {
-                    pauseCallback(element);
+        this.bookwormRestClient.bestelleHoerprobe(titelnummer, (blob) => {
+            if (audio === undefined || audio === null) {
+                audio = this.createAudioElement(titelnummer);
+            }
+            this.audio = audio;
+            audio.src = URL.createObjectURL(blob);
+            audio.load();
+            audio.addEventListener('play', () => {
+                if (playCallback) {
+                    playCallback(element);
                 }
             });
+            audio.addEventListener('pause', () => {
+                this.pausiereHoerprobe(element, pauseCallback);
+            });
+            audio.addEventListener('ended', () => {
+                this.cleanup(audio);
+            });
+            audio.play();
+        });
     }
 
     pausiereHoerprobe(element, callback) {
         if (this.audio) {
             this.audio.pause();
+            this.cleanup(audio);
             if (callback) {
                 callback(element);
             }
