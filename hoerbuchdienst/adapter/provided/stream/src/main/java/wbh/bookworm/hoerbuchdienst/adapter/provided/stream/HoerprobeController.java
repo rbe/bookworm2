@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
@@ -132,6 +133,8 @@ public class HoerprobeController {
                                          final String titelnummer) {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
         final List<String> mp3s = playlist.getEntries().stream()
+                .filter(dto -> dto.getSeconds() < 600)
+                .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
                 .map(PlaylistEntryDTO::getIdent)
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());
