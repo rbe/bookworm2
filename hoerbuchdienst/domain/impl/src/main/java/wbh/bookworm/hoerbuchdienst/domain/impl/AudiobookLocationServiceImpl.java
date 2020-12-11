@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookLocationService;
+import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.DatabeatManager;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardName;
 import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.ShardingRepository;
 
@@ -32,14 +33,18 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
 
     private final ShardingRepository shardingRepository;
 
+    private final DatabeatManager databeatManager;
+
     @Inject
-    AudiobookLocationServiceImpl(final ShardingRepository shardingRepository) {
+    AudiobookLocationServiceImpl(final ShardingRepository shardingRepository,
+                                 final DatabeatManager databeatManager) {
         this.shardingRepository = shardingRepository;
+        this.databeatManager = databeatManager;
     }
 
     @Override
     public String shardLocation(/* TODO Mandantenspezifisch */final String titelnummer) {
-        final Optional<ShardName> maybeShardName = shardingRepository.lookupShard(titelnummer);
+        final Optional<ShardName> maybeShardName = databeatManager.findShardNameForAudiobook(titelnummer);
         if (maybeShardName.isPresent()) {
             LOGGER.debug("Looked up shard '{}' for object '{}'", maybeShardName, titelnummer);
             return maybeShardName.get().toString();
@@ -51,7 +56,7 @@ class AudiobookLocationServiceImpl implements AudiobookLocationService {
 
     @Override
     public boolean isLocatedLocal(/* TODO Mandantenspezifisch */final String titelnummer) {
-        final Optional<ShardName> maybeShardName = shardingRepository.lookupShard(titelnummer);
+        final Optional<ShardName> maybeShardName = databeatManager.findShardNameForAudiobook(titelnummer);
         if (maybeShardName.isPresent()) {
             return MY_SHARD_NAME.equals(maybeShardName.get());
         } else {
