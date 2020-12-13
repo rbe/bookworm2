@@ -6,21 +6,31 @@
 
 "use strict";
 
+const stichwortsucheUrl = '/konto/stichwortsuche.html';
+
 export class WbhonlineSuchformular {
 
     initialisiereSuchformulare() {
         const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-            const button = form.querySelector('button[class*="search"]');
-            if (undefined !== button && null !== button) {
-                button.addEventListener('click', (event) => {
-                    event.currentTarget.disabled = true;
-                    const url = new URL(window.location);
-                    url.pathname = '/konto/stichwortsuche.html';
-                    url.searchParams.set('stichwort', inputField.value);
-                    window.location = url.toString();
+            if (undefined !== inputField) {
+                const button = form.querySelector('button[class*="search"]');
+                inputField.addEventListener('keyup', function(event) {
+                    if (event.keyCode === 13) {
+                        event.preventDefault();
+                        button.click();
+                    }
                 });
+                if (undefined !== button && null !== button) {
+                    button.addEventListener('click', (event) => {
+                        event.currentTarget.disabled = true;
+                        const url = new URL(window.location);
+                        url.pathname = stichwortsucheUrl;
+                        url.searchParams.set('stichwort', inputField.value);
+                        window.location = url.toString();
+                    });
+                }
             }
         }
     }
