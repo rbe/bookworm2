@@ -10,6 +10,7 @@
 namespace restbridge;
 
 use Exception;
+use InvalidArgumentException;
 
 final class RestRequestReply
 {
@@ -65,7 +66,7 @@ final class RestRequestReply
     {
         $url = $this->restEndpoint['url'];
         $urlParameterTemplate = new Template($this->restEndpoint['parameter_template']);
-        $urlParameter = $urlParameterTemplate->renderToString([$parameters]);
+        $urlParameter = $urlParameterTemplate->renderToString([], [$parameters]);
         $httpClient = new HttpClient(isRestBridgeDebugLog());
         $method = strtoupper($this->restEndpoint['method']);
         if ($method === 'GET') {
@@ -80,6 +81,8 @@ final class RestRequestReply
             }
             return $httpClient->{"http$method"}($url . $urlParameter, $body, $preHttpCallback);
         }
+
+        throw new InvalidArgumentException();
 
     }//end execute()
 
@@ -101,7 +104,7 @@ final class RestRequestReply
             try {
                 $json = json_encode($this->requestDto, JSON_THROW_ON_ERROR);
                 $jsonTemplate = new Template($json);
-                $body = $jsonTemplate->renderToString([$parameters]);
+                $body = $jsonTemplate->renderToString([], [$parameters]);
             } catch (\JsonException $e) {
                 throw new Exception('Encoding body as JSON failed', 0, $e);
             }

@@ -76,11 +76,11 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
             $hoerernummer = '00000';
         }
 
-        $bestellungSessionId = $this->putBestellungSessionIdIntoCookie();
+        $this->bookwormCookie($hoerernummer);
         return "<script type='module'>\n"
             . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
             . "document.addEventListener('DOMContentLoaded', (event) => {\n"
-            . "  const wbhonline = new Wbhonline('" . $hoerernummer . "', '" . $bestellungSessionId . "');\n"
+            . "  const wbhonline = new Wbhonline();\n"
             . "  wbhonline.initialize();\n"
             . "});\n"
             . "</script>\n";
@@ -91,26 +91,30 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
     /**
      * Description.
      *
+     * @param string $hoerenummer Comment.
+     *
      * @return string Comment.
      *
      * @throws Exception
      *
      * @since 1.0
      */
-    private function putBestellungSessionIdIntoCookie(): string
+    private function bookwormCookie(string $hoerenummer): void
     {
-        $bestellungSessionId = $this->cmsAdapter->getCookie('bestellungSessionId');
-        if (is_null($bestellungSessionId) === true) {
-            restBridgeDebugLog('Keine BestellungSessionId vorhanden');
-            $commandResult = $this->commandExecutor->executeCommand('BestellungSessionId', '');
-            $bestellungSessionId = $commandResult->getData()['bestellungSessionId'];
+        $bookworm = $this->cmsAdapter->getCookie('bookworm');
+        if ($bookworm === '') {
+            global $mandant;
+            $commandResult = $this->commandExecutor->executeCommand('BestellungSessionId',
+                'mandant:' . $mandant . ',hoerernummer:' . $hoerenummer);
+            $data = $commandResult->getData();
+            restBridgeDebugLog('Antwort ' . print_r($data, true) . ' erhalten');
+            $bestellungSessionId = $data['bestellungSessionId'];
             restBridgeDebugLog('BestellungSessionId ' . $bestellungSessionId . ' erhalten');
-            $this->cmsAdapter->setCookieOnce('bestellungSessionId', $bestellungSessionId);
+            $value = $hoerenummer . ',' . $bestellungSessionId ?? '';
+            $this->cmsAdapter->setCookieOnce('bookworm', $value);
         }
 
-        return $bestellungSessionId;
-
-    }//end putBestellungSessionIdIntoCookie()
+    }//end bookwormCookie()
 
 
 }//end class

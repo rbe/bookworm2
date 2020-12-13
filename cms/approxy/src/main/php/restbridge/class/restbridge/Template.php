@@ -49,15 +49,16 @@ final class Template
      */
     public function renderToString(array $meta, array $rowsWithValues): string
     {
-        $result = $this->replaceData($rowsWithValues);
-        return $this->replaceMeta($result, $meta);
+        $contentAfterMeta = $this->replaceMeta($this->template, $meta);
+        $contentAfterData = $this->replaceData($contentAfterMeta, $rowsWithValues);
+        return empty($contentAfterData) === false ? $contentAfterData : $contentAfterMeta;
 
     }//end renderToString()
 
 
     private function replaceMeta(string $content, array $meta): string
     {
-        preg_match_all('/\{meta.([A-Za-z0-9_]+)*\}/', $this->template, $matches);
+        preg_match_all('/\{meta.([A-Za-z0-9_]+)*\}/', $content, $matches);
         foreach ($matches[1] as $match) {
             $content = str_replace('{meta.' . $match . '}', $meta[$match], $content);
         }
@@ -66,51 +67,42 @@ final class Template
     }//end replaceMeta()
 
 
-    private function replaceData(array $rowsWithValues): string
+    private function replaceData(string $template, array $rowsWithValues): string
     {
-        preg_match_all('/\{([A-Za-z0-9_]+)*\}/', $this->template, $matches);
-        $content = '';
+        preg_match_all('/\{([A-Za-z0-9_]+)*\}/', $template, $matches);
+        $ret = '';
         foreach ($rowsWithValues as $row) {
-            $c = $this->template;
+            $content = $template;
             foreach ($matches[1] as $match) {
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
-                    $value = $this->value($row[$match]);
+                    $value = $this->value($row, $match);
                 } else {
                     restBridgeDebugLog('No value found for "' . $key . '" in ' . print_r($row, true));
                     $value = '';
                 }
 
-                $c = str_replace($key, $value, $c);
+                $content = str_replace($key, $value, $content);
             }
 
-            $content .= $c;
+            $ret .= $content;
         }
-        return $content;
+        return $ret;
 
     }//end replaceData()
 
 
-    /**
-     * Description.
-     *
-     * @param string $rowValue Comment.
-     *
-     * @return string Comment.
-     *
-     * @since 1.0
-     */
-    private function value(string $rowValue): string
+    private function value(array $row, string $match): string
     {
-        if (is_bool($rowValue) === true) {
-            if ($rowValue === true) {
+        if (is_bool($row[$match]) === true) {
+            if ($row[$match] === true) {
                 $value = 'true';
             } else {
                 $value = 'false';
             }
 
         } else {
-            $value = $rowValue;
+            $value = $row[$match];
         }
 
         return $value;

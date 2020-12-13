@@ -18,6 +18,25 @@ class TemplateTest extends TestCase
 
 
     /**
+     * Test with no data.
+     *
+     * @return void
+     *
+     * @since version
+     */
+    public function test0Row(): void
+    {
+        echo "test0Row\n";
+        $template = new Template("This template shows {meta.count} rows: {key} and {bool}\n");
+        $rowsWithValues = [];
+        $result = $template->renderToString(['count' => 0], $rowsWithValues);
+        $this->assertNotNull($result);
+        print_r($result);
+
+    }//end test0Row()
+
+
+    /**
      * Test one row with data.
      *
      * @return void

@@ -81,6 +81,19 @@ class CommandResult
      *
      * @since 1.0
      */
+    public function isNotFound(): bool
+    {
+        return $this->status === 404;
+    }//end isOk()
+
+
+    /**
+     * Description.
+     *
+     * @return bool
+     *
+     * @since 1.0
+     */
     public function isError(): bool
     {
         return $this->status >= 400;

@@ -5,12 +5,11 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-require_once __DIR__ . '/restbridgeCommons.php';
 require_once __DIR__ . '/autoload.php';
 require_once __DIR__ . '/WbhRestBridgePlugin.php';
 
-$HOERBUCHKATALOG_URL = 'http://host.docker.internal:8080';
-//$HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
+//$HOERBUCHKATALOG_URL = 'http://host.docker.internal:8080';
+$HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
 $HOERBUCHKATALOG_HEADERS = [
     'Accept' => 'application/json',
     'Origin' => 'audiobook.wbh-online.de',
@@ -23,7 +22,7 @@ $mandant = '06';
 
 global $restBridge;
 $restBridge = [
-    'DEBUG' => true,
+    'DEBUG' => false,
     'TEMPLATE_NAME_PREFIX' => 'Bookworm',
     'REST_ENDPOINTS' => [
         // Suche
@@ -144,44 +143,12 @@ $restBridge = [
         ],
     ],
     'REQUEST_DTOS' => [
-        // Suche
-        'Stichwortsuche' => [
-        ],
-        // Hörbuchdetails
-        'HoerbuchdetailsAnzeigen' => [
-        ],
-        // Merkliste
-        'MerklisteHinzufuegen' => [ // wird per JavaScript erledigt
-        ],
-        'MerklisteLoeschen' => [ // wird per JavaScript erledigt
-        ],
-        'MerklisteAnzeigen' => [
-        ],
-        // Warenkorb
-        'WarenkorbBestellungSessionId' => [
-        ],
-        'WarenkorbHinzufuegen' => [ // wird per JavaScript erledigt
-        ],
-        'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
-        ],
-        'WarenkorbAnzeigen' => [
-        ],
         'WarenkorbBestellen' => [ // wird per JavaScript erledigt
             'hoerername' => '{hoerername}',
             'hoereremail' => '{hoereremail}',
             'bemerkung' => '{bemerkung}',
             'bestellkarteMischen' => '{bestellkarteMischen}',
             'alteBestellkarteLoeschen' => '{alteBestellkarteLoeschen}',
-        ],
-        // Hörerdaten
-        'HoererdatenAnzeigen' => [
-        ],
-        // Hörerarchiv
-        'BelastungenAnzeigen' => [
-        ],
-        'BestellkarteAnzeigen' => [
-        ],
-        'ErledigteBestellkartenAnzeigen' => [
         ],
     ],
     'PLUGIN' => new WbhRestBridgePlugin(),

@@ -51,22 +51,17 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
      */
     public function execute(): CommandResult
     {
-        /*restBridgeDebugLog('RestRequestReplyCommandImpl#execute:'
-            . ' restEndpoint=' . print_r($restEndpoint, true)
-            . ' requestDto=' . print_r($requestDto, true));*/
         try {
             $restReqResp = new RestRequestReply($this->restEndpoint, $this->requestDto);
             $httpResponse = $restReqResp->execute(
                 $this->parameters['urlParameters'],
                 $this->parameters['preHttpPostCallback']
             );
-            restBridgeDebugLog('Response: HTTP ' . $httpResponse->getStatusCode()
-                . ' Body=' . $httpResponse->getBody());
             $reply = $httpResponse->getJson();
-            return new CommandResult($httpResponse->getStatusCode(), $reply['meta'], $reply['data']);
+            return new CommandResult($httpResponse->getStatusCode(), $reply['meta'] ?? [], $reply['data'] ?? []);
         } catch (Exception $e) {
-            restBridgeDebugLog('Exception: ' . $e->getMessage());
-            return new CommandResult(500, []);
+            restBridgeErrorLog('Exception: ' . $e->getMessage());
+            return new CommandResult(500, [], []);
         }
     }//end execute()
 

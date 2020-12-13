@@ -67,7 +67,7 @@ final class CommandExecutor
         if (isset($restEndpoint) === false) {
             $result = 'CommandExecutor#executeCommand: REST endpoint ' . $commandName . ' not found';
             restBridgeErrorLog($result);
-            return new CommandResult(500, ['error' => $result]);
+            return new CommandResult(500, [], []);
         }
 
         $urlParameterArray = $this->resolveHttpRequestParameters($commandName, $urlParameters);
@@ -76,7 +76,7 @@ final class CommandExecutor
         if (array_key_exists($commandName, $restBridge['REQUEST_DTOS'])) {
             $requestDto = $this->resolveRequestDto($restBridge['REQUEST_DTOS'][$commandName], $urlParameterArray);
         } else {
-            throw new Exception('No requestDto definition for ' . $commandName . ' found');
+            $requestDto = [];
         }
         $command = new RestRequestReplyCommandImpl(
             [
@@ -120,7 +120,6 @@ final class CommandExecutor
     private function resolveHttpRequestParameters(string $commandName, string $parameters): array
     {
         $parameterArray = $this->analyzeParameters($commandName, $parameters);
-        restBridgeDebugLog('Parameters before cmsAdapter->resolveParameters: ' . print_r($parameterArray, true));
         $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
         restBridgeDebugLog('Parameters after cmsAdapter->resolveParameters: ' . print_r($parameterArray, true));
         return $parameterArray;
@@ -171,9 +170,8 @@ final class CommandExecutor
     {
         foreach ($headers as $key => $value) {
             $template = new Template($value);
-            $headers[$key] = $template->renderToString([$urlParameterArray]);
+            $headers[$key] = $template->renderToString([], [$urlParameterArray]);
         }
-        //restBridgeDebugLog('Resolved HTTP Headers: ' . print_r($headers, true));
     }//end resolveTemplateHttpHeaders()
 
 

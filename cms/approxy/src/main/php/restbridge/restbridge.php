@@ -12,50 +12,11 @@ defined('_JEXEC') || die('Restricted access');
 use restbridge\CmsAdapter;
 use restbridge\CommandExecutor;
 use restbridge\CommandResult;
-use restbridge\Debugging;
-use restbridge\Environment;
 use restbridge\JoomlaCmsAdapterImpl;
 use restbridge\JsonHelper;
 
 require_once __DIR__ . '/restbridgeCommons.php';
 require_once __DIR__ . '/restbridge_configuration.php';
-
-// Check environment.
-$environment = new Environment();
-$environment->checkPhpVersion();
-
-function isRestBridgeDebugLog()
-{
-    global $restBridge;
-    return $restBridge['DEBUG'];
-}//end isRestBridgeDebugLog()
-
-function restBridgeInfoLog($msg)
-{
-    error_log('INFO: ' . $msg, 0);
-}//end restBridgeInfoLog()
-
-function restBridgeWarningLog($msg)
-{
-    error_log('WARNING: ' . $msg, 0);
-}//end restBridgeWarningLog()
-
-function restBridgeErrorLog($msg)
-{
-    error_log('ERROR: ' . $msg, 0);
-}//end restBridgeErrorLog()
-
-function restBridgeDebugLog($msg)
-{
-    if (isRestBridgeDebugLog()) {
-        error_log('DEBUG: ' . $msg, 0);
-    }
-}//end restBridgeDebugLog()
-
-// Enable debugging?
-if (isRestBridgeDebugLog() === true) {
-    Debugging::enable();
-}
 
 /**
  * Class plgContentRestbridge.
@@ -157,7 +118,7 @@ final class plgContentRestbridge extends JPlugin
      */
     private function executeCommand(array $matches): string
     {
-        if (count($matches) !== 2) {
+        if (count($matches) < 2) {
             restBridgeErrorLog('Cannot execute command, matches=' . print_r($matches, true));
             return '';
         }
@@ -170,14 +131,15 @@ final class plgContentRestbridge extends JPlugin
         }
 
         $commandResult = $this->commandExecutor->executeCommand($commandName, $urlParameters);
-        restBridgeDebugLog('$commandResult=' . print_r($commandResult, true));
         if ($commandResult->isOk()) {
             if ($commandResult->isDataNotEmpty()) {
                 $content = $this->renderData($commandName, $commandResult);
             } else {
                 $content = $this->renderEmptyResult($commandName);
             }
-        } else {
+        } else if ($commandResult->isNotFound()) {
+            $content = $this->renderEmptyResult($commandName);
+        } else if ($commandResult->isError()) {
             $content = $this->renderError($commandName, $commandResult);
         }
 
@@ -203,10 +165,12 @@ final class plgContentRestbridge extends JPlugin
     private function renderData(string $commandName, CommandResult $commandResult): string
     {
         $jsonHelper = new JsonHelper($commandResult->getData());
-        $content = $this->cmsAdapter->getModuleContent($commandName . '_Header');
+        $content = $this->cmsAdapter->renderTemplate($commandName . '_Header',
+            $commandResult->getMeta(), []);
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Content',
             $commandResult->getMeta(), $jsonHelper->rowsWithValues());
-        $content .= $this->cmsAdapter->getModuleContent($commandName . '_Footer');
+        $content .= $this->cmsAdapter->renderTemplate($commandName . '_Footer',
+            $commandResult->getMeta(), []);
         return $content;
     }
 
@@ -241,11 +205,13 @@ final class plgContentRestbridge extends JPlugin
      */
     private function renderError(string $commandName, CommandResult $commandResult): string
     {
-        $jsonHelper = new JsonHelper($commandResult->getData()); // TODO getError
-        $content = $this->cmsAdapter->getModuleContent($commandName . '_Error_Header');
+        $jsonHelper = new JsonHelper($commandResult->getData());
+        $content = $this->cmsAdapter->renderTemplate($commandName . '_Error_Header',
+            $commandResult->getMeta(), []);
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Content',
             $commandResult->getMeta(), $jsonHelper->rowsWithValues());
-        $content .= $this->cmsAdapter->getModuleContent($commandName . '_Error_Footer');
+        $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Footer',
+            $commandResult->getMeta(), []);
         return $content;
     }
 

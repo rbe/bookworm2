@@ -39,7 +39,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $app = Factory::getApplication();
             $input = $app->input;
         } catch (Exception $e) {
-            restBridgeDebugLog('Exception while retrieving JInput: ' . $e->getMessage());
+            restBridgeErrorLog('Exception while retrieving JInput: ' . $e->getMessage());
         }
         if (isset($input) === true) {
             foreach ($array as $key => $value) {
@@ -74,7 +74,6 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $template = new Template($customTemplateModule->content);
             return $template->renderToString($meta, $rowsWithValues);
         } else {
-            restBridgeDebugLog('Template "' . $customTemplateModuleName . '" not found');
             return '';
         }
 
@@ -127,7 +126,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             restBridgeDebugLog('Returning module content of "' . $customModuleName . '"');
             return $customModule->content;
         } else {
-            restBridgeDebugLog('Module "' . $customModuleName . '" has no content');
+            restBridgeWarningLog('Module "' . $customModuleName . '" has no content');
             return '';
         }
 
@@ -152,11 +151,10 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $query = 'SELECT ' . $field . ' FROM #__comprofiler WHERE user_id=' . $user->id;
             $db->setQuery($query);
             $result = $db->loadResult();
-            restBridgeDebugLog('User [' . $user->id . ']: field ' . $field . ' has value [' . $result . ']');
             if (isset($value) === true) {
                 $value = $result;
             } else {
-                restBridgeDebugLog('User [' . $user->id . ']: no value for field ' . $field);
+                restBridgeWarningLog('User [' . $user->id . ']: no value for field ' . $field);
             }
         }
 
@@ -184,7 +182,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     {
         $app = JFactory::getApplication();
         $cookie = $app->input->cookie;
-        return $cookie->get($name, null);
+        return $cookie->get($name, '');
     }//end getCookie()
 
 
@@ -203,7 +201,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         $app = JFactory::getApplication();
         $cookie = $app->input->cookie;
         $currentValue = $cookie->get($name, null);
-        if (null == $currentValue) {
+        if (is_null($currentValue)) {
             $time = time() + self::ONE_WEEK;
             $cookie->set($name, $value, $time,
                 $app->get('cookie_path', '/'),
