@@ -79,37 +79,6 @@ export class BookwormRestClient {
     }
 
     //
-    // Session
-    //
-
-    holeBestellungSessionId(successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/session', HOERBUCHKATALOG_URL);
-        fetch(url.toString(), {
-            'method': 'PUT',
-            'headers': {
-                'Accept': 'application/json',
-                'X-Bookworm-Mandant': this.mandant,
-                'X-Bookworm-Hoerernummer': this.hoerernummer
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    return response.json();
-                } else {
-                    FetchErrorHandler.handle(response);
-                }
-            })
-            .then(json => {
-                if (json.bestellungSessionId && undefined !== successCallback) {
-                    successCallback(json.bestellungSessionId);
-                }
-            })
-            .catch(reason => {
-                console.log('Fehler: ' + reason);
-            });
-    }
-
-    //
     // Warenkorb
     //
 
