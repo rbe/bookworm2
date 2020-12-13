@@ -16,8 +16,9 @@ const PAUSE_BUTTON = ['far', 'fa-pause-circle'];
 
 export class Wbhonline {
 
-    constructor(hoerernummer) {
-        this.bookwormRestClient = new BookwormRestClient('06', hoerernummer);
+    constructor(hoerernummer, bestellungSessionId) {
+        //const bestellungSessionId = window.sessionStorage.getItem('bestellungSessionId');
+        this.bookwormRestClient = new BookwormRestClient('06', hoerernummer, bestellungSessionId);
         this.audioplayer = new Audioplayer('06', hoerernummer);
         this.previousClassList = new Map();
     }
@@ -74,6 +75,15 @@ export class Wbhonline {
     //
     // Warenkorb
     //
+
+    fetchBestellungSessionId() {
+        const key = 'bestellungSessionId';
+        if (null === window.sessionStorage.getItem(key)) {
+            this.bookwormRestClient.holeBestellungSessionId((bestellungSessionId) => {
+                window.sessionStorage.setItem(key, bestellungSessionId);
+            });
+        }
+    }
 
     warenkorbButtons() {
         const warenkorbButtons = document.querySelectorAll('a[id^="warenkorb-"]');
