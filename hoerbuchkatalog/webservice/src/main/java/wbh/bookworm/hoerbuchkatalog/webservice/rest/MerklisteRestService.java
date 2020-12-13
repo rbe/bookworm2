@@ -71,12 +71,8 @@ public class MerklisteRestService {
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
             hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
-            if (bestellungSessionId.isBekannt()) {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
-                        new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
-            } else {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(false);
-            }
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
+                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }
@@ -93,12 +89,8 @@ public class MerklisteRestService {
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
             hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
-            if (bestellungSessionId.isBekannt()) {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
-                        new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
-            } else {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(false);
-            }
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer,
+                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }

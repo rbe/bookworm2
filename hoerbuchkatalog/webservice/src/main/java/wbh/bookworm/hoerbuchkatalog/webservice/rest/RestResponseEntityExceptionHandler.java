@@ -1,5 +1,7 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +12,8 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
 
     @ExceptionHandler(value = {RuntimeException.class})
     protected ResponseEntity<Object> handleRuntimeException(final Exception ex, final WebRequest request) {
@@ -29,6 +33,7 @@ public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionH
     private ResponseEntity<Object> getObjectResponseEntity(final Exception ex,
                                                            final WebRequest request,
                                                            final HttpStatus status) {
+        LOGGER.error("", ex);
         final String bodyOfResponse = ex.getMessage();
         return handleExceptionInternal(ex, bodyOfResponse,
                 new HttpHeaders(), status, request);

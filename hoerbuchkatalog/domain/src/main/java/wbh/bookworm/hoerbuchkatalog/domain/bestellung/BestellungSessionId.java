@@ -11,8 +11,6 @@ import aoc.mikrokosmos.lang.strings.RandomStringGenerator;
 
 public final class BestellungSessionId extends DomainSingleValueObject<String, String> {
 
-    private static final BestellungSessionId UNBEKANNT = new BestellungSessionId("UNBEKANNT");
-
     public BestellungSessionId() {
         super(RandomStringGenerator.next());
     }
@@ -21,25 +19,13 @@ public final class BestellungSessionId extends DomainSingleValueObject<String, S
         super(id);
     }
 
-    public static BestellungSessionId unbekannt() {
-        return UNBEKANNT;
-    }
-
     public static BestellungSessionId of(final String id) {
-        return null == id || id.isBlank() ? UNBEKANNT : new BestellungSessionId(id);
+        return new BestellungSessionId(id);
     }
 
     @Override
     public boolean checkValue(final String s) {
-        return s.length() == 25;
-    }
-
-    public boolean isBekannt() {
-        return this != UNBEKANNT;
-    }
-
-    public boolean isUnbekannt() {
-        return this == UNBEKANNT;
+        return s.length() == 26;
     }
 
 }

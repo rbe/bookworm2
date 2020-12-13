@@ -66,11 +66,7 @@ public class KatalogRestService {
                 hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
             }
             hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            if (bestellungSessionId.isBekannt()) {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
-            } else {
-                hoerbuchAntwortKurzDTO.setImWarenkorb(false);
-            }
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
             antwort.add(hoerbuchAntwortKurzDTO);
         }
         final Map<String, Object> meta = Map.of("stichwort", stichwort,
@@ -98,11 +94,7 @@ public class KatalogRestService {
             hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
         hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
-        if (bestellungSessionId.isBekannt()) {
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
-        } else {
-            hoerbuchAntwortKurzDTO.setImWarenkorb(false);
-        }
+        hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
         final Map<String, Object> meta = Map.of();
         return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTO));
     }
@@ -125,11 +117,7 @@ public class KatalogRestService {
             hoerbuchAntwortDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
         hoerbuchAntwortDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
-        if (bestellungSessionId.isBekannt()) {
-            hoerbuchAntwortDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
-        } else {
-            hoerbuchAntwortDTO.setImWarenkorb(false);
-        }
+        hoerbuchAntwortDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortDTO));
     }
 
