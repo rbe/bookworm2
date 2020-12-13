@@ -22,7 +22,7 @@ export class Wbhonline {
         this.readCookie();
         this.bookwormRestClient = new BookwormRestClient('06', this.hoerernummer,
             this.bestellungSessionId);
-        this.audioplayer = new Audioplayer('06', hoerernummer);
+        this.audioplayer = new Audioplayer('06', this.hoerernummer);
         this.previousClassList = new Map();
     }
 
