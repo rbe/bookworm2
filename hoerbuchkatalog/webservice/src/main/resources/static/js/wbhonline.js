@@ -54,7 +54,7 @@ export class Wbhonline {
                 this.zurMerklisteHinzugefuegt(merklisteButton);
             });
         }
-        if (callback) {
+        if (undefined !== callback) {
             callback();
         }
     }
@@ -103,7 +103,7 @@ export class Wbhonline {
                 this.inDenWarenkorbGelegt(warenkorbButton);
             });
         }
-        if (callback) {
+        if (undefined !== callback) {
             callback();
         }
     }

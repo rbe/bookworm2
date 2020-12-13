@@ -35,7 +35,7 @@ export class Audioplayer {
             audio.src = URL.createObjectURL(blob);
             audio.load();
             audio.addEventListener('play', () => {
-                if (playCallback) {
+                if (undefined !== playCallback) {
                     playCallback(element);
                 }
             });
@@ -53,7 +53,7 @@ export class Audioplayer {
         if (this.audio) {
             this.audio.pause();
             this.cleanup(this.audio);
-            if (callback) {
+            if (undefined !== callback) {
                 callback(element);
             }
         }

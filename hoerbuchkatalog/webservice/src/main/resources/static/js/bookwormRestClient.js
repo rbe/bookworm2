@@ -157,7 +157,7 @@ export class BookwormRestClient {
                         }
                     })
                     .then(blob => {
-                        if (blob !== undefined && blob.size > 0) {
+                        if (undefined !== blob && blob.size > 0) {
                             playCallback(blob);
                         }
                     })
@@ -206,14 +206,14 @@ export class BookwormRestClient {
                     })
                     .catch(reason => {
                         console.log('Fehler: ' + reason);
-                        if (downloadFertigCallback) {
+                        if (undefined !== downloadFertigCallback) {
                             downloadFertigCallback(element);
                         }
                     });
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (downloadFertigCallback) {
+                if (undefined !== downloadFertigCallback) {
                     downloadFertigCallback(element);
                 }
             });
@@ -265,14 +265,14 @@ export class BookwormRestClient {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (callback) {
+                if (undefined !== callback) {
                     callback(element);
                 }
             });
     }
 
     downloadHoerbuch(shardName, titelnummer, orderId, element, callback) {
-        if (callback) {
+        if (undefined !== callback) {
             callback(element);
         }
         const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId

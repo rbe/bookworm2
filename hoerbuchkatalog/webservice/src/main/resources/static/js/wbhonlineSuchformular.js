@@ -8,12 +8,12 @@
 
 export class WbhonlineSuchformular {
 
-    suchFormulare() {
+    initialisiereSuchformulare() {
         const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             const button = form.querySelector('button[class*="search"]');
-            if (button !== undefined && button !== null) {
+            if (undefined !== button && null !== button) {
                 button.addEventListener('click', (event) => {
                     event.currentTarget.disabled = true;
                     const url = new URL(window.location);
@@ -33,7 +33,7 @@ export class WbhonlineSuchformular {
             const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
             for (const form of forms) {
                 const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-                if (inputField !== undefined && inputField !== null) {
+                if (undefined !== inputField && null !== inputField) {
                     inputField.value = stichwort;
                 }
             }
@@ -42,7 +42,7 @@ export class WbhonlineSuchformular {
 
     initialize() {
         this.zeigeStichwortNachSuche();
-        this.suchFormulare();
+        this.initialisiereSuchformulare();
     }
 
 }
