@@ -8,15 +8,14 @@
 
 export class FetchErrorHandler {
 
-    constructor() {
-    }
-
     static handle(response) {
-        console.log('FetchErrorHandler#handle: HTTP status ' + response.status);
         const status = response.status;
-        if (status >= 200 && status < 300) {
+        if (status >= 200 && status < 400) {
+            console.log('FetchErrorHandler#handle: OK -- HTTP status ' + response.status);
         } else if (status >= 400 && status < 500) {
+            console.log('FetchErrorHandler#handle: Client Error -- HTTP status ' + response.status);
         } else if (status >= 500) {
+            console.log('FetchErrorHandler#handle: FAILED -- HTTP status ' + response.status);
         } else {
             alert('Unhandled response status!');
         }
