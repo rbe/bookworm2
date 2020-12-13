@@ -1,8 +1,10 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,24 +31,36 @@ public class HoererarchivRestService {
     }
 
     @GetMapping(value = "/belastungen", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<BelastungAntwortDTO> belastungen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                 @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<AntwortDTO<List<BelastungAntwortDTO>>> belastungen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                             @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<Belastung> belastungen = cdLieferungService.belastungen(new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toBelastungenAntwortDTO(belastungen);
+        if (belastungen.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        final List<BelastungAntwortDTO> data = hoerbuchResolver.toBelastungenAntwortDTO(belastungen);
+        return ResponseEntity.ok(new AntwortDTO<>(Map.of("count", data.size()), data));
     }
 
     @GetMapping(value = "/bestellkarten", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<BestellkarteAntwortDTO> bestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<AntwortDTO<List<BestellkarteAntwortDTO>>> bestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                                  @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toBestellkarteAntwortDTO(bestellkarten);
+        if (bestellkarten.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        final List<BestellkarteAntwortDTO> data = hoerbuchResolver.toBestellkarteAntwortDTO(bestellkarten);
+        return ResponseEntity.ok(new AntwortDTO<>(Map.of("count", data.size()), data));
     }
 
     @GetMapping(value = "/erledigteBestellkarten", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<ErledigteBestellkarteAntwortDTO> erledigteBestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                        @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<AntwortDTO<List<ErledigteBestellkarteAntwortDTO>>> erledigteBestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                                                    @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final List<ErledigteBestellkarte> erledigteBestellkarten = cdLieferungService.erledigteBestellkarten(new Hoerernummer(xHoerernummer));
-        return hoerbuchResolver.toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
+        if (erledigteBestellkarten.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        final List<ErledigteBestellkarteAntwortDTO> data = hoerbuchResolver.toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
+        return ResponseEntity.ok(new AntwortDTO<>(Map.of("count", data.size()), data));
     }
 
 }

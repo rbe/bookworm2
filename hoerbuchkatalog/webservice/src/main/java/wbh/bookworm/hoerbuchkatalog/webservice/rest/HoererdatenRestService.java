@@ -1,6 +1,9 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import java.util.Map;
+
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,13 +24,16 @@ public class HoererdatenRestService {
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public HoererAntwortDTO suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                  @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<AntwortDTO<HoererAntwortDTO>> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Hoerer hoerer = hoererService.hoerer(new Hoerernummer(xHoerernummer));
+        if (hoerer.isUnbekannt()) {
+            return ResponseEntity.notFound().build();
+        }
         final HoererAntwortDTO hoererAntwortDTO = HoererMapper.INSTANCE.convert(hoerer);
         hoererAntwortDTO.setMandant("06");
         hoererAntwortDTO.setHoerernummer(xHoerernummer);
-        return hoererAntwortDTO;
+        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoererAntwortDTO));
     }
 
 }
