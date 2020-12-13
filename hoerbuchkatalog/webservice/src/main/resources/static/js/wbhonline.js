@@ -108,16 +108,16 @@ export class Wbhonline {
         }
     }
 
-    ausDemWarenkorbEntfernt(warenkorbButton) {
-        warenkorbButton.classList.remove('order-cd-true');
-        warenkorbButton.classList.add('order-cd-false');
-        this.setTitle(warenkorbButton, 'Hörbuch als CD bestellen');
-    }
-
     inDenWarenkorbGelegt(warenkorbButton) {
         warenkorbButton.classList.remove('order-cd-false');
         warenkorbButton.classList.add('order-cd-true');
         this.setTitle(warenkorbButton, 'CD aus der Bestellung entfernen');
+    }
+
+    ausDemWarenkorbEntfernt(warenkorbButton) {
+        warenkorbButton.classList.remove('order-cd-true');
+        warenkorbButton.classList.add('order-cd-false');
+        this.setTitle(warenkorbButton, 'Hörbuch als CD bestellen');
     }
 
     //
