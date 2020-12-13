@@ -110,7 +110,7 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
             restBridgeDebugLog('Antwort ' . print_r($data, true) . ' erhalten');
             $bestellungSessionId = $data['bestellungSessionId'];
             restBridgeDebugLog('BestellungSessionId ' . $bestellungSessionId . ' erhalten');
-            $value = $hoerenummer . ',' . $bestellungSessionId ?? '';
+            $value = $hoerenummer . '--' . $bestellungSessionId ?? '';
             $this->cmsAdapter->setCookieOnce('bookworm', $value);
         }
 

@@ -27,8 +27,11 @@ export class Wbhonline {
     }
 
     readCookie() {
-        const bookwormCookie = window.sessionStorage.getItem('bookworm');
-        const strings = bookwormCookie.split(',');
+        const bookwormCookie = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('bookworm'))
+            .split('=')[1];
+        const strings = bookwormCookie.split('--');
         this.hoerernummer = strings[0];
         this.bestellungSessionId = strings[1];
     }

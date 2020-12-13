@@ -206,7 +206,8 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             $cookie->set($name, $value, $time,
                 $app->get('cookie_path', '/'),
                 $app->get('cookie_domain'),
-                $app->isSSLConnection());
+                $app->isSSLConnection(),
+                false);
         }
     }//end setCookieOnce()
 
