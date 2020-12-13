@@ -29,6 +29,11 @@ public final class BestellungSessionId extends DomainSingleValueObject<String, S
         return null == id || id.isBlank() ? UNBEKANNT : new BestellungSessionId(id);
     }
 
+    @Override
+    public boolean checkValue(final String s) {
+        return s.length() == 25;
+    }
+
     public boolean isBekannt() {
         return this != UNBEKANNT;
     }
