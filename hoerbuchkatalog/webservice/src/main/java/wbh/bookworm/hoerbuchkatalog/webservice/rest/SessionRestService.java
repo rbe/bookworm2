@@ -26,11 +26,12 @@ public final class SessionRestService {
     }
 
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, String>> bestellungSessionId(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<AntwortDTO<Map<String, String>>> bestellungSessionId(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                               @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
-        return ResponseEntity.ok(Map.of("bestellungSessionId", bestellungSessionId.getValue()));
+        final Map<String, String> data = Map.of("bestellungSessionId", bestellungSessionId.getValue());
+        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), data));
     }
 
 }
