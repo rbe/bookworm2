@@ -86,7 +86,6 @@ public class HoerprobeController {
             "Glossar",
             "Widmung",
             "Nachwort",
-            "Buchzus",
             "Literatur",
             "Tips",
             "Ende"
@@ -135,13 +134,14 @@ public class HoerprobeController {
         final List<String> mp3s = playlist.getEntries().stream()
                 .filter(dto -> dto.getSeconds() < 600)
                 .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
+                .peek(dto -> LOGGER.debug("Hörbuch {} Kandiat für eine Hörprobe: {}", titelnummer, dto))
                 .map(PlaylistEntryDTO::getIdent)
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());
         final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
         final Map<Boolean, List<String>> filteredMp3s = mp3s.stream()
                 .collect(Collectors.partitioningBy(mp3 -> mp3Ignorieren.stream().anyMatch(mp3::contains)));
-        LOGGER.debug("Kandiaten für eine Hörprobe: {}, Gesamte MP3s {}", filteredMp3s, mp3s);
+        LOGGER.debug("Kandiaten für eine Hörprobe: {}", filteredMp3s);
         if (!filteredMp3s.isEmpty()) {
             final List<String> strings = filteredMp3s.get(false);
             int random = new Random().nextInt(strings.size());
