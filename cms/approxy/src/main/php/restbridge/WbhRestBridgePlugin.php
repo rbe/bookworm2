@@ -55,8 +55,14 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
 
         global $mandant;
         $parameters .= 'mandant:' . $mandant . ',hoerernummer:' . $hoerernummer;
-        restBridgeDebugLog('#customizeParameters: $parameters=' . print_r($parameters, true));
+        $bookwormCookie = $this->cmsAdapter->getCookie('bookworm');
+        if (isset($bookwormCookie) === true) {
+            $strings = explode('--', $bookwormCookie);
+            $bestellungSessionId = $strings[1];
+            $parameters .= ',bestellungSessionId:' . $bestellungSessionId;
+        }
 
+        restBridgeDebugLog('#customizeParameters: $parameters=' . print_r($parameters, true));
     }//end customizeParameters()
 
 
@@ -93,7 +99,7 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
      *
      * @param string $hoerenummer Comment.
      *
-     * @return string Comment.
+     * @return void Comment.
      *
      * @throws Exception
      *

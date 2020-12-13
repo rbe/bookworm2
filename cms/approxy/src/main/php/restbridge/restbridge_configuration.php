@@ -12,9 +12,9 @@ require_once __DIR__ . '/WbhRestBridgePlugin.php';
 $HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
 $HOERBUCHKATALOG_HEADERS = [
     'Accept' => 'application/json',
-    'Origin' => 'audiobook.wbh-online.de',
     'X-Bookworm-Mandant' => '{mandant}',
     'X-Bookworm-Hoerernummer' => '{hoerernummer}',
+    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
 ];
 
 global $mandant;
@@ -74,30 +74,20 @@ $restBridge = [
             'method' => 'PUT',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
-            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
-                [
-                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
-                    'Content-Type' => 'application/json',
-                ]),
+            'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'DELETE',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
-            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
-                [
-                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
-                ]),
+            'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
-            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
-                [
-                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
-                ]),
+            'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'WarenkorbBestellerAnzeigen' => [ // Hörerdaten im Bestellformular
             'url' => $HOERBUCHKATALOG_URL,
@@ -110,10 +100,7 @@ $restBridge = [
             'method' => 'POST',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
             'mime_type' => 'application/json',
-            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
-                [
-                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
-                ]),
+            'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörerdaten
         'HoererdatenAnzeigen' => [

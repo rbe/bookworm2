@@ -31,6 +31,8 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
      *
      * @return array
      *
+     * @throws Exception
+     *
      * @since 1.0
      */
     public function resolveParameters(array $array): array
@@ -45,6 +47,10 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             foreach ($array as $key => $value) {
                 if ($value === 'HttpRequest') {
                     $array[$key] = $input->get($key, '', 'ALNUM');
+                } else if (strpos($value, 'Cookie') > 0) {
+                    $strings = explode('-', $value);
+                    $cookieName = $strings[1];
+                    $array[$key] = $this->getCookie($cookieName);
                 }
 
             }
