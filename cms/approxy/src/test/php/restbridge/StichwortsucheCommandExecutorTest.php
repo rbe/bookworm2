@@ -8,6 +8,7 @@
 // Causes problems with other PHP code: declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/Environment.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
@@ -32,8 +33,9 @@ class StichwortsucheCommandExecutorTest extends TestCase
         $parameters = "mandant:06,hoerernummer:80170,stichwort:Adams";
         $result = $commandExecutor->executeCommand($commandName, $parameters);
         error_log(print_r($result), true);
+        $this->assertTrue($result->isOk());
 
-    }//end testCommand()
+    }//end testStichwortsucheCommand()
 
 
 }//end class

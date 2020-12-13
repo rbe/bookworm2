@@ -11,33 +11,51 @@ defined('_JEXEC') || die('Restricted access');
 
 use restbridge\CmsAdapter;
 use restbridge\CommandExecutor;
+use restbridge\CommandResult;
 use restbridge\Debugging;
 use restbridge\Environment;
 use restbridge\JoomlaCmsAdapterImpl;
 use restbridge\JsonHelper;
 
+require_once __DIR__ . '/restbridgeCommons.php';
 require_once __DIR__ . '/restbridge_configuration.php';
-
-//
-// DO NOT MODIFY CODE BELOW THIS COMMENT.
-//
 
 // Check environment.
 $environment = new Environment();
 $environment->checkPhpVersion();
-// Enable debugging?
-global $restBridge;
-if ($restBridge['DEBUG'] === true) {
-    Debugging::enable();
-}
+
+function isRestBridgeDebugLog()
+{
+    global $restBridge;
+    return $restBridge['DEBUG'];
+}//end isRestBridgeDebugLog()
+
+function restBridgeInfoLog($msg)
+{
+    error_log('INFO: ' . $msg, 0);
+}//end restBridgeInfoLog()
+
+function restBridgeWarningLog($msg)
+{
+    error_log('WARNING: ' . $msg, 0);
+}//end restBridgeWarningLog()
+
+function restBridgeErrorLog($msg)
+{
+    error_log('ERROR: ' . $msg, 0);
+}//end restBridgeErrorLog()
 
 function restBridgeDebugLog($msg)
 {
-    global $restBridge;
-    if ($restBridge['DEBUG'] === true) {
-        error_log($msg, 0);
+    if (isRestBridgeDebugLog()) {
+        error_log('DEBUG: ' . $msg, 0);
     }
 }//end restBridgeDebugLog()
+
+// Enable debugging?
+if (isRestBridgeDebugLog() === true) {
+    Debugging::enable();
+}
 
 /**
  * Class plgContentRestbridge.
@@ -68,11 +86,11 @@ final class plgContentRestbridge extends JPlugin
     /**
      * Description.
      *
-     * @var mixed|RestBridgePlugin
+     * @var mixed|WbhRestBridgePlugin
      *
      * @since 1.0
      */
-    private RestBridgePlugin $restBridgePlugin;
+    private WbhRestBridgePlugin $restBridgePlugin;
 
 
     /**
@@ -134,33 +152,33 @@ final class plgContentRestbridge extends JPlugin
      *
      * @return string Content.
      *
+     * @throws Exception
      * @since 1.0
      */
     private function executeCommand(array $matches): string
     {
-        /** @var $commandName string */
-        $commandName = trim($matches[1]);
-        /** @var $parameters string */
-        $parameters = trim($matches[2]);
-        if (isset($this->restBridgePlugin) === true) {
-            $this->restBridgePlugin->customizeParameters($commandName, $parameters);
+        if (count($matches) !== 2) {
+            restBridgeErrorLog('Cannot execute command, matches=' . print_r($matches, true));
+            return '';
         }
 
-        $commandResult = $this->commandExecutor->executeCommand($commandName, $parameters);
-        if (is_array($commandResult) === true && array_key_exists('error', $commandResult)) {
-            return $commandResult['error'];
-        } else {
-            $hasMergableResult = is_array($commandResult) === true && empty($commandResult) === false;
-            if ($hasMergableResult) {
-                $jsonHelper = new JsonHelper($commandResult);
-                $content = $this->cmsAdapter->getModuleContent($commandName . '_Header');
-                $content .= $this->cmsAdapter->renderTemplate($commandName . '_Content', $jsonHelper->rowsWithValues());
-                $content .= $this->cmsAdapter->getModuleContent($commandName . '_Footer');
+        $commandName = trim($matches[1]);
+        $urlParameters = trim($matches[2]);
+        restBridgeDebugLog('Executing command ' . $commandName . ' with parameters ' . $urlParameters);
+        if (isset($this->restBridgePlugin) === true) {
+            $this->restBridgePlugin->customizeParameters($commandName, $urlParameters);
+        }
+
+        $commandResult = $this->commandExecutor->executeCommand($commandName, $urlParameters);
+        restBridgeDebugLog('$commandResult=' . print_r($commandResult, true));
+        if ($commandResult->isOk()) {
+            if ($commandResult->isDataNotEmpty()) {
+                $content = $this->renderData($commandName, $commandResult);
             } else {
-                $content = $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Header');
-                $content .= $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Content');
-                $content .= $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Footer');
+                $content = $this->renderEmptyResult($commandName);
             }
+        } else {
+            $content = $this->renderError($commandName, $commandResult);
         }
 
         if (isset($this->restBridgePlugin) === true) {
@@ -170,6 +188,66 @@ final class plgContentRestbridge extends JPlugin
         return $content;
 
     }//end executeCommand()
+
+
+    /**
+     * Description.
+     *
+     * @param string $commandName Comment.
+     * @param CommandResult $commandResult Comment.
+     *
+     * @return string Comment.
+     *
+     * @since 1.0
+     */
+    private function renderData(string $commandName, CommandResult $commandResult): string
+    {
+        $jsonHelper = new JsonHelper($commandResult->getData());
+        $content = $this->cmsAdapter->getModuleContent($commandName . '_Header');
+        $content .= $this->cmsAdapter->renderTemplate($commandName . '_Content',
+            $commandResult->getMeta(), $jsonHelper->rowsWithValues());
+        $content .= $this->cmsAdapter->getModuleContent($commandName . '_Footer');
+        return $content;
+    }
+
+
+    /**
+     * Description.
+     *
+     * @param string $commandName Comment.
+     *
+     * @return string Comment.
+     *
+     * @since 1.0
+     */
+    private function renderEmptyResult(string $commandName): string
+    {
+        $content = $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Header');
+        $content .= $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Content');
+        $content .= $this->cmsAdapter->getModuleContent($commandName . '_EmptyResult_Footer');
+        return $content;
+    }
+
+
+    /**
+     * Description.
+     *
+     * @param string $commandName Comment.
+     * @param CommandResult $commandResult Comment.
+     *
+     * @return string Comment.
+     *
+     * @since 1.0
+     */
+    private function renderError(string $commandName, CommandResult $commandResult): string
+    {
+        $jsonHelper = new JsonHelper($commandResult->getData()); // TODO getError
+        $content = $this->cmsAdapter->getModuleContent($commandName . '_Error_Header');
+        $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Content',
+            $commandResult->getMeta(), $jsonHelper->rowsWithValues());
+        $content .= $this->cmsAdapter->getModuleContent($commandName . '_Error_Footer');
+        return $content;
+    }
 
 
 }//end class

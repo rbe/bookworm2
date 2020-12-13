@@ -8,6 +8,7 @@
 // Causes problems with other PHP code: declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/Environment.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
@@ -25,14 +26,33 @@ class WarenkorbCommandExecutorTest extends TestCase
      *
      * @since version
      */
+    public function testWarenkorbBestellundSessionId(): void
+    {
+        $commandExecutor = new CommandExecutor(new JoomlaCmsAdapterImpl());
+        $commandName = "WarenkorbBestellungSessionId";
+        $parameters = "mandant:06,hoerernummer:80007";
+        $result = $commandExecutor->executeCommand($commandName, $parameters);
+        error_log(print_r($result), true);
+        $this->assertTrue($result->isOk());
+
+    }//end testWarenkorbBestellundSessionId()
+
+
+    /**
+     * Test REST request and reply.
+     *
+     * @return void
+     *
+     * @since version
+     */
     public function testWarenkorbHinzufuegen(): void
     {
         $commandExecutor = new CommandExecutor(new JoomlaCmsAdapterImpl());
         $commandName = "WarenkorbHinzufuegen";
-        $parameters = "mandant:06,hoerernummer:80007,titelnummer:21052";
+        $parameters = "mandant:06,hoerernummer:80007,bestellungSessionId:1234,titelnummer:21052";
         $result = $commandExecutor->executeCommand($commandName, $parameters);
         error_log(print_r($result), true);
-        $this->assertEquals(['result' => true], $result);
+        $this->assertTrue($result->isOk());
 
     }//end testWarenkorbHinzufuegen()
 

@@ -10,21 +10,24 @@
 require_once __DIR__ . '/autoload.php';
 
 use restbridge\AbstractRestBridgePlugin;
+use restbridge\CommandExecutor;
 use restbridge\JoomlaCmsAdapterImpl;
 
-final class RestBridgePlugin extends AbstractRestBridgePlugin
+final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
 {
+
+    private CommandExecutor $commandExecutor;
 
 
     /**
-     * RestBridgePlugin constructor.
+     * WbhRestBridgePlugin constructor.
      *
      * @since 1.0
      */
     public function __construct()
     {
-        $cmsAdapter = new JoomlaCmsAdapterImpl();
-        parent::__construct($cmsAdapter);
+        parent::__construct(new JoomlaCmsAdapterImpl());
+        $this->commandExecutor = new CommandExecutor($this->cmsAdapter);
 
     }//end __construct()
 
@@ -60,24 +63,54 @@ final class RestBridgePlugin extends AbstractRestBridgePlugin
     /**
      * Description.
      *
-     * @return string
+     * @return string Comment.
+     *
+     * @throws Exception
      *
      * @since 1.0
      */
-    public function afterContentPrepared()
+    public function afterContentPrepared(): string
     {
         $hoerernummer = $this->cmsAdapter->getUserValue('cb_hoerernummer');
         if (isset($hoerernummer) === false || $hoerernummer === '') {
             $hoerernummer = '00000';
         }
+
+        $bestellungSessionId = $this->putBestellungSessionIdIntoCookie();
         return "<script type='module'>\n"
             . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
             . "document.addEventListener('DOMContentLoaded', (event) => {\n"
-            . "  const wbhonline = new Wbhonline('" . $hoerernummer . "');\n"
+            . "  const wbhonline = new Wbhonline('" . $hoerernummer . "', '" . $bestellungSessionId . "');\n"
             . "  wbhonline.initialize();\n"
             . "});\n"
             . "</script>\n";
+
     }//end afterContentPrepared()
+
+
+    /**
+     * Description.
+     *
+     * @return string Comment.
+     *
+     * @throws Exception
+     *
+     * @since 1.0
+     */
+    private function putBestellungSessionIdIntoCookie(): string
+    {
+        $bestellungSessionId = $this->cmsAdapter->getCookie('bestellungSessionId');
+        if (is_null($bestellungSessionId) === true) {
+            restBridgeDebugLog('Keine BestellungSessionId vorhanden');
+            $commandResult = $this->commandExecutor->executeCommand('BestellungSessionId', '');
+            $bestellungSessionId = $commandResult->getData()['bestellungSessionId'];
+            restBridgeDebugLog('BestellungSessionId ' . $bestellungSessionId . ' erhalten');
+            $this->cmsAdapter->setCookieOnce('bestellungSessionId', $bestellungSessionId);
+        }
+
+        return $bestellungSessionId;
+
+    }//end putBestellungSessionIdIntoCookie()
 
 
 }//end class

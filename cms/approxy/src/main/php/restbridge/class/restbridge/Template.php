@@ -41,33 +41,41 @@ final class Template
     /**
      * Render a template with values.
      *
+     * @param array $meta Meta data.
      * @param array $rowsWithValues Rows with values.
      *
      * @return string Content: template with {placeholder} substituted with value.
      * @since  version
      */
-    public function renderToString(array $rowsWithValues): string
+    public function renderToString(array $meta, array $rowsWithValues): string
+    {
+        $result = $this->replaceData($rowsWithValues);
+        return $this->replaceMeta($result, $meta);
+
+    }//end renderToString()
+
+
+    private function replaceMeta(string $content, array $meta): string
+    {
+        preg_match_all('/\{meta.([A-Za-z0-9_]+)*\}/', $this->template, $matches);
+        foreach ($matches[1] as $match) {
+            $content = str_replace('{meta.' . $match . '}', $meta[$match], $content);
+        }
+        return $content;
+
+    }//end replaceMeta()
+
+
+    private function replaceData(array $rowsWithValues): string
     {
         preg_match_all('/\{([A-Za-z0-9_]+)*\}/', $this->template, $matches);
-        $matches = $matches[1];
         $content = '';
         foreach ($rowsWithValues as $row) {
             $c = $this->template;
-            foreach ($matches as $match) {
+            foreach ($matches[1] as $match) {
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
-                    $rowValue = $row[$match];
-                    if (is_bool($rowValue) === true) {
-                        if ($rowValue === true) {
-                            $value = 'true';
-                        } else {
-                            $value = 'false';
-                        }
-
-                    } else {
-                        $value = $rowValue;
-                    }
-
+                    $value = $this->value($row[$match]);
                 } else {
                     restBridgeDebugLog('No value found for "' . $key . '" in ' . print_r($row, true));
                     $value = '';
@@ -78,9 +86,36 @@ final class Template
 
             $content .= $c;
         }
-
         return $content;
 
-    }//end renderToString()
+    }//end replaceData()
+
+
+    /**
+     * Description.
+     *
+     * @param string $rowValue Comment.
+     *
+     * @return string Comment.
+     *
+     * @since 1.0
+     */
+    private function value(string $rowValue): string
+    {
+        if (is_bool($rowValue) === true) {
+            if ($rowValue === true) {
+                $value = 'true';
+            } else {
+                $value = 'false';
+            }
+
+        } else {
+            $value = $rowValue;
+        }
+
+        return $value;
+
+    }//end value()
+
 
 }//end class

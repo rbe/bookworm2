@@ -9,6 +9,8 @@
 
 namespace restbridge;
 
+use Exception;
+
 final class RestRequestReply
 {
 
@@ -51,37 +53,35 @@ final class RestRequestReply
      * Call a REST endpoint.
      *
      * @param array $parameters Comment.
-     * @param callable|null $preHttpPostCallback Comment.
+     * @param callable|null $preHttpCallback Comment.
      *
      * @return HttpResponse
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @since 1.0
      */
-    public function execute(array $parameters, callable $preHttpPostCallback = null): HttpResponse
+    public function execute(array $parameters, callable $preHttpCallback = null): HttpResponse
     {
-        $payloadIsJson = isset($this->restEndpoint['mime_type']) === false
-            || $this->restEndpoint['mime_type'] == 'application/json';
-        if ($payloadIsJson) {
-            $body = $this->encodeJsonBody($parameters);
-        } else {
-            throw new \Exception('Payload not JSON');
-        }
-
         $url = $this->restEndpoint['url'];
         $urlParameterTemplate = new Template($this->restEndpoint['parameter_template']);
         $urlParameter = $urlParameterTemplate->renderToString([$parameters]);
-        $httpClient = new HttpClient();
+        $httpClient = new HttpClient(isRestBridgeDebugLog());
         $method = strtoupper($this->restEndpoint['method']);
-
         if ($method === 'GET') {
-            return $httpClient->{"http$method"}($url.$urlParameter, $preHttpPostCallback);
+            return $httpClient->{"http$method"}($url . $urlParameter, $preHttpCallback);
         } else if ($method === 'POST' || $method === 'PUT' || $method === 'DELETE') {
-            return $httpClient->{"http$method"}($url.$urlParameter, $body, $preHttpPostCallback);
+            $payloadIsJson = isset($this->restEndpoint['mime_type']) === false
+                || $this->restEndpoint['mime_type'] == 'application/json';
+            if ($payloadIsJson) {
+                $body = $this->encodeJsonBody($parameters);
+            } else {
+                throw new Exception('Payload not JSON');
+            }
+            return $httpClient->{"http$method"}($url . $urlParameter, $body, $preHttpCallback);
         }
 
-    }//end restRequestReply()
+    }//end execute()
 
 
     /**
@@ -91,7 +91,7 @@ final class RestRequestReply
      *
      * @return string
      *
-     * @throws \Exception Comment.
+     * @throws Exception Comment.
      *
      * @since 1.0
      */
@@ -103,7 +103,7 @@ final class RestRequestReply
                 $jsonTemplate = new Template($json);
                 $body = $jsonTemplate->renderToString([$parameters]);
             } catch (\JsonException $e) {
-                throw new \Exception('Encoding body as JSON failed', 0, $e);
+                throw new Exception('Encoding body as JSON failed', 0, $e);
             }
         }
 

@@ -9,51 +9,65 @@
 
 namespace restbridge;
 
+use Exception;
+
 final class RestRequestReplyCommandImpl extends AbstractCommand
 {
+
+    private array $restEndpoint;
+
+    private array $requestDto;
+
+
+    /**
+     * RestRequestReplyCommandImpl constructor.
+     *
+     * @param array $parameters
+     *
+     * @throws Exception Comment.
+     *
+     * @since 1.0
+     */
+    public function __construct(array $parameters)
+    {
+        parent::__construct($parameters);
+        if (isset($this->parameters['endpoint']) === false) {
+            throw new Exception('Cannot execute, no REST endpoint');
+        }
+        $this->restEndpoint = $this->parameters['endpoint'];
+        if (isset($this->parameters['requestDto']) === false) {
+            $this->requestDto = [];
+        }
+        $this->requestDto = $this->parameters['requestDto'];
+    }//end __construct()
 
 
     /**
      * Execute this command.
      *
-     * @return array
+     * @return CommandResult Comment.
      *
      * @since 1.0
      */
-    public function execute(): array // TODO Return CommandResult
+    public function execute(): CommandResult
     {
-        $restEndpoint = $this->parameters['endpoint'];
-        if (isset($restEndpoint) === false) {
-            restBridgeDebugLog('Cannot execute, no REST endpoint');
-            return [];
-        }
-
-        $requestDto = $this->parameters['requestDto'];
-        if (isset($requestDto) === false) {
-            $requestDto = [];
-        }
-
         /*restBridgeDebugLog('RestRequestReplyCommandImpl#execute:'
             . ' restEndpoint=' . print_r($restEndpoint, true)
             . ' requestDto=' . print_r($requestDto, true));*/
-        $responseBody = [];
         try {
-            $restReqResp = new RestRequestReply($restEndpoint, $requestDto);
+            $restReqResp = new RestRequestReply($this->restEndpoint, $this->requestDto);
             $httpResponse = $restReqResp->execute(
                 $this->parameters['urlParameters'],
                 $this->parameters['preHttpPostCallback']
             );
-            $statusCode = $httpResponse->getStatusCode();
-            if ($statusCode >= 200 && $statusCode < 300) {
-                $responseBody = $httpResponse->getJson();
-                restBridgeDebugLog('Response: HTTP ' . $statusCode . ' Body=' . print_r($responseBody, true));
-            }
-        } catch (\Exception $e) {
+            restBridgeDebugLog('Response: HTTP ' . $httpResponse->getStatusCode()
+                . ' Body=' . $httpResponse->getBody());
+            $reply = $httpResponse->getJson();
+            return new CommandResult($httpResponse->getStatusCode(), $reply['meta'], $reply['data']);
+        } catch (Exception $e) {
             restBridgeDebugLog('Exception: ' . $e->getMessage());
+            return new CommandResult(500, []);
         }
-
-        return $responseBody;
-
     }//end execute()
 
 

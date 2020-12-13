@@ -5,11 +5,12 @@
  * All rights reserved. Use is subject to license terms.
  */
 
+require_once __DIR__ . '/restbridgeCommons.php';
 require_once __DIR__ . '/autoload.php';
-require_once __DIR__ . '/RestBridgePlugin.php';
+require_once __DIR__ . '/WbhRestBridgePlugin.php';
 
-//$HOERBUCHKATALOG_URL = 'http://host.docker.internal:8080';
-$HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
+$HOERBUCHKATALOG_URL = 'http://host.docker.internal:8080';
+//$HOERBUCHKATALOG_URL = 'http://hoerbuchkatalog:8080';
 $HOERBUCHKATALOG_HEADERS = [
     'Accept' => 'application/json',
     'Origin' => 'audiobook.wbh-online.de',
@@ -60,26 +61,44 @@ $restBridge = [
             'parameter_template' => '/hoerbuchkatalog/v1/merkliste',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
+        // Session
+        'BestellungSessionId' => [
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'PUT',
+            'parameter_template' => '/hoerbuchkatalog/v1/session',
+            'mime_type' => 'application/json',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
         // Warenkorb
         'WarenkorbHinzufuegen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
-            'method' => 'POST',
+            'method' => 'PUT',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
-            'headers' => $HOERBUCHKATALOG_HEADERS,
+            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
+                [
+                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
+                    'Content-Type' => 'application/json',
+                ]),
         ],
         'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'DELETE',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/{titelnummer}',
             'mime_type' => 'application/json',
-            'headers' => $HOERBUCHKATALOG_HEADERS,
+            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
+                [
+                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
+                ]),
         ],
         'WarenkorbAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
-            'headers' => $HOERBUCHKATALOG_HEADERS,
+            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
+                [
+                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
+                ]),
         ],
         'WarenkorbBestellerAnzeigen' => [ // Hörerdaten im Bestellformular
             'url' => $HOERBUCHKATALOG_URL,
@@ -90,9 +109,12 @@ $restBridge = [
         'WarenkorbBestellen' => [ // wird per JavaScript erledigt
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'POST',
-            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb/bestellen',
+            'parameter_template' => '/hoerbuchkatalog/v1/warenkorb',
             'mime_type' => 'application/json',
-            'headers' => $HOERBUCHKATALOG_HEADERS,
+            'headers' => array_merge($HOERBUCHKATALOG_HEADERS,
+                [
+                    'X-Bookworm-BestellungSessionId' => '{bestellungSessionId}',
+                ]),
         ],
         // Hörerdaten
         'HoererdatenAnzeigen' => [
@@ -136,6 +158,8 @@ $restBridge = [
         'MerklisteAnzeigen' => [
         ],
         // Warenkorb
+        'WarenkorbBestellungSessionId' => [
+        ],
         'WarenkorbHinzufuegen' => [ // wird per JavaScript erledigt
         ],
         'WarenkorbLoeschen' => [ // wird per JavaScript erledigt
@@ -160,5 +184,5 @@ $restBridge = [
         'ErledigteBestellkartenAnzeigen' => [
         ],
     ],
-    'PLUGIN' => new RestBridgePlugin(),
+    'PLUGIN' => new WbhRestBridgePlugin(),
 ];

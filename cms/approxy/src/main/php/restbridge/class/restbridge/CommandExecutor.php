@@ -9,6 +9,8 @@
 
 namespace restbridge;
 
+use Exception;
+
 final class CommandExecutor
 {
 
@@ -44,57 +46,43 @@ final class CommandExecutor
         $this->classHelper = new CommandExecutorClassHelper();
     }//end __construct()
 
+
     /**
      * Execute a command.
      *
      * @param string $commandName Command name.
-     * @param string $parameters Parameters.
+     * @param string $urlParameters Parameters.
      *
-     * @return array Result of command execution.
+     * @return CommandResult Result of command execution.
+     *
+     * @throws Exception Comment.
      *
      * @since 1.0
      */
-    public function executeCommand(string $commandName, string $parameters): array
+    public function executeCommand(string $commandName, string $urlParameters): CommandResult
     {
-        $parameterArray = $this->analyzeParameters($commandName, $parameters);
-        restBridgeDebugLog('Parameters before JInput: ' . print_r($parameterArray, true));
-        $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
-        restBridgeDebugLog('Parameters after JInput: ' . print_r($parameterArray, true));
         global $restBridge;
         /** @var $restEndpoint array */
         $restEndpoint = $restBridge['REST_ENDPOINTS'][$commandName];
         if (isset($restEndpoint) === false) {
             $result = 'CommandExecutor#executeCommand: REST endpoint ' . $commandName . ' not found';
-            restBridgeDebugLog($result);
-            return ['error' => $result];
+            restBridgeErrorLog($result);
+            return new CommandResult(500, ['error' => $result]);
         }
 
+        $urlParameterArray = $this->resolveHttpRequestParameters($commandName, $urlParameters);
         $headers = $restEndpoint['headers'];
-        foreach ($headers as $key => $value) {
-            $template = new Template($value);
-            $headers[$key] = $template->renderToString([$parameterArray]);
-        }
-        restBridgeDebugLog('CommandExecutor#executeCommand: HTTP Headers: ' . print_r($headers, true));
-        /** @var $requestDto array */
-        $requestDto = $restEndpoint['requestDto'];
-        if (isset($requestDto) === false) {
-            $requestDto = $restBridge['REQUEST_DTOS'][$commandName];
-        }
-
-        if (isset($requestDto) === false) {
-            $requestDto = [];
+        $this->resolveTemplateHttpHeaders($headers, $urlParameterArray);
+        if (array_key_exists($commandName, $restBridge['REQUEST_DTOS'])) {
+            $requestDto = $this->resolveRequestDto($restBridge['REQUEST_DTOS'][$commandName], $urlParameterArray);
         } else {
-            foreach ($requestDto as $key => $value) {
-                $template = new Template($value);
-                $requestDto[$key] = $template->renderToString([$parameterArray]);
-            }
+            throw new Exception('No requestDto definition for ' . $commandName . ' found');
         }
-
         $command = new RestRequestReplyCommandImpl(
             [
                 'endpoint' => $restEndpoint,
                 'requestDto' => $requestDto,
-                'urlParameters' => $parameterArray,
+                'urlParameters' => $urlParameterArray,
                 'preHttpPostCallback' => function ($ch) use ($headers) {
                     curl_setopt(
                         $ch,
@@ -104,16 +92,38 @@ final class CommandExecutor
                 },
             ]
         );
-        /** @var array result */
-        $result = $command->execute(); // TODO $result == CommandResult
-        if (is_array($result) === true && empty($result) === false) {
-            // Merge parameterArray into every row
-            $jsonHelper = new JsonHelper($result);
-            return $jsonHelper->merge($parameterArray);
+        $result = $command->execute();
+        if ($result->isOk()) {
+            // Merge urlParameterArray into every row
+            $jsonHelper = new JsonHelper($result->getData());
+            $merged = $jsonHelper->merge($urlParameterArray);
+            $result->updateData($merged);
         } else {
-            return $result;
+            // ignore
         }
 
+        return $result;
+
+    }//end executeCommand()
+
+
+    /**
+     * Description.
+     *
+     * @param string $commandName Comment.
+     * @param string $parameters Comment.
+     *
+     * @return array Comment.
+     *
+     * @since 1.0
+     */
+    private function resolveHttpRequestParameters(string $commandName, string $parameters): array
+    {
+        $parameterArray = $this->analyzeParameters($commandName, $parameters);
+        restBridgeDebugLog('Parameters before cmsAdapter->resolveParameters: ' . print_r($parameterArray, true));
+        $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
+        restBridgeDebugLog('Parameters after cmsAdapter->resolveParameters: ' . print_r($parameterArray, true));
+        return $parameterArray;
     }//end analyzeParameters()
 
 
@@ -144,7 +154,53 @@ final class CommandExecutor
 
         return $parameterArray;
 
-    }//end executeCommand()
+    }//end resolveHttpRequestParameters()
+
+
+    /**
+     * Description.
+     *
+     * @param array $headers Comment.
+     * @param array $urlParameterArray Comment.
+     *
+     * @return void
+     *
+     * @since 1.0
+     */
+    private function resolveTemplateHttpHeaders(array &$headers, array &$urlParameterArray): void
+    {
+        foreach ($headers as $key => $value) {
+            $template = new Template($value);
+            $headers[$key] = $template->renderToString([$urlParameterArray]);
+        }
+        //restBridgeDebugLog('Resolved HTTP Headers: ' . print_r($headers, true));
+    }//end resolveTemplateHttpHeaders()
+
+
+    /**
+     * Description.
+     *
+     * @param $requestDto Comment.
+     * @param $restBridge Comment.
+     * @param $parameterArray Comment.
+     *
+     * @return array Comment.
+     *
+     * @since 1.0
+     */
+    private function resolveRequestDto(array $requestDto, array $parameterArray): array
+    {
+        if (isset($requestDto) === false) {
+            $requestDto = [];
+        } else {
+            foreach ($requestDto as $key => $value) {
+                $template = new Template($value);
+                $requestDto[$key] = $template->renderToString([$parameterArray]);
+            }
+        }
+
+        return $requestDto;
+    }//end resolveRequestDto()
 
 
 }//end class

@@ -27,10 +27,11 @@ class TemplateTest extends TestCase
     public function test1Row(): void
     {
         echo "test1Row\n";
-        $template = new Template("This template shows: {key}\n{bool}\n");
-        $rowsWithValues = [['key' => 'value', 'bool' => true]];
-        print_r($rowsWithValues);
-        $result = $template->renderToString($rowsWithValues);
+        $template = new Template("This template shows {meta.count} rows: {key} and {bool}\n");
+        $rowsWithValues = [
+            ['key' => 'key_value', 'bool' => true],
+        ];
+        $result = $template->renderToString(['count' => 1], $rowsWithValues);
         $this->assertNotNull($result);
         print_r($result);
 
@@ -47,13 +48,12 @@ class TemplateTest extends TestCase
     public function test2Rows(): void
     {
         echo "test2Rows\n";
-        $template = new Template("This template shows: {key}\n");
+        $template = new Template("This template shows {meta.count} rows: {key}\n");
         $rowsWithValues = [
             ['key' => 'value1'],
-            ['key' => 'value2']
+            ['key' => 'value2'],
         ];
-        print_r($rowsWithValues);
-        $result = $template->renderToString($rowsWithValues);
+        $result = $template->renderToString(['count' => 2], $rowsWithValues);
         $this->assertNotNull($result);
         print_r($result);
 

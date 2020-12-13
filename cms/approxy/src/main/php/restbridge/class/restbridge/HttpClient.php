@@ -9,8 +9,32 @@
 
 namespace restbridge;
 
+use Exception;
+
 final class HttpClient
 {
+
+    /**
+     * Description.
+     *
+     * @var bool
+     *
+     * @since 1.0
+     */
+    private bool $debug;
+
+
+    /**
+     * HttpClient constructor.
+     *
+     * @param bool $debug Comment.
+     *
+     * @since 1.0
+     */
+    public function __construct(bool $debug = false)
+    {
+        $this->debug = $debug;
+    }
 
 
     /**
@@ -21,7 +45,7 @@ final class HttpClient
      *
      * @return HttpResponse
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @since 1.0
      */
@@ -32,10 +56,13 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        restBridgeDebugLog(sprintf("GET %s\n", $url));
+        if ($this->debug) {
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+        }
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
-            throw new \Exception('Empty response body');
+            throw new Exception('Empty response body');
         }
 
         $info = $this->responseInfo($ch);
@@ -54,7 +81,7 @@ final class HttpClient
      *
      * @return HttpResponse
      *
-     * @throws \Exception
+     * @throws Exception
      *
      * @since 1.0
      */
@@ -70,10 +97,52 @@ final class HttpClient
         }
 
         restBridgeDebugLog(sprintf("POST %s\n%s", $url, $requestBody));
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        if ($this->debug) {
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+        }
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
-            throw new \Exception('Empty response body');
+            throw new Exception('Empty response body');
+        }
+
+        $info = $this->responseInfo($ch);
+        curl_close($ch);
+        return new HttpResponse($info['statuscode'], $responseBody);
+
+    }//end httpDELETE()
+
+
+    /**
+     * Description.
+     *
+     * @param string $url Comment.
+     * @param string|null $requestBody Comment.
+     * @param callable|null $preCallback Comment.
+     *
+     * @return HttpResponse
+     *
+     * @throws Exception
+     *
+     * @since 1.0
+     */
+    public function httpPUT(string $url, string $requestBody = null, callable $preCallback = null): HttpResponse
+    {
+        $ch = $this->initCurl($url);
+        curl_setopt($ch, CURLOPT_PUT, true);
+        if (isset($requestBody) === true) {
+            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
+        }
+        if (isset($preCallback) === true) {
+            $preCallback($ch);
+        }
+
+        restBridgeDebugLog(sprintf("PUT %s\n%s", $url, $requestBody));
+        if ($this->debug) {
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+        }
+        $responseBody = curl_exec($ch);
+        if ($responseBody === false) {
+            throw new Exception('Empty response body');
         }
 
         $info = $this->responseInfo($ch);
@@ -92,45 +161,7 @@ final class HttpClient
      *
      * @return HttpResponse
      *
-     * @throws \Exception
-     *
-     * @since 1.0
-     */
-    public function httpPUT(string $url, string $requestBody = null, callable $preCallback = null): HttpResponse
-    {
-        $ch = $this->initCurl($url);
-        curl_setopt($ch, CURLOPT_PUT, true);
-        if (isset($requestBody) === true) {
-            curl_setopt($ch, CURLOPT_POSTFIELDS, $requestBody);
-        }
-        if (isset($preCallback) === true) {
-            $preCallback($ch);
-        }
-
-        restBridgeDebugLog(sprintf("PUT %s\n%s", $url, $requestBody));
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
-        $responseBody = curl_exec($ch);
-        if ($responseBody === false) {
-            throw new \Exception('Empty response body');
-        }
-
-        $info = $this->responseInfo($ch);
-        curl_close($ch);
-        return new HttpResponse($info['statuscode'], $responseBody);
-
-    }//end httpPUT()
-
-
-    /**
-     * Description.
-     *
-     * @param string $url Comment.
-     * @param string|null $requestBody Comment.
-     * @param callable|null $preCallback Comment.
-     *
-     * @return HttpResponse
-     *
-     * @throws \Exception
+     * @throws Exception
      *
      * @since 1.0
      */
@@ -146,10 +177,12 @@ final class HttpClient
         }
 
         restBridgeDebugLog(sprintf("DELETE %s\n%s", $url, $requestBody));
-        curl_setopt($ch, CURLOPT_VERBOSE, true);
+        if ($this->debug) {
+            curl_setopt($ch, CURLOPT_VERBOSE, true);
+        }
         $responseBody = curl_exec($ch);
         if ($responseBody === false) {
-            throw new \Exception('Empty response body');
+            throw new Exception('Empty response body');
         }
 
         $info = $this->responseInfo($ch);
@@ -157,6 +190,20 @@ final class HttpClient
         return new HttpResponse($info['statuscode'], $responseBody);
 
     }//end httpDELETE()
+
+
+    /**
+     * Description.
+     *
+     * @param       $ch      Comment.
+     * @param array $headers Comment.
+     *
+     * @since 1.0
+     */
+    private function setHeader($ch, array $headers): void
+    {
+        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+    }//end setHeader()
 
 
     /**
@@ -181,7 +228,7 @@ final class HttpClient
         curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
         return $ch;
 
-    }//end httpPost()
+    }//end httpPOST()
 
 
     /**
@@ -211,21 +258,7 @@ final class HttpClient
 
         return $myinfo;
 
-    }//end setHeader()
-
-
-    /**
-     * Description.
-     *
-     * @param       $ch      Comment.
-     * @param array $headers Comment.
-     *
-     * @since 1.0
-     */
-    private function setHeader($ch, array $headers): void
-    {
-        curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
-    }//end stdCurlOpt()
+    }//end httpPUT()
 
 
 }//end class

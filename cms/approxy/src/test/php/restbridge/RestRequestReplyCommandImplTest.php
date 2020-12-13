@@ -8,6 +8,7 @@
 // Causes problems with other PHP code: declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/Environment.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
@@ -28,8 +29,9 @@ class RestRequestReplyCommandImplTest extends TestCase
      */
     public function testSuche(): void
     {
-        $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS']['Stichwortuche'];
-        $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS']['Stichwortsuche'];
+        global $restBridge;
+        $restEndpoint = $restBridge['REST_ENDPOINTS']['Stichwortsuche'];
+        $requestDto = $restBridge['REQUEST_DTOS']['Stichwortsuche'];
         $headers = $restEndpoint['headers'];
         foreach ($headers as $k => $v) {
             $template = new Template($v);

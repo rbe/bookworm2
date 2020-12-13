@@ -40,7 +40,7 @@ abstract class AbstractRestBridgePlugin
      * @param string $commandName Comment.
      * @param string $parameters Comment.
      *
-     * @return mixed
+     * @return mixed Comment.
      *
      * @since 1.0
      */

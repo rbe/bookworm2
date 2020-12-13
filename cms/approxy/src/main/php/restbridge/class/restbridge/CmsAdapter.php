@@ -27,7 +27,7 @@ interface CmsAdapter
      *
      * @since  version
      */
-    public function renderTemplate(string $customTemplateModuleName, array $rowsWithValues): string;
+    public function renderTemplate(string $customTemplateModuleName, array $meta, array $rowsWithValues): string;
 
     /**
      * Just use a module for content.
@@ -48,5 +48,9 @@ interface CmsAdapter
      * @since  version
      */
     public function getUserValue(string $field): string;
+
+    public function getCookie(string $name): string;
+
+    public function setCookieOnce(string $name, string $value): void;
 
 }

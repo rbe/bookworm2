@@ -8,6 +8,7 @@
 // Causes problems with other PHP code: declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/Environment.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
@@ -31,8 +32,8 @@ class RestRequestReplyTest extends TestCase
     {
         $response = '';
         try {
-            $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS']['AudiobookInfo'];
-            $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS']['AudiobookInfo'];
+            $restEndpoint = $GLOBALS['restBridge']['REST_ENDPOINTS']['HoerbuchdetailsAnzeigen'];
+            $requestDto = $GLOBALS['restBridge']['REQUEST_DTOS']['HoerbuchdetailsAnzeigen'];
             $restReqResp = new RestRequestReply($restEndpoint, $requestDto);
             $response = $restReqResp->execute(
                 ['mandant' => '06', 'hoerernummer' => '80170', 'titelnummer' => '32901'],

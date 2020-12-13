@@ -71,7 +71,7 @@ final class HttpResponse
      */
     public function wasSuccessful(): bool
     {
-        return $this->statusCode >= 200 && $this->statusCode < 400;
+        return $this->statusCode >= 100 && $this->statusCode < 400;
 
     }//end wasSuccessful()
 

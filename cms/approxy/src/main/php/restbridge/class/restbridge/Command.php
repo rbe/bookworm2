@@ -14,11 +14,11 @@ interface Command
     /**
      * Execute the command.
      *
-     * @return object Result rows with values.
+     * @return CommandResult Result of command execution.
      *
      * @since 1.0
      */
-    public function execute(): array;
+    public function execute(): CommandResult;
 
 
 }

@@ -9,6 +9,7 @@
 
 namespace restbridge;
 
+use Exception;
 use JFactory;
 use Joomla;
 use Joomla\CMS\Factory;
@@ -17,6 +18,10 @@ use stdClass;
 
 class JoomlaCmsAdapterImpl implements CmsAdapter
 {
+
+    const ONE_DAY = 60 * 60 * 24;
+
+    const ONE_WEEK = self::ONE_DAY * 7;
 
 
     /**
@@ -33,7 +38,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         try {
             $app = Factory::getApplication();
             $input = $app->input;
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             restBridgeDebugLog('Exception while retrieving JInput: ' . $e->getMessage());
         }
         if (isset($input) === true) {
@@ -55,19 +60,19 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
      * Description.
      *
      * @param string $customTemplateModuleName Description.
+     * @param array $meta
      * @param array $rowsWithValues Description.
      *
      * @return string
      *
      * @since 1.0
      */
-    public function renderTemplate(string $customTemplateModuleName, array $rowsWithValues): string
+    public function renderTemplate(string $customTemplateModuleName, array $meta, array $rowsWithValues): string
     {
         $customTemplateModule = self::customModule($customTemplateModuleName);
         if (is_null($customTemplateModule) === false) {
             $template = new Template($customTemplateModule->content);
-            //restBridgeDebugLog('Rendering values into template: ' . print_r($rowsWithValues, true));
-            return $template->renderToString($rowsWithValues);
+            return $template->renderToString($meta, $rowsWithValues);
         } else {
             restBridgeDebugLog('Template "' . $customTemplateModuleName . '" not found');
             return '';
@@ -90,17 +95,16 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         global $restBridge;
         $customModuleTitle = $restBridge['TEMPLATE_NAME_PREFIX'] . '_' . $customModuleName;
         $customModule = ModuleHelper::getModule('mod_custom', $customModuleTitle);
-        //restBridgeDebugLog('$customModule=' . print_r($customModule, true));
-        $customModuleExistsAndHasContent = /*isset($customModule) === true
-            &&*/
-            is_null($customModule) === false
+        $customModuleExistsAndHasContent = is_null($customModule) === false
             && is_object($customModule) === true
             && empty($customModule->content) === false;
         if ($customModuleExistsAndHasContent === true) {
-            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" exists and has content');
+            restBridgeDebugLog('Custom module "' . $customModuleName
+                . '" title="' . $customModuleTitle . '" exists and has content');
             return $customModule;
         } else {
-            restBridgeDebugLog('Custom module "' . $customModuleName . '" title="' . $customModuleTitle . '" not found');
+            restBridgeDebugLog('Custom module "' . $customModuleName
+                . '" title="' . $customModuleTitle . '" not found');
             return null;
         }
 
@@ -163,6 +167,50 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         return $value;
 
     }//end getUserValue()
+
+
+    /**
+     * Description.
+     *
+     * @param string $name Comment.
+     *
+     * @return string Comment.
+     *
+     * @throws Exception Comment.
+     *
+     * @since 1.0
+     */
+    public function getCookie(string $name): string
+    {
+        $app = JFactory::getApplication();
+        $cookie = $app->input->cookie;
+        return $cookie->get($name, null);
+    }//end getCookie()
+
+
+    /**
+     * Description.
+     *
+     * @param string $name Comment.
+     * @param string $value Comment.
+     *
+     * @throws Exception Comment.
+     *
+     * @since 1.0
+     */
+    public function setCookieOnce(string $name, string $value): void
+    {
+        $app = JFactory::getApplication();
+        $cookie = $app->input->cookie;
+        $currentValue = $cookie->get($name, null);
+        if (null == $currentValue) {
+            $time = time() + self::ONE_WEEK;
+            $cookie->set($name, $value, $time,
+                $app->get('cookie_path', '/'),
+                $app->get('cookie_domain'),
+                $app->isSSLConnection());
+        }
+    }//end setCookieOnce()
 
 
 }//end class

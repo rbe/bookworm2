@@ -8,6 +8,7 @@
 declare(strict_types=1);
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
+require_once '../../../main/php/restbridge/class/restbridge/Environment.php';
 require_once '../../../main/php/restbridge/restbridge_configuration.php';
 
 use PHPUnit\Framework\TestCase;
@@ -69,10 +70,11 @@ class MerklisteCommandExecutorTest extends TestCase
         $commandName = "MerklisteAnzeigen";
         $parameters = "mandant:06,hoerernummer:80007";
         $result = $commandExecutor->executeCommand($commandName, $parameters);
-        error_log(print_r($result), true);
-        $this->assertGreaterThan(0, count($result));
+        error_log(print_r($result, true), 0);
+        $this->assertTrue($result->isOk());
+        $this->assertGreaterThan(0, count($result->getData()));
 
-    }//end testMerklisteLoeschen()
+    }//end testMerklisteAnzeigen()
 
 
 }//end class
