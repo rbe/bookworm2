@@ -19,7 +19,7 @@
     <logger name="wbh.bookworm.hoerbuchkatalog.assembly" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
-    <logger name="wbh.bookworm.hoerbuchkatalog.ui" level="TRACE" additivity="false">
+    <logger name="wbh.bookworm.hoerbuchkatalog.rest" level="DEBUG" additivity="false">
         <appender-ref ref="STDOUT"/>
     </logger>
     <logger name="wbh.bookworm.hoerbuchkatalog.app" level="TRACE" additivity="false">

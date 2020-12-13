@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
@@ -64,10 +65,10 @@ public final class BestellungService {
                                                      final Boolean bestellkarteMischen,
                                                      final Boolean alteBestellkarteLoeschen) {
         LOGGER.trace("Bestellung {} für Hörer {} wird aufgegeben", this, hoerernummer);
-        final CdWarenkorb cdWarenkorb =
-                warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer);
-        final DownloadWarenkorb downloadWarenkorb =
-                warenkorbService.downloadWarenkorbKopie(bestellungSessionId, hoerernummer);
+        final CdWarenkorb cdWarenkorb = warenkorbService
+                .cdWarenkorbKopie(bestellungSessionId, hoerernummer);
+        final DownloadWarenkorb downloadWarenkorb = warenkorbService
+                .downloadWarenkorbKopie(bestellungSessionId, hoerernummer);
         final Bestellung bestellung = bestellungRepository.erstellen(
                 hoerernummer, hoerername, hoereremail,
                 bemerkung, bestellkarteMischen, alteBestellkarteLoeschen,

@@ -8,10 +8,12 @@ package wbh.bookworm.hoerbuchkatalog.assembly;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.ServletComponentScan;
 
 @SpringBootApplication(scanBasePackages = {
         "wbh.bookworm.hoerbuchkatalog"
 })
+@ServletComponentScan
 public class HoerbuchkatalogMain {
 
     public static void main(String[] args) {
