@@ -56,6 +56,7 @@ export class Wbhonline {
                         () => this.wbhbuttons.enableAnchor(merklisteButton));
                 });
             } else {
+                this.wbhbuttons.disableAnchor(merklisteButton);
                 this.wbhbuttons.setTitle(merklisteButton, 'Bitte anmelden');
             }
         }
@@ -215,6 +216,7 @@ export class Wbhonline {
                     this.wbhbuttons.setTitle(downloadButton, 'Hörbuch nicht als Download verfügbar');
                 }
             } else {
+                this.wbhbuttons.disableAnchor(downloadButton);
                 this.wbhbuttons.setTitle(downloadButton, 'Bitte anmelden');
             }
         }
