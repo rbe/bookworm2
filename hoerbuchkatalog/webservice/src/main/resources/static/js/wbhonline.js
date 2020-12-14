@@ -54,9 +54,9 @@ export class Wbhonline {
                 const self = this;
                 const merklisteHandleClick = function (event) {
                     self.wbhbuttons.disableAnchor(event.currentTarget);
-                    const titelnummer = this.titelnummer(event.currentTarget);
-                    this.flipMerklisteButton(titelnummer, event.currentTarget,
-                        () => this.wbhbuttons.enableAnchor(event.currentTarget));
+                    const titelnummer = self.titelnummer(event.currentTarget);
+                    self.flipMerklisteButton(titelnummer, event.currentTarget,
+                        () => self.wbhbuttons.enableAnchor(event.currentTarget));
                 }
                 merklisteButton.addEventListener('click', merklisteHandleClick);
             } else {
@@ -215,14 +215,15 @@ export class Wbhonline {
             if (this.hoerernummer !== HOERER_UNBEKANNT) {
                 if (downloadButton.classList.contains('order-download-true')) {
                     this.wbhbuttons.setTitle(downloadButton, 'Hörbuch herunterladen');
+                    const self = this;
                     const bestelleDownload = function (event) {
                         this.wbhbuttons.disableButtons();
                         this.wbhbuttons.activateSpinner(event.currentTarget.querySelector('i'));
-                        const titelnummer = this.titelnummer(event.currentTarget);
+                        const titelnummer = self.titelnummer(event.currentTarget);
                         this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
                             (element) => {
-                                this.wbhbuttons.deactivateSpinner(element.querySelector('i'));
-                                this.wbhbuttons.enableButtons();
+                                self.wbhbuttons.deactivateSpinner(element.querySelector('i'));
+                                self.wbhbuttons.enableButtons();
                             });
                     }
                     downloadButton.addEventListener('click', bestelleDownload);
