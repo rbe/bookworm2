@@ -51,7 +51,14 @@ export class Wbhonline {
                 } else {
                     this.vonMerklisteEntfernt(merklisteButton);
                 }
-                merklisteButton.addEventListener('click', this.merklisteHandleClick);
+                const self = this;
+                const merklisteHandleClick = function (event) {
+                    self.wbhbuttons.disableAnchor(event.currentTarget);
+                    const titelnummer = this.titelnummer(event.currentTarget);
+                    this.flipMerklisteButton(titelnummer, event.currentTarget,
+                        () => this.wbhbuttons.enableAnchor(event.currentTarget));
+                }
+                merklisteButton.addEventListener('click', merklisteHandleClick);
             } else {
                 this.merklisteNichtEingeloggt(merklisteButton);
             }
@@ -64,13 +71,6 @@ export class Wbhonline {
         merklisteButton.href = LOGIN_HTML;
         this.wbhbuttons.setTitle(merklisteButton, 'Bitte anmelden');
     }
-
-    merklisteHandleClick(event) {
-        this.wbhbuttons.disableAnchor(event.currentTarget);
-        const titelnummer = this.titelnummer(event.currentTarget);
-        this.flipMerklisteButton(titelnummer, event.currentTarget,
-            () => this.wbhbuttons.enableAnchor(event.currentTarget));
-    };
 
     flipMerklisteButton(titelnummer, merklisteButton, callback) {
         const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
@@ -215,7 +215,17 @@ export class Wbhonline {
             if (this.hoerernummer !== HOERER_UNBEKANNT) {
                 if (downloadButton.classList.contains('order-download-true')) {
                     this.wbhbuttons.setTitle(downloadButton, 'Hörbuch herunterladen');
-                    downloadButton.addEventListener('click', this.bestelleDownload);
+                    const bestelleDownload = function (event) {
+                        this.wbhbuttons.disableButtons();
+                        this.wbhbuttons.activateSpinner(event.currentTarget.querySelector('i'));
+                        const titelnummer = this.titelnummer(event.currentTarget);
+                        this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
+                            (element) => {
+                                this.wbhbuttons.deactivateSpinner(element.querySelector('i'));
+                                this.wbhbuttons.enableButtons();
+                            });
+                    }
+                    downloadButton.addEventListener('click', bestelleDownload);
                 } else {
                     this.wbhbuttons.setTitle(downloadButton, 'Hörbuch nicht als Download verfügbar');
                 }
@@ -231,17 +241,6 @@ export class Wbhonline {
         downloadButton.href = LOGIN_HTML;
         this.wbhbuttons.setTitle(downloadButton, 'Bitte anmelden');
     }
-
-    bestelleDownload(event) {
-        this.wbhbuttons.disableButtons();
-        this.wbhbuttons.activateSpinner(event.currentTarget.querySelector('i'));
-        const titelnummer = this.titelnummer(event.currentTarget);
-        this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
-            (element) => {
-            this.wbhbuttons.deactivateSpinner(element.querySelector('i'));
-            this.wbhbuttons.enableButtons();
-        });
-    };
 
     //
     // DOM
