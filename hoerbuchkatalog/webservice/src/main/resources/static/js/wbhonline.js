@@ -66,7 +66,7 @@ export class Wbhonline {
     }
 
     merklisteNichtEingeloggt(merklisteButton) {
-        merklisteButton.classList.remove('watchlist-false');
+        merklisteButton.classList.remove('watchlist-true', 'watchlist-false');
         merklisteButton.classList.add('watchlist-login');
         merklisteButton.href = LOGIN_HTML;
         this.wbhbuttons.setTitle(merklisteButton, 'Bitte anmelden');
@@ -237,8 +237,8 @@ export class Wbhonline {
     }
 
     downloadNichtEingeloggt(downloadButton) {
-        downloadButton.classList.remove('download-true', 'download-false');
-        downloadButton.classList.add('download-login');
+        downloadButton.classList.remove('order-download-true', 'order-download-false');
+        downloadButton.classList.add('order-download-login');
         downloadButton.href = LOGIN_HTML;
         this.wbhbuttons.setTitle(downloadButton, 'Bitte anmelden');
     }
