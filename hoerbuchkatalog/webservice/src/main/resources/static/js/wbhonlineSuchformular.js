@@ -6,7 +6,7 @@
 
 "use strict";
 
-const stichwortsucheUrl = '/konto/stichwortsuche.html';
+const stichwortsucheUrl = '/stichwortsuche.html';
 
 export class WbhonlineSuchformular {
 
@@ -16,7 +16,7 @@ export class WbhonlineSuchformular {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             if (undefined !== inputField) {
                 const button = form.querySelector('button[class*="search"]');
-                inputField.addEventListener('keyup', function(event) {
+                inputField.addEventListener('keyup', (event) => {
                     if (event.keyCode === 13) {
                         event.preventDefault();
                         button.click();
