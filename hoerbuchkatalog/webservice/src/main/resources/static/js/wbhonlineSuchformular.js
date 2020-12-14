@@ -29,9 +29,13 @@ export class WbhonlineSuchformular {
                         url.pathname = stichwortsucheUrl;
                         url.searchParams.delete('stichwort');
                         url.search = Array.from(url.searchParams.entries())
-                            .map(([k,v])=>
+                            .map(([k, v]) =>
                                 `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
                             .join('&');
+                        if (url.search.length > 0) {
+                            url.search += '&';
+                        }
+                        url.search += 'stichwort=' + encodeURIComponent(inputField.value);
                         window.location = url.toString();
                     });
                 }
