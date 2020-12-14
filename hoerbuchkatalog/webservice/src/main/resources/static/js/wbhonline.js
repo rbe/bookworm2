@@ -159,41 +159,41 @@ export class Wbhonline {
         for (const hoerprobeButton of hoerprobeButtons) {
             if (hoerprobeButton.classList.contains('hoerprobe-true')) {
                 this.wbhbuttons.setTitle(hoerprobeButton, 'Hörprobe abspielen');
-                hoerprobeButton.addEventListener('click', this.spieleOderPausiereHoerprobe);
+                const self = this;
+                const spieleOderPausiereHoerprobe = function (event) {
+                    self.wbhbuttons.disableButtons();
+                    const i = event.currentTarget.querySelector('i');
+                    const titelnummer = self.titelnummer(event.currentTarget);
+                    if (i.classList.contains('fa-volume-up')) {
+                        self.wbhbuttons.activateSpinner(i);
+                        self.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
+                            (anchor) => {
+                                const i = anchor.querySelector('i');
+                                self.wbhbuttons.deactivateSpinner(i);
+                                self.hoerprobeSpielt(i);
+                                self.wbhbuttons.enableAnchor(anchor);
+                            },
+                            (anchor) => {
+                                const i = anchor.querySelector('i');
+                                self.wbhbuttons.deactivateSpinner(i);
+                                self.hoerprobePausiert(i);
+                                self.wbhbuttons.enableButtons();
+                            });
+                    } else {
+                        self.audioplayer.pausiereHoerprobe(event.currentTarget, (anchor) => {
+                            const i = anchor.querySelector('i');
+                            self.hoerprobePausiert(i);
+                            self.wbhbuttons.deactivateSpinner(i);
+                            self.wbhbuttons.enableButtons();
+                        });
+                    }
+                };
+                hoerprobeButton.addEventListener('click', spieleOderPausiereHoerprobe);
             } else {
                 this.wbhbuttons.setTitle(hoerprobeButton, 'Hörprobe nicht verfügbar');
             }
         }
     }
-
-    spieleOderPausiereHoerprobe(event) {
-        this.wbhbuttons.disableButtons();
-        const i = event.currentTarget.querySelector('i');
-        const titelnummer = this.titelnummer(event.currentTarget);
-        if (i.classList.contains('fa-volume-up')) {
-            this.wbhbuttons.activateSpinner(i);
-            this.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
-                (anchor) => {
-                    const i = anchor.querySelector('i');
-                    this.wbhbuttons.deactivateSpinner(i);
-                    this.hoerprobeSpielt(i);
-                    this.wbhbuttons.enableAnchor(anchor);
-                },
-                (anchor) => {
-                    const i = anchor.querySelector('i');
-                    this.wbhbuttons.deactivateSpinner(i);
-                    this.hoerprobePausiert(i);
-                    this.wbhbuttons.enableButtons();
-                });
-        } else {
-            this.audioplayer.pausiereHoerprobe(event.currentTarget, (anchor) => {
-                const i = anchor.querySelector('i');
-                this.hoerprobePausiert(i);
-                this.wbhbuttons.deactivateSpinner(i);
-                this.wbhbuttons.enableButtons();
-            });
-        }
-    };
 
     hoerprobeSpielt(i) {
         PLAY_BUTTON.forEach(value => i.classList.remove(value));
