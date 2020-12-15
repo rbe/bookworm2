@@ -217,10 +217,10 @@ export class Wbhonline {
                     this.wbhbuttons.setTitle(downloadButton, 'Hörbuch herunterladen');
                     const self = this;
                     const bestelleDownload = function (event) {
-                        this.wbhbuttons.disableButtons();
-                        this.wbhbuttons.activateSpinner(event.currentTarget.querySelector('i'));
+                        self.wbhbuttons.disableButtons();
+                        self.wbhbuttons.activateSpinner(event.currentTarget.querySelector('i'));
                         const titelnummer = self.titelnummer(event.currentTarget);
-                        this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
+                        self.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
                             (element) => {
                                 self.wbhbuttons.deactivateSpinner(element.querySelector('i'));
                                 self.wbhbuttons.enableButtons();
