@@ -62,12 +62,14 @@ pacinstall lvm2
 
 # IONOS
 echo "Setting up volume group 'tank'"
+set +o errexit
 umount /data
 lvremove -f hdd data
+set -o errexit
 vgrename hdd tank
 echo "done"
 
-echo "Creating volume group 'swap' and filesystem"
+echo "Creating volume group 'swap' and swap space"
 lvcreate -L64G -n swap tank
 mkswap /dev/tank/swap
 echo "done"
