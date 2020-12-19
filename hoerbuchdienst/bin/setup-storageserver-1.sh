@@ -72,7 +72,7 @@ vgrename hdd tank
 echo "done"
 
 echo "Creating volume group 'swap' and swap space"
-lvcreate -L64G -n swap tank
+lvcreate -L64G -n swap vg00
 mkswap /dev/tank/swap
 echo "done"
 echo "Adding swap space"
