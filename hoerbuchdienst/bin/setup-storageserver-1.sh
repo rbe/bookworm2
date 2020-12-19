@@ -65,10 +65,10 @@ echo "Setting up volume group 'tank'"
 set +o errexit
 umount /data
 lvremove -f hdd data
+vgrename hdd tank
 set -o errexit
 grep -v "/data" /etc/fstab >fstab.$$
 mv fstab.$$ /etc/fstab
-vgrename hdd tank
 echo "done"
 
 echo "Creating volume group 'swap' and swap space"
