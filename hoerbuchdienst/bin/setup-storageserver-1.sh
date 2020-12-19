@@ -90,7 +90,7 @@ if ! lvs | grep -c swap >/dev/null; then
 fi
 if ! grep tank /proc/swaps; then
   echo "Adding swap space"
-  export $(blkid -o export /dev/tank/swap)
+  export $(blkid -o export /dev/vg00/swap)
   cat >>/etc/fstab <<EOF
 UUID=$UUID  none  swap  defaults  0  0
 EOF
