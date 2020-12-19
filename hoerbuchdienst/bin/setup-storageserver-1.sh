@@ -71,7 +71,7 @@ echo "done"
 
 echo "Creating volume group 'swap' and swap space"
 lvcreate -L64G -n swap tank
-mkswap /dev/tank/swap
+mkswap -f /dev/tank/swap
 echo "done"
 echo "Adding swap space"
 export $(blkid -o export /dev/tank/swap)
@@ -86,7 +86,7 @@ echo "done"
 
 echo "Creating volume group 'docker' and filesystem"
 lvcreate -L16G -n docker tank
-mkfs.ext4 /dev/tank/docker
+mkfs.ext4 -f /dev/tank/docker
 echo "done"
 echo "Mounting filesystem /var/lib/docker"
 mkdir -p /var/lib/docker
@@ -99,7 +99,7 @@ echo "done"
 
 echo "Creating volume group 'dockervolumes' and filesystem"
 lvcreate -y -l 90%FREE -n dockervolumes tank
-mkfs.ext4 /dev/tank/dockervolumes
+mkfs.ext4 -f /dev/tank/dockervolumes
 echo "done"
 echo "Mounting filesystem /var/lib/dockervolumes"
 mkdir -p /var/lib/docker/volumes
@@ -112,8 +112,8 @@ echo "done"
 
 echo "Creating users"
 groupadd admin
-useradd -m -s /bin/bash -g rbe rbe
-useradd -m -s /bin/bash -g cew cew
+useradd -m -s /bin/bash -g admin rbe
+useradd -m -s /bin/bash -g admin cew
 cat >/etc/sudoers.d/admin <<EOF
 rbe ALL=(ALL) NOPASSWD: ALL
 cew ALL=(ALL) ALL
