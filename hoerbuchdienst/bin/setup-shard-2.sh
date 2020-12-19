@@ -8,16 +8,17 @@ execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 . "${execdir}/lib.sh"
 
 pacinstall docker
-systemctl enable docker
 pacinstall docker-compose
+systemctl enable docker
 
 echo "Cleaning package cache"
 echo "y" | pacman -Scc
 echo "done"
+yum -y clean
 
 if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
   echo "Generating SSH key for user $(id -un)"
-  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "$(hostname)"
+  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "$(hostname -f)"
   cat ~/.ssh/id_rsa.pub
   echo "done"
 else

@@ -18,6 +18,7 @@ echo "done"
 
 "${execdir}"/update-linux.sh
 
+pacinstall sudo
 pacinstall inetutils
 pacinstall man man-pages
 pacinstall pacman-contrib
@@ -89,48 +90,78 @@ if ! lvs | grep -c swap >/dev/null; then
   echo "done"
 fi
 if ! grep tank /proc/swaps; then
-  echo "Adding swap space"
+  echo "Adding swap space to fstab"
   export $(blkid -o export /dev/vg00/swap)
   cat >>/etc/fstab <<EOF
-UUID=$UUID  none  swap  defaults  0  0
+UUID=$UUID  none  swap  sw
 EOF
   unset UUID
   echo "done"
   echo "Activating swap space"
+  set +o errexit
   swapon -f /dev/vg00/swap
+  set -o errexit
   echo "done"
 fi
 
-echo "Creating volume group 'docker' and filesystem"
-lvcreate -L16G -n docker tank
-mkfs.ext4 -f /dev/tank/docker
-echo "done"
-echo "Mounting filesystem /var/lib/docker"
-mkdir -p /var/lib/docker
-export $(blkid -o export /dev/tank/docker)
-cat >>/etc/fstab <<EOF
-UUID=$UUID  /var/lib/docker  ext4  rw,noatime,noexec,nodev,nosuid  0  0
+if ! lvs | grep -c "docker" >/dev/null; then
+  echo "Creating volume group 'docker'"
+  lvcreate -L16G -n docker tank
+  echo "done"
+fi
+if ! blkid /dev/tank/docker >/dev/null; then
+  echo "Creating filesystem 'docker'"
+  mkfs.ext4 -F /dev/tank/docker
+  echo "done"
+fi
+if [ ! -d /var/lib/docker ]; then
+  echo "Creating mountpoint /var/lib/docker"
+  mkdir -p /var/lib/docker
+  echo "done"
+fi
+if ! grep -c "tank/docker" /etc/fstab >/dev/null; then
+  echo "Adding tank/docker to fstab"
+  export $(blkid -o export /dev/tank/docker)
+  cat >>/etc/fstab <<EOF
+UUID=$UUID  /var/lib/docker  ext4  rw,noatime,noexec,nodev,nosuid  0  2
 EOF
-unset UUID
-echo "done"
+  unset UUID
+  echo "done"
+fi
 
-echo "Creating volume group 'dockervolumes' and filesystem"
-lvcreate -y -l 90%FREE -n dockervolumes tank
-mkfs.ext4 -f /dev/tank/dockervolumes
-echo "done"
-echo "Mounting filesystem /var/lib/dockervolumes"
-mkdir -p /var/lib/docker/volumes
-export $(blkid -o export /dev/tank/dockervolumes)
-cat >>/etc/fstab <<EOF
-UUID=$UUID  /var/lib/docker/volumes  ext4  rw,noatime,noexec,nodev,nosuid  0  0
+if ! lvs | grep -c "dockervolumes" >/dev/null; then
+  echo "Creating volume group 'dockervolumes'"
+  lvcreate -y -l 90%FREE -n dockervolumes tank
+  echo "done"
+fi
+if ! blkid /dev/tank/dockervolumes >/dev/null; then
+  echo "Creating filesystem 'dockervolumes'"
+  mkfs.ext4 -F /dev/tank/dockervolumes
+  echo "done"
+fi
+if [ ! -d /var/lib/dockervolumes ]; then
+  echo "Creating mountpoint /var/lib/dockervolumes"
+  mkdir -p /var/lib/docker/volumes
+  echo "done"
+fi
+if ! grep -c "tank/dockervolumes" /etc/fstab >/dev/null; then
+  echo "Adding tank/dockervolumes to fstab"
+  export $(blkid -o export /dev/tank/dockervolumes)
+  cat >>/etc/fstab <<EOF
+UUID=$UUID  /var/lib/docker/volumes  ext4  rw,noatime,noexec,nodev,nosuid  0  2
 EOF
-unset UUID
-echo "done"
+  unset UUID
+  echo "done"
+fi
 
 echo "Creating users"
-groupadd admin
-useradd -m -s /bin/bash -g admin rbe
-useradd -m -s /bin/bash -g admin cew
+groupadd -f admin
+if ! grep -c rbe /etc/passwd >/dev/null; then
+  useradd -m -s /bin/bash -g admin rbe
+fi
+if ! grep -c cew /etc/passwd >/dev/null; then
+  useradd -m -s /bin/bash -g admin cew
+fi
 cat >/etc/sudoers.d/admin <<EOF
 rbe ALL=(ALL) NOPASSWD: ALL
 cew ALL=(ALL) ALL

@@ -4,6 +4,17 @@
 set -o nounset
 set -o errexit
 
+function yuminstall() {
+  local packages="$*"
+  shift
+  echo "Installing ${packages}"
+  if yum -y "${packages}"; then
+    echo "${packages} installed successfully"
+  else
+    echo "${packages} installation failed"
+  fi
+}
+
 function pacinstall() {
   local packages="$*"
   shift
