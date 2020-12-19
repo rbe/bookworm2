@@ -83,7 +83,7 @@ EOF
 unset UUID
 echo "done"
 echo "Activating swap space"
-swapon -f /dev/tank/swap
+swapon -f /dev/vg00/swap
 echo "done"
 
 echo "Creating volume group 'docker' and filesystem"
