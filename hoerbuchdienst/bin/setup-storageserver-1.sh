@@ -73,7 +73,7 @@ echo "done"
 
 echo "Creating volume group 'swap' and swap space"
 lvcreate -L64G -n swap vg00
-mkswap /dev/tank/swap
+mkswap /dev/vg00/swap
 echo "done"
 echo "Adding swap space"
 export $(blkid -o export /dev/tank/swap)
