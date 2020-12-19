@@ -9,6 +9,13 @@ execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 
 set_fqdn
 
+echo "Setting timezone"
+timedatectl set-timezone Europe/Berlin
+echo "done"
+echo "Enabling NTP"
+timedatectl set-ntp true
+echo "done"
+
 "${execdir}"/update-linux.sh
 
 pacinstall inetutils
@@ -39,24 +46,65 @@ cat >/etc/logrotate.d/docker <<EOF
 EOF
 echo "done"
 
-echo "Cleaning package cache"
-echo "y" | pacman -Scc
-echo "done"
-
-echo "Setting timezone"
-timedatectl set-timezone Europe/Berlin
-echo "done"
-echo "Enabling NTP"
-timedatectl set-ntp true
-echo "done"
-
 pacinstall lvm2
 
-echo "Partitioning hard disk"
-cd
-sfdisk --dump /dev/sda >sda.dump.1
-echo ",,L" | sfdisk --no-reread --force -a /dev/sda
-sfdisk --dump /dev/sda >sda.dump.2
+# netcup
+#echo "Partitioning hard disk"
+#cd
+#sfdisk --dump /dev/sda >sda.dump.1
+#echo ",,L" | sfdisk --no-reread --force -a /dev/sda
+#sfdisk --dump /dev/sda >sda.dump.2
+#echo "done"
+#echo "Setting up physical volume and volume group 'tank'"
+#pvcreate /dev/sda4
+#vgcreate tank /dev/sda4
+#echo "done"
+
+# IONOS
+echo "Setting up volume group 'tank'"
+lvremove hdd data
+vgrename hdd tank
+echo "done"
+
+echo "Creating volume group 'swap' and filesystem"
+lvcreate -L64G -n swap tank
+mkswap /dev/tank/swap
+echo "done"
+echo "Adding swap space"
+export $(blkid -o export /dev/tank/swap)
+cat >>/etc/fstab <<EOF
+UUID=$UUID  none  swap  defaults  0  0
+EOF
+unset UUID
+echo "done"
+echo "Activating swap space"
+swapon /dev/tank/swap
+echo "done"
+
+echo "Creating volume group 'docker' and filesystem"
+lvcreate -L16G -n docker tank
+mkfs.ext4 /dev/tank/docker
+echo "done"
+echo "Mounting filesystem /var/lib/docker"
+mkdir -p /var/lib/docker
+export $(blkid -o export /dev/tank/docker)
+cat >>/etc/fstab <<EOF
+UUID=$UUID  /var/lib/docker  ext4  rw,noatime,noexec,nodev,nosuid  0  0
+EOF
+unset UUID
+echo "done"
+
+echo "Creating volume group 'dockervolumes' and filesystem"
+lvcreate -y -l 90%FREE -n dockervolumes tank
+mkfs.ext4 /dev/tank/dockervolumes
+echo "done"
+echo "Mounting filesystem /var/lib/dockervolumes"
+mkdir -p /var/lib/docker/volumes
+export $(blkid -o export /dev/tank/dockervolumes)
+cat >>/etc/fstab <<EOF
+UUID=$UUID  /var/lib/docker/volumes  ext4  rw,noatime,noexec,nodev,nosuid  0  0
+EOF
+unset UUID
 echo "done"
 
 echo "Creating users"
