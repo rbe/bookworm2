@@ -16,7 +16,7 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
-"${execdir}"/update-linux.sh
+"${execdir}"/update-linux-ArchLinux.sh
 
 pacinstall sudo
 pacinstall inetutils
@@ -181,7 +181,7 @@ echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
 echo "!!!"
 echo "!!!"
-echo "!!! *** After reboot execute setup-storageserver-2.sh ***"
+echo "!!! *** After reboot execute setup-shard-2-ArchLinux.sh ***"
 echo "!!!"
 echo "!!!"
 sleep 10
