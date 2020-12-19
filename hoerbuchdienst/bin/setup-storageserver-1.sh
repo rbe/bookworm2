@@ -62,7 +62,8 @@ pacinstall lvm2
 
 # IONOS
 echo "Setting up volume group 'tank'"
-lvremove hdd data
+umount /data
+lvremove -f hdd data
 vgrename hdd tank
 echo "done"
 
