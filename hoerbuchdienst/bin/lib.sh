@@ -8,7 +8,7 @@ function yuminstall() {
   local packages="$*"
   shift
   echo "Installing ${packages}"
-  if yum -y "${packages}"; then
+  if yum -y install "${packages}"; then
     echo "${packages} installed successfully"
   else
     echo "${packages} installation failed"
