@@ -68,7 +68,6 @@ lvremove -f hdd data
 set -o errexit
 grep -v "/data" /etc/fstab >fstab.$$
 mv fstab.$$ /etc/fstab
-rm fstab.$$
 vgrename hdd tank
 echo "done"
 
