@@ -68,8 +68,15 @@ fi
 
 if vgs | grep -c hdd >/dev/null; then
   echo "Setting up volume group 'tank'"
+  set +o errexit
   lvremove -f hdd data
   vgrename hdd tank
+  set +o errexit
+  echo "done"
+fi
+
+if grep -c "/data" /etc/fstab >/dev/null; then
+  echo "Removing /data from /etc/fstab"
   grep -v "/data" /etc/fstab >fstab.$$
   mv fstab.$$ /etc/fstab
   echo "done"
