@@ -66,6 +66,9 @@ set +o errexit
 umount /data
 lvremove -f hdd data
 set -o errexit
+grep -v "/data" /etc/fstab >fstab.$$
+mv fstab.$$ /etc/fstab
+rm fstab.$$
 vgrename hdd tank
 echo "done"
 
@@ -119,6 +122,14 @@ rbe ALL=(ALL) NOPASSWD: ALL
 cew ALL=(ALL) ALL
 EOF
 echo "done"
+
+echo "***"
+echo "*** Please check fstab"
+echo "***"
+cat /etc/fstab
+echo "***"
+echo "***"
+read
 
 echo "!!!"
 echo "!!!"

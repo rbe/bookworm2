@@ -17,7 +17,7 @@ echo "done"
 
 if [[ ! -f ~/.ssh/id_rsa.pub ]]; then
   echo "Generating SSH key for user $(id -un)"
-  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N ""
+  ssh-keygen -t rsa -b 4096 -f ~/.ssh/id_rsa -N "" -C "$(hostname)"
   cat ~/.ssh/id_rsa.pub
   echo "done"
 else
