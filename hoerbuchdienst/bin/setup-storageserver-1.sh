@@ -61,30 +61,38 @@ pacinstall lvm2
 #echo "done"
 
 # IONOS
-echo "Setting up volume group 'tank'"
-set +o errexit
-umount /data
-lvremove -f hdd data
-vgrename hdd tank
-set -o errexit
-grep -v "/data" /etc/fstab >fstab.$$
-mv fstab.$$ /etc/fstab
-echo "done"
+if mount | grep data; then
+  echo "Unmount volume 'data'"
+  umount /data
+fi
 
-echo "Creating volume group 'swap' and swap space"
-lvcreate -L64G -n swap vg00
-mkswap /dev/vg00/swap
-echo "done"
-echo "Adding swap space"
-export $(blkid -o export /dev/tank/swap)
-cat >>/etc/fstab <<EOF
+if vgs | grep -c hdd >/dev/null; then
+  echo "Setting up volume group 'tank'"
+  lvremove -f hdd data
+  vgrename hdd tank
+  grep -v "/data" /etc/fstab >fstab.$$
+  mv fstab.$$ /etc/fstab
+  echo "done"
+fi
+
+if ! lvs | grep -c swap >/dev/null; then
+  echo "Creating volume group 'swap' and swap space"
+  lvcreate -L64G -n swap vg00
+  mkswap /dev/vg00/swap
+  echo "done"
+fi
+if ! grep tank /proc/swaps; then
+  echo "Adding swap space"
+  export $(blkid -o export /dev/tank/swap)
+  cat >>/etc/fstab <<EOF
 UUID=$UUID  none  swap  defaults  0  0
 EOF
-unset UUID
-echo "done"
-echo "Activating swap space"
-swapon -f /dev/vg00/swap
-echo "done"
+  unset UUID
+  echo "done"
+  echo "Activating swap space"
+  swapon -f /dev/vg00/swap
+  echo "done"
+fi
 
 echo "Creating volume group 'docker' and filesystem"
 lvcreate -L16G -n docker tank
