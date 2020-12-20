@@ -21,22 +21,26 @@ function yuminstall() {
   local packages="$*"
   shift
   echo "Installing ${packages}"
-  if yum -y install "${packages}"; then
-    echo "${packages} installed successfully"
-  else
-    echo "${packages} installation failed"
-  fi
+  for package in ${packages[*]}; do
+    if yum -y install "${package}"; then
+      echo "${package} installed successfully"
+    else
+      echo "${package} installation failed"
+    fi
+  done
 }
 
 function pacinstall() {
   local packages="$*"
   shift
   echo "Installing ${packages}"
-  if pacman --noconfirm -S "${packages}"; then
-    echo "${packages} installed successfully"
-  else
-    echo "${packages} installation failed"
-  fi
+  for package in ${packages[*]}; do
+    if pacman --noconfirm -S "${package}"; then
+      echo "${package} installed successfully"
+    else
+      echo "${package} installation failed"
+    fi
+  done
 }
 
 function set_fqdn() {
