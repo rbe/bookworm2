@@ -4,6 +4,17 @@
 set -o nounset
 set -o errexit
 
+function zypperinstall() {
+  local packages="$*"
+  shift
+  echo "Installing ${packages}"
+  if zypper install -y "${packages}"; then
+    echo "${packages} installed successfully"
+  else
+    echo "${packages} installation failed"
+  fi
+}
+
 function yuminstall() {
   local packages="$*"
   shift
