@@ -16,7 +16,7 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
-"${execdir}"/update-linux-CentOS.sh
+"${execdir}"/update-linux-openSUSE.sh
 
 zypperinstall sudo
 zypperinstall ca-certificates ca-certificates-cacert ca-certificates-mozilla
