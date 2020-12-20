@@ -62,7 +62,7 @@ pacinstall lvm2
 #echo "done"
 
 # IONOS
-if mount | grep -c data >/dev/null; then
+if mount | grep -c "/data" >/dev/null; then
   echo "Unmount volume 'data'"
   umount /data
 fi

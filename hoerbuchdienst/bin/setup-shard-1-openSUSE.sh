@@ -41,7 +41,7 @@ zypperinstall logrotate
 zypperinstall lvm2
 
 # IONOS
-if mount | grep -c data >/dev/null; then
+if mount | grep -c "/data" >/dev/null; then
   echo "Unmount volume 'data'"
   umount /data
 fi
