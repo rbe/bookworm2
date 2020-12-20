@@ -86,8 +86,8 @@ case "${project}" in
     if ! docker volume ls | grep -c "${project_name}_minio" >/dev/null; then
       echo "Provisioning ${project}, environment ${env} (${project_name})"
       ./lifecycle.sh provision
-      ./backup.sh "${env}" "${project}"
-      ./setup-ufw.sh
+      #./backup.sh "${env}" "${project}"
+      #./setup-ufw.sh
       echo "done"
     else
       echo "Won't provision ${project_name}, there are volumes present already"
