@@ -8,11 +8,13 @@ function zypperinstall() {
   local packages="$*"
   shift
   echo "Installing ${packages}"
-  if zypper install -y "${packages}"; then
-    echo "${packages} installed successfully"
-  else
-    echo "${packages} installation failed"
-  fi
+  for package in ${packages[*]}; do
+    if zypper install -y "${package}"; then
+      echo "${package} installed successfully"
+    else
+      echo "${package} installation failed"
+    fi
+  done
 }
 
 function yuminstall() {
