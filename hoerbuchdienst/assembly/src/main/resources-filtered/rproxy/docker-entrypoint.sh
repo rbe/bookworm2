@@ -35,6 +35,7 @@ then
   then
     echo "Creating self-signed TLS server certificates"
     selfsigned-openssl.sh "${nginx.hostname}"
+    selfsigned-openssl.sh "${portainer.hostname}"
     selfsigned-openssl.sh "${vault.hostname}"
     selfsigned-openssl.sh "${kes.hostname}"
     selfsigned-openssl.sh "${minio.hostname}"
@@ -53,6 +54,8 @@ then
       [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
       [[ ! -d /etc/letsencrypt/live/"${nginx.hostname}" ]] \
           && certbot certonly ${certonly_args} -d "${nginx.hostname}"
+      [[ ! -d /etc/letsencrypt/live/"${portainer.hostname}" ]] \
+          && certbot certonly ${certonly_args} -d "${portainer.hostname}"
       [[ ! -d /etc/letsencrypt/live/"${vault.hostname}" ]] \
           && certbot certonly ${certonly_args} -d "${vault.hostname}"
       [[ ! -d /etc/letsencrypt/live/"${kes.hostname}" ]] \
