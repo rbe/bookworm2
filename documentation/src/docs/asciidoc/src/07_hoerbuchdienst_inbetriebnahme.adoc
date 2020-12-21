@@ -97,7 +97,7 @@ cd ~/bookworm2 && git pull && cd -
 .Installation Teil 1 -- Die Installation starten:
 [source,shell,linenum]
 ----
-bash ~/bookworm2/hoerbuchdienst/bin/setup-shard-1-openSUSE.sh
+bash ~/bookworm2/hoerbuchdienst/bin/ionos/openSUSE/setup-shard-1.sh
 ----
 
 und bei Aufforderung Shard Name eingeben (shardN.audiobook.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
@@ -118,7 +118,7 @@ Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
 .Installation Teil 2 -- Storage einrichten und Docker installieren:
 [source,shell,linenum]
 ----
-bash ~/bookworm2/hoerbuchdienst/bin/setup-shard-2.sh
+bash ~/bookworm2/hoerbuchdienst/bin/ionos/openSUSE/setup-shard-2.sh
 ----
 
 ==== Netzwerkkonfiguration
@@ -340,8 +340,19 @@ $ cnt.sh prod hbd exec rabbitmq rabbitmq-change-password.sh bugs
 
 ==== Weitere Inbetriebnahme
 
+----
 rm /var/lib/docker/volumes/prod-hbd_rproxycerts/_data/is_initialized
+cnt.sh prod hbd exec hbd-rproxy provision.sh default_tls_server
 cnt.sh prod hbd restart hbd-rproxy
+----
+
+----
+cnt.sh prod hbd exec hbd-rproxy provision.sh default_tls_server minio rabbitmq
+----
+
+----
+cnt.sh prod hbd exec hbd-rproxy provision.sh hoerbuchdienst
+----
 
 ==== Aktualisierung
 
