@@ -16,55 +16,53 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
-"${execdir}"/update-linux-openSUSE.sh
+"${execdir}"/update-linux.sh
 
-zypperinstall sudo
-zypperinstall ca-certificates ca-certificates-cacert ca-certificates-mozilla
-zypperinstall vim
-zypperinstall git
-zypperinstall unzip
+pacinstall sudo
+pacinstall inetutils
+pacinstall man man-pages
+pacinstall pacman-contrib
+echo "Enable paccache timer"
+systemctl enable paccache.timer
+echo "done"
+pacinstall ca-certificates ca-certificates-mozilla ca-certificates-utils
+pacinstall vi vim
+pacinstall git
+pacinstall unzip
 
-zypperinstall logrotate
-#echo "Enabling log rotation for Docker containers"
-#cat >/etc/logrotate.d/docker <<EOF
-#/var/lib/docker/containers/*/*.log {
-#        rotate 30
-#        daily
-#        compress
-#        missingok
-#        delaycompress
-#        copytruncate
-#}
-#EOF
-#echo "done"
+pacinstall logrotate
+echo "Enabling logrotate timer"
+systemctl enable logrotate.timer
+echo "done"
+echo "Enabling log rotation for Docker containers"
+cat >/etc/logrotate.d/docker <<EOF
+/var/lib/docker/containers/*/*.log {
+        rotate 30
+        daily
+        compress
+        missingok
+        delaycompress
+        copytruncate
+}
+EOF
+echo "done"
 
-zypperinstall lvm2
+pacinstall lvm2
 
-# IONOS
-if mount | grep -c "/data" >/dev/null; then
-  echo "Unmount volume 'data'"
-  umount /data
-fi
-
-if vgs | grep -c hdd >/dev/null; then
-  echo "Setting up volume group 'tank'"
-  set +o errexit
-  lvremove -f hdd data
-  vgrename hdd tank
-  set +o errexit
-  echo "done"
-fi
-
-if grep -c "/data" /etc/fstab >/dev/null; then
-  echo "Removing /data from /etc/fstab"
-  grep -v "/data" /etc/fstab >fstab.$$
-  mv fstab.$$ /etc/fstab
-  echo "done"
-fi
+echo "Partitioning hard disk"
+cd
+sfdisk --dump /dev/sda >sda.dump.1
+echo ",,L" | sfdisk --no-reread --force -a /dev/sda
+sfdisk --dump /dev/sda >sda.dump.2
+echo "done"
+echo "Setting up physical volume and volume group 'tank'"
+pvcreate /dev/sda4
+vgcreate tank /dev/sda4
+echo "done"
 
 if ! lvs | grep -c swap >/dev/null; then
   echo "Creating volume group 'swap' and swap space"
-  lvcreate -L64G -n swap vg00
+  lvcreate -L16G -n swap vg00
   mkswap /dev/vg00/swap
   echo "done"
 fi
@@ -85,7 +83,7 @@ fi
 
 if ! lvs | grep -c "docker" >/dev/null; then
   echo "Creating volume group 'docker'"
-  lvcreate -L16G -n docker tank
+  lvcreate -L8G -n docker tank
   echo "done"
 fi
 if ! blkid /dev/tank/docker >/dev/null; then
@@ -160,7 +158,7 @@ echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
 echo "!!!"
 echo "!!!"
-echo "!!! *** After reboot execute setup-shard-2-CentOS.sh ***"
+echo "!!! *** After reboot execute setup-shard-2.sh ***"
 echo "!!!"
 echo "!!!"
 sleep 10

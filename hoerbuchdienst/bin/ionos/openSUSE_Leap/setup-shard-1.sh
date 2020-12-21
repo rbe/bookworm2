@@ -16,24 +16,15 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
-"${execdir}"/update-linux-ArchLinux.sh
+"${execdir}"/update-linux.sh
 
-pacinstall sudo
-pacinstall inetutils
-pacinstall man man-pages
-pacinstall pacman-contrib
-echo "Enable paccache timer"
-systemctl enable paccache.timer
-echo "done"
-pacinstall ca-certificates ca-certificates-mozilla ca-certificates-utils
-pacinstall vi vim
-pacinstall git
-pacinstall unzip
+zypperinstall sudo
+zypperinstall ca-certificates ca-certificates-cacert ca-certificates-mozilla
+zypperinstall vim
+zypperinstall git
+zypperinstall unzip
 
-pacinstall logrotate
-echo "Enabling logrotate timer"
-systemctl enable logrotate.timer
-echo "done"
+zypperinstall logrotate
 echo "Enabling log rotation for Docker containers"
 cat >/etc/logrotate.d/docker <<EOF
 /var/lib/docker/containers/*/*.log {
@@ -47,25 +38,17 @@ cat >/etc/logrotate.d/docker <<EOF
 EOF
 echo "done"
 
-pacinstall lvm2
-
-# netcup
-#echo "Partitioning hard disk"
-#cd
-#sfdisk --dump /dev/sda >sda.dump.1
-#echo ",,L" | sfdisk --no-reread --force -a /dev/sda
-#sfdisk --dump /dev/sda >sda.dump.2
-#echo "done"
-#echo "Setting up physical volume and volume group 'tank'"
-#pvcreate /dev/sda4
-#vgcreate tank /dev/sda4
-#echo "done"
+zypperinstall lvm2
 
 # IONOS
 if mount | grep -c "/data" >/dev/null; then
   echo "Unmount volume 'data'"
   umount /data
 fi
+
+pvs
+vgs
+lvs
 
 if vgs | grep -c hdd >/dev/null; then
   echo "Setting up volume group 'tank'"
@@ -181,7 +164,7 @@ echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
 echo "!!!"
 echo "!!!"
-echo "!!! *** After reboot execute setup-shard-2-ArchLinux.sh ***"
+echo "!!! *** After reboot execute setup-shard-2.sh ***"
 echo "!!!"
 echo "!!!"
 sleep 10

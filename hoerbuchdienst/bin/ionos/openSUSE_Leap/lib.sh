@@ -17,32 +17,6 @@ function zypperinstall() {
   done
 }
 
-function yuminstall() {
-  local packages="$*"
-  shift
-  echo "Installing ${packages}"
-  for package in ${packages[*]}; do
-    if yum -y install "${package}"; then
-      echo "${package} installed successfully"
-    else
-      echo "${package} installation failed"
-    fi
-  done
-}
-
-function pacinstall() {
-  local packages="$*"
-  shift
-  echo "Installing ${packages}"
-  for package in ${packages[*]}; do
-    if pacman --noconfirm -S "${package}"; then
-      echo "${package} installed successfully"
-    else
-      echo "${package} installation failed"
-    fi
-  done
-}
-
 function set_fqdn() {
   correct=0
   while [[ ${correct} != 1 ]]; do

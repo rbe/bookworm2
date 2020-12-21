@@ -16,7 +16,7 @@ echo "Enabling NTP"
 timedatectl set-ntp true
 echo "done"
 
-"${execdir}"/update-linux-CentOS.sh
+"${execdir}"/update-linux.sh
 
 yuminstall sudo
 yuminstall ca-certificates
@@ -45,6 +45,10 @@ if mount | grep -c "/data" >/dev/null; then
   echo "Unmount volume 'data'"
   umount /data
 fi
+
+pvs
+vgs
+lvs
 
 if vgs | grep -c hdd >/dev/null; then
   echo "Setting up volume group 'tank'"
@@ -160,7 +164,7 @@ echo "!!!"
 echo "!!! System will reboot in 10 seconds or press Ctrl-C to go back to shell"
 echo "!!!"
 echo "!!!"
-echo "!!! *** After reboot execute setup-shard-2-CentOS.sh ***"
+echo "!!! *** After reboot execute setup-shard-2.sh ***"
 echo "!!!"
 echo "!!!"
 sleep 10
