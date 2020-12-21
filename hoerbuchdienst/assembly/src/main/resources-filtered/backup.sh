@@ -23,23 +23,24 @@ mkdir -p ~/backup/"${project_name}"
 pushd ~/backup/"${project_name}" >/dev/null
 
 # Vault
-mkdir vault
-docker cp "${project_name}"_vault:/vault/config/vault-operator-init.txt vault
-docker cp "${project_name}"_vault:/vault/config/kes-role-id.json vault
-docker cp "${project_name}"_vault:/vault/config/kes-secret-id.json vault
+mkdir -p vault
+docker cp "${project_name}"_vault_1:/vault/config/vault-operator-init.txt vault
+docker cp "${project_name}"_vault_1:/vault/config/kes-role-id.json vault
+docker cp "${project_name}"_vault_1:/vault/config/kes-secret-id.json vault
 # MinIO KES
-mkdir kes
-docker cp "${project_name}"_kes:/var/local/kes/minio.cert kes
-docker cp "${project_name}"_kes:/var/local/kes/minio.key kes
-docker cp "${project_name}"_kes:/var/local/kes/root.cert kes
-docker cp "${project_name}"_kes:/var/local/kes/root.key kes
-docker cp "${project_name}"_kes:/var/local/kes/server-config.yml kes
+mkdir -p kes
+docker cp "${project_name}"_kes_1:/var/local/kes/minio.cert kes
+docker cp "${project_name}"_kes_1:/var/local/kes/minio.key kes
+docker cp "${project_name}"_kes_1:/var/local/kes/root.cert kes
+docker cp "${project_name}"_kes_1:/var/local/kes/root.key kes
+docker cp "${project_name}"_kes_1:/var/local/kes/server-config.yml kes
 # MinIO
-mkdir minio
-docker cp "${project_name}"_minio:/var/local/minio/access_key minio
-docker cp "${project_name}"_minio:/var/local/minio/secret_key minio
-docker cp "${project_name}"_minio:/var/local/minio/user_admin minio
-docker cp "${project_name}"_minio:/var/local/minio/user_wbh minio
+mkdir -p minio
+docker cp "${project_name}"_minio_1:/var/local/minio/access_key minio
+docker cp "${project_name}"_minio_1:/var/local/minio/secret_key minio
+mkdir -p mc
+docker cp "${project_name}"_mc_1:/var/local/mc/user_admin mc
+docker cp "${project_name}"_mc_1:/var/local/mc/user_wbh mc
 
 popd >/dev/null
 
