@@ -9,6 +9,11 @@ set -o errexit
 execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 . "${execdir}/lib.sh"
 
+echo "Disabling Postfix"
+systemctl stop postfix
+systemctl disable postfix
+echo "done"
+
 zypperinstall docker
 zypperinstall docker-compose
 systemctl enable docker

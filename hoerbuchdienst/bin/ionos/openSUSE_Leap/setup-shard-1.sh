@@ -8,6 +8,22 @@ execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 . "${execdir}/lib.sh"
 
 set_fqdn
+cat >/root/sethostname.sh <<EOF
+#!/bin/sh
+/usr/bin/hostnamectl set-hostname $(hostname -f)
+exit 0
+EOF
+cat >/etc/systemd/system/sethostname.service <<EOF
+[Unit]
+After=syslog.service
+
+[Service]
+ExecStart=/root/sethostname.sh
+
+[Install]
+WantedBy=network.target
+EOF
+systemctl enable sethostname
 
 echo "Setting timezone"
 timedatectl set-timezone Europe/Berlin
