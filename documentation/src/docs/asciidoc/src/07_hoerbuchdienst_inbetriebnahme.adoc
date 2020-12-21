@@ -45,6 +45,20 @@ ssh-keyscan shard2.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
 ssh-copy-id -i ~/.ssh/id_rsa root@shard2.audiobook.wbh-online.de
 ----
 
+==== Linux aktualisieren
+
+.Linux aktualisieren
+----
+# ArchLinux
+pacman --noconfirm -Syu git
+# CentOS
+yum -y update
+yum -y install git
+# openSUSE
+zypper update -y
+zypper install -y git
+----
+
 ==== Das Projekt klonen
 
 .Auf dem Shard einloggen:
@@ -67,12 +81,15 @@ und der Public Key muss auf GitHub und Bitbucket zum Zugriff durch den Shard hin
 .Source Code auschecken
 [source,shell,linenum]
 ----
+git config --global pull.rebase false
 ssh-keyscan github.com 2>/dev/null >>~/.ssh/known_hosts
 ssh-keyscan bitbucket.org 2>/dev/null >>~/.ssh/known_hosts
 git clone git@bitbucket.org:artofcoding/bookworm2 ~/bookworm2
-cd ~/bookworm2
-git config pull.rebase false
-git checkout master
+----
+
+.Update Bookworm2
+----
+cd ~/bookworm2 && git pull && cd -
 ----
 
 ==== Erstinstallation durchführen
@@ -80,16 +97,16 @@ git checkout master
 .Installation Teil 1 -- Die Installation starten:
 [source,shell,linenum]
 ----
-bookworm2 $ bash hoerbuchdienst/bin/setup-storageserver-1.sh
+bash ~/bookworm2/hoerbuchdienst/bin/setup-shard-1-openSUSE.sh
 ----
 
 und bei Aufforderung Shard Name eingeben (shardN.audiobook.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
 
 [source,text,linenum]
 ----
-Please enter FQDN of shard: shard1.audiobook.wbh-online.de
+Please enter FQDN of shard: shard1.wbh-online.de
 Shard name is shard1
-Shard's domain is audiobook.wbh-online.de
+Shard's domain is wbh-online.de
 Is this correct? (Enter 'yes') yes
 ----
 
@@ -101,7 +118,7 @@ Nach erfolgreicher Installation erfolgt automatisch ein Reboot.
 .Installation Teil 2 -- Storage einrichten und Docker installieren:
 [source,shell,linenum]
 ----
-bookworm2 $ bash hoerbuchdienst/bin/setup-storageserver-2.sh
+bash ~/bookworm2/hoerbuchdienst/bin/setup-shard-2.sh
 ----
 
 ==== Netzwerkkonfiguration
@@ -117,22 +134,22 @@ WARNING: Die *zwingend* zu konfigurierenden Namen sind wie folgt, dabei ist die 
 | Name
 | Beschreibung
 
-| shard__N__.audiobook.wbh-online.de
+| shard__N__.wbh-online.de
 | Der Shard/der Server selbst
 
-| vault.shard__N__.audiobook.wbh-online.de
+| vault-shard__N__.wbh-online.de
 | Vault
 
-| kes.shard__N__.audiobook.wbh-online.de
+| kes-shard__N__.wbh-online.de
 | MinIO KES
 
-| s3.shard__N__.audiobook.wbh-online.de
+| s3-shard__N__.wbh-online.de
 | MinIO
 
-| rabbitmq.shard__N__.audiobook.wbh-online.de
+| rabbitmq-shard__N__.wbh-online.de
 | RabbitMQ
 
-| hoerbuchdienst.shard__N__.audiobook.wbh-online.de
+| hoerbuchdienst-shard__N__.wbh-online.de
 | Hörbuchdienst
 |====
 
@@ -143,8 +160,8 @@ $ cat >/etc/hosts <<EOF
 # Static table lookup for hostnames.
 # See hosts(5) for details.
 127.0.0.1       localhost
-188.68.50.68    shard1.audiobook.wbh-online.de  rabbitmq.shard1.audiobook.wbh-online.de  shard1
-188.68.43.25    shard2.audiobook.wbh-online.de  rabbitmq.shard2.audiobook.wbh-online.de  shard2
+188.68.50.68    shard1.wbh-online.de  rabbitmq.shard1.wbh-online.de  shard1
+188.68.43.25    shard2.wbh-online.de  rabbitmq.shard2.wbh-online.de  shard2
 ... <1>
 EOF
 ----
@@ -159,7 +176,7 @@ Die folgenden Schritte müssen auf einem Shard durchgeführt werden.
 .Software für Produktion bauen, deployen und starten
 [source,shell,linenum]
 ----
-bookworm2 $ ./autoupdate.sh prod hbd force
+~/bookworm2/autoupdate.sh prod hbd force
 ----
 
 .Releases
@@ -186,7 +203,7 @@ Dabei den gewünschten Release-Zeitpunkt wählen und per `deploy.sh` in das `rel
 
 [source,shell,linenum]
 ----
-bookworm2 $ ./deploy.sh prod hbd 2020-07-18T09-02-06Z
+~/bookworm2/deploy.sh prod hbd 2020-07-18T09-02-06Z
 ----
 
 .Starten der Applikationen
@@ -206,7 +223,7 @@ Dabei wird in der neuen RabbitMQ Instanz das Passwort für den Nutzer `federator
 .RabbitMQ erstmalig provisionieren
 [source,shell,linenum]
 ----
-$ cnt.sh prod hbd exec rabbitmq rabbitmq-provision.sh
+cnt.sh prod hbd exec rabbitmq rabbitmq-provision.sh
 ----
 
 Ausgabe:
@@ -219,14 +236,24 @@ Setting password for RabbitMQ federator
 Generated RabbitMQ federator password: Abc123Def456
 Changing password for user "federator" ...
 done
+Checking if RabbitMQ is online
+RabbitMQ appears to be online
+Adding user "exporteur-yae3beeb" ...
+Changing password for user "exporteur-yae3beeb" ...
+Setting tags for user "exporteur-yae3beeb" to [administrator] ...
+Setting permissions for user "exporteur-yae3beeb" in vhost "hoerbuchdienst" ...
+Exporting RabbitMQ definitions
+Exported definitions for rabbitmq.s22587203.onlinehome-server.info to "/etc/rabbitmq/definitions.json"
+done
+Deleting user "exporteur-yae3beeb" ...
 ----
 
 .Andere RabbitMQ Instanzen anbinden
 [source,shell,linenum,subs="verbatim"]
 ----
-$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh \
-    "*rabbitmq.shard2*:user:pwd" \ <1>
-    "*rabbitmq.shard3*:user:pwd"   <2>
+cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh \
+  "*rabbitmq.shard2*:user:pwd" \ <1>
+  "*rabbitmq.shard3*:user:pwd"   <2>
 ----
 <1> Ein weiterer, bereits eingerichteter Shard `shard2`
 <2> Ein weiterer, bereits eingerichteter Shard `shard3`
@@ -237,7 +264,7 @@ Auf Shard1
 
 [source,shell,linenum]
 ----
-$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
+cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard2:federator:Abc123Def456"
 ----
 
 Ausgabe:
@@ -256,7 +283,7 @@ Auf Shard2:
 
 [source,shell,linenum]
 ----
-$ cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard1:federator:Abc123Def456"
+cnt.sh prod hbd exec rabbitmq rabbitmq-setup-federation.sh "rabbitmq.shard1:federator:Abc123Def456"
 ----
 
 Ausgabe:
@@ -310,6 +337,11 @@ NOTE: Die Konfiguration der TTL für Nachrichten ist bereits in der `definitions
 ----
 $ cnt.sh prod hbd exec rabbitmq rabbitmq-change-password.sh bugs
 ----
+
+==== Weitere Inbetriebnahme
+
+rm /var/lib/docker/volumes/prod-hbd_rproxycerts/_data/is_initialized
+cnt.sh prod hbd restart hbd-rproxy
 
 ==== Aktualisierung
 
