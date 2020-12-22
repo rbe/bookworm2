@@ -13,7 +13,9 @@
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
+        <domain/>
         <hbd.release>${maven.build.timestamp}</hbd.release>
+        <hbd.hostname>hoerbuchdienst-${domain}</hbd.hostname>
     </properties>
     <build>
         <resources>
