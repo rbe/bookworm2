@@ -13,7 +13,6 @@
     <packaging>pom</packaging>
     <properties>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss'Z'</maven.build.timestamp.format>
-        <domain/>
         <nginx.release>1.17-alpine</nginx.release>
         <nginx.hostname>${domain}</nginx.hostname>
         <portainer.hostname>portainer-${domain}</portainer.hostname>
@@ -53,11 +52,9 @@
             <properties>
                 <docker.project.env>dev</docker.project.env>
                 <docker.project.name>hbd</docker.project.name>
-                <domain>shard1.local</domain>
+                <domain>local</domain>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
-                <nginx.enable.servers>
-                    vault minio rabbitmq
-                </nginx.enable.servers>
+                <nginx.enable.servers>vault minio rabbitmq</nginx.enable.servers>
             </properties>
             <build>
                 <plugins>

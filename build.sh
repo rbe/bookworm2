@@ -76,7 +76,8 @@ docker run \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
   --mount type=bind,source="${MAVEN_REPO}",destination="${MAVEN_REPO_CNT}" \
   --mount type=bind,source="$(pwd)",destination=/var/local/source \
-  -e MAVEN_OPTS="${MAVEN_OPTS} -Ddomain=${HOSTNAME}" \
+  -e MAVEN_OPTS="${MAVEN_OPTS} \
+  -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
   ash -c "${MAVEN_INIT} && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
   tee build-wbh.bookworm.log
