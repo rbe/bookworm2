@@ -18,7 +18,6 @@
         <module>shardingshared</module>
         <module>katalog</module>
         <module>stream</module>
-        <module>webaudioplayer</module>
         <module>specification</module>
     </modules>
     <dependencies>
