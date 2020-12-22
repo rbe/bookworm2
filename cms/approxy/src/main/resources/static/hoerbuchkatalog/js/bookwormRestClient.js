@@ -8,13 +8,12 @@
 
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-const HOERBUCHKATALOG_URL = 'https://www.beta.wbh-online.de';
+const HOERBUCHKATALOG_URL = 'https://www.prod.wbh-online.de';
 
 const SHARD_URLS = [
-    'https://hoerbuchdienst.shard1.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard2.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard3.audiobook.wbh-online.de',
-    'https://hoerbuchdienst.shard4.audiobook.wbh-online.de'
+    'https://hoerbuchdienst-shard11.audiobook.wbh-online.de',
+    'https://hoerbuchdienst-shard12.audiobook.wbh-online.de',
+    'https://hoerbuchdienst-shard13.audiobook.wbh-online.de'
 ];
 const DOWNLOAD_STATUS_TIMEOUT = 2500;
 

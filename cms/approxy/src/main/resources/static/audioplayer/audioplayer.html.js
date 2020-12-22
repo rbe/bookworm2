@@ -95,7 +95,7 @@ function showElementsLoaded() {
         showElementsLoading();
         audioplayer.reset();
         const b = window.location;
-        const url = new URL(b.protocol + '//' + b.host);
+        const url = new URL('https://hoerbuchdienst-shard11.wbh-online.de');
         const mandant = document.querySelector('#mandant').value;
         const hoerernummer = document.querySelector('#hoerernummer').value;
         const titelnummer = document.querySelector('#titelnummer').value;
