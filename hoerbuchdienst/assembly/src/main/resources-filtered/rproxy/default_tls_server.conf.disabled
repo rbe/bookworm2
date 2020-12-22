@@ -10,15 +10,16 @@ server {
     ssl_stapling on;
     ssl_stapling_verify on;
 
+    location ~ /\. {
+        deny all;
+    }
     location / {
         root /var/local/rproxy/;
         index index.html;
     }
-    location ~ /\. {
-        deny all;
-    }
-    location ~* "/(favicon.ico|robots.txt|index.html)" {
+    location ~* "/(|favicon.ico|robots.txt|index.html)" {
         root /var/local/rproxy/;
+        index index.html;
         log_not_found off;
         access_log off;
     }
