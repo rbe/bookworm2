@@ -7,8 +7,14 @@ set -o errexit
 pushd ~/bookworm2 >/dev/null
 git fetch origin
 git checkout origin/master -- autoupdate.sh
+
 autoupdate.sh prod hbd
-cnt.sh prod hbd exec hbd-rproxy provision.sh default_tls_server hoerbuchdienst minio
+
+cnt.sh prod hbd exec hbd-rproxy provision.sh \
+  default_tls_server \
+  minio \
+  hoerbuchdienst
+
 popd >/dev/null
 
 exit 0
