@@ -119,7 +119,7 @@ function unpack() {
 
 if [[ $# -eq 0 ]]; then
   SHARD="minio"
-  TITELNUMMERN=$(titelnummern.sh 1 100 | sort -g)
+  TITELNUMMERN=("$(titelnummern.sh 1 100 | sort -g)")
 elif [[ $# -lt 2 ]]; then
   show_usage
 else
