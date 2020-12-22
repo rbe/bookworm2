@@ -8,10 +8,10 @@ Subsystem sftp internal-sftp -u 0007
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
-    ChrootDirectory /var/local
+    ChrootDirectory /var/local/fs
     ForceCommand internal-sftp -u 0007
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
-    ChrootDirectory /var/local
+    ChrootDirectory /var/local/fs
     ForceCommand internal-sftp -u 0007

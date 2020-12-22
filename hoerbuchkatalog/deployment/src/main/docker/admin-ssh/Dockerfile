@@ -34,6 +34,9 @@ RUN chmod 700 /usr/local/bin/setup-ssh-users.sh \
     && rm /usr/local/bin/setup-ssh-users.sh
 COPY sshd_config_2 /etc/ssh/
 RUN cat /etc/ssh/sshd_config_2 >>/etc/ssh/sshd_config
+RUN mkdir /var/local/hoerbuchkatalog \
+    && chown root:root /var/local \
+    && chmod 555 /var/local
 WORKDIR /etc/ssh
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D"]

@@ -25,7 +25,7 @@ services:
       - LANG=en_US.UTF-8
     volumes:
       - datatransfersshconf:/etc/ssh:rw
-      - hoerbuchkataloglocal:/var/local:rw
+      - hoerbuchkataloglocal:/var/local/hoerbuchkatalog:rw
     networks:
       - frontend
     expose:
@@ -38,7 +38,7 @@ services:
       - LANG=en_US.UTF-8
     volumes:
       - adminsshconf:/etc/ssh:rw
-      - hoerbuchkataloglocal:/var/local:rw
+      - hoerbuchkataloglocal:/var/local/hoerbuchkatalog:rw
     networks:
       - frontend
     expose:
