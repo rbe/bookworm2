@@ -36,6 +36,30 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
      * Description.
      *
      * @param string $commandName Comment.
+     * @param string $urlParameters Comment.
+     * @return string Comment.
+     *
+     * @throws Exception
+     *
+     * @since 1.0
+     */
+    public function beforeCommandExecution(string $commandName, string &$urlParameters): string
+    {
+        $hoerernummer = $this->cmsAdapter->getUserValue('cb_hoerernummer');
+        if (isset($hoerernummer) === false || $hoerernummer === '') {
+            $hoerernummer = '00000';
+        }
+
+        $this->bookwormCookie($hoerernummer);
+        return '';
+
+    }//end beforeContentPrepared()
+
+
+    /**
+     * Description.
+     *
+     * @param string $commandName Comment.
      * @param string $parameters Comment.
      *
      * @return void
@@ -57,32 +81,27 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
         $parameters .= 'mandant:' . $mandant . ',hoerernummer:' . $hoerernummer;
         $bookwormCookie = $this->cmsAdapter->getCookie('bookworm');
         if (isset($bookwormCookie) === true) {
-            $strings = explode('--', $bookwormCookie);
-            $bestellungSessionId = $strings[1];
+            list($_ignore, $bestellungSessionId) = $this->explodeCookie($bookwormCookie);
             $parameters .= ',bestellungSessionId:' . $bestellungSessionId;
         }
 
-        restBridgeDebugLog('#customizeParameters: $parameters=' . print_r($parameters, true));
+        restBridgeDebugLog('customizeParameters: $parameters=' . print_r($parameters, true));
     }//end customizeParameters()
 
 
     /**
      * Description.
      *
-     * @return string Comment.
+     * @param string $commandName Comment.
+     * @param string $urlParameters Comment.
+     * @param string $content Comment.
      *
-     * @throws Exception
+     * @return string Comment.
      *
      * @since 1.0
      */
-    public function afterContentPrepared(): string
+    public function afterCommandExecution(string $commandName, string $urlParameters, string &$content): string
     {
-        $hoerernummer = $this->cmsAdapter->getUserValue('cb_hoerernummer');
-        if (isset($hoerernummer) === false || $hoerernummer === '') {
-            $hoerernummer = '00000';
-        }
-
-        $this->bookwormCookie($hoerernummer);
         return "<script type='module'>\n"
             . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
             . "document.addEventListener('DOMContentLoaded', (event) => {\n"
@@ -97,7 +116,7 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
     /**
      * Description.
      *
-     * @param string $hoerenummer Comment.
+     * @param string $hoerernummer Comment.
      *
      * @return void Comment.
      *
@@ -105,22 +124,64 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
      *
      * @since 1.0
      */
-    private function bookwormCookie(string $hoerenummer): void
+    private function bookwormCookie(string $hoerernummer): void
     {
-        $bookworm = $this->cmsAdapter->getCookie('bookworm');
-        if ($bookworm === '') {
-            global $mandant;
-            $commandResult = $this->commandExecutor->executeCommand('BestellungSessionId',
-                'mandant:' . $mandant . ',hoerernummer:' . $hoerenummer);
-            $data = $commandResult->getData();
-            restBridgeDebugLog('Antwort ' . print_r($data, true) . ' erhalten');
-            $bestellungSessionId = $data['bestellungSessionId'];
-            restBridgeDebugLog('BestellungSessionId ' . $bestellungSessionId . ' erhalten');
-            $value = $hoerenummer . '--' . $bestellungSessionId ?? '';
-            $this->cmsAdapter->setCookieOnce('bookworm', $value);
+        $bookwormCookie = $this->cmsAdapter->getCookie('bookworm');
+        if ($bookwormCookie === '') {
+            $bestellungSessionId = $this->bestellungSessionId($hoerernummer);
+        } else {
+            list($_ignore, $bestellungSessionId) = $this->explodeCookie($bookwormCookie);
         }
 
+        if (isset($bestellungSessionId) === true) {
+            $value = $hoerernummer . '--' . $bestellungSessionId;
+            $this->cmsAdapter->setCookie('bookworm', $value);
+        } else {
+            restBridgeErrorLog('bookwormCookie: Could not create cookie');
+        }
     }//end bookwormCookie()
+
+
+    /**
+     * Description.
+     *
+     * @param string $bookwormCookie Comment.
+     *
+     * @return array Comment.
+     *
+     * @since 1.0
+     */
+    private function explodeCookie(string $bookwormCookie): array
+    {
+        $strings = explode('--', $bookwormCookie);
+        $hoerernummer = $strings[0];
+        $bestellungSessionId = $strings[1];
+        return [$hoerernummer, $bestellungSessionId];
+    }//end explodeCookie()
+
+
+    /**
+     * Description.
+     *
+     * @param string $hoerernummer Comment.
+     *
+     * @return string Comment.
+     *
+     * @throws Exception Comment.
+     *
+     * @since 1.0
+     */
+    private function bestellungSessionId(string $hoerernummer): string
+    {
+        global $mandant;
+        $commandResult = $this->commandExecutor->executeCommand('BestellungSessionId',
+            'mandant:' . $mandant . ',hoerernummer:' . $hoerernummer);
+        $data = $commandResult->getData();
+        $bestellungSessionId = $data['bestellungSessionId'];
+        restBridgeDebugLog('bestellungSessionId: ' . print_r($data, true)
+            . ', BestellungSessionId ' . $bestellungSessionId . ' erhalten');
+        return $bestellungSessionId;
+    }//end bestellungSessionId()
 
 
 }//end class

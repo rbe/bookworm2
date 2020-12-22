@@ -211,7 +211,7 @@ final class HttpClient
      *
      * @param string $url Comment.
      *
-     * @return false|resource
+     * @return resource
      *
      * @since 1.0
      */
@@ -228,7 +228,7 @@ final class HttpClient
         curl_setopt($ch, CURLOPT_MAXREDIRS, 1);
         return $ch;
 
-    }//end httpPOST()
+    }//end initCurl()
 
 
     /**

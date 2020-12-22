@@ -9,6 +9,8 @@
 
 namespace restbridge;
 
+use JsonException;
+
 final class HttpResponse
 {
 
@@ -95,7 +97,7 @@ final class HttpResponse
      *
      * @return array
      *
-     * @throws \JsonException
+     * @throws JsonException
      *
      * @since 1.0
      */
@@ -104,8 +106,8 @@ final class HttpResponse
         if ($this->wasSuccessful() === true && isset($this->json) === false) {
             $jsonResponse = json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
             if ($jsonResponse === false) {
-                showJsonError();
-                restBridgeDebugLog('Error decoding response body as JSON: ' . json_last_error_msg());
+                //showJsonError();
+                restBridgeErrorLog('getJson: Error decoding response body as JSON: ' . json_last_error_msg());
                 $this->json = json_decode('[false]');
             } else {
                 if (is_bool($jsonResponse) === true) {
@@ -115,7 +117,7 @@ final class HttpResponse
                 }
             }
         } else {
-            restBridgeDebugLog('No JSON response, request was not successful, HTTP status ' . $this->statusCode);
+            restBridgeErrorLog('getJson: HTTP status ' . $this->statusCode . ', no JSON in response');
             $this->json = json_decode('[false]');
         }
 

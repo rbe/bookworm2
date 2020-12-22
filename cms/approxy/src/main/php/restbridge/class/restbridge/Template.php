@@ -78,7 +78,7 @@ final class Template
                 if (array_key_exists($match, $row) === true) {
                     $value = $this->value($row, $match);
                 } else {
-                    restBridgeDebugLog('No value found for "' . $key . '" in ' . print_r($row, true));
+                    restBridgeWarningLog('replaceData: No value found for "' . $key . '" in ' . print_r($row, true));
                     $value = '';
                 }
 

@@ -47,4 +47,10 @@ abstract class AbstractRestBridgePlugin
     abstract public function customizeParameters(string $commandName, string &$parameters);
 
 
+    abstract public function beforeCommandExecution(string $commandName, string &$urlParameters): string;
+
+
+    abstract public function afterCommandExecution(string $commandName, string $urlParameters, string &$content): string;
+
+
 }//end class

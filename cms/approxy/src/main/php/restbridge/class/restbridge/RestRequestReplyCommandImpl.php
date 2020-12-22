@@ -60,7 +60,7 @@ final class RestRequestReplyCommandImpl extends AbstractCommand
             $reply = $httpResponse->getJson();
             return new CommandResult($httpResponse->getStatusCode(), $reply['meta'] ?? [], $reply['data'] ?? []);
         } catch (Exception $e) {
-            restBridgeErrorLog('Exception: ' . $e->getMessage());
+            restBridgeErrorLog('execute: Exception: ' . $e->getMessage());
             return new CommandResult(500, [], []);
         }
     }//end execute()

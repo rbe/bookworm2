@@ -11,6 +11,7 @@ namespace restbridge;
 
 use Exception;
 use JFactory;
+use JInput;
 use Joomla;
 use Joomla\CMS\Factory;
 use Joomla\CMS\Helper\ModuleHelper;
@@ -18,6 +19,8 @@ use stdClass;
 
 class JoomlaCmsAdapterImpl implements CmsAdapter
 {
+
+    const MIN_15 = 15 * 60;
 
     const ONE_DAY = 60 * 60 * 24;
 
@@ -37,25 +40,20 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
      */
     public function resolveParameters(array $array): array
     {
-        try {
-            $app = Factory::getApplication();
-            $input = $app->input;
-        } catch (Exception $e) {
-            restBridgeErrorLog('Exception while retrieving JInput: ' . $e->getMessage());
-        }
+        $input = $this->getJInput();
         if (isset($input) === true) {
             foreach ($array as $key => $value) {
                 if ($value === 'HttpRequest') {
-                    $array[$key] = $input->get($key, '', 'ALNUM');
+                    $array[$key] = $input->get($key, '', 'STRING');
                 } else if (strpos($value, 'Cookie') > 0) {
                     $strings = explode('-', $value);
                     $cookieName = $strings[1];
                     $array[$key] = $this->getCookie($cookieName);
                 }
-
             }
+            restBridgeDebugLog('resolveParameters: ' . print_r($array, true));
         } else {
-            restBridgeDebugLog('Could not get JInput');
+            restBridgeErrorLog('resolveParameters: Failed');
         }
 
         return $array;
@@ -65,22 +63,23 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     /**
      * Description.
      *
-     * @param string $customTemplateModuleName Description.
-     * @param array $meta
-     * @param array $rowsWithValues Description.
+     * @param string $customTemplateModuleName Comment.
+     * @param array $meta Comment.
+     * @param array $rowsWithValues Comment.
+     * @param string $default Comment.
      *
      * @return string
      *
      * @since 1.0
      */
-    public function renderTemplate(string $customTemplateModuleName, array $meta, array $rowsWithValues): string
+    public function renderTemplate(string $customTemplateModuleName, array $meta, array $rowsWithValues, string $default = ''): string
     {
         $customTemplateModule = self::customModule($customTemplateModuleName);
         if (is_null($customTemplateModule) === false) {
             $template = new Template($customTemplateModule->content);
             return $template->renderToString($meta, $rowsWithValues);
         } else {
-            return '';
+            return $default;
         }
 
     }//end renderTemplate()
@@ -104,11 +103,11 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             && is_object($customModule) === true
             && empty($customModule->content) === false;
         if ($customModuleExistsAndHasContent === true) {
-            restBridgeDebugLog('Custom module "' . $customModuleName
+            restBridgeDebugLog('customModule: "' . $customModuleName
                 . '" title="' . $customModuleTitle . '" exists and has content');
             return $customModule;
         } else {
-            restBridgeDebugLog('Custom module "' . $customModuleName
+            restBridgeWarningLog('customModule: "' . $customModuleName
                 . '" title="' . $customModuleTitle . '" not found');
             return null;
         }
@@ -129,10 +128,9 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
     {
         $customModule = self::customModule($customModuleName);
         if (is_null($customModule) === false) {
-            restBridgeDebugLog('Returning module content of "' . $customModuleName . '"');
             return $customModule->content;
         } else {
-            restBridgeWarningLog('Module "' . $customModuleName . '" has no content');
+            restBridgeWarningLog('getModuleContent: Custom module "' . $customModuleName . '" not found');
             return '';
         }
 
@@ -160,7 +158,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             if (isset($value) === true) {
                 $value = $result;
             } else {
-                restBridgeWarningLog('User [' . $user->id . ']: no value for field ' . $field);
+                restBridgeWarningLog('getUserValue(' . $user->id . '): no value for field ' . $field);
             }
         }
 
@@ -202,20 +200,50 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
      *
      * @since 1.0
      */
+    public function setCookie(string $name, string $value): void
+    {
+        $app = JFactory::getApplication();
+        $cookie = $app->input->cookie;
+        $time = time() + self::MIN_15;
+        $cookie->set($name, $value, $time,
+            $app->get('cookie_path', '/'),
+            $app->get('cookie_domain'),
+            $app->isSSLConnection(),
+            false);
+    }//end setCookieOnce()
+
+
+    /**
+     * Description.
+     *
+     * @param string $name Comment.
+     * @param string $value Comment.
+     *
+     * @throws Exception Comment.
+     *
+     * @since 1.0
+     */
     public function setCookieOnce(string $name, string $value): void
     {
         $app = JFactory::getApplication();
         $cookie = $app->input->cookie;
         $currentValue = $cookie->get($name, null);
-        if (is_null($currentValue)) {
-            $time = time() + self::ONE_WEEK;
-            $cookie->set($name, $value, $time,
-                $app->get('cookie_path', '/'),
-                $app->get('cookie_domain'),
-                $app->isSSLConnection(),
-                false);
+        if (is_null($currentValue) === true) {
+            $this->setCookie($name, $value);
         }
     }//end setCookieOnce()
+
+
+    private function getJInput(): ?JInput
+    {
+        try {
+            $app = Factory::getApplication();
+            return $app->input;
+        } catch (Exception $e) {
+            restBridgeErrorLog('getJInput: Exception while retrieving JInput: ' . $e->getMessage());
+            return null;
+        }
+    }//end getJInput()
 
 
 }//end class

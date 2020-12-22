@@ -68,7 +68,7 @@ class MerklisteCommandExecutorTest extends TestCase
     {
         $commandExecutor = new CommandExecutor(new JoomlaCmsAdapterImpl());
         $commandName = "MerklisteAnzeigen";
-        $parameters = "mandant:06,hoerernummer:80007";
+        $parameters = "mandant:06,hoerernummer:80007,bestellungSessionId:";
         $result = $commandExecutor->executeCommand($commandName, $parameters);
         error_log(print_r($result, true), 0);
         $this->assertTrue($result->isOk());

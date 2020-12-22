@@ -33,6 +33,12 @@ $restBridge = [
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörbuchdetails
+        'Buchempfehlung' => [
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'GET',
+            'parameter_template' => '/hoerbuchkatalog/v1/katalog/{titelnummer}/details',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
         'HoerbuchdetailsAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',

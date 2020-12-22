@@ -51,6 +51,8 @@ interface CmsAdapter
 
     public function getCookie(string $name): string;
 
+    public function setCookie(string $name, string $value): void;
+
     public function setCookieOnce(string $name, string $value): void;
 
 }

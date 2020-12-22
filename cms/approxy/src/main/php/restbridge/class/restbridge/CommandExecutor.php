@@ -78,6 +78,11 @@ final class CommandExecutor
         } else {
             $requestDto = [];
         }
+
+        // Encode URL parameters according to RFC 3986
+        foreach ($urlParameterArray as $k => $v) {
+            $urlParameterArray[$k] = rawurlencode($v);
+        }
         $command = new RestRequestReplyCommandImpl(
             [
                 'endpoint' => $restEndpoint,
@@ -115,13 +120,15 @@ final class CommandExecutor
      *
      * @return array Comment.
      *
+     * @throws Exception
+     *
      * @since 1.0
      */
     private function resolveHttpRequestParameters(string $commandName, string $parameters): array
     {
         $parameterArray = $this->analyzeParameters($commandName, $parameters);
         $parameterArray = $this->cmsAdapter->resolveParameters($parameterArray);
-        restBridgeDebugLog('Parameters after cmsAdapter->resolveParameters: ' . print_r($parameterArray, true));
+        restBridgeDebugLog('resolveHttpRequestParameters: ' . print_r($parameterArray, true));
         return $parameterArray;
     }//end analyzeParameters()
 
@@ -147,7 +154,8 @@ final class CommandExecutor
                 $value = $keyValue[1];
                 $parameterArray[$key] = $value;
             } else {
-                restBridgeDebugLog('Command ' . $commandName . ': Error analyzing parameter ' . print_r($p, true));
+                restBridgeErrorLog('analyzeParameters: Command ' . $commandName
+                    . ': Error analyzing parameter ' . print_r($p, true));
             }
         }
 
@@ -172,6 +180,7 @@ final class CommandExecutor
             $template = new Template($value);
             $headers[$key] = $template->renderToString([], [$urlParameterArray]);
         }
+        restBridgeDebugLog('resolveTemplateHttpHeaders: ' . print_r($headers, true));
     }//end resolveTemplateHttpHeaders()
 
 

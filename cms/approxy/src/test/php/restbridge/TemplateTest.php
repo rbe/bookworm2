@@ -46,9 +46,9 @@ class TemplateTest extends TestCase
     public function test1Row(): void
     {
         echo "test1Row\n";
-        $template = new Template("This template shows {meta.count} rows: {key} and {bool}\n");
+        $template = new Template("This template shows {meta.count} rows: {key} and {bool}, empty '{empty}'\n");
         $rowsWithValues = [
-            ['key' => 'key_value', 'bool' => true],
+            ['key' => 'key_value', 'bool' => true, 'empty' => ''],
         ];
         $result = $template->renderToString(['count' => 1], $rowsWithValues);
         $this->assertNotNull($result);

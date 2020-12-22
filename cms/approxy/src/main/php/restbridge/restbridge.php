@@ -119,13 +119,19 @@ final class plgContentRestbridge extends JPlugin
     private function executeCommand(array $matches): string
     {
         if (count($matches) < 2) {
-            restBridgeErrorLog('Cannot execute command, matches=' . print_r($matches, true));
+            restBridgeErrorLog('executeCommand: Cannot execute, matches=' . print_r($matches, true));
             return '';
         }
 
         $commandName = trim($matches[1]);
         $urlParameters = trim($matches[2]);
-        restBridgeDebugLog('Executing command ' . $commandName . ' with parameters ' . $urlParameters);
+        restBridgeDebugLog('executeCommand: ' . $commandName . ' with parameters ' . $urlParameters);
+
+        $content = '';
+        if (isset($this->restBridgePlugin) === true) {
+            $content .= $this->restBridgePlugin->beforeCommandExecution($commandName, $urlParameters);
+        }
+
         if (isset($this->restBridgePlugin) === true) {
             $this->restBridgePlugin->customizeParameters($commandName, $urlParameters);
         }
@@ -144,7 +150,7 @@ final class plgContentRestbridge extends JPlugin
         }
 
         if (isset($this->restBridgePlugin) === true) {
-            $content .= $this->restBridgePlugin->afterContentPrepared();
+            $content .= $this->restBridgePlugin->afterCommandExecution($commandName, $urlParameters, $content);
         }
 
         return $content;
@@ -209,7 +215,8 @@ final class plgContentRestbridge extends JPlugin
         $content = $this->cmsAdapter->renderTemplate($commandName . '_Error_Header',
             $commandResult->getMeta(), []);
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Content',
-            $commandResult->getMeta(), $jsonHelper->rowsWithValues());
+            $commandResult->getMeta(), $jsonHelper->rowsWithValues(),
+            'ERROR: module ' . $commandName . '_Error_Content' . ' not defined');
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Footer',
             $commandResult->getMeta(), []);
         return $content;
