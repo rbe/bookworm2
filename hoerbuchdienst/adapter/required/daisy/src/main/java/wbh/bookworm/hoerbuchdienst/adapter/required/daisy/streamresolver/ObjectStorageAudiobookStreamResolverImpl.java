@@ -166,7 +166,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     public Path mp3ToTempDirectory(/* TODO Mandantenspezifisch */final String titelnummer, final Path tempDirectory) {
         final List<Path> allObjects = bucketObjectStorage.listAllObjects(titelnummer);
         for (Path object : allObjects) {
-            final Path tempMp3 = tempDirectory.resolve(object.toString());
+            final Path tempMp3 = tempDirectory.resolve(object.getFileName());
             final long start = System.nanoTime();
             try (final OutputStream outputStream = Files.newOutputStream(tempMp3)) {
                 bucketObjectStorage.asStream(object.toString())
