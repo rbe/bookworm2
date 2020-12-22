@@ -17,7 +17,7 @@ rabbitmq:
     default:
       uri: amqp://guest:guest@localhost
       #uri: amqps://nnn:nnn@rabbitmq.${shard.name}.${shard.domain}/hoerbuchdienst
-      #uri: amqps://nnn:nnn@rabbitmq.shard2.audiobook.wbh-online.de/hoerbuchdienst
+      #uri: amqps://nnn:nnn@rabbitmq.shard2.wbh-online.de/hoerbuchdienst
 
 objectstorage:
   minio:

@@ -19,30 +19,30 @@ Bitte `N` gegen die entsprechende Nummer ersetzen:
 
 [source,shell,linenum]
 ----
-ssh-keygen -R shardN.audiobook.wbh-online.de
+ssh-keygen -R shardN.wbh-online.de
 ssh-keygen -R <IP Adresse shardN>
-ssh-keyscan shardN.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
+ssh-keyscan shardN.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
 ssh-keygen -H
-ssh-copy-id -i ~/.ssh/id_rsa root@shardN1.audiobook.wbh-online.de <1>
+ssh-copy-id -i ~/.ssh/id_rsa root@shardN.wbh-online.de <1>
 ----
 <1> Bei Aufforderung das Passwort aus der Konsole des Providers verwenden.
 
-.shard1.audiobook.wbh-online.de
+.shard1.wbh-online.de
 [source,shell,linenum]
 ----
-ssh-keygen -R shard1.audiobook.wbh-online.de
+ssh-keygen -R shard1.wbh-online.de
 ssh-keygen -R 188.68.50.68
-ssh-keyscan shard1.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
-ssh-copy-id -i ~/.ssh/id_rsa root@shard1.audiobook.wbh-online.de
+ssh-keyscan shard1.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
+ssh-copy-id -i ~/.ssh/id_rsa root@shard1.wbh-online.de
 ----
 
-.shard2.audiobook.wbh-online.de
+.shard2.wbh-online.de
 [source,shell,linenum]
 ----
-ssh-keygen -R shard2.audiobook.wbh-online.de
+ssh-keygen -R shard2.wbh-online.de
 ssh-keygen -R 188.68.43.25
-ssh-keyscan shard2.audiobook.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
-ssh-copy-id -i ~/.ssh/id_rsa root@shard2.audiobook.wbh-online.de
+ssh-keyscan shard2.wbh-online.de 2>/dev/null >>~/.ssh/known_hosts
+ssh-copy-id -i ~/.ssh/id_rsa root@shard2.wbh-online.de
 ----
 
 ==== Linux aktualisieren
@@ -64,7 +64,7 @@ zypper install -y git
 .Auf dem Shard einloggen:
 [source,shell,linenum]
 ----
-ssh root@shardN.audiobook.wbh-online.de
+ssh root@shardN.wbh-online.de
 ----
 
 .SSH Schlüssel generieren
@@ -100,7 +100,7 @@ cd ~/bookworm2 && git pull && cd -
 bash ~/bookworm2/hoerbuchdienst/bin/ionos/openSUSE/setup-shard-1.sh
 ----
 
-und bei Aufforderung Shard Name eingeben (shardN.audiobook.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
+und bei Aufforderung Shard Name eingeben (shardN.wbh-online.de) und mit der Eingabe 'yes' bestätigen:
 
 [source,text,linenum]
 ----
@@ -127,7 +127,7 @@ bash ~/bookworm2/hoerbuchdienst/bin/ionos/openSUSE/setup-shard-2.sh
 Alle bereits existierenden Shards müssen dem einzurichtenden Shard bekannt sein.
 Dies kann a) per DNS und/oder b) durch lokale Dienste wie `/etc/hosts` erfolgen.
 
-WARNING: Die *zwingend* zu konfigurierenden Namen sind wie folgt, dabei ist die Domäne immer `audiobook.wbh-online.de`:
+WARNING: Die *zwingend* zu konfigurierenden Namen sind wie folgt, dabei ist die Domäne immer `wbh-online.de`:
 
 [cols="45%a,55%a",opts="header",subs="quotes"]
 |====
@@ -273,10 +273,10 @@ Ausgabe:
 ----
 Checking if RabbitMQ is online
 RabbitMQ appears to be online
-My node name is rabbitmq.shard1.audiobook.wbh-online.de
-Common domain for all shards is audiobook.wbh-online.de
-Adding federation upstream to *rabbitmq.shard2*.audiobook.wbh-online.de at amqps://federator:Abc123Def456@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst
-Setting runtime parameter "shard2" for component "federation-upstream" to "{"uri":"amqps://federator:Abc123Def456@rabbitmq.shard2.audiobook.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.audiobook.wbh-online.de&heartbeat=10&connection_timeout=10000"}" in vhost "hoerbuchdienst" ...
+My node name is rabbitmq.shard1.wbh-online.de
+Common domain for all shards is wbh-online.de
+Adding federation upstream to *rabbitmq.shard2*.wbh-online.de at amqps://federator:Abc123Def456@rabbitmq.shard2.wbh-online.de:5671/hoerbuchdienst
+Setting runtime parameter "shard2" for component "federation-upstream" to "{"uri":"amqps://federator:Abc123Def456@rabbitmq.shard2.wbh-online.de:5671/hoerbuchdienst?server_name_indication=rabbitmq.shard2.wbh-online.de&heartbeat=10&connection_timeout=10000"}" in vhost "hoerbuchdienst" ...
 ----
 
 Auf Shard2:
