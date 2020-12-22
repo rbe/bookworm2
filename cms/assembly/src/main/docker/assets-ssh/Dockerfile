@@ -34,9 +34,8 @@ COPY setup-ssh-users.sh /usr/local/bin
 RUN chmod 700 /usr/local/bin/setup-ssh-users.sh \
     && /usr/local/bin/setup-ssh-users.sh rbe cew mysql wbh \
     && rm /usr/local/bin/setup-ssh-users.sh
-COPY sshd_config_2 /var/local
-RUN cat /var/local/sshd_config_2 >>/etc/ssh/sshd_config \
-    && rm /var/local/sshd_config_2
+COPY sshd_config_2 /etc/ssh/
+RUN cat /etc/ssh/sshd_config_2 >>/etc/ssh/sshd_config
 RUN passwd -u www-data
 WORKDIR /etc/ssh
 VOLUME ["/var/www/html"]
