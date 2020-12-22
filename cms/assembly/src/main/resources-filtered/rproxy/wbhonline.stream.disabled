@@ -1,10 +1,10 @@
 stream {
 
     upstream java_debug {
-        server hoerbuchdienst:5005;
+        server hoerbuchkatalog:5005;
     }
     upstream jstatd {
-        server hoerbuchdienst:8001;
+        server hoerbuchkatalog:8001;
     }
 
     server {

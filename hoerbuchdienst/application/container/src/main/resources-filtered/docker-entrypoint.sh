@@ -23,7 +23,7 @@ java \
   -XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
   -XX:+UnlockExperimentalVMOptions \
   -XX:+UseZGC \
-  -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=128M \
+  -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=16M \
   -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n \
   -Dlogback.configurationFile=/var/local/logback.xml \
   -Dmicronaut.environments=prod \
@@ -31,10 +31,19 @@ java \
   -jar /usr/local/service.jar
 
 if [ -x jstatd ]; then
+  cat >/var/local/jstatd.policy <<EOF
+grant codebase "jrt:/jdk.jstatd" {
+ permission java.security.AllPermission;
+};
+grant codebase "jrt:/jdk.internal.jvmstat" {
+ permission java.security.AllPermission;
+};
+EOF
   echo "Starting jstatd"
   jstatd \
-    -J-Djava.security.policy=all.policy \
+    -J-Djava.security.policy=/var/local/jstatd.policy \
     -J-Djava.rmi.server.logCalls=true \
+    -J-Djava.rmi.server.hostname=$(hostname -f) \
     -p 8001 \
     -n jstatdserver
 fi
