@@ -229,9 +229,7 @@
                 <domain>local</domain>
                 <cms.hostname>wbhonline.${domain}</cms.hostname>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
-                <nginx.enable.servers>
-                    wbhonline
-                </nginx.enable.servers>
+                <nginx.enable.servers/>
             </properties>
             <build>
                 <plugins>
@@ -269,7 +267,7 @@
                 <docker.project.name>hbk</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
-                <nginx.enable.servers>wbhonline</nginx.enable.servers>
+                <nginx.enable.servers/>
             </properties>
             <build>
                 <plugins>
