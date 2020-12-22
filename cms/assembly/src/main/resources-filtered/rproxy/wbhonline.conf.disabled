@@ -44,8 +44,9 @@ server {
     location ~ /\. {
         deny all;
     }
-    location ~* "/(favicon.ico|robots.txt|index.html)" {
+    location ~* "/(|favicon.ico|robots.txt|index.html)" {
         root /var/local/rproxy/;
+        index index.html;
         log_not_found off;
         access_log off;
     }
