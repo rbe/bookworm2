@@ -15,7 +15,7 @@ exit 0
 EOF
 cat >/etc/systemd/system/sethostname.service <<EOF
 [Unit]
-After=syslog.service
+After=network.service
 
 [Service]
 ExecStart=/usr/local/bin/sethostname.sh

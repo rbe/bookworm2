@@ -8,17 +8,17 @@ execdir="$(pushd "$(dirname "$0")" >/dev/null && pwd && popd >/dev/null)"
 . "${execdir}/lib.sh"
 
 set_fqdn
-cat >/root/sethostname.sh <<EOF
+cat >/usr/local/bin/sethostname.sh <<EOF
 #!/bin/sh
 /usr/bin/hostnamectl set-hostname $(hostname -f)
 exit 0
 EOF
 cat >/etc/systemd/system/sethostname.service <<EOF
 [Unit]
-After=syslog.service
+After=network.service
 
 [Service]
-ExecStart=/root/sethostname.sh
+ExecStart=/usr/local/bin/sethostname.sh
 
 [Install]
 WantedBy=network.target
