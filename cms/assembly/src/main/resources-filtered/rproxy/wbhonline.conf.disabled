@@ -117,8 +117,4 @@ server {
         }
     }
 
-    location /hoerbuchkatalog/ {
-        proxy_pass http://hoerbuchkatalog:8080;
-    }
-
 }
