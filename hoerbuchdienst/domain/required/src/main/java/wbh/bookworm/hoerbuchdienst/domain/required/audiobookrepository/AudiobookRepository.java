@@ -24,4 +24,6 @@ public interface AudiobookRepository {
 
     InputStream zipAsStream(/* TODO Mandantenspezifisch */String titelnummer);
 
+    Path mp3ToTempDirectory(String titelnummer, Path tempDirectory);
+
 }

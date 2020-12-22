@@ -153,4 +153,11 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
                 () -> null);
     }
 
+    @Override
+    public Path mp3ToTempDirectory(final String titelnummer, final Path tempDirectory) {
+        return whileServicing("mp3ToTempDirectory",
+                () -> audiobookStreamResolver.mp3ToTempDirectory(titelnummer, tempDirectory),
+                () -> null);
+    }
+
 }

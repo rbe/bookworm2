@@ -4,14 +4,12 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipInputStream;
 
 import io.micronaut.context.annotation.Value;
 import org.slf4j.Logger;
@@ -48,64 +46,86 @@ final class AudiobookZipper {
     }
 
     Path watermarkedAudiobookAsZip(final String mandant, final String hoerernummer, final String titelnummer) {
-        final Path audiobookDirectory = Path.of(String.format("%s/%s-%s-%s", temporaryDirectory, hoerernummer, titelnummer, UUID.randomUUID())
-                .replace("//", "/"));
+        final String tempName = String.format("%s/%s-%s-%s", temporaryDirectory, hoerernummer, titelnummer, UUID.randomUUID())
+                .replace("//", "/");
+        final Path audiobookDirectory = Path.of(tempName);
         try {
             Files.createDirectories(audiobookDirectory);
         } catch (IOException e) {
-            throw new AudiobookServiceException("Cannot create temporary directory", e);
+            final String message = String.format("Cannot create temporary directory %s", audiobookDirectory.toAbsolutePath());
+            throw new AudiobookServiceException(message, e);
         }
-        // ZIP auf tmpfs auspacken
-        try (final ZipInputStream sourceZipStream = new ZipInputStream(audiobookRepository.zipAsStream(titelnummer))) {
-            LOGGER.info("Hörer {} Entpacke Hörbuch {} unter {}", hoerernummer, titelnummer, temporaryDirectory);
-            zip.unzip(sourceZipStream, audiobookDirectory);
-            LOGGER.info("Hörer {} Hörbuch {} unter {} entpackt", hoerernummer, titelnummer, temporaryDirectory);
-        } catch (IOException e) {
-            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
-            throw new AudiobookServiceException("", e);
-        }
-        final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
-        // Wasserzeichen an MP3s anbringen
         final Path daisyDirectory = audiobookDirectory.resolve(String.format("%sDAISY", titelnummer));
-        try (final Stream<Path> paths = Files.list(daisyDirectory)
+        // MP3s auf tmpfs packen
+        copyMp3sToTempDirectory(hoerernummer, titelnummer, daisyDirectory);
+        try {
+            // Wasserzeichen an MP3s anbringen
+            final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
+            final int numMp3s = watermarkMp3s(watermark, daisyDirectory);
+            LOGGER.info("Hörer {} Hörbuch {}: Wasserzeichen {} in {} MP3s angebracht", hoerernummer, titelnummer,
+                    watermark, numMp3s);
+            // Wasserzeichen als Textdatei in ZIP legen
+            addWatermarkFile(watermark, daisyDirectory);
+            LOGGER.info("Hörer {} Hörbuch {}: Wasserzeichen {} als cpr.txt-Textdatei erstellt", hoerernummer, titelnummer, watermark);
+            // Alle Dateien in DAISY ZIP packen
+            return toZip(hoerernummer, titelnummer, daisyDirectory);
+        } catch (AudiobookServiceException e) {
+            throw e;
+        } finally {
+            // Cleanup
+            FilesUtils.cleanupTemporaryDirectory(daisyDirectory);
+            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
+        }
+    }
+
+    private void copyMp3sToTempDirectory(final String hoerernummer, final String titelnummer, final Path daisyDirectory) {
+        final long startCopyMp3 = System.nanoTime();
+        audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
+        final long stopCopyMp3 = System.nanoTime();
+        LOGGER.info("Hörer {} Hörbuch {} unter {} in {} s abgelegt", hoerernummer, titelnummer, temporaryDirectory,
+                (stopCopyMp3 - startCopyMp3) / 1_000_000);
+    }
+
+    private int watermarkMp3s(final String watermark, final Path daisyDirectory) {
+        try (final Stream<Path> pathStream = Files.list(daisyDirectory)
                 .filter(path -> path.getFileName().toString().endsWith(".mp3"))) {
-            paths.collect(Collectors.toUnmodifiableList())
-                    // Wasserzeichen anbringen mit 1 Thread pro MP3
-                    .parallelStream()
+            final List<Path> paths = pathStream.collect(Collectors.toUnmodifiableList());
+            paths.parallelStream() // Wasserzeichen anbringen mit 1 Thread pro MP3
                     .forEach(mp3File -> {
-                        LOGGER.info("Bringe Wasserzeichen {} in {} an", watermark, mp3File.getFileName());
                         watermarker.addWatermarkInPlace(watermark, piracyInquiryUrlPrefix, mp3File);
                     });
+            return paths.size();
         } catch (IOException e) {
-            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
             throw new AudiobookServiceException("", e);
         }
-        // Wasserzeichen als Textdatei in ZIP legen
-        LOGGER.info("Hörer {} Lege Wasserzeichen {} als Textdatei in DAISY ZIP", hoerernummer, watermark);
+    }
+
+    private void addWatermarkFile(final String watermark, final Path daisyDirectory) {
         try {
-            Files.write(daisyDirectory.resolve("cpr.txt"), watermark.getBytes(StandardCharsets.UTF_8));
+            Files.writeString(daisyDirectory.resolve("cpr.txt"), watermark);
         } catch (IOException e) {
-            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
             throw new AudiobookServiceException("", e);
         }
-        // Alle Dateien in DAISY ZIP packen
+    }
+
+    private Path toZip(final String hoerernummer, final String titelnummer, final Path daisyDirectory) {
+        final long startZip = System.nanoTime();
         final InputStream zipInputStream;
         try (final Stream<Path> paths = Files.list(daisyDirectory)) {
             final List<Path> files = paths.sorted().collect(Collectors.toUnmodifiableList());
-            LOGGER.debug("Hörer {} Erstelle DAISY Hörbuch {} mit folgenden Dateien: {}", hoerernummer, titelnummer, files);
+            LOGGER.debug("Hörer {} Erstelle DAISY Hörbuch {} mit {} Dateien", hoerernummer, titelnummer, files.size());
             zipInputStream = zip.zipAsStream(files);
             final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID() + ".zip");
             final OutputStream outputStream = Files.newOutputStream(zipFile);
-            LOGGER.debug("Wrote {} bytes into ZIP file", zipInputStream.transferTo(outputStream));
-            LOGGER.info("Hörer {} DAISY Hörbuch {} unter {} erstellt", hoerernummer, titelnummer, zipFile);
+            final long numBytes = zipInputStream.transferTo(outputStream);
+            final long stopZip = System.nanoTime();
+            LOGGER.info("Hörer {} DAISY Hörbuch {} mit {} Bytes unter {} in {} s erstellt", hoerernummer, titelnummer,
+                    numBytes, zipFile, (stopZip - startZip) / 1_000_000);
             zipInputStream.close();
             outputStream.close();
             return zipFile;
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
-        } finally {
-            FilesUtils.cleanupTemporaryDirectory(/* TODO Mandantenspezifisch */daisyDirectory);
-            FilesUtils.cleanupTemporaryDirectory(audiobookDirectory);
         }
     }
 

@@ -127,4 +127,9 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
         throw new UnsupportedOperationException();
     }
 
+    @Override
+    public Path mp3ToTempDirectory(final String titelnummer, Path tempDirectory) {
+        throw new UnsupportedOperationException();
+    }
+
 }

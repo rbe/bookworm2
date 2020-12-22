@@ -18,20 +18,22 @@ public interface AudiobookStreamResolver {
 
     List<ObjectMetaInfo> objectsMetaInfo();
 
-    List<Path> list(/* TODO AGH Nummer o.ä. */String titelnummer);
+    List<Path> list(/*TODO Mandantenspezifisch*/String titelnummer);
 
-    InputStream nccHtmlStream(/* TODO AGH Nummer o.ä. */String titelnummer);
+    InputStream nccHtmlStream(/*TODO Mandantenspezifisch*/String titelnummer);
 
-    InputStream masterSmilStream(/* TODO AGH Nummer o.ä. */String titelnummer);
+    InputStream masterSmilStream(/*TODO Mandantenspezifisch*/String titelnummer);
 
-    InputStream trackAsStream(/* TODO AGH Nummer o.ä. */String titelnummer, String ident);
+    InputStream trackAsStream(/*TODO Mandantenspezifisch*/String titelnummer, String ident);
 
-    InputStream zipAsStream(/* TODO AGH Nummer o.ä. */String titelnummer);
+    InputStream zipAsStream(/*TODO Mandantenspezifisch*/String titelnummer);
 
-    String putZip(byte[] bytes, /* TODO AGH Nummer o.ä. */String titelnummer);
+    String putZip(byte[] bytes, /*TODO Mandantenspezifisch*/String titelnummer);
 
-    String putZip(InputStream inputStream, /* TODO AGH Nummer o.ä. */String titelnummer);
+    String putZip(InputStream inputStream, /*TODO Mandantenspezifisch*/String titelnummer);
 
     void removeZip(String titelnummer);
+
+    Path mp3ToTempDirectory(String titelnummer, Path tempDirectory);
 
 }

@@ -10,12 +10,14 @@ import javax.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
@@ -38,7 +40,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     private final Zip zip;
 
-    private Path temporaryDirectory;
+    private final Path temporaryDirectory;
 
     ObjectStorageAudiobookStreamResolverImpl(final BucketObjectStorage bucketObjectStorage,
                                              final Zip zip,
@@ -159,6 +161,22 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     public void removeZip(/* TODO Mandantenspezifisch */final String titelnummer) {
         final List<ObjectStorage.RemoveResult> removedPaths = bucketObjectStorage.removeObjects(String.format("%sDAISY", titelnummer));
         LOGGER.info("Removed audiobook {} with its contents {}", titelnummer, removedPaths);
+    }
+
+    @Override
+    public Path mp3ToTempDirectory(final String titelnummer, Path tempDirectory) {
+        final List<Path> allObjects = bucketObjectStorage.listAllObjects(titelnummer);
+        for (Path object : allObjects) {
+            final Path tempMp3 = tempDirectory.resolve(object.toString());
+            LOGGER.info("Copying {} to {}", object, tempMp3);
+            try (final OutputStream outputStream = Files.newOutputStream(tempMp3)) {
+                bucketObjectStorage.asStream(object.toString())
+                        .transferTo(outputStream);
+            } catch (IOException e) {
+                throw new AudiobookStreamResolverException("", e);
+            }
+        }
+        return null;
     }
 
     private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {
