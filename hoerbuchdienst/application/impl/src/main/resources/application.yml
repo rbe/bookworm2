@@ -56,7 +56,7 @@ hoerbuchdienst:
     path: ${java.io.tmpdir}/hoerbuchdienst
   piracy:
     inquiry:
-      urlprefix: https://wbh-online.de/ausleihe-anfragen
+      urlprefix: https://wbh-online.de/q-ausleihe
 
 objectstorage:
   minio:
