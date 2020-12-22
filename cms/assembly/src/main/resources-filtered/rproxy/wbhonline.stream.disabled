@@ -4,7 +4,7 @@ stream {
         server hoerbuchkatalog:5005;
     }
     upstream jstatd {
-        server hoerbuchkatalog:8001;
+        server hoerbuchkatalog:1099;
     }
 
     server {
@@ -13,7 +13,7 @@ stream {
     }
 
     server {
-        listen 8001;
+        listen 1099;
         proxy_pass jstatd;
     }
 

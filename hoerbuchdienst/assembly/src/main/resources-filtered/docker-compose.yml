@@ -252,6 +252,7 @@ services:
           - ${hbd.hostname}
       frontend:
     expose:
+      - 1099
       - 5005
       - 8080
   hbd-rproxy:
