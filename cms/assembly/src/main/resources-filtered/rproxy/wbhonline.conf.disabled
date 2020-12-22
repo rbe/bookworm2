@@ -101,7 +101,8 @@ server {
             fastcgi_index index.php;
             include /etc/nginx/fastcgi_params;
             fastcgi_param SCRIPT_FILENAME /var/www/html$fastcgi_script_name;
-            fastcgi_connect_timeout 5s;
+            fastcgi_connect_timeout  5s;
+            fastcgi_read_timeout    30s;
             fastcgi_ignore_client_abort on;
             fastcgi_intercept_errors on;
             # images etc. nicht via PHP
