@@ -62,10 +62,10 @@ echo "Creating WBH user"
 recreate_user_readwrite minio-admin wbh readwrite
 echo "done"
 set +o errexit
-echo "Creating bucket 'rogers'"
-mc mb minio-admin/rogers
-echo "Creating bucket 'buckrogers'"
-mc mb minio-admin/buckrogers
+#echo "Creating bucket 'rogers'"
+#mc mb minio-admin/rogers
+#echo "Creating bucket 'buckrogers'"
+#mc mb minio-admin/buckrogers
 echo "Creating bucket 'papierkorb'"
 mc mb minio-admin/papierkorb
 echo "Creating bucket 'hoerbuchdienst'"
