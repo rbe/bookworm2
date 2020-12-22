@@ -5,6 +5,8 @@ set -o nounset
 set -o errexit
 
 function show_usage() {
+  echo "usage: $0"
+  echo "  $0 minio $(titelnummern.sh 1 100 | sort -g)"
   echo "usage: $0 <Dst Shard> <Name im Eingangskorb 1> [<Name im Eingangskorb N> ...]"
   echo "  Dst Shard      Ziel-Shard (mc host alias for shard, see 'mc config host list')"
   echo "  Titelnummer    Name im Eingangskorb, ohne .zip"
@@ -77,18 +79,22 @@ function unpack() {
     echo "done"
     mandant_wbh "${ident}" "${tmpdir}_2"
     echo "Comparing number of files"
+    set +o errexit
     num_files_in_zip="$(unzip -Z "${zipdownload}" | grep -cE "^(d|-).*")"
     num_extracted_files="$(find "${tmpdir}_2/${daisydir}" | wc -l)"
     if [[ "${num_files_in_zip}" != "${num_extracted_files}" ]]; then
-      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})" >>"${unzip_log}"
+      echo "${ident}: Number of files in ZIP (${num_files_in_zip}) differs to number of extracted files (${num_extracted_files})" |
+         tee 1>>"${unzip_log}" 2>&1
     fi
+    set -o errexit
     echo "done"
     echo "Moving unpack report to ausgangskorb"
     mc mv "${unzip_log}" minio/ausgangskorb
     echo "done"
     if [[ -d "${tmpdir}_2/${daisydir}" ]]; then
       pushd "${tmpdir}_2" >/dev/null
-      mc mv --recursive "${daisydir}" "${dst}"
+      mc mv --recursive "${daisydir}" "${dst}" |
+        tee 1>>"${unzip_log}" 2>&1
       popd >/dev/null
       echo "Cleaning up temporary files"
       rm -rf "${tmpdir}_1"
@@ -100,33 +106,31 @@ function unpack() {
         mc rm "${zip}"
         echo "done"
       else
-        echo "Cannot stat ${dst}/${daisydir}, did not remove ${zip}"
-        exit 1
+        echo "Cannot stat ${dst}/${daisydir}, did not remove ${zip}" 1>>"${unzip_log}" 2>&1
       fi
     else
-      echo "${ident}: Could not unzip ${zip} into ${daisydir}"
-      exit 1
+      echo "${ident}: Could not unzip ${zip} into ${daisydir}" 1>>"${unzip_log}" 2>&1
     fi
   else
-    echo "${ident}: ${zip} not found"
-    exit 1
+    echo "${ident}: ${zip} not found" 1>>"${unzip_log}" 2>&1
   fi
   echo "done"
 }
 
-if [[ $# -lt 2 ]]; then
+if [[ $# -eq 0 ]]; then
+  SHARD="minio"
+  TITELNUMMERN=$(titelnummern.sh 1 100 | sort -g)
+elif [[ $# -lt 2 ]]; then
   show_usage
+else
+  SHARD="$1"
+  shift
+  TITELNUMMERN=("$@")
 fi
-
-SHARD="$1"
-shift
-TITELNUMMERN=("$@")
 
 echo "Moving ${#TITELNUMMERN[@]} audiobooks to ${SHARD}"
 for t in "${TITELNUMMERN[@]}"; do
   unpack "${t}" "${SHARD}"
-  echo "Waiting 1 second"
-  sleep 1
 done
 
 exit 0
