@@ -22,9 +22,6 @@ chmod 440 /usr/local/service.jar
 # Konfiguration
 find /var/local -type f -name \*.yml -print0 | xargs -r -0 chmod 660
 
-# Templates
-find /var/local/templates/* -type f -print0 | xargs -r -0 chmod 660
-
 # Daten - Hörbuchkatalog
 chmod 750 /var/local/wbh/hoerbuchkatalog
 # Daten - Nutzerdaten
