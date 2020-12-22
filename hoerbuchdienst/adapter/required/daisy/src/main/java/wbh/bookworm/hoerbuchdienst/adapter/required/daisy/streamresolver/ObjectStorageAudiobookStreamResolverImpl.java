@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 import org.slf4j.Logger;
@@ -164,14 +163,16 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     }
 
     @Override
-    public Path mp3ToTempDirectory(final String titelnummer, Path tempDirectory) {
+    public Path mp3ToTempDirectory(/* TODO Mandantenspezifisch */final String titelnummer, final Path tempDirectory) {
         final List<Path> allObjects = bucketObjectStorage.listAllObjects(titelnummer);
         for (Path object : allObjects) {
             final Path tempMp3 = tempDirectory.resolve(object.toString());
-            LOGGER.info("Copying {} to {}", object, tempMp3);
+            final long start = System.nanoTime();
             try (final OutputStream outputStream = Files.newOutputStream(tempMp3)) {
                 bucketObjectStorage.asStream(object.toString())
                         .transferTo(outputStream);
+                final long stop = System.nanoTime();
+                LOGGER.info("Copyied {} to {} in {} ms", object, tempMp3, (stop - start) / 1_000_000L);
             } catch (IOException e) {
                 throw new AudiobookStreamResolverException("", e);
             }

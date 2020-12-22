@@ -83,7 +83,7 @@ final class AudiobookZipper {
         audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
         final long stopCopyMp3 = System.nanoTime();
         LOGGER.info("Hörer {} Hörbuch {} unter {} in {} s abgelegt", hoerernummer, titelnummer, temporaryDirectory,
-                (stopCopyMp3 - startCopyMp3) / 1_000_000);
+                (stopCopyMp3 - startCopyMp3) / 1_000_000L / 1_000L);
     }
 
     private int watermarkMp3s(final String watermark, final Path daisyDirectory) {
@@ -120,7 +120,7 @@ final class AudiobookZipper {
             final long numBytes = zipInputStream.transferTo(outputStream);
             final long stopZip = System.nanoTime();
             LOGGER.info("Hörer {} DAISY Hörbuch {} mit {} Bytes unter {} in {} s erstellt", hoerernummer, titelnummer,
-                    numBytes, zipFile, (stopZip - startZip) / 1_000_000);
+                    numBytes, zipFile, (stopZip - startZip) / 1_000_000L / 1_000L);
             zipInputStream.close();
             outputStream.close();
             return zipFile;
