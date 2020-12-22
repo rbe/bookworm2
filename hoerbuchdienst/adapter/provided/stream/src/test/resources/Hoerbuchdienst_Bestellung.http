@@ -1,11 +1,11 @@
 // Ein Hörbuch mit Wasserzeichen bestellen
-OPTIONS {{host}}/bestellung/zip
+OPTIONS {{host}}/{{api-version}}/bestellung/zip
 Origin: {{origin}}
 
 ###
 
 // Ein Hörbuch mit Wasserzeichen bestellen
-POST {{host}}/bestellung/zip
+POST {{host}}/{{api-version}}/bestellung/zip
 Origin: {{origin}}
 Content-Type: application/json
 

@@ -1,4 +1,10 @@
 // Informationen über ein Hörbuch abrufen
+OPTIONS {{host}}/{{api-version}}/katalog/{{titelnummer}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
+// Informationen über ein Hörbuch abrufen
 GET {{host}}/{{api-version}}/katalog/{{titelnummer}}
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}

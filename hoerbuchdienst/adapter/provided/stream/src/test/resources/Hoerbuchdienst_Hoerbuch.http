@@ -1,0 +1,13 @@
+// Ein Hörbuch mit Wasserzeichen direkt abrufen
+GET {{host}}/{{api-version}}/hoerbuch/{{titelnummer}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
+
+// Einen einzelnen Track mit Wasserzeichen eines Hörbuchs abrufen
+GET {{host}}/{{api-version}}/stream/{{titelnummer}}/track/01_Halt_die_Wolken_fest.mp3
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+
+###
