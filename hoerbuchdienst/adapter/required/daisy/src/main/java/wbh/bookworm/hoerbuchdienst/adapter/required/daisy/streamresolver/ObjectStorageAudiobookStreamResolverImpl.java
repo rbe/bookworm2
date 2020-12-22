@@ -164,6 +164,12 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
 
     @Override
     public Path mp3ToTempDirectory(/* TODO Mandantenspezifisch */final String titelnummer, final Path tempDirectory) {
+        try {
+            Files.createDirectories(tempDirectory);
+        } catch (IOException e) {
+            final String message = String.format("Cannot create temporary directory %s", tempDirectory.toAbsolutePath());
+            throw new AudiobookStreamResolverException(message, e);
+        }
         final List<Path> allObjects = bucketObjectStorage.listAllObjects(titelnummer);
         for (Path object : allObjects) {
             final Path tempMp3 = tempDirectory.resolve(object.getFileName());
@@ -177,7 +183,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
                 throw new AudiobookStreamResolverException("", e);
             }
         }
-        return null;
+        return tempDirectory;
     }
 
     private void putFile(final Path path, /* TODO Mandantenspezifisch */final String titelnummer) {
