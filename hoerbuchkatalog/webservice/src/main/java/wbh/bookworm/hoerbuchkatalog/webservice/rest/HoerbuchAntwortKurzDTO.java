@@ -71,7 +71,8 @@ public final class HoerbuchAntwortKurzDTO {
     }
 
     public boolean isDownloadbar() {
-        return downloadbar;
+        // TODO return downloadbar;
+        return null != aghNummer && !aghNummer.isBlank();
     }
 
     public void setDownloadbar(final boolean downloadbar) {
