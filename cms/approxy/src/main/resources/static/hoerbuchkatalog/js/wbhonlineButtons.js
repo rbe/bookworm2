@@ -8,7 +8,7 @@
 
 const ENABLE_SPINNER = ['fas', 'fa-spinner', 'fa-spin'];
 
-export class Wbhbuttons {
+export class WbhonlineButtons {
 
     constructor() {
         this.previousClassList = new Map();
@@ -19,7 +19,7 @@ export class Wbhbuttons {
         button.ariaLabel = text;
     }
 
-    withButtons(skipSelector = '', skipArray = [], fun) {
+    withButtons(fun, skipSelector = '', skipArray = []) {
         document.querySelectorAll('a[class*="button"]').forEach(element => {
             const matchesSkipSelector = skipSelector !== '' && element.matches(skipSelector);
             const inSkipArray = typeof skipArray !== 'undefined' && skipArray.length > 0 && !skipArray.includes(element);
@@ -30,11 +30,11 @@ export class Wbhbuttons {
     }
 
     disableButtons(skipSelector = '', skipArray = []) {
-        this.withButtons('', [], (element) => this.disableAnchor(element));
+        this.withButtons((element) => this.disableAnchor(element), '', []);
     }
 
     enableButtons(skipSelector = '', skipArray = []) {
-        this.withButtons('', [], (element) => this.enableAnchor(element));
+        this.withButtons((element) => this.enableAnchor(element), '', []);
     }
 
     disableAnchor(anchor) {
@@ -49,15 +49,15 @@ export class Wbhbuttons {
         i.style.pointerEvents = 'none';
         this.previousClassList.set(i.id, [...i.classList]);
         i.className = '';
-        //i.classList = [...ENABLE_SPINNER];
-        ENABLE_SPINNER.forEach(value => i.classList.add(value));
+        //ENABLE_SPINNER.forEach(value => i.classList.add(value));
+        i.classList = [...ENABLE_SPINNER];
     }
 
     deactivateSpinner(i) {
         if (this.previousClassList.has(i.id)) {
             i.className = '';
-            //i.classList = [...this.previousClassList.get(i.id)];
-            this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
+            //this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
+            i.classList = [...this.previousClassList.get(i.id)];
         }
         i.style.pointerEvents = '';
     }

@@ -8,7 +8,7 @@
 
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
 
-const HOERBUCHKATALOG_URL = 'https://www.prod.wbh-online.de';
+const HOERBUCHKATALOG_URL = 'https://www-prod.wbh-online.de';
 
 const SHARD_URLS = [
     'https://hoerbuchdienst-shard11.wbh-online.de',
@@ -36,7 +36,6 @@ export class BookwormRestClient {
             'method': 'PUT',
             'headers': {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
                 'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer,
                 'X-Bookworm-BestellungSessionId': this.bestellungSessionId
@@ -87,7 +86,6 @@ export class BookwormRestClient {
             'method': 'PUT',
             'headers': {
                 'Accept': 'application/json',
-                'Content-Type': 'application/json',
                 'X-Bookworm-Mandant': this.mandant,
                 'X-Bookworm-Hoerernummer': this.hoerernummer,
                 'X-Bookworm-BestellungSessionId': this.bestellungSessionId,
@@ -272,8 +270,7 @@ export class BookwormRestClient {
         if (undefined !== callback) {
             callback(element);
         }
-        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId
-            + '/' + this.mandant + '/' + this.hoerernummer, 'https://' + shardName);
+        const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId, 'https://' + shardName);
         //const newWindow = window.open(url, 'daisyHoerbuchDownload');
         const anchor = document.createElement('a');
         anchor.href = url.toString();
@@ -281,6 +278,30 @@ export class BookwormRestClient {
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
+        this.verbucheDownload(shardName, titelnummer);
+    }
+
+    verbucheDownload(shardName, titelnummer) {
+        const url = new URL('v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
+        fetch(url.toString(), {
+            'method': 'PUT',
+            'headers': {
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': this.mandant,
+                'X-Bookworm-Hoerernummer': this.hoerernummer,
+                'X-Bookworm-BestellungSessionId': this.bestellungSessionId
+            }
+        })
+            .then(response => {
+                if (response.ok) {
+                    // ignore
+                } else {
+                    FetchErrorHandler.handle(response);
+                }
+            })
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+            });
     }
 
     //
