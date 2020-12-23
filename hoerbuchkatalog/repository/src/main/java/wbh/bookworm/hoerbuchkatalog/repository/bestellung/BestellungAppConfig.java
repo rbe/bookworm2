@@ -45,4 +45,9 @@ public class BestellungAppConfig {
         return new SessionRepository(Path.of(repositoryPath));
     }
 
+    @Bean
+    public DownloadsRepository downloadsRepository() {
+        return new DownloadsRepository(Path.of(repositoryPath));
+    }
+
 }

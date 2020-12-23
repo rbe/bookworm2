@@ -19,6 +19,7 @@ mkdir repository/HtmlEmailTemplate 2>/dev/null
 mkdir repository/Merkliste 2>/dev/null
 mkdir repository/Warenkorb 2>/dev/null
 mkdir repository/Session 2>/dev/null
+mkdir repository/Downloads 2>/dev/null
 mkdir wbh 2>/dev/null
 mkdir wbh/aktualisierung 2>/dev/null
 mkdir wbh/aktualisierung/eingangskorb 2>/dev/null

@@ -47,6 +47,8 @@ public final class HoerbuchAntwortDTO {
 
     private boolean downloadbar;
 
+    private boolean alsDownloadGebucht;
+
     private boolean aufDerMerkliste;
 
     private boolean imWarenkorb;
@@ -223,6 +225,14 @@ public final class HoerbuchAntwortDTO {
 
     public void setDownloadbar(final boolean downloadbar) {
         this.downloadbar = downloadbar;
+    }
+
+    public boolean isAlsDownloadGebucht() {
+        return alsDownloadGebucht;
+    }
+
+    public void setAlsDownloadGebucht(final boolean alsDownloadGebucht) {
+        this.alsDownloadGebucht = alsDownloadGebucht;
     }
 
     public boolean isAufDerMerkliste() {

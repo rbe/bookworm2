@@ -27,12 +27,12 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @SpringBootTest(classes = {BestellungTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
 @ActiveProfiles("test")
-class WarenkorbDomainRepositoryTest {
+class WarenkorbRepositoryTest {
 
     private final WarenkorbRepository warenkorbRepository;
 
     @Autowired
-    WarenkorbDomainRepositoryTest(final WarenkorbRepository warenkorbRepository) {
+    WarenkorbRepositoryTest(final WarenkorbRepository warenkorbRepository) {
         this.warenkorbRepository = warenkorbRepository;
     }
 

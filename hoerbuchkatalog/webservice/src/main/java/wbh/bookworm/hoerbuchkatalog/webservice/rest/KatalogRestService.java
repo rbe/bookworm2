@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
@@ -32,14 +33,18 @@ public class KatalogRestService {
 
     private final MerklisteService merklisteService;
 
+    private final DownloadsService downloadsService;
+
     private final WarenkorbService warenkorbService;
 
     @Autowired
     public KatalogRestService(final HoerbuchkatalogService hoerbuchkatalogService,
                               final MerklisteService merklisteService,
+                              final DownloadsService downloadsService,
                               final WarenkorbService warenkorbService) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.merklisteService = merklisteService;
+        this.downloadsService = downloadsService;
         this.warenkorbService = warenkorbService;
     }
 
@@ -93,6 +98,7 @@ public class KatalogRestService {
         if (null != sachgebiet) {
             hoerbuchAntwortKurzDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
+        hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
         hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
         final Map<String, Object> meta = Map.of();
@@ -116,6 +122,7 @@ public class KatalogRestService {
         if (null != sachgebiet) {
             hoerbuchAntwortDTO.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
+        hoerbuchAntwortDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         hoerbuchAntwortDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
         hoerbuchAntwortDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortDTO));

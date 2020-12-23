@@ -19,13 +19,13 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
+import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 @RestController
-@RequestMapping("/v1/merkliste")
-public class MerklisteRestService {
+@RequestMapping("/v1/downloads")
+public class DownloadsRestService {
 
     private final DownloadsService downloadsService;
 
@@ -36,7 +36,7 @@ public class MerklisteRestService {
     private final HoerbuchResolver hoerbuchResolver;
 
     @Autowired
-    public MerklisteRestService(final DownloadsService downloadsService,
+    public DownloadsRestService(final DownloadsService downloadsService,
                                 final MerklisteService merklisteService,
                                 final WarenkorbService warenkorbService,
                                 final HoerbuchResolver hoerbuchResolver) {
@@ -51,17 +51,7 @@ public class MerklisteRestService {
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
                                            @PathVariable final String titelnummer) {
-        final boolean b = merklisteService.hinzufuegen(new Hoerernummer(xHoerernummer),
-                new Titelnummer(titelnummer));
-        return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
-    }
-
-    @DeleteMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                          @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                          @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
-                                          @PathVariable final String titelnummer) {
-        final boolean b = merklisteService.entfernen(new Hoerernummer(xHoerernummer),
+        final boolean b = downloadsService.hinzufuegen(new Hoerernummer(xHoerernummer),
                 new Titelnummer(titelnummer));
         return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
     }
@@ -70,14 +60,14 @@ public class MerklisteRestService {
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
-        final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
+        final Downloads downloads = downloadsService.downloadsKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
+            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
             hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
@@ -90,14 +80,14 @@ public class MerklisteRestService {
                                                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
                                                                                     @PathVariable final String datumab,
                                                                                     @PathVariable final String stichwort) {
-        final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
+        final Downloads downloads = downloadsService.downloadsKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
+            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
             hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });

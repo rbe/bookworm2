@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
+import wbh.bookworm.hoerbuchkatalog.app.bestellung.DownloadsService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
@@ -33,6 +34,8 @@ import wbh.bookworm.shared.domain.Titelnummer;
 @RequestMapping("/v1/warenkorb")
 public final class WarenkorbRestService {
 
+    private final DownloadsService downloadsService;
+
     private final WarenkorbService warenkorbService;
 
     private final BestellungService bestellungService;
@@ -42,10 +45,12 @@ public final class WarenkorbRestService {
     private final HoerbuchResolver hoerbuchResolver;
 
     @Autowired
-    public WarenkorbRestService(final WarenkorbService warenkorbService,
+    public WarenkorbRestService(final DownloadsService downloadsService,
+                                final WarenkorbService warenkorbService,
                                 final BestellungService bestellungService,
                                 final MerklisteService merklisteService,
                                 final HoerbuchResolver hoerbuchResolver) {
+        this.downloadsService = downloadsService;
         this.warenkorbService = warenkorbService;
         this.bestellungService = bestellungService;
         this.merklisteService = merklisteService;
@@ -84,10 +89,11 @@ public final class WarenkorbRestService {
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver
                 .toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer,
-                    new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId,
-                    hoerernummer, new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer())));
+            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
+            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
+            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
+                    bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }
