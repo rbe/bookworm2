@@ -385,15 +385,13 @@ export class Audioplayer {
     }
 
     asyncDownloadAudiobook() {
-        const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId + '/' + this.mandant + '/' + this.hoerernummer,
+        const url = new URL('v1/bestellung/' + this.titelnummer + '/fetch/' + this.orderId,
             this.audiobookURL);
         this.asyncDownloadStatusText.innerHTML = 'DAISY Hörbuch wird heruntergeladen!';
         fetch(url.toString(), {
             'method': 'GET',
             'headers': {
-                'Accept': 'application/zip',
-                'X-Bookworm-Mandant': this.mandant,
-                'X-Bookworm-Hoerernummer': this.hoerernummer
+                'Accept': 'application/zip'
             },
             'redirect': 'follow'
         })
