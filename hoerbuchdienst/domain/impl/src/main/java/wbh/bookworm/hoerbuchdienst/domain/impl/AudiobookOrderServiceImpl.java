@@ -57,7 +57,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
                 hoerernummer, titelnummer);
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
-        final Path zipFile = audiobookZipper.watermarkedAudiobookAsZip(mandant, hoerernummer, titelnummer);
+        final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
         try (final InputStream audiobook = Files.newInputStream(zipFile)) {
             LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
                     hoerernummer, titelnummer);

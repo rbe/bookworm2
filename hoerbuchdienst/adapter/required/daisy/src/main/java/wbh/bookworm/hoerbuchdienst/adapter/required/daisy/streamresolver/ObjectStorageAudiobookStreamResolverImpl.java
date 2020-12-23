@@ -178,7 +178,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
                 bucketObjectStorage.asStream(object.toString())
                         .transferTo(outputStream);
                 final long stop = System.nanoTime();
-                LOGGER.info("Copyied {} to {} in {} ms", object, tempMp3, (stop - start) / 1_000_000L);
+                LOGGER.debug("Copyied {} to {} in {} ms", object, tempMp3, (stop - start) / 1_000_000L);
             } catch (IOException e) {
                 throw new AudiobookStreamResolverException("", e);
             }

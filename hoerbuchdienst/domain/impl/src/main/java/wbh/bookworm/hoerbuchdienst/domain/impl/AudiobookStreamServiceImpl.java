@@ -64,18 +64,12 @@ class AudiobookStreamServiceImpl implements AudiobookStreamService {
 
     @Override
     public InputStream zipAsStream(final String mandant, final String hoerernummer, final String titelnummer) {
-        try {
-            final Path daisyZipFile = audiobookZipper.watermarkedAudiobookAsZip(mandant, hoerernummer, titelnummer);
-            return Files.newInputStream(daisyZipFile);
-        } catch (IOException e) {
-            throw new AudiobookServiceException("", e);
-        }
+        return audiobookZipper.watermarkedDaisyZipAsStream(mandant, hoerernummer, titelnummer);
     }
 
     @Override
     public Path zipAsFile(final String mandant, final String hoerernummer, final String titelnummer) {
-        final Path daisyZipFile = audiobookZipper.watermarkedAudiobookAsZip(mandant, hoerernummer, titelnummer);
-        return daisyZipFile;
+        return audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
     }
 
 }
