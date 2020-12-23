@@ -130,15 +130,13 @@ public class BestellungController {
     }
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
-    @Get(uri = "/{titelnummer}/fetch/{orderId}/{mandant}/{hoerernummer}", headRoute = false)
+    @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false)
     @Produces(APPLICATION_ZIP)
     public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                     //@Header("X-Bookworm-Mandant") final String xMandant,
-                                                     //@Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @Header("X-Bookworm-Mandant") final String xMandant,
+                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @PathVariable final String titelnummer,
-                                                     @PathVariable final String orderId,
-                                                     @PathVariable("mandant") final String xMandant,
-                                                     @PathVariable("hoerernummer") final String xHoerernummer) {
+                                                     @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
