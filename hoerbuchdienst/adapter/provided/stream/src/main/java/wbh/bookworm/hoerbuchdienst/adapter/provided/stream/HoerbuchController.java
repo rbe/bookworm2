@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
+import java.io.InputStream;
 import java.nio.file.Path;
 
 import io.micronaut.core.annotation.Blocking;
@@ -20,6 +21,7 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.micronaut.http.server.types.files.SystemFile;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
@@ -55,8 +57,9 @@ public class HoerbuchController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchController.class);
 
-    private static final String APPLICATION_ZIP = "application/zip";
-    //private static final MediaType APPLICATION_ZIP=MediaType.of("application/zip");
+    private static final String APPLICATION_ZIP_VALUE = "application/zip";
+
+    private static final MediaType APPLICATION_ZIP = MediaType.of("application/zip");
 
     private static final String EMPTY_STRING = "";
 
@@ -81,30 +84,66 @@ public class HoerbuchController {
     @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
     @Get(uri = "/{titelnummer}")
-    @Produces(APPLICATION_ZIP)
+    @Produces(APPLICATION_ZIP_VALUE)
     @Blocking
-    public HttpResponse<SystemFile> zippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
-                                                                         @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                         @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                         @PathVariable("titelnummer") final String titelnummer) {
+    public HttpResponse<SystemFile> daisyZipAsFile(final HttpRequest<?> httpRequest,
+                                                   @Header("X-Bookworm-Mandant") final String xMandant,
+                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                   @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> makeDaisyZipFile(xMandant, xHoerernummer, titelnummer),
                 dto -> CORS.response(httpRequest, dto)
+                        .header("Content-Type", APPLICATION_ZIP_VALUE)
                         .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }
 
-    // TODO StreamedFile schneller?
+    @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
+    @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
+    @Get(uri = "/{titelnummer}/stream")
+    @Produces(APPLICATION_ZIP_VALUE)
+    @Blocking
+    public HttpResponse<StreamedFile> daisyZipAsStream(final HttpRequest<?> httpRequest,
+                                                       @Header("X-Bookworm-Mandant") final String xMandant,
+                                                       @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                       @PathVariable("titelnummer") final String titelnummer) {
+        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
+                () -> makeDaisyZipStream(xMandant, xHoerernummer, titelnummer),
+                dto -> CORS.response(httpRequest, dto)
+                        .header("Content-Type", APPLICATION_ZIP_VALUE)
+                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
+                String.format("%s/%s", BASE_URL, titelnummer),
+                httpRequest);
+    }
+
     // TODO Idee HTTP redirect, nginx sendet ZIP
     private SystemFile makeDaisyZipFile(final String mandant, final String hoerernummer, final String titelnummer) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle DAISY Hörbuch als ZIP-Datei",
                 hoerernummer, titelnummer);
         try {
+            final long start = System.nanoTime();
             final Path zip = audiobookStreamService.zipAsFile(mandant, hoerernummer, titelnummer);
-            LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
-                    hoerernummer, titelnummer);
+            final long stop = System.nanoTime();
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} s erstellt",
+                    hoerernummer, titelnummer, (stop - start) / 1_000_000L / 1_000L);
             return new SystemFile(zip.toFile()).attach(String.format("%s.zip", titelnummer));
+        } catch (Exception e) {
+            throw new BusinessException(EMPTY_STRING, e);
+        }
+    }
+
+    private StreamedFile makeDaisyZipStream(final String mandant, final String hoerernummer, final String titelnummer) {
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle DAISY Hörbuch als ZIP-Datei",
+                hoerernummer, titelnummer);
+        try {
+            final long start = System.nanoTime();
+            final InputStream zip = audiobookStreamService.zipAsStream(mandant, hoerernummer, titelnummer);
+            final long stop = System.nanoTime();
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} s erstellt",
+                    hoerernummer, titelnummer, (stop - start) / 1_000_000L / 1_000L);
+            return new StreamedFile(zip, APPLICATION_ZIP)
+                    .attach(String.format("%s.zip", titelnummer));
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);
         }

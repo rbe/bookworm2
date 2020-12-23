@@ -57,14 +57,16 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
                 hoerernummer, titelnummer);
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
-        final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
-        try (final InputStream audiobook = Files.newInputStream(zipFile)) {
-            LOGGER.info("Hörer '{}' Hörbuch '{}': Hörbuch mit Wasserzeichen als ZIP erstellt",
+        try {
+            final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei erstellt",
                     hoerernummer, titelnummer);
             final Path orderDirectory = temporaryDirectory.resolve(orderId);
             Files.createDirectories(orderDirectory);
-            Files.write(orderDirectory.resolve(DAISY_ZIP), audiobook.readAllBytes());
+            Files.move(zipFile, orderDirectory.resolve(DAISY_ZIP));
             orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch erfolgreich erstellt",
+                    hoerernummer, titelnummer);
         } catch (Exception e) {
             orderStatus.put(orderId, ORDER_STATUS_FAILED);
             throw new AudiobookServiceException(String.format("Hörer %s Hörbuch %s: Kann Bestellung nicht persistieren", hoerernummer, titelnummer), e);
