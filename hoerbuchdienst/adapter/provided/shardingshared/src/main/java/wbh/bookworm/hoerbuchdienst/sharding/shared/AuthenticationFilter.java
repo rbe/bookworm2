@@ -19,8 +19,10 @@ public class AuthenticationFilter implements HttpServerFilter {
     public Publisher<MutableHttpResponse<?>> doFilter(final HttpRequest<?> request,
                                                       final ServerFilterChain chain) {
         final String mandant = request.getHeaders().get("X-Bookworm-Mandant");
-        final String hoerer = request.getHeaders().get("X-Bookworm-Hoerernummer");
-        LOGGER.info("X-Bookworm-Mandant={} X-Bookworm-Hoerernummer={}", mandant, hoerer);
+        final String hoerernummer = request.getHeaders().get("X-Bookworm-Hoerernummer");
+        if (null == mandant || mandant.isBlank() || null == hoerernummer || hoerernummer.isBlank()) {
+            LOGGER.warn("X-Bookworm-Mandant={} X-Bookworm-Hoerernummer={}", mandant, hoerernummer);
+        }
         return chain.proceed(request);
     }
 
