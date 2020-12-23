@@ -126,7 +126,6 @@ public class BestellungController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/fetch/{orderId}")
-    @Produces(APPLICATION_ZIP_VALUE)
     public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                             @PathVariable final String titelnummer,
                                                             @PathVariable final String orderId) {
@@ -134,7 +133,7 @@ public class BestellungController {
     }
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
-    @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false)
+    @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP_VALUE)
     @Produces(APPLICATION_ZIP_VALUE)
     public HttpResponse<StreamedFile> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                            @PathVariable final String titelnummer,
