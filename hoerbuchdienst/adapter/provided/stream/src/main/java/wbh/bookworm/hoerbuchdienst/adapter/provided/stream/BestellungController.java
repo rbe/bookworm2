@@ -22,6 +22,7 @@ import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Post;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -53,7 +54,9 @@ public class BestellungController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungController.class);
 
-    private static final String APPLICATION_ZIP = "application/zip";
+    private static final String APPLICATION_ZIP_VALUE = "application/zip";
+
+    private static final MediaType APPLICATION_ZIP = MediaType.of("application/zip");
 
     private static final String EMPTY_STRING = "";
 
@@ -131,25 +134,23 @@ public class BestellungController {
 
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
     @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false)
-    @Produces(APPLICATION_ZIP)
-    public HttpResponse<byte[]> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                     @Header("X-Bookworm-Mandant") final String xMandant,
-                                                     @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                     @PathVariable final String titelnummer,
-                                                     @PathVariable final String orderId) {
+    @Produces(APPLICATION_ZIP_VALUE)
+    public HttpResponse<StreamedFile> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
+                                                           @PathVariable final String titelnummer,
+                                                           @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
                     try (final InputStream inputStream = audiobookOrderService.fetchOrder(orderId)) {
-                        return inputStream.readAllBytes();
+                        return new StreamedFile(inputStream, APPLICATION_ZIP);
                     } catch (IOException e) {
                         throw new BusinessException(EMPTY_STRING, e);
                     }
                 },
                 body -> CORS.response(httpRequest, body)
-                        .contentType(APPLICATION_ZIP)
+                        .contentType(APPLICATION_ZIP_VALUE)
                         .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
-                String.format("%s/%s/fetch/%s/%s/%s", BASE_URL, titelnummer, orderId, xMandant, xHoerernummer),
+                String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 
