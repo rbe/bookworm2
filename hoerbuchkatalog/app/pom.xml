@@ -22,10 +22,6 @@
         </dependency>
         <dependency>
             <groupId>wbh.bookworm</groupId>
-            <artifactId>wbh.bookworm.hoerbuchkatalog.infrastructure</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>wbh.bookworm</groupId>
             <artifactId>wbh.bookworm.shared.domain</artifactId>
             <version>LocalBuild</version>
         </dependency>

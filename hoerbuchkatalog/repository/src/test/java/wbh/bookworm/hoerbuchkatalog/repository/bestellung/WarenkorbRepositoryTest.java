@@ -16,7 +16,6 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.shared.domain.Hoerernummer;
@@ -52,24 +51,6 @@ class WarenkorbDomainRepositoryTest {
         assertEquals(warenkorbId, cdWarenkorb2.get().getDomainId());
         assertEquals(hoerernummer, cdWarenkorb2.get().getHoerernummer());
         assertTrue(cdWarenkorb2.get().enthalten(new Titelnummer("123")));
-    }
-
-    @Test
-    void shouldPersistAndLoadDownloadWarenkorb() {
-        final Hoerernummer hoerernummer = new Hoerernummer("12345");
-        final WarenkorbId warenkorbId = new WarenkorbId("12345-Download");
-
-        final Warenkorb downloadWarenkorb1 =
-                new DownloadWarenkorb(warenkorbId, hoerernummer);
-        downloadWarenkorb1.hinzufuegen(new Titelnummer("456"));
-        warenkorbRepository.save(downloadWarenkorb1);
-
-        final Optional<DownloadWarenkorb> downloadWarenkorb2 =
-                warenkorbRepository.load(warenkorbId, DownloadWarenkorb.class);
-        assertTrue(downloadWarenkorb2.isPresent());
-        assertEquals(warenkorbId, downloadWarenkorb2.get().getDomainId());
-        assertEquals(hoerernummer, downloadWarenkorb2.get().getHoerernummer());
-        assertTrue(downloadWarenkorb2.get().enthalten(new Titelnummer("456")));
     }
 
 }

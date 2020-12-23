@@ -46,8 +46,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     private final Set<Titelnummer> cdTitelnummern;
 
-    private final Set<Titelnummer> downloadTitelnummern;
-
     private LocalDateTime zeitpunktAbgeschickt;
 
     @JsonCreator
@@ -59,7 +57,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final @JsonProperty("bestellkarteMischen") Boolean bestellkarteMischen,
                       final @JsonProperty("alteBestellkarteLoeschen") Boolean alteBestellkarteLoeschen,
                       final @JsonProperty("cdTitelnummern") Set<Titelnummer> cdTitelnummern,
-                      final @JsonProperty("downloadTitelnummern") Set<Titelnummer> downloadTitelnummern,
                       final @JsonProperty("zeitpunktAbgeschickt") LocalDateTime zeitpunktAbgeschickt) {
         super(bestellungId);
         this.hoerername = hoerername;
@@ -69,7 +66,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
         this.bestellkarteMischen = bestellkarteMischen;
         this.alteBestellkarteLoeschen = alteBestellkarteLoeschen;
         this.cdTitelnummern = cdTitelnummern;
-        this.downloadTitelnummern = downloadTitelnummern;
         this.zeitpunktAbgeschickt = zeitpunktAbgeschickt;
     }
 
@@ -81,13 +77,12 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
                       final String bemerkung,
                       final Boolean bestellkarteMischen,
                       final Boolean alteBestellkarteLoeschen,
-                      final Set<Titelnummer> cdTitelnummern, final Set<Titelnummer> downloadTitelnummern) {
+                      final Set<Titelnummer> cdTitelnummern) {
         this(bestellungId,
                 hoerernummer, hoerername, hoereremail,
                 bemerkung,
                 bestellkarteMischen, alteBestellkarteLoeschen,
-                new TreeSet<>(cdTitelnummern), new TreeSet<>(downloadTitelnummern),
-                null);
+                new TreeSet<>(cdTitelnummern), null);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -124,14 +119,6 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public boolean hatCdTitelnummern() {
         return !cdTitelnummern.isEmpty();
-    }
-
-    public Set<Titelnummer> getDownloadTitelnummern() {
-        return downloadTitelnummern;
-    }
-
-    public boolean hatDownloadTitelnummern() {
-        return !downloadTitelnummern.isEmpty();
     }
 
     public LocalDateTime aufgeben() {
@@ -188,7 +175,7 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @Override
     public int hashCode() {
-        return Objects.hash(hoerernummer, cdTitelnummern, downloadTitelnummern);
+        return Objects.hash(hoerernummer, cdTitelnummern);
     }
 
     @Override
@@ -198,8 +185,8 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     @Override
     public String toString() {
-        return String.format("Bestellung{domainId=%s, hoerernummer=%s, cdTitelnummern=%s, downloadTitelnummern=%s}",
-                domainId, hoerernummer, cdTitelnummern, downloadTitelnummern);
+        return String.format("Bestellung{domainId=%s, hoerernummer=%s, cdTitelnummern=%s}",
+                domainId, hoerernummer, cdTitelnummern);
     }
 
 }

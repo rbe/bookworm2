@@ -6,20 +6,19 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import aoc.mikrokosmos.io.fs.FilesUtils;
-import aoc.mikrokosmos.io.fs.FilesystemWatcher;
+import javax.annotation.PreDestroy;
+import java.nio.file.Path;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.core.task.TaskExecutor;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.PreDestroy;
-import java.nio.file.Path;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
+import aoc.mikrokosmos.io.fs.FilesUtils;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 @Component
 public class HoerbuchkatalogRepositoryAktualisierer {

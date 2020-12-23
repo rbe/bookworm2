@@ -18,9 +18,7 @@ import org.thymeleaf.TemplateEngine;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.app.email.EmailService;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
-import wbh.bookworm.hoerbuchkatalog.app.lieferung.DownloadsLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.config.DomainConfig;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.config.InfrastructureBlistaConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.HoerbuchkatalogConfig;
 
@@ -32,13 +30,11 @@ import aoc.mikrokosmos.ddd.search.LuceneIndexFactory;
 @EnableConfigurationProperties({LuceneIndexConfig.class, HoerbuchkatalogConfig.class})
 @Import({
         RepositoryConfig.class,
-        DomainConfig.class,
-        InfrastructureBlistaConfig.class
+        DomainConfig.class
 })
 @ComponentScan(basePackageClasses = {
         HoerbuchkatalogService.class,
         BestellungService.class,
-        DownloadsLieferungService.class,
         EmailService.class,
         TemplateEngine.class,
         LuceneIndexFactory.class

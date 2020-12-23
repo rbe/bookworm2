@@ -11,6 +11,7 @@ import javax.inject.Named;
 
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @MicronautTest
+@Disabled("RabbitMQ benötigt")
 class AudiobookMapperImplTest {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookMapperImplTest.class);

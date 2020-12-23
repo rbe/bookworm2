@@ -41,12 +41,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ActiveProfiles("test")
 class CdBestellungAufgegebenHandlerTest {
 
-    private final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler;
-
-    private static ServerSetup serverSetup;
-
     @RegisterExtension
     static GreenMailExtension greenMail;
+
+    private static ServerSetup serverSetup;
 
     static {
         serverSetup = new ServerSetup(8025, "127.0.0.1", "smtp")
@@ -54,6 +52,8 @@ class CdBestellungAufgegebenHandlerTest {
         greenMail = new GreenMailExtension(
                 serverSetup);
     }
+
+    private final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler;
 
     @Autowired
     CdBestellungAufgegebenHandlerTest(final CdBestellungAufgegebenHandler cdBestellungAufgegebenHandler) {
@@ -81,7 +81,6 @@ class CdBestellungAufgegebenHandlerTest {
                 "Hier wurde eine Bemerkung eingegeben.",
                 Boolean.FALSE, Boolean.FALSE,
                 Set.of(new Titelnummer("69404")/* TODO null, new Titelnummer("789012")*/),
-                null,
                 LocalDateTime.now()
         );
         cdBestellungAufgegebenHandler.handleEvent(

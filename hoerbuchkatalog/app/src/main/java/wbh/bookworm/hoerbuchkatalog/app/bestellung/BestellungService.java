@@ -18,7 +18,6 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Bestellung;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungRepository;
@@ -58,7 +57,7 @@ public final class BestellungService {
      * Command
      */
     public Optional<BestellungId> bestellungAufgeben(final BestellungSessionId bestellungSessionId,
-                                                     /* TODO Hoerer */final Hoerernummer hoerernummer,
+            /* TODO Hoerer */final Hoerernummer hoerernummer,
                                                      final Hoerername hoerername,
                                                      final HoererEmail hoereremail,
                                                      final String bemerkung,
@@ -67,15 +66,12 @@ public final class BestellungService {
         LOGGER.trace("Bestellung {} für Hörer {} wird aufgegeben", this, hoerernummer);
         final CdWarenkorb cdWarenkorb = warenkorbService
                 .cdWarenkorbKopie(bestellungSessionId, hoerernummer);
-        final DownloadWarenkorb downloadWarenkorb = warenkorbService
-                .downloadWarenkorbKopie(bestellungSessionId, hoerernummer);
         final Bestellung bestellung = bestellungRepository.erstellen(
                 hoerernummer, hoerername, hoereremail,
                 bemerkung, bestellkarteMischen, alteBestellkarteLoeschen,
-                cdWarenkorb.getTitelnummern(), downloadWarenkorb.getTitelnummern());
+                cdWarenkorb.getTitelnummern());
         bestellung.aufgeben();
         cdWarenkorb.leeren();
-        downloadWarenkorb.leeren();
         LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben!",
                 bestellung, hoerernummer);
         return Optional.of(bestellung.getDomainId());
@@ -84,7 +80,7 @@ public final class BestellungService {
     public long anzahlBestellungen(final Hoerernummer hoerernummer) {
         return bestellungRepository
                 .find(/*hoerernummer.getValue(),
-                        */QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
+                 */QueryPredicate.Equals.of("hoerernummer", hoerernummer.getValue()))
                 .orElseGet(Collections::emptySet)
                 .size();
     }

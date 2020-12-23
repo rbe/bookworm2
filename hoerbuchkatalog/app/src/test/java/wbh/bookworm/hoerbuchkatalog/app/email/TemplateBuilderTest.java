@@ -76,7 +76,6 @@ class TemplateBuilderTest {
                 "Bemerkung",
                 Boolean.FALSE, Boolean.FALSE,
                 Set.of(new Titelnummer("123456"), new Titelnummer("789012")),
-                null,
                 LocalDateTime.now()
         );
         final Set<Hoerbuch> hoerbucher = hoerbuecher();
@@ -86,43 +85,23 @@ class TemplateBuilderTest {
                 build.getBytes(StandardCharsets.UTF_8));
     }
 
-    @Test
-    void shouldBuildBestellbestaetigungDownload() throws IOException {
-        final Bestellung bestellung = new Bestellung(
-                new BestellungId("1234567890"),
-                new Hoerernummer("80170"),
-                new Hoerername(new Vorname("Herbert"), new Nachname("Hörer")),
-                new HoererEmail("herbert.hoerer@example.com"),
-                "Bemerkung",
-                Boolean.FALSE, Boolean.FALSE,
-                null,
-                Set.of(new Titelnummer("123456"), new Titelnummer("789012")),
-                LocalDateTime.now()
-        );
-        final Set<Hoerbuch> hoerbucher = hoerbuecher();
-        final String build = emailTemplateBuilder.build("BestellbestaetigungDownload.html",
-                Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
-        Files.write(Path.of("target/BestellbestaetigungDownload-test.html"),
-                build.getBytes(StandardCharsets.UTF_8));
-    }
-
     private Set<Hoerbuch> hoerbuecher() {
         return Set.of(
-                    new Hoerbuch(Sachgebiet.A, new Titelnummer("123456"),
-                            "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
-                            "", "", "", "", "", "",
-                            "", "", "", "", "",
-                            LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
-                    new Hoerbuch(Sachgebiet.A, new Titelnummer("234567"),
-                            "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
-                            "", "", "", "", "", "",
-                            "", "", "", "", "",
-                            LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
-                    new Hoerbuch(Sachgebiet.A, new Titelnummer("345678"),
-                            "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
-                            "", "", "", "", "", "",
-                            "", "", "", "", "",
-                            LocalDate.now(), new AghNummer("1-1234567-2-3"), false));
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("123456"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("234567"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false),
+                new Hoerbuch(Sachgebiet.A, new Titelnummer("345678"),
+                        "Autor Autor Autor", "Titel Titel Titel Titel Titel", "", "",
+                        "", "", "", "", "", "",
+                        "", "", "", "", "",
+                        LocalDate.now(), new AghNummer("1-1234567-2-3"), false));
     }
 
 }

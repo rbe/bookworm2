@@ -14,10 +14,8 @@ import org.springframework.stereotype.Service;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.WarenkorbRepository;
-import wbh.bookworm.hoerbuchkatalog.repository.lieferung.DownloadsRepository;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
@@ -25,30 +23,36 @@ import wbh.bookworm.shared.domain.Titelnummer;
 @Service
 public class WarenkorbService {
 
+    public static final String CD = "CD";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WarenkorbService.class);
 
     private static final String DOWNLOAD = "Download";
-
-    public static final String CD = "CD";
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
     private final WarenkorbRepository warenkorbRepository;
 
-    private final DownloadsRepository downloadsRepository;
-
     @Autowired
     public WarenkorbService(final HoerbuchkatalogService hoerbuchkatalogService,
-                            final WarenkorbRepository warenkorbRepository,
-                            final DownloadsRepository downloadsRepository) {
+                            final WarenkorbRepository warenkorbRepository) {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
         this.warenkorbRepository = warenkorbRepository;
-        this.downloadsRepository = downloadsRepository;
     }
 
     //
     // CD Warenkorb
     //
+
+    /**
+     * Hoerernummer aus {@link BestellungSessionId} erzeugen.
+     * Bei unbekannten Hörern wird die SessionId angehangen,
+     * bei bekannten die Hörernummer verwendet.
+     */
+    private static WarenkorbId warenkorbIdFrom(final BestellungSessionId bestellungSessionId,
+                                               final String diskriminator) {
+        return new WarenkorbId(String.format("%s-%s", bestellungSessionId, diskriminator));
+    }
 
     public CdWarenkorb cdWarenkorbKopie(final BestellungSessionId bestellungSessionId,
                                         final Hoerernummer hoerernummer) {
@@ -111,104 +115,13 @@ public class WarenkorbService {
         }
     }
 
-    public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
-        warenkorbRepository.delete(warenkorbId);
-    }
-
-    //
-    // Download Warenkorb
-    //
-
-    public DownloadWarenkorb downloadWarenkorbKopie(final BestellungSessionId bestellungSessionId,
-                                                    final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        return new DownloadWarenkorb(downloadWarenkorb(hoerernummer, warenkorbId));
-    }
-
-    private DownloadWarenkorb downloadWarenkorb(final Hoerernummer hoerernummer, final WarenkorbId warenkorbId) {
-        return warenkorbRepository.loadDownloadWarenkorb(warenkorbId)
-                .orElseGet(() -> warenkorbRepository.downloadWarenkorbErstellen(warenkorbId, hoerernummer));
-    }
-
-    /**
-     * Command
-     */
-    public void inDenDownloadWarenkorb(final BestellungSessionId bestellungSessionId,
-                                       final Hoerernummer hoerernummer,
-                                       final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
-            final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId);
-            downloadWarenkorb.hinzufuegen(titelnummer);
-        } else {
-            LOGGER.error("Unbekanntes Hörbuch #{} wurde nicht für Hörer {} in den Download-Warenkorb gelegt",
-                    titelnummer, hoerernummer);
-        }
-    }
-
-    public boolean imDownloadWarenkorbEnthalten(final BestellungSessionId bestellungSessionId,
-                                                final Hoerernummer hoerernummer,
-                                                final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        return downloadWarenkorb(hoerernummer, warenkorbId).enthalten(titelnummer);
-    }
-
-    /**
-     * Command
-     */
-    public void ausDemDownloadWarenkorbEntfernen(final BestellungSessionId bestellungSessionId,
-                                                 final Hoerernummer hoerernummer,
-                                                 final Titelnummer titelnummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        if (hoerbuchkatalogService.hoerbuchVorhanden(hoerernummer, titelnummer)) {
-            final DownloadWarenkorb downloadWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId);
-            downloadWarenkorb.entfernen(titelnummer);
-        } else {
-            LOGGER.error("Unbekanntes Hörbuch {} wurde nicht für Hörer {} aus dem Download-Warenkorb entfernt",
-                    titelnummer, hoerernummer);
-        }
-    }
-
-    public int anzahlHoerbuecherAlsDownload(final BestellungSessionId bestellungSessionId,
-                                            final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        return downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
-    }
-
-    public boolean isMaxDownloadsProTagErreicht(final BestellungSessionId bestellungSessionId,
-                                                final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        final long vonHeute = downloadsRepository.anzahlLieferungenHeute(hoerernummer);
-        final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
-        return (vonHeute + imWarenkorb) >= /* TODO Konfigurieren */5;
-    }
-
-    public boolean isMaxDownloadsProMonatErreicht(final BestellungSessionId bestellungSessionId,
-                                                  final Hoerernummer hoerernummer) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        final long inDiesemMonat = downloadsRepository.anzahlLieferungenInDiesemMonat(hoerernummer);
-        final int imWarenkorb = downloadWarenkorb(hoerernummer, warenkorbId).getAnzahl();
-        return (inDiesemMonat + imWarenkorb) >= /* TODO Konfigurieren */10;
-    }
-
-    public void downloadWarenkorbLoeschen(final BestellungSessionId bestellungSessionId) {
-        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, DOWNLOAD);
-        warenkorbRepository.delete(warenkorbId);
-    }
-
     //
     // Warenkorb
     //
 
-    /**
-     * Hoerernummer aus {@link BestellungSessionId} erzeugen.
-     * Bei unbekannten Hörern wird die SessionId angehangen,
-     * bei bekannten die Hörernummer verwendet.
-     */
-    private static WarenkorbId warenkorbIdFrom(final BestellungSessionId bestellungSessionId,
-                                               final String diskriminator) {
-        return new WarenkorbId(String.format("%s-%s", bestellungSessionId, diskriminator));
+    public void cdWarenkorbLoeschen(final BestellungSessionId bestellungSessionId) {
+        final WarenkorbId warenkorbId = warenkorbIdFrom(bestellungSessionId, CD);
+        warenkorbRepository.delete(warenkorbId);
     }
 
 }

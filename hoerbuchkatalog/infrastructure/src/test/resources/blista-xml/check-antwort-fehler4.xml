@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<dls>
-    <version>1.4</version>
-    <fehler>
-        <fehlercode>4</fehlercode>
-        <fehlermeldung>Unbekannte DLS-Methode: '' oder falsche Syntax im REST-Aufruf '/v1/check/80170/1-0005761-3-22'.</fehlermeldung>
-    </fehler>
-</dls>

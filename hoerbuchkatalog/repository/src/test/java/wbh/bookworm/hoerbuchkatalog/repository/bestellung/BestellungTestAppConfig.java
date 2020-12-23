@@ -6,24 +6,15 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.bestellung.DlsBestellung;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.restdlskatalog.RestServiceClient;
-
-import aoc.mikrokosmos.io.fs.FilesystemWatcher;
-
 import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Import;
 
-import java.nio.file.Path;
+import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 @SpringBootApplication(scanBasePackageClasses = {
         FilesystemWatcher.class,
-        WarenkorbRepository.class,
-        DlsBestellung.class,
-        RestServiceClient.class
+        WarenkorbRepository.class
 })
 @SpringBootConfiguration
 @EnableConfigurationProperties

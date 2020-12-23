@@ -12,9 +12,6 @@ import java.util.Optional;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdAusDemWarenkorbEntfernt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdInDenWarenkorbGelegt;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadAusDemWarenkorbEntfernt;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadInDenWarenkorbGelegt;
-import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Warenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbGeleert;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.WarenkorbId;
@@ -30,8 +27,6 @@ public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, Warenko
         super(Warenkorb.class, WarenkorbId.class, storagePath);
         saveOnEvent(logger, CdInDenWarenkorbGelegt.class);
         saveOnEvent(logger, CdAusDemWarenkorbEntfernt.class);
-        saveOnEvent(logger, DownloadInDenWarenkorbGelegt.class);
-        saveOnEvent(logger, DownloadAusDemWarenkorbEntfernt.class);
         deleteOnEvent(logger, WarenkorbGeleert.class);
     }
 
@@ -41,15 +36,6 @@ public class WarenkorbRepository extends JsonDomainRepository<Warenkorb, Warenko
 
     public Optional<CdWarenkorb> loadCdWarenkorb(final WarenkorbId warenkorbId) {
         return super.load(warenkorbId, CdWarenkorb.class);
-    }
-
-    public DownloadWarenkorb downloadWarenkorbErstellen(final WarenkorbId warenkorbId,
-                                                        final Hoerernummer hoerernummer) {
-        return new DownloadWarenkorb(warenkorbId, hoerernummer);
-    }
-
-    public Optional<DownloadWarenkorb> loadDownloadWarenkorb(final WarenkorbId warenkorbId) {
-        return super.load(warenkorbId, DownloadWarenkorb.class);
     }
 
 }

@@ -16,10 +16,7 @@ import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferung;
-import wbh.bookworm.hoerbuchkatalog.infrastructure.blista.lieferung.DlsLieferungAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.config.RepositoryResolver;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.Hoerbuchkatalog;
 
@@ -28,14 +25,11 @@ import aoc.mikrokosmos.ddd.search.LuceneIndexFactory;
 import aoc.mikrokosmos.io.fs.FilesystemWatcher;
 
 @Configuration
-@Import({DlsLieferungAppConfig.class})
 @ComponentScan(basePackageClasses = {
         FilesystemWatcher.class,
         RepositoryResolver.class,
-        DownloadsRepository.class,
         CdLieferungRepository.class,
         Hoerbuchkatalog.class,
-        DlsLieferung.class,
         LuceneIndexFactory.class
 })
 @EnableConfigurationProperties(LuceneIndexConfig.class)
