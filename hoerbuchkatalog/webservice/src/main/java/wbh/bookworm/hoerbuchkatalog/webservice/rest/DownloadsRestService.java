@@ -1,5 +1,8 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -7,7 +10,6 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -26,6 +28,8 @@ import wbh.bookworm.shared.domain.Titelnummer;
 @RestController
 @RequestMapping("/v1/downloads")
 public class DownloadsRestService {
+
+    public static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("dd.MM.yyyy");
 
     private final DownloadsService downloadsService;
 
@@ -60,16 +64,17 @@ public class DownloadsRestService {
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
-        final Downloads downloads = downloadsService.downloadsKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
-        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(true);
-            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
-                    bestellungSessionId, hoerernummer, titelnummer));
+        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setAlsDownloadGebucht(true);
+            final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setAusgeliehenAm(format(downloads.ausgeliehenAm(titelnummer)));
+            dto.setRueckgabeBis(format(downloads.rueckgabeBis(titelnummer)));
+            dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }
@@ -80,18 +85,25 @@ public class DownloadsRestService {
                                                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
                                                                                     @PathVariable final String datumab,
                                                                                     @PathVariable final String stichwort) {
-        final Downloads downloads = downloadsService.downloadsKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
-        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(true);
-            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
-                    bestellungSessionId, hoerernummer, titelnummer));
+        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setAlsDownloadGebucht(true);
+            final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
+    }
+
+    private String format(final LocalDateTime localDateTime) {
+        try {
+            return localDateTime.format(DATE_TIME_FORMATTER);
+        } catch (Exception e) {
+            return "";
+        }
     }
 
 }

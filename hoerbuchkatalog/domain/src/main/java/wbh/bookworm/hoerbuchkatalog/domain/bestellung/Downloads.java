@@ -6,7 +6,7 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -15,6 +15,10 @@ import java.util.stream.Collectors;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,7 +34,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     @JsonProperty
     private final Hoerernummer hoerernummer;
 
-    private final Map<Titelnummer, LocalDate> titelnummern;
+    private final transient Map<Titelnummer, Details> titelnummern;
 
     /**
      * Copy constructor
@@ -47,19 +51,19 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     @JsonCreator
-    public Downloads(final @JsonProperty("domainId") DownloadsId downloadsId,
-                     final @JsonProperty("hoerernummer") Hoerernummer hoerernummer,
-                     final @JsonProperty("titelnummern") Map<Titelnummer, LocalDate> titelnummern) {
+    public Downloads(@JsonProperty("domainId") final DownloadsId downloadsId,
+                     @JsonProperty("hoerernummer") final Hoerernummer hoerernummer,
+                     @JsonProperty("titelnummern") final Map<Titelnummer, Details> titelnummern) {
         super(downloadsId);
         this.hoerernummer = hoerernummer;
         this.titelnummern = titelnummern;
     }
 
-    public Map<Titelnummer, LocalDate> getTitelnummern() {
-        final LocalDate now = LocalDate.now();
-        return titelnummern.entrySet().stream()
-                .filter(e -> now.getMonthValue() == e.getValue().getMonthValue()
-                        && now.getYear() == e.getValue().getYear())
+    public Map<Titelnummer, Details> getTitelnummern() {
+        final LocalDateTime now = LocalDateTime.now();
+        return titelnummern.entrySet()
+                .stream()
+                .filter(e -> now.isBefore(e.getValue().getRueckgabeBis()))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -75,13 +79,23 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
-        titelnummern.put(titelnummer, LocalDate.now());
+        titelnummern.put(titelnummer, new Details(LocalDateTime.now()));
         LOGGER.info("Hörbuch {} zu Downloads {} hinzugefügt", titelnummer, this);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
         LOGGER.info("Hörbuch {} von Downloads {} entfernt", titelnummer, this);
+    }
+
+    public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {
+        final boolean vorhanden = titelnummern.containsKey(titelnummer);
+        return vorhanden ? titelnummern.get(titelnummer).getAusgeliehenAm() : null;
+    }
+
+    public LocalDateTime rueckgabeBis(final Titelnummer titelnummer) {
+        final boolean vorhanden = titelnummern.containsKey(titelnummer);
+        return vorhanden ? titelnummern.get(titelnummer).getRueckgabeBis() : null;
     }
 
     @Override
@@ -103,6 +117,29 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public String toString() {
         return String.format("Merkliste{domainId=%s, merklisteId=%s, hoerernummer=%s, titelnummern=%s}",
                 domainId, domainId, hoerernummer, titelnummern);
+    }
+
+    public static class Details {
+
+        private final LocalDateTime ausgeliehenAm;
+
+        @JsonIgnore
+        private final LocalDateTime rueckgabeBis;
+
+        @JsonCreator
+        public Details(@JsonProperty("ausgeliehenAm") final LocalDateTime ausgeliehenAm) {
+            this.ausgeliehenAm = ausgeliehenAm;
+            this.rueckgabeBis = ausgeliehenAm.plusMonths(1);
+        }
+
+        public LocalDateTime getAusgeliehenAm() {
+            return ausgeliehenAm;
+        }
+
+        public LocalDateTime getRueckgabeBis() {
+            return rueckgabeBis;
+        }
+
     }
 
 }

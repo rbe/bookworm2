@@ -49,6 +49,10 @@ public final class HoerbuchAntwortDTO {
 
     private boolean alsDownloadGebucht;
 
+    private String ausgeliehenAm;
+
+    private String rueckgabeBis;
+
     private boolean aufDerMerkliste;
 
     private boolean imWarenkorb;
@@ -234,6 +238,22 @@ public final class HoerbuchAntwortDTO {
 
     public void setAlsDownloadGebucht(final boolean alsDownloadGebucht) {
         this.alsDownloadGebucht = alsDownloadGebucht;
+    }
+
+    public String getAusgeliehenAm() {
+        return ausgeliehenAm;
+    }
+
+    public void setAusgeliehenAm(final String ausgeliehenAm) {
+        this.ausgeliehenAm = ausgeliehenAm;
+    }
+
+    public String getRueckgabeBis() {
+        return rueckgabeBis;
+    }
+
+    public void setRueckgabeBis(final String rueckgabeBis) {
+        this.rueckgabeBis = rueckgabeBis;
     }
 
     public boolean isAufDerMerkliste() {
