@@ -126,6 +126,7 @@ public class BestellungController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/fetch/{orderId}")
+    @Produces(APPLICATION_ZIP_VALUE)
     public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                             @PathVariable final String titelnummer,
                                                             @PathVariable final String orderId) {
