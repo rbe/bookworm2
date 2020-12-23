@@ -33,6 +33,12 @@ $restBridge = [
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörbuchdetails
+        'Neuerscheinung' => [
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'GET',
+            'parameter_template' => '/hoerbuchkatalog/v1/katalog/{titelnummer}/details',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
         'Buchempfehlung' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
@@ -43,6 +49,28 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/katalog/{titelnummer}/details',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
+        // Session
+        'BestellungSessionId' => [
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'PUT',
+            'parameter_template' => '/hoerbuchkatalog/v1/session',
+            'mime_type' => 'application/json',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
+        // Downloads
+        'DownloadHinzufuegen' => [ // wird per JavaScript erledigt
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'POST',
+            'parameter_template' => '/hoerbuchkatalog/v1/downloads/{titelnummer}',
+            'mime_type' => 'application/json',
+            'headers' => $HOERBUCHKATALOG_HEADERS,
+        ],
+        'DownloadsAnzeigen' => [
+            'url' => $HOERBUCHKATALOG_URL,
+            'method' => 'GET',
+            'parameter_template' => '/hoerbuchkatalog/v1/downloads',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Merkliste
@@ -64,14 +92,6 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/merkliste',
-            'headers' => $HOERBUCHKATALOG_HEADERS,
-        ],
-        // Session
-        'BestellungSessionId' => [
-            'url' => $HOERBUCHKATALOG_URL,
-            'method' => 'PUT',
-            'parameter_template' => '/hoerbuchkatalog/v1/session',
-            'mime_type' => 'application/json',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Warenkorb

@@ -103,7 +103,7 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
     public function afterCommandExecution(string $commandName, string $urlParameters, string &$content): string
     {
         return "<script type='module'>\n"
-            . "import {Wbhonline} from '/hoerbuchkatalog/js/wbhonline.js';\n"
+            . "import {Wbhonline} from '/templates/wbh-online/hoerbuchkatalog/js/wbhonline.js';\n"
             . "document.addEventListener('DOMContentLoaded', (event) => {\n"
             . "  const wbhonline = new Wbhonline();\n"
             . "  wbhonline.initialize();\n"
