@@ -161,7 +161,8 @@ public class BestellungController {
             final long stop = System.nanoTime();
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} ms = {} s erstellt",
                     orderId, titelnummer, (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-            return new StreamedFile(inputStream, APPLICATION_ZIP);
+            return new StreamedFile(inputStream, APPLICATION_ZIP)
+                    .attach(String.format("%s.zip", titelnummer));
         } catch (IOException e) {
             throw new BusinessException(EMPTY_STRING, e);
         }
