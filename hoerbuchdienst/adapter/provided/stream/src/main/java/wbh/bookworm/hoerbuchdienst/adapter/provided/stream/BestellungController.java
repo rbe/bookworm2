@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.util.Map;
 import java.util.UUID;
 
+import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
 import io.micronaut.http.MediaType;
@@ -135,6 +136,7 @@ public class BestellungController {
     @Operation(summary = "Bestellung DAISY-ZIP abholen")
     @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP_VALUE)
     @Produces(APPLICATION_ZIP_VALUE)
+    @Blocking
     public HttpResponse<StreamedFile> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
                                                            @PathVariable final String titelnummer,
                                                            @PathVariable final String orderId) {
