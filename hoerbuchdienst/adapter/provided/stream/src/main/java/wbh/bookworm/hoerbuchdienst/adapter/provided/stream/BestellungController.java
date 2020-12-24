@@ -151,6 +151,7 @@ public class BestellungController {
                 },
                 body -> CORS.response(httpRequest, body)
                         .contentType(APPLICATION_ZIP_VALUE)
+                        .contentLength(body.getLength())
                         .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
