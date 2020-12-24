@@ -4,12 +4,12 @@
 
 X11Forwarding no
 AllowTcpForwarding no
-Subsystem sftp internal-sftp -u 0007
+Subsystem sftp internal-sftp -u 0002 # 2=nur lesen, 7=nichts
 
 Match User www-data
     AuthorizedKeysFile /etc/ssh/keys/www-data_authorized_keys
     ChrootDirectory /var/www
-    ForceCommand internal-sftp -u 0007
+    ForceCommand internal-sftp -u 0002 # 2=nur lesen, 7=nichts
 
 Match User mysql
     AuthorizedKeysFile /etc/ssh/keys/mysql_authorized_keys
@@ -19,4 +19,4 @@ Match User mysql
 Match User wbh
     AuthorizedKeysFile /etc/ssh/keys/wbh_authorized_keys
     ChrootDirectory /var/www
-    ForceCommand internal-sftp -u 0007
+    ForceCommand internal-sftp -u 0002 # 2=nur lesen, 7=nichts

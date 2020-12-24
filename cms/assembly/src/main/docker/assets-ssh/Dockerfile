@@ -13,7 +13,8 @@ RUN apk --no-cache add tzdata \
 RUN addgroup -g 1000 service \
     && adduser -u 100 -D -S -G service service
 RUN addgroup -g 82 -S www-data \
-    && adduser -u 82 -D -S -G www-data www-data
+    && adduser -u 82 -D -S -G www-data www-data \
+    && passwd -u www-data
 RUN apk --no-cache add openssh
 RUN sed -i'' -E \
         -e 's/^#(HostKey)/\1/' \
@@ -32,11 +33,10 @@ COPY *_authorized_keys /etc/ssh/keys/
 RUN chmod 444 /etc/ssh/keys/*_authorized_keys
 COPY setup-ssh-users.sh /usr/local/bin
 RUN chmod 700 /usr/local/bin/setup-ssh-users.sh \
-    && /usr/local/bin/setup-ssh-users.sh rbe cew mysql wbh \
+    && /usr/local/bin/setup-ssh-users.sh rbe cew wbh mysql \
     && rm /usr/local/bin/setup-ssh-users.sh
 COPY sshd_config_2 /etc/ssh/
 RUN cat /etc/ssh/sshd_config_2 >>/etc/ssh/sshd_config
-RUN passwd -u www-data
 WORKDIR /etc/ssh
 VOLUME ["/var/www/html"]
 EXPOSE 22

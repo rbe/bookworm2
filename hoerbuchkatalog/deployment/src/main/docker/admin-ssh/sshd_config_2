@@ -1,17 +1,17 @@
 #
-# WBH Bookworm - Admin
+# WBH Bookworm Admin
 #
 
 X11Forwarding no
 AllowTcpForwarding no
-Subsystem sftp internal-sftp -u 0007
+Subsystem sftp internal-sftp -u 0002 # 2=nur lesen, 7=nichts
 
 Match User rbe
     AuthorizedKeysFile /etc/ssh/keys/rbe_authorized_keys
-    ChrootDirectory /var/local/fs
-    ForceCommand internal-sftp -u 0007
+    ChrootDirectory /var/local/hoerbuchkatalog
+    ForceCommand internal-sftp -u 0002 # 2=nur lesen, 7=nichts
 
 Match User cew
     AuthorizedKeysFile /etc/ssh/keys/cew_authorized_keys
-    ChrootDirectory /var/local/fs
-    ForceCommand internal-sftp -u 0007
+    ChrootDirectory /var/local/hoerbuchkatalog
+    ForceCommand internal-sftp -u 0002 # 2=nur lesen, 7=nichts
