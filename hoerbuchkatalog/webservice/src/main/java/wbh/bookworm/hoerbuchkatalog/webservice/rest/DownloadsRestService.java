@@ -1,6 +1,5 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -50,7 +49,7 @@ public class DownloadsRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
-    @PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
@@ -79,7 +78,7 @@ public class DownloadsRestService {
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }
 
-    @GetMapping(value = "datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhaltGefiltert(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
