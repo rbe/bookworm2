@@ -9,9 +9,11 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Map;
 import java.util.UUID;
 
+import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -37,6 +39,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
+import aoc.mikrokosmos.io.fs.FilesUtils;
+
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition(
@@ -57,7 +61,7 @@ public class BestellungController {
 
     private static final String APPLICATION_ZIP_VALUE = "application/zip";
 
-    private static final MediaType APPLICATION_ZIP = MediaType.of("application/zip");
+    private static final MediaType APPLICATION_ZIP = MediaType.of(APPLICATION_ZIP_VALUE);
 
     private static final String EMPTY_STRING = "";
 
@@ -141,20 +145,34 @@ public class BestellungController {
                                                            @PathVariable final String titelnummer,
                                                            @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> {
-                    LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
-                    try (final InputStream inputStream = audiobookOrderService.fetchOrder(orderId)) {
-                        return new StreamedFile(inputStream, APPLICATION_ZIP);
-                    } catch (IOException e) {
-                        throw new BusinessException(EMPTY_STRING, e);
-                    }
-                },
+                () -> makeDaisyZipAsStream(titelnummer, orderId),
                 body -> CORS.response(httpRequest, body)
                         .contentType(APPLICATION_ZIP_VALUE)
                         .contentLength(body.getLength())
                         .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
+    }
+
+    private StreamedFile makeDaisyZipAsStream(final String titelnummer, final String orderId) {
+        LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
+        final long start = System.nanoTime();
+        try (final InputStream inputStream = audiobookOrderService.fetchOrder(orderId)) {
+            final long stop = System.nanoTime();
+            LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} ms = {} s erstellt",
+                    orderId, titelnummer, (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
+            return new StreamedFile(inputStream, APPLICATION_ZIP);
+        } catch (IOException e) {
+            throw new BusinessException(EMPTY_STRING, e);
+        }
+    }
+
+    @Value("${hoerbuchdienst.temporary.path}")
+    private Path temporaryDirectory;
+    private static final String DAISY_ZIP = "DAISY.zip";
+    private void cleanup(final String orderId) {
+        final Path orderDirectory = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        FilesUtils.cleanupTemporaryDirectory(orderDirectory);
     }
 
 }

@@ -80,11 +80,9 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     @Override
     public InputStream fetchOrder(final String orderId) {
-        try {
-            final Path orderDirectory = temporaryDirectory.resolve(orderId);
-            final InputStream inputStream = Files.newInputStream(orderDirectory.resolve(DAISY_ZIP));
+        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        try (final InputStream inputStream = Files.newInputStream(daisyZip)) {
             orderStatus.remove(orderId);
-            FilesUtils.cleanupTemporaryDirectory(orderDirectory);
             return inputStream;
         } catch (IOException e) {
             throw new AudiobookServiceException(String.format("Bestellung %s kann nicht abgerufen werden", orderId), e);
