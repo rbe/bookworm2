@@ -115,14 +115,16 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     }
 
     private void addWatermarkToId3Tags(final String watermark, final String urlPrefix, final Mp3File mp3file) {
+        /*
         if (!mp3file.hasId3v1Tag()) {
             mp3file.setId3v1Tag(new ID3v1Tag());
         }
+        mp3file.getId3v1Tag().setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
+        mp3file.getId3v1Tag().setComment(watermark); // max 30 Zeichen
+        */
         if (!mp3file.hasId3v2Tag()) {
             mp3file.setId3v2Tag(new ID3v24Tag());
         }
-        mp3file.getId3v1Tag().setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
-        mp3file.getId3v1Tag().setComment(watermark); // max 30 Zeichen
         mp3file.getId3v2Tag().setGenreDescription(GENRE_SPEECH);
         mp3file.getId3v2Tag().setCopyright(watermark); // max 30 Zeichen
         mp3file.getId3v2Tag().setUrl(String.format("%s/%s", urlPrefix, watermark));
