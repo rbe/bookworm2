@@ -4,7 +4,7 @@ GET {{host}}/{{api-version}}/shard/location/{{titelnummer}}
 ###
 
 // Ein Hörbuch aufgrund von Resharding zum Shard senden
-POST {{host}}/{{api-version}}/shard/redistribute/zip/{{titelnummer}}/{hash}
+POST {{host}}/{{api-version}}/shard/redistribute/{{titelnummer}}/{hash}
 Content-Type: application/octet-stream
 
 binaryData...

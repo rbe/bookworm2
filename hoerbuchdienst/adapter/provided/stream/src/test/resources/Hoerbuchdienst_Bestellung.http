@@ -1,5 +1,7 @@
 // Ein DAISY Hörbuch bestellen
 OPTIONS {{host}}/{{api-version}}/bestellung/{{titelnummer}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
@@ -9,12 +11,16 @@ X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
 Content-Type: application/json
 
-> {% client.global.set("orderId", response.json().orderId); %}
+> {%
+client.global.set("orderId", response.json.orderId);
+%}
 
 ###
 
 //  Den Status einer Bestellung eines DAISY Hörbuchs abfragen
 OPTIONS {{host}}/{{api-version}}/bestellung/{{titelnummer}}/status/{{orderId}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 

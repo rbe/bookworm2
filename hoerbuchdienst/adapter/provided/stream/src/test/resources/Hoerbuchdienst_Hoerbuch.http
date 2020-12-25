@@ -6,7 +6,7 @@ X-Bookworm-Hoerernummer: {{hoerernummer}}
 ###
 
 // Einen einzelnen Track eines Hörbuchs abrufen
-GET {{host}}/{{api-version}}/stream/{{titelnummer}}/track/01_Halt_die_Wolken_fest.mp3
+GET {{host}}/{{api-version}}/hoerbuch/{{titelnummer}}/track/{{track}}
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
 
