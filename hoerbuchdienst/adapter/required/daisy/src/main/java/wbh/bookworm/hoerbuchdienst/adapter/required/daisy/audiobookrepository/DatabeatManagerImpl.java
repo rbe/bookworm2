@@ -147,7 +147,7 @@ class DatabeatManagerImpl implements DatabeatManager {
                 final long delta = stop - start;
                 final Databeat myDatabeat = new Databeat(ZonedDateTime.now().toInstant(), myShardName,
                         availableBytes, usedBytes, shardAudiobooks, consentHash());
-                LOGGER.info("Generating Databeat with {} entries took {} ms = {} s = {} min",
+                LOGGER.info("Generated Databeat with {} entries in {} ms = {} s = {} min",
                         myDatabeat.numberOfObjects(), delta, delta / 1_000L, delta / 1_000L / 60L);
                 databeatMap.put(myShardName, myDatabeat);
                 persistDatabeat(myDatabeat);
