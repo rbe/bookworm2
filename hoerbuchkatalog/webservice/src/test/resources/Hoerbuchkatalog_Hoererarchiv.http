@@ -1,17 +1,17 @@
 GET {{host}}/{{context}}/{{api-version}}/hoererarchiv/belastungen
 X-Bookworm-Mandant: {{mandant}}
-X-Bookworm-Hoerernummer: 80170
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
 GET {{host}}/{{context}}/{{api-version}}/hoererarchiv/bestellkarten
 X-Bookworm-Mandant: {{mandant}}
-X-Bookworm-Hoerernummer: 80170
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
 GET {{host}}/{{context}}/{{api-version}}/hoererarchiv/erledigteBestellkarten
 X-Bookworm-Mandant: {{mandant}}
-X-Bookworm-Hoerernummer: 80170
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###

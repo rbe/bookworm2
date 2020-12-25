@@ -1,27 +1,29 @@
-POST {{host}}/{{context}}/{{api-version}}/warenkorb/21052
-Content-Type: application/json
+PUT {{host}}/{{context}}/{{api-version}}/warenkorb/21052
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
 
 ###
 
 GET {{host}}/{{context}}/{{api-version}}/warenkorb
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
 
 ###
 
 DELETE {{host}}/{{context}}/{{api-version}}/warenkorb/21052
-Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
 
 ###
 
-POST {{host}}/{{context}}/{{api-version}}/warenkorb/bestellen
+POST {{host}}/{{context}}/{{api-version}}/warenkorb
 Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
 
 {
     "hoerername": "Herbert Hörer",

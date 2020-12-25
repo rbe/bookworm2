@@ -1,41 +1,33 @@
-// Ein Hörbuch mit Wasserzeichen bestellen
-OPTIONS {{host}}/{{api-version}}/bestellung/zip
-Origin: {{origin}}
+// Ein DAISY Hörbuch bestellen
+OPTIONS {{host}}/{{api-version}}/bestellung/{{titelnummer}}
 
 ###
 
-// Ein Hörbuch mit Wasserzeichen bestellen
-POST {{host}}/{{api-version}}/bestellung/zip
-Origin: {{origin}}
+// Ein DAISY Hörbuch bestellen
+POST {{host}}/{{api-version}}/bestellung/{{titelnummer}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 Content-Type: application/json
-
-{
-    "mandant": "{{mandant}}",
-    "hoerernummer": "{{hoerernummer}}",
-    "aghNummer": "{{aghNummer}}",
-    "titelnummer": "{{titelnummer}}"
-}
 
 > {% client.global.set("orderId", response.json().orderId); %}
 
 ###
 
-//  Den Status einer Bestellung eines Hörbuchs mit Wasserzeichen abfragen
-OPTIONS {{host}}/bestellung/zip/{{titelnummer}}/status/{{orderId}}
+//  Den Status einer Bestellung eines DAISY Hörbuchs abfragen
+OPTIONS {{host}}/{{api-version}}/bestellung/{{titelnummer}}/status/{{orderId}}
 
 ###
 
-//  Den Status einer Bestellung eines Hörbuchs mit Wasserzeichen abfragen
-GET {{host}}/bestellung/zip/{{titelnummer}}/status/{{orderId}}
-Origin: {{origin}}
+//  Den Status einer Bestellung eines DAISY Hörbuchs abfragen
+GET {{host}}/{{api-version}}/bestellung/{{titelnummer}}/status/{{orderId}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
 
-//  Eine zuvor bestelltes Hörbuch mit Wasserzeichen abrufen
-GET {{host}}/bestellung/zip/{{titelnummer}}/fetch/{{orderId}}
-Origin: {{origin}}
+//  Eine zuvor bestelltes DAISY Hörbuch abrufen
+GET {{host}}/{{api-version}}/bestellung/{{titelnummer}}/fetch/{{orderId}}
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
 
 ###
-
-GET {{host}}/bestellung/zip/00004/status/8a190f21-6e8f-4f9a-8411-7ce9ad18d13d
-Origin: {{origin}}

@@ -1,0 +1,13 @@
+PUT {{host}}/{{context}}/{{api-version}}/downloads/21052
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
+###
+
+GET {{host}}/{{context}}/{{api-version}}/downloads
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
+###

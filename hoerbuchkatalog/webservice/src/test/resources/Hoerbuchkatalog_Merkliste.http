@@ -1,13 +1,16 @@
-POST {{host}}/{{context}}/{{api-version}}/merkliste/21052
-Content-Type: application/json
+PUT {{host}}/{{context}}/{{api-version}}/merkliste/21052
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
 
 ###
 
 GET {{host}}/{{context}}/{{api-version}}/merkliste
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
 
 ###
 
@@ -15,5 +18,7 @@ DELETE {{host}}/{{context}}/{{api-version}}/merkliste/21052
 Content-Type: application/json
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
 
 ###

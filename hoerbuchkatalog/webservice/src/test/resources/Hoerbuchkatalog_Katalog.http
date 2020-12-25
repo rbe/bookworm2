@@ -1,0 +1,25 @@
+// Stichwortsuche
+GET {{host}}/{{context}}/{{api-version}}/katalog/stichwort/Adams
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
+###
+
+// Hörbuch-Kurzinfo anzeigen
+GET {{host}}/{{context}}/{{api-version}}/katalog/21052
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
+
+###
+
+// Hörbuchdetails anzeigen
+GET {{host}}/{{context}}/{{api-version}}/katalog/21052/details
+X-Bookworm-Mandant: {{mandant}}
+X-Bookworm-Hoerernummer: {{hoerernummer}}
+X-Bookworm-BestellungSessionId:
+
+
+###

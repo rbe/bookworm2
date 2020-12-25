@@ -19,7 +19,7 @@ X-Bookworm-Hoerernummer: {{hoerernummer}}
 ###
 
 // Informationen über einen Track eines Hörbuchs abrufen
-GET {{host}}/{{api-version}}/katalog/{{titelnummer}}/track/01_Halt_die_Wolken_fest.mp3
+GET {{host}}/{{api-version}}/katalog/{{titelnummer}}/track/dtb_0001.mp3
 X-Bookworm-Mandant: {{mandant}}
 X-Bookworm-Hoerernummer: {{hoerernummer}}
 
