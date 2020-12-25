@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
-import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
@@ -84,18 +83,18 @@ public class BestellungController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}")
-    public HttpResponse<String> optionsOrderZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                            @PathVariable final String titelnummer) {
+    public HttpResponse<String> optionsOrderDaisyZip(final HttpRequest<?> httpRequest,
+                                                     @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Hörbuch als DAISY-ZIP bestellen")
     @Post(uri = "/{titelnummer}")
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Map<String, String>> orderZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                  @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                  @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                  @PathVariable final String titelnummer) {
+    public HttpResponse<Map<String, String>> orderDaisyZip(final HttpRequest<?> httpRequest,
+                                                           @Header("X-Bookworm-Mandant") final String xMandant,
+                                                           @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                           @PathVariable final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final UUID orderId = UUID.randomUUID();
@@ -110,20 +109,20 @@ public class BestellungController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/status/{orderId}")
-    public HttpResponse<String> optionsFetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                    @PathVariable final String titelnummer,
-                                                                    @PathVariable final String orderId) {
+    public HttpResponse<String> optionsFetchStatusOfDaisyZip(final HttpRequest<?> httpRequest,
+                                                             @PathVariable final String titelnummer,
+                                                             @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Status einer Bestellung DAISY-ZIP abrufen")
     @Get(uri = "/{titelnummer}/status/{orderId}", headRoute = false)
     @Produces(MediaType.APPLICATION_JSON)
-    public HttpResponse<Map<String, String>> fetchStatusOfZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                                          @Header("X-Bookworm-Mandant") final String xMandant,
-                                                                          @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                          @PathVariable final String titelnummer,
-                                                                          @PathVariable final String orderId) {
+    public HttpResponse<Map<String, String>> fetchStatusOfDaisyZip(final HttpRequest<?> httpRequest,
+                                                                   @Header("X-Bookworm-Mandant") final String xMandant,
+                                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                   @PathVariable final String titelnummer,
+                                                                   @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final String status = audiobookOrderService.orderStatus(orderId);
@@ -137,9 +136,9 @@ public class BestellungController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}/fetch/{orderId}")
-    public HttpResponse<String> optionsFetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                            @PathVariable final String titelnummer,
-                                                            @PathVariable final String orderId) {
+    public HttpResponse<String> optionsFetchDaisyZip(final HttpRequest<?> httpRequest,
+                                                     @PathVariable final String titelnummer,
+                                                     @PathVariable final String orderId) {
         return optionsResponse(httpRequest);
     }
 
@@ -147,16 +146,16 @@ public class BestellungController {
     @Get(uri = "/{titelnummer}/fetch/{orderId}", headRoute = false, produces = APPLICATION_ZIP_VALUE)
     @Produces(APPLICATION_ZIP_VALUE)
     @Blocking
-    public HttpResponse<StreamedFile> fetchZippedAudiobook(final HttpRequest<?> httpRequest,
-                                                           @PathVariable final String titelnummer,
-                                                           @PathVariable final String orderId) {
+    public HttpResponse<StreamedFile> fetchDaisyZip(final HttpRequest<?> httpRequest,
+                                                    @PathVariable final String titelnummer,
+                                                    @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> daisyZipAsStream(titelnummer, orderId),
                 body -> CORS.response(httpRequest, body)
-                        //.contentType(APPLICATION_ZIP_VALUE)
-                        //.contentLength(Math.max(0, body.getLength()))
-                        //.header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer))
-                        ,
+                //.contentType(APPLICATION_ZIP_VALUE)
+                //.contentLength(Math.max(0, body.getLength()))
+                //.header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer))
+                ,
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
@@ -164,13 +163,9 @@ public class BestellungController {
     private StreamedFile daisyZipAsStream(final String titelnummer, final String orderId) {
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
         if (maybeDaisyZipInputStream.isPresent()) {
-            try (final InputStream inputStream = maybeDaisyZipInputStream.get()) {
-                LOGGER.info("Bestellung {} Hörbuch {}: DAISY Hörbuch als ZIP-Datei wird gestreamt", orderId, titelnummer);
-                return new StreamedFile(inputStream, APPLICATION_ZIP)
-                        .attach(String.format("%s.zip", titelnummer));
-            } catch (IOException e) {
-                throw new BusinessException(EMPTY_STRING, e);
-            }
+            LOGGER.info("Bestellung {} Hörbuch {}: DAISY ZIP wird gestreamt", orderId, titelnummer);
+            return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP)
+                    .attach(String.format("%s.zip", titelnummer));
         }
         throw new BusinessException("Kein Hörbuch");
     }
