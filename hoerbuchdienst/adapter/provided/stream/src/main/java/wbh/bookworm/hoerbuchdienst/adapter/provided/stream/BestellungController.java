@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import io.micronaut.context.annotation.Value;
@@ -65,9 +66,14 @@ public class BestellungController {
 
     private static final String EMPTY_STRING = "";
 
+    private static final String DAISY_ZIP = "DAISY.zip";
+
     private final AudiobookOrderService audiobookOrderService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
+
+    @Value("${hoerbuchdienst.temporary.path}")
+    private Path temporaryDirectory;
 
     @Inject
     public BestellungController(final AudiobookOrderService audiobookOrderService,
@@ -94,7 +100,7 @@ public class BestellungController {
                 () -> {
                     final UUID orderId = UUID.randomUUID();
                     audiobookOrderService.orderZip(xMandant, xHoerernummer, titelnummer, orderId.toString());
-                    LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung aufgegeben", xHoerernummer, titelnummer);
+                    LOGGER.info("Hörer '{}' Hörbuch '{}': Bestellung {} aufgegeben", xHoerernummer, titelnummer, orderId);
                     return Map.of("orderId", orderId.toString());
                 },
                 body -> CORS.response(httpRequest, body),
@@ -145,32 +151,30 @@ public class BestellungController {
                                                            @PathVariable final String titelnummer,
                                                            @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> makeDaisyZipAsStream(titelnummer, orderId),
+                () -> daisyZipAsStream(titelnummer, orderId),
                 body -> CORS.response(httpRequest, body)
-                        .contentType(APPLICATION_ZIP_VALUE)
-                        .contentLength(body.getLength())
-                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
+                        //.contentType(APPLICATION_ZIP_VALUE)
+                        //.contentLength(Math.max(0, body.getLength()))
+                        //.header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer))
+                        ,
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 
-    private StreamedFile makeDaisyZipAsStream(final String titelnummer, final String orderId) {
-        LOGGER.info("Hörbuch {}: Bestellung {} wird abgeholt", titelnummer, orderId);
-        final long start = System.nanoTime();
-        try (final InputStream inputStream = audiobookOrderService.fetchOrder(orderId)) {
-            final long stop = System.nanoTime();
-            LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} ms = {} s erstellt",
-                    orderId, titelnummer, (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-            return new StreamedFile(inputStream, APPLICATION_ZIP)
-                    .attach(String.format("%s.zip", titelnummer));
-        } catch (IOException e) {
-            throw new BusinessException(EMPTY_STRING, e);
+    private StreamedFile daisyZipAsStream(final String titelnummer, final String orderId) {
+        final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
+        if (maybeDaisyZipInputStream.isPresent()) {
+            try (final InputStream inputStream = maybeDaisyZipInputStream.get()) {
+                LOGGER.info("Bestellung {} Hörbuch {}: DAISY Hörbuch als ZIP-Datei wird gestreamt", orderId, titelnummer);
+                return new StreamedFile(inputStream, APPLICATION_ZIP)
+                        .attach(String.format("%s.zip", titelnummer));
+            } catch (IOException e) {
+                throw new BusinessException(EMPTY_STRING, e);
+            }
         }
+        throw new BusinessException("Kein Hörbuch");
     }
 
-    @Value("${hoerbuchdienst.temporary.path}")
-    private Path temporaryDirectory;
-    private static final String DAISY_ZIP = "DAISY.zip";
     private void cleanup(final String orderId) {
         final Path orderDirectory = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
         FilesUtils.cleanupTemporaryDirectory(orderDirectory);

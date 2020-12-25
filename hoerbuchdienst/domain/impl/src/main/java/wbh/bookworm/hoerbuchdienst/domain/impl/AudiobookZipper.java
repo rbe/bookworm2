@@ -48,7 +48,9 @@ final class AudiobookZipper {
     Path watermarkedDaisyZipAsFile(final String mandant, final String hoerernummer, final String titelnummer) {
         final InputStream inputStream = watermarkedDaisyZipAsStream(mandant, hoerernummer, titelnummer);
         final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID() + ".zip");
+        LOGGER.info("Hörer {} Hörbuch {}: DAISY ZIP Stream wird in {} gespeichert", hoerernummer, titelnummer, zipFile);
         streamToFile(zipFile, inputStream);
+        LOGGER.info("Hörer {} Hörbuch {}: DAISY ZIP Stream wurde in {} gespeichert", hoerernummer, titelnummer, zipFile);
         return zipFile;
     }
 
@@ -65,7 +67,11 @@ final class AudiobookZipper {
         final Path daisyDirectory = audiobookDirectory.resolve(String.format("%sDAISY", titelnummer));
         try {
             // MP3s auf tmpfs packen
-            copyMp3sToTempDirectory(hoerernummer, titelnummer, daisyDirectory);
+            final long start = System.nanoTime();
+            audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
+            final long stop = System.nanoTime();
+            LOGGER.info("Hörer {} Hörbuch {} unter {} in {} ms = {} s abgelegt", hoerernummer, titelnummer, temporaryDirectory,
+                    (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             // Wasserzeichen an MP3s anbringen
             final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
             final int numMp3s = watermarkMp3s(watermark, daisyDirectory);
@@ -85,13 +91,6 @@ final class AudiobookZipper {
         }
     }
 
-    private void copyMp3sToTempDirectory(final String hoerernummer, final String titelnummer, final Path daisyDirectory) {
-        final long start = System.nanoTime();
-        audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
-        final long stop = System.nanoTime();
-        LOGGER.info("Hörer {} Hörbuch {} unter {} in {} ms = {} s abgelegt", hoerernummer, titelnummer, temporaryDirectory,
-                (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-    }
 
     private int watermarkMp3s(final String watermark, final Path daisyDirectory) {
         final long start = System.nanoTime();

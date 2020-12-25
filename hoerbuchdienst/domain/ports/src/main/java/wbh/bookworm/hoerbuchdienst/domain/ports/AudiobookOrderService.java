@@ -7,6 +7,8 @@
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.io.InputStream;
+import java.nio.file.Path;
+import java.util.Optional;
 
 public interface AudiobookOrderService {
 
@@ -14,6 +16,8 @@ public interface AudiobookOrderService {
 
     String orderStatus(String orderId);
 
-    InputStream fetchOrder(String orderId);
+    Optional<InputStream> fetchOrderAsStream(String orderId);
+
+    Optional<Path> fetchOrderAsFile(String orderId);
 
 }

@@ -12,6 +12,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.micronaut.context.annotation.Value;
@@ -21,8 +22,6 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookServiceException;
-
-import aoc.mikrokosmos.io.fs.FilesUtils;
 
 @Singleton
 class AudiobookOrderServiceImpl implements AudiobookOrderService {
@@ -54,19 +53,16 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     @Override
     @Async
     public void orderZip(final String mandant, final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String orderId) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörbuch mit Wasserzeichen als ZIP",
-                hoerernummer, titelnummer);
+        LOGGER.debug("Hörer {} Hörbuch {} Bestellung {}: Erstelle DAISY ZIP", hoerernummer, titelnummer, orderId);
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
         try {
             final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
-            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei erstellt",
-                    hoerernummer, titelnummer);
+            LOGGER.info("Hörer {} Hörbuch {} Bestellung {}: DAISY ZIP erstellt", hoerernummer, titelnummer, orderId);
             final Path orderDirectory = temporaryDirectory.resolve(orderId);
             Files.createDirectories(orderDirectory);
             Files.move(zipFile, orderDirectory.resolve(DAISY_ZIP));
             orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
-            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch erfolgreich erstellt",
-                    hoerernummer, titelnummer);
+            LOGGER.info("Hörer {} Hörbuch {} Bestellung {}: DAISY ZIP bereitgestellt", hoerernummer, titelnummer, orderId);
         } catch (Exception e) {
             orderStatus.put(orderId, ORDER_STATUS_FAILED);
             throw new AudiobookServiceException(String.format("Hörer %s Hörbuch %s: Kann Bestellung nicht persistieren", hoerernummer, titelnummer), e);
@@ -79,13 +75,28 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     }
 
     @Override
-    public InputStream fetchOrder(final String orderId) {
-        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
-        try (final InputStream inputStream = Files.newInputStream(daisyZip)) {
-            orderStatus.remove(orderId);
-            return inputStream;
+    public Optional<InputStream> fetchOrderAsStream(final String orderId) {
+        final Path daisyZip = fetchOrderAsFile(orderId).orElseThrow();
+        try {
+            return Optional.of(Files.newInputStream(daisyZip));
         } catch (IOException e) {
-            throw new AudiobookServiceException(String.format("Bestellung %s kann nicht abgerufen werden", orderId), e);
+            LOGGER.error("", e);
+            return Optional.empty();
+        }
+    }
+
+    @Override
+    public Optional<Path> fetchOrderAsFile(final String orderId) {
+        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        final boolean orderExists = orderStatus.containsKey(orderId)
+                && Files.exists(daisyZip);
+        if (orderExists) {
+            LOGGER.info("Bestellung {} wird abgeholt", orderId);
+            orderStatus.remove(orderId);
+            return Optional.of(daisyZip);
+        } else {
+            LOGGER.warn("Bestellung {} existiert nicht", orderId);
+            return Optional.empty();
         }
     }
 
