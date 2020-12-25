@@ -46,7 +46,7 @@ import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 @Produces(TrackController.AUDIO_MP3)
 public class TrackController {
 
-    static final String BASE_URL = "/v1/stream";
+    static final String BASE_URL = "/v1/hoerbuch";
 
     static final String AUDIO_MP3 = "audio/mp3";
 

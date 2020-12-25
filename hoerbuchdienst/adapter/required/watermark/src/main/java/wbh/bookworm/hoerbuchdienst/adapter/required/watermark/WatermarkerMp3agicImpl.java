@@ -38,7 +38,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
 
     @Override
     public String makeWatermark(final String mandant, final String hoerernummer, final String titelnummer) {
-        LOGGER.info("Erzeuge Wasserzeichen für Mandant {}, Hörer {}, Titelnummer {}",
+        LOGGER.debug("Erzeuge Wasserzeichen für Mandant {}, Hörer {}, Titelnummer {}",
                 mandant, hoerernummer, titelnummer);
         return String.format("%s-%s-%s", mandant, hoerernummer, titelnummer);
     }

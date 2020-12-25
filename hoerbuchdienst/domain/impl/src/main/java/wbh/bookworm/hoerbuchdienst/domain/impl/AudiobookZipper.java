@@ -70,16 +70,12 @@ final class AudiobookZipper {
             final long start = System.nanoTime();
             audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
             final long stop = System.nanoTime();
-            LOGGER.info("Hörer {} Hörbuch {} unter {} in {} ms = {} s abgelegt", hoerernummer, titelnummer, temporaryDirectory,
+            LOGGER.info("Hörer {} Hörbuch {} unter {} in {} ms = {} s abgelegt", hoerernummer, titelnummer, daisyDirectory,
                     (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             // Wasserzeichen an MP3s anbringen
             final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
-            final int numMp3s = watermarkMp3s(watermark, daisyDirectory);
-            LOGGER.info("Hörer {} Hörbuch {}: Wasserzeichen {} in {} MP3s angebracht", hoerernummer, titelnummer,
-                    watermark, numMp3s);
             // Wasserzeichen als Textdatei in ZIP legen
             addWatermarkFile(watermark, daisyDirectory);
-            LOGGER.info("Hörer {} Hörbuch {}: Wasserzeichen {} als cpr.txt-Textdatei erstellt", hoerernummer, titelnummer, watermark);
             // Alle Dateien in DAISY ZIP packen
             return daisyZipAsStream(hoerernummer, titelnummer, daisyDirectory);
         } catch (AudiobookServiceException e) {
@@ -91,7 +87,6 @@ final class AudiobookZipper {
         }
     }
 
-
     private int watermarkMp3s(final String watermark, final Path daisyDirectory) {
         final long start = System.nanoTime();
         try (final Stream<Path> pathStream = Files.list(daisyDirectory)
@@ -100,7 +95,7 @@ final class AudiobookZipper {
             paths.parallelStream() // Wasserzeichen anbringen mit 1 Thread pro MP3
                     .forEach(mp3File -> watermarker.addWatermarkInPlace(watermark, piracyInquiryUrlPrefix, mp3File));
             final long stop = System.nanoTime();
-            LOGGER.info("Wasserzeichen an {} MP3s in {} in {} ms = {} s angebracht", paths.size(), temporaryDirectory,
+            LOGGER.info("Wasserzeichen an {} MP3s in {} in {} ms = {} s angebracht", paths.size(), daisyDirectory,
                     (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             return paths.size();
         } catch (IOException e) {
@@ -109,8 +104,12 @@ final class AudiobookZipper {
     }
 
     private void addWatermarkFile(final String watermark, final Path daisyDirectory) {
+        final long start = System.nanoTime();
         try {
             Files.writeString(daisyDirectory.resolve("cpr.txt"), watermark);
+            final long stop = System.nanoTime();
+            LOGGER.info("Wasserzeichen als {}/cpr.txt-Textdatei in {} ms erstellt",
+                    daisyDirectory, (stop - start) / 1_000_000L);
         } catch (IOException e) {
             throw new AudiobookServiceException("", e);
         }
@@ -147,7 +146,7 @@ final class AudiobookZipper {
     }
 
     private void streamToFile(final Path zipFile, final InputStream zipInputStream) {
-        try(final OutputStream outputStream = Files.newOutputStream(zipFile)) {
+        try (final OutputStream outputStream = Files.newOutputStream(zipFile)) {
             zipInputStream.transferTo(outputStream);
             zipInputStream.close();
         } catch (Exception e) {
