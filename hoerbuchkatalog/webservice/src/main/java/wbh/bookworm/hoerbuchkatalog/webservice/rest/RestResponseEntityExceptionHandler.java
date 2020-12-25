@@ -10,10 +10,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import aoc.mikrokosmos.ddd.model.DomainValueException;
+
 @ControllerAdvice
 public class RestResponseEntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(RestResponseEntityExceptionHandler.class);
+
+    @ExceptionHandler(value = {DomainValueException.class})
+    protected ResponseEntity<Object> handleDomainValueException(final Exception ex, final WebRequest request) {
+        return getObjectResponseEntity(ex, request, HttpStatus.UNPROCESSABLE_ENTITY);
+    }
 
     @ExceptionHandler(value = {RuntimeException.class})
     protected ResponseEntity<Object> handleRuntimeException(final Exception ex, final WebRequest request) {
