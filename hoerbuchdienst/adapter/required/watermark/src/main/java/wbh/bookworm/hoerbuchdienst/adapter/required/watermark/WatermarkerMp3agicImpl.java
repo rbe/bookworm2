@@ -102,8 +102,8 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
 
     @Override
     public void addWatermarkInPlace(final String watermark, final String urlPrefix, final Path mp3) {
-        final Path watermarkedMp3File = mp3.getParent()
-                .resolve(String.format("%s.watermark.%s", mp3.getFileName(), UUID.randomUUID()));
+        final String filename = String.format("%s.watermark.%s", mp3.getFileName(), UUID.randomUUID());
+        final Path watermarkedMp3File = mp3.getParent().resolve(filename);
         try {
             final Mp3File mp3file = new Mp3File(mp3.toFile());
             addWatermarkToId3Tags(watermark, urlPrefix, mp3file);
@@ -115,26 +115,28 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     }
 
     private void addWatermarkToId3Tags(final String watermark, final String urlPrefix, final Mp3File mp3file) {
-        /*
+        // ID3v1
+        final ID3v1Tag id3v1Tag = new ID3v1Tag();
         if (!mp3file.hasId3v1Tag()) {
-            mp3file.setId3v1Tag(new ID3v1Tag());
+            mp3file.setId3v1Tag(id3v1Tag);
         }
-        mp3file.getId3v1Tag().setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
-        mp3file.getId3v1Tag().setComment(watermark); // max 30 Zeichen
-        */
+        id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
+        id3v1Tag.setComment(watermark); // max 30 Zeichen
+        // ID3v2
+        final ID3v24Tag id3v2Tag = new ID3v24Tag();
         if (!mp3file.hasId3v2Tag()) {
-            mp3file.setId3v2Tag(new ID3v24Tag());
+            mp3file.setId3v2Tag(id3v2Tag);
         }
-        mp3file.getId3v2Tag().setGenreDescription(GENRE_SPEECH);
-        mp3file.getId3v2Tag().setCopyright(watermark); // max 30 Zeichen
-        mp3file.getId3v2Tag().setUrl(String.format("%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setCopyrightUrl(String.format("CR:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setArtistUrl(String.format("AR:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setCommercialUrl(String.format("CO:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setAudiofileUrl(String.format("AF:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setAudioSourceUrl(String.format("AS:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setPublisherUrl(String.format("PU:%s/%s", urlPrefix, watermark));
-        mp3file.getId3v2Tag().setPaymentUrl(String.format("PY:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setGenreDescription(GENRE_SPEECH);
+        id3v2Tag.setCopyright(watermark); // max 30 Zeichen
+        id3v2Tag.setUrl(String.format("%s/%s", urlPrefix, watermark));
+        id3v2Tag.setCopyrightUrl(String.format("CR:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setArtistUrl(String.format("AR:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setAudiofileUrl(String.format("AF:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setAudioSourceUrl(String.format("AS:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setPublisherUrl(String.format("PU:%s/%s", urlPrefix, watermark));
+        id3v2Tag.setPaymentUrl(String.format("PY:%s/%s", urlPrefix, watermark));
     }
 
 }
