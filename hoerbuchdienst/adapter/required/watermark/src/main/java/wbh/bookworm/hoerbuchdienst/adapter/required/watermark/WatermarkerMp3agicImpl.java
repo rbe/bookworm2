@@ -18,7 +18,6 @@ import com.mpatric.mp3agic.ID3v1Genres;
 import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
 import com.mpatric.mp3agic.ID3v23Tag;
-import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
 import com.mpatric.mp3agic.NotSupportedException;
@@ -117,27 +116,39 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
 
     private void addWatermarkToId3Tags(final String watermark, final String urlPrefix, final Mp3File mp3file) {
         // ID3v1
-        final ID3v1Tag id3v1Tag = new ID3v1Tag();
+        final ID3v1 id3v1Tag = new ID3v1Tag();
         if (!mp3file.hasId3v1Tag()) {
             mp3file.setId3v1Tag(id3v1Tag);
         }
         id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
         id3v1Tag.setComment(watermark); // max 30 Zeichen
         // ID3v2
-        final ID3v23Tag id3v2Tag = new ID3v23Tag();
+        final ID3v2 id3v2Tag = new ID3v23Tag();
         if (!mp3file.hasId3v2Tag()) {
             mp3file.setId3v2Tag(id3v2Tag);
         }
+        // TCON (Content type): Speech (101)
         id3v2Tag.setGenreDescription(GENRE_SPEECH);
-        id3v2Tag.setCopyright(watermark); // max 30 Zeichen
+        // TCOP (Copyright message), max. 30 Zeichen
+        id3v2Tag.setCopyright(watermark);
+        // WCOM (Commercial information)
+        //id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", urlPrefix, watermark));
+        // WCOP (Copyright/Legal infromation)
+        id3v2Tag.setCopyrightUrl(String.format("%s/%s", urlPrefix, watermark));
+        // WOAF (Official audio file webpage)
+        id3v2Tag.setAudiofileUrl(String.format("%s/%s", urlPrefix, watermark));
+        // WOAR (Official artist/performer webpage)
+        //id3v2Tag.setArtistUrl();
+        // WOAS (Official audio source webpage)
+        id3v2Tag.setAudioSourceUrl(String.format("%s/%s", urlPrefix, watermark));
+        // WPUB (Official publisher webpage)
+        id3v2Tag.setPublisherUrl("https://wbh-online.de");
+        // WPAY (Payment)
+        //id3v2Tag.setPaymentUrl();
+        // WXXX (User defined URL link)
         id3v2Tag.setUrl(String.format("%s/%s", urlPrefix, watermark));
-        id3v2Tag.setCopyrightUrl(String.format("CR:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setArtistUrl(String.format("AR:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setAudiofileUrl(String.format("AF:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setAudioSourceUrl(String.format("AS:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setPublisherUrl(String.format("PU:%s/%s", urlPrefix, watermark));
-        id3v2Tag.setPaymentUrl(String.format("PY:%s/%s", urlPrefix, watermark));
+        // COMM (Comment)
+        id3v2Tag.setComment(watermark);
     }
 
 }
