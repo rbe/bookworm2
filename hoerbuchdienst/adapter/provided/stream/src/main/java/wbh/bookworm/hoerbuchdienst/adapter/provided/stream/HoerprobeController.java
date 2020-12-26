@@ -132,8 +132,8 @@ public class HoerprobeController {
                                          final String titelnummer) {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
         final List<String> mp3s = playlist.getEntries().stream()
-                .filter(dto -> dto.getSeconds() < 600)
                 .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
+                .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 600)
                 .peek(dto -> LOGGER.debug("Hörbuch {} Kandiat für eine Hörprobe: {}", titelnummer, dto))
                 .map(PlaylistEntryDTO::getIdent)
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
