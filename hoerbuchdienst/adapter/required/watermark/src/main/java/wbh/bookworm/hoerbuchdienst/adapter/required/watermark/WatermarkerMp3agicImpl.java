@@ -17,6 +17,7 @@ import com.mpatric.mp3agic.ID3v1;
 import com.mpatric.mp3agic.ID3v1Genres;
 import com.mpatric.mp3agic.ID3v1Tag;
 import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.ID3v23Tag;
 import com.mpatric.mp3agic.ID3v24Tag;
 import com.mpatric.mp3agic.InvalidDataException;
 import com.mpatric.mp3agic.Mp3File;
@@ -123,7 +124,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
         id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
         id3v1Tag.setComment(watermark); // max 30 Zeichen
         // ID3v2
-        final ID3v24Tag id3v2Tag = new ID3v24Tag();
+        final ID3v23Tag id3v2Tag = new ID3v23Tag();
         if (!mp3file.hasId3v2Tag()) {
             mp3file.setId3v2Tag(id3v2Tag);
         }
