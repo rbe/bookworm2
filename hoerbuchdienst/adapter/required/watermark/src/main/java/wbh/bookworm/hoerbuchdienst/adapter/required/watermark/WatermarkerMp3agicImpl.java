@@ -115,14 +115,12 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
     }
 
     private void addWatermarkToId3Tags(final String watermark, final String urlPrefix, final Mp3File mp3file) {
-        // ID3v1
-        final ID3v1 id3v1Tag = new ID3v1Tag();
-        if (!mp3file.hasId3v1Tag()) {
-            mp3file.setId3v1Tag(id3v1Tag);
-        }
-        id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
-        id3v1Tag.setComment(watermark); // max 30 Zeichen
-        // ID3v2
+        final String watermarkUrl = String.format("%s/%s", urlPrefix, watermark);
+        id3v1(watermark, watermarkUrl, mp3file);
+        id3v2(watermark, watermarkUrl, mp3file);
+    }
+
+    private void id3v2(final String watermark, final String watermarkUrl, final Mp3File mp3file) {
         final ID3v2 id3v2Tag = new ID3v23Tag();
         if (!mp3file.hasId3v2Tag()) {
             mp3file.setId3v2Tag(id3v2Tag);
@@ -132,23 +130,32 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
         // TCOP (Copyright message), max. 30 Zeichen
         id3v2Tag.setCopyright(watermark);
         // WCOM (Commercial information)
-        //id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", urlPrefix, watermark));
+        //id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", watermarkUrl, watermark));
         // WCOP (Copyright/Legal infromation)
-        id3v2Tag.setCopyrightUrl(String.format("%s/%s", urlPrefix, watermark));
+        id3v2Tag.setCopyrightUrl(watermarkUrl);
         // WOAF (Official audio file webpage)
-        id3v2Tag.setAudiofileUrl(String.format("%s/%s", urlPrefix, watermark));
+        id3v2Tag.setAudiofileUrl(watermarkUrl);
         // WOAR (Official artist/performer webpage)
         //id3v2Tag.setArtistUrl();
         // WOAS (Official audio source webpage)
-        id3v2Tag.setAudioSourceUrl(String.format("%s/%s", urlPrefix, watermark));
+        id3v2Tag.setAudioSourceUrl(watermarkUrl);
         // WPUB (Official publisher webpage)
         id3v2Tag.setPublisherUrl("https://wbh-online.de");
         // WPAY (Payment)
         //id3v2Tag.setPaymentUrl();
         // WXXX (User defined URL link)
-        id3v2Tag.setUrl(String.format("%s/%s", urlPrefix, watermark));
+        //id3v2Tag.setUrl();
         // COMM (Comment)
-        id3v2Tag.setComment(watermark);
+        id3v2Tag.setComment(watermarkUrl);
+    }
+
+    private void id3v1(final String watermark, final String watermarkUrl, final Mp3File mp3file) {
+        final ID3v1 id3v1Tag = new ID3v1Tag();
+        if (!mp3file.hasId3v1Tag()) {
+            mp3file.setId3v1Tag(id3v1Tag);
+        }
+        id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
+        id3v1Tag.setComment(watermarkUrl); // max 30 Zeichen
     }
 
 }
