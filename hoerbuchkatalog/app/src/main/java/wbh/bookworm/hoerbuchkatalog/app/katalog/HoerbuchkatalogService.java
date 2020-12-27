@@ -27,7 +27,7 @@ public final class HoerbuchkatalogService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerbuchkatalogService.class);
 
-    private static final String HOERER_TITELNUMMER = "Hörer {} Titelnummer {}";
+    private static final String HOERER_TITELNUMMER = "Hörer '{}' Titelnummer '{}'";
 
     private final RepositoryResolver repositoryResolver;
 
@@ -38,9 +38,9 @@ public final class HoerbuchkatalogService {
 
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
-        LOGGER.trace("Hörer {} Suchparameter {} in {}", hoerernummer, suchparameter, hoerbuchkatalog);
+        LOGGER.trace("Hörer '{}': Suchparameter {} in {}", hoerernummer, suchparameter, hoerbuchkatalog);
         final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.info("Hörer {} Suche nach '{}' ergab {} Treffer",
+        LOGGER.info("Hörer '{}': Suche nach '{}' ergab {} Treffer",
                 hoerernummer, suchparameter, suchergebnis.getAnzahl());
         return suchergebnis;
     }

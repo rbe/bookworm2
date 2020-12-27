@@ -77,8 +77,8 @@ public class WarenkorbService {
             cdWarenkorb.hinzufuegen(titelnummer);
             return true;
         } else {
-            LOGGER.error("Unbekanntes Hörbuch #{} wurde nicht für Hörer {} in den CD-Warenkorb gelegt",
-                    titelnummer, hoerernummer);
+            LOGGER.error("Hörer '{}': Unbekanntes Hörbuch '{}' wurde nicht in den CD-Warenkorb gelegt",
+                    hoerernummer, titelnummer);
             return false;
         }
     }
@@ -109,7 +109,7 @@ public class WarenkorbService {
             cdWarenkorb.entfernen(titelnummer);
             return true;
         } else {
-            LOGGER.error("Unbekanntes Hörbuch #{} wurde nicht für Hörer {} aus dem CD-Warenkorb entfernt",
+            LOGGER.error("Hörer '{}': Unbekanntes Hörbuch '{}' wurde nicht aus dem CD-Warenkorb entfernt",
                     titelnummer, hoerernummer);
             return false;
         }

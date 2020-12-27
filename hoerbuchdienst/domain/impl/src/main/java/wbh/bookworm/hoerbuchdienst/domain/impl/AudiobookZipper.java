@@ -70,7 +70,7 @@ final class AudiobookZipper {
             final long start = System.nanoTime();
             audiobookRepository.mp3ToTempDirectory(titelnummer, daisyDirectory);
             final long stop = System.nanoTime();
-            LOGGER.info("Hörer {} Hörbuch {} unter {} in {} ms = {} s abgelegt", hoerernummer, titelnummer, daisyDirectory,
+            LOGGER.info("Hörer '{}' Hörbuch '{}': ZIP unter '{}' in {} ms = {} s abgelegt", hoerernummer, titelnummer, daisyDirectory,
                     (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             // Wasserzeichen an MP3s anbringen
             final String watermark = watermarker.makeWatermark(mandant, hoerernummer, titelnummer);
@@ -138,7 +138,7 @@ final class AudiobookZipper {
             final List<Path> files = paths.sorted().collect(Collectors.toUnmodifiableList());
             zipInputStream = zip.zipAsStream(files);
             final long stop = System.nanoTime();
-            LOGGER.info("Hörer {} Hörbuch {}: DAISY Hörbuch als Stream in {} ms = {} s erstellt", hoerernummer, titelnummer,
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als Stream in {} ms = {} s erstellt", hoerernummer, titelnummer,
                     (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             return zipInputStream;
         } catch (IOException e) {

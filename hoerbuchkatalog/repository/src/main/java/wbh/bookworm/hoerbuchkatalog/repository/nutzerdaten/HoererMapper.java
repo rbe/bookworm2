@@ -292,7 +292,7 @@ final class HoererMapper {
     private Hoerer hoererAusAs400Dateien(final String[] hoerstpRow) {
         final Hoerernummer hoerernummer =
                 new Hoerernummer(hoerstp.getValue(hoerstpRow, "HOENR"));
-        LOGGER.trace("Verheirate Daten für Hörer {}", hoerernummer);
+        LOGGER.trace("Hörer '{}': Verheirate Daten", hoerernummer);
         try {
             final String[] hoekzstpRow =
                     hoekzstp.findRowByColumnValue("HOEKZN", hoerernummer.getValue());
@@ -333,7 +333,7 @@ final class HoererMapper {
                             hoebstp.getValue(hoebstpRow, "BURDAT"))
             );
         } catch (Exception e) {
-            LOGGER.error("Kann Daten für Hörer " + hoerernummer + " nicht verheiraten", e);
+            LOGGER.error(String.format("Hörer '%s': Kann Daten nicht verheiraten", hoerernummer), e);
             return null;
         }
     }

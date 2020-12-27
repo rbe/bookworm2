@@ -28,11 +28,11 @@ public final class Datenformat {
         } catch (DateTimeParseException e) {
             try {
                 final LocalDate yyyyddMM = LocalDate.parse(str, DateTimeFormatter.ofPattern("yyyyddMM"));
-                LOGGER.warn("Hörer {} {} hat falsches Format: {}, korrigiert zu {}",
+                LOGGER.warn("Hörer '{}': '{}' hat falsches Format: '{}', korrigiert zu '{}'",
                         hoerernummer, datum, str, yyyyddMM);
                 return yyyyddMM;
             } catch (DateTimeParseException e2) {
-                LOGGER.warn("Hörer {} {} hat falsches Format: {}, Korrektur nicht möglich",
+                LOGGER.warn("Hörer '{}': '{}' hat falsches Format: '{}', Korrektur nicht möglich",
                         hoerernummer, datum, str);
                 return null;
             }

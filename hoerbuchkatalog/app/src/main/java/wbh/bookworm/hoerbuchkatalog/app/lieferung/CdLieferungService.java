@@ -51,7 +51,7 @@ public final class CdLieferungService {
                     Comparator.comparing(Belastung::getBelastungsdatum,
                             Comparator.nullsFirst(Comparator.naturalOrder())))
                     .reversed());
-            LOGGER.info("{} Belastungen für Hörer {} gefunden", belastungen.size(), hoerernummer);
+            LOGGER.info("Hörer '{}': {} Belastungen gefunden", hoerernummer, belastungen.size());
             return belastungen;
         }
     }
@@ -72,8 +72,8 @@ public final class CdLieferungService {
                     Comparator.comparing(Bestellkarte::toString,
                             Comparator.nullsFirst(Comparator.naturalOrder())))
                     .reversed());*/
-            LOGGER.info("{} Bestellkarten für Hörer {} gefunden und sortiert",
-                    bestellkarten.size(), hoerernummer);
+            LOGGER.info("Hörer '{}': {} Bestellkarten gefunden und sortiert",
+                    hoerernummer, bestellkarten.size());
             return bestellkarten;
         }
     }
@@ -94,8 +94,8 @@ public final class CdLieferungService {
                     Comparator.comparing(ErledigteBestellkarte::getAusleihdatum,
                             Comparator.nullsFirst(Comparator.naturalOrder())))
                     .reversed());
-            LOGGER.info("{} erledigte Bestellkarten für Hörer {} gefunden und sortiert",
-                    erledigteBestellkarten.size(), hoerernummer);
+            LOGGER.info("Hörer '{}': {} erledigte Bestellkarten gefunden und sortiert",
+                    hoerernummer, erledigteBestellkarten.size());
             return erledigteBestellkarten;
         }
     }

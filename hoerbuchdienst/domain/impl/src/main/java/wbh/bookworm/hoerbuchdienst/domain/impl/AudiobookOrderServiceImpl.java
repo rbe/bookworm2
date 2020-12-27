@@ -53,7 +53,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     @Override
     @Async
     public void orderZip(final String mandant, final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String orderId) {
-        LOGGER.debug("Hörer {} Hörbuch {} Bestellung {}: Erstelle DAISY ZIP", hoerernummer, titelnummer, orderId);
+        LOGGER.debug("Hörer '{}' Hörbuch '{}' Bestellung {}: Erstelle DAISY ZIP", hoerernummer, titelnummer, orderId);
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
         try {
             final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);

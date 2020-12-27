@@ -307,7 +307,7 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
             }
         }
         if ("0,00".equalsIgnoreCase(spieldauer)) {
-            LOGGER.warn("Spieldauer ({}) von Hörbuch {} unbekannt", spieldauer, titelnummer);
+            LOGGER.warn("Spieldauer {} von Hörbuch '{}' unbekannt", spieldauer, titelnummer);
         }
         return abgeleiteteSpieldauer;
     }

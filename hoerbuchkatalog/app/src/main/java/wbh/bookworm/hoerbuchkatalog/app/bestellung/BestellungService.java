@@ -43,13 +43,13 @@ public final class BestellungService {
 
     public BestellungSessionId bestellungSessionId(final String hoerernummer) {
         final BestellungSessionId bestellungSessionId = new BestellungSessionId(hoerernummer);
-        LOGGER.debug("Hörer {} hat BestellungSessionId {} bekommen", hoerernummer, bestellungSessionId);
+        LOGGER.debug("Hörer '{}' hat BestellungSessionId '{}' bekommen", hoerernummer, bestellungSessionId);
         return bestellungSessionId;
     }
 
     public BestellungSessionId bestellungSessionId(final Hoerernummer hoerernummer) {
         final BestellungSessionId bestellungSessionId = new BestellungSessionId();
-        LOGGER.debug("Hörer {} hat BestellungSessionId {} bekommen", hoerernummer, bestellungSessionId);
+        LOGGER.debug("Hörer '{}' hat BestellungSessionId '{}' bekommen", hoerernummer, bestellungSessionId);
         return bestellungSessionId;
     }
 
@@ -63,7 +63,7 @@ public final class BestellungService {
                                                      final String bemerkung,
                                                      final Boolean bestellkarteMischen,
                                                      final Boolean alteBestellkarteLoeschen) {
-        LOGGER.trace("Bestellung {} für Hörer {} wird aufgegeben", this, hoerernummer);
+        LOGGER.trace("Bestellung '{}' für Hörer '{}' wird aufgegeben", this, hoerernummer);
         final CdWarenkorb cdWarenkorb = warenkorbService
                 .cdWarenkorbKopie(bestellungSessionId, hoerernummer);
         final Bestellung bestellung = bestellungRepository.erstellen(
@@ -72,7 +72,7 @@ public final class BestellungService {
                 cdWarenkorb.getTitelnummern());
         bestellung.aufgeben();
         cdWarenkorb.leeren();
-        LOGGER.info("Bestellung {} für Hörer {} wurde erfolgreich aufgegeben!",
+        LOGGER.info("Bestellung '{}' für Hörer '{}' wurde erfolgreich aufgegeben!",
                 bestellung, hoerernummer);
         return Optional.of(bestellung.getDomainId());
     }

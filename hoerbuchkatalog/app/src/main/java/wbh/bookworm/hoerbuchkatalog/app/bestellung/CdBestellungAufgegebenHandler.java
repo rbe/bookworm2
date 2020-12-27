@@ -54,7 +54,7 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
     public void handleEvent(final BestellungAufgegeben domainEvent) {
         final Bestellung bestellung = (Bestellung) domainEvent.getDomainAggregate();
         final BestellungId bestellungId = domainEvent.getDomainId();
-        logger.info("Bestellung {}: Hörer {} hat folgende CDs bestellt: {}",
+        logger.info("Bestellung '{}': Hörer '{}' hat folgende CDs bestellt: {}",
                 bestellungId, domainEvent.getHoerernummer(), bestellung.getCdTitelnummern());
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
         final Set<Hoerbuch> hoerbucher = bestellung.getCdTitelnummern().stream().
@@ -79,19 +79,19 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
 
     private void emailArchivieren(final BestellungAufgegeben domainEvent,
                                   final String htmlEmail) {
-        logger.trace("Archiviere E-Mail zu Bestellung {} an Hörer {}",
-                domainEvent.getDomainId(), domainEvent.getHoerernummer());
+        logger.trace("Hörer '{}': Archiviere E-Mail zu Bestellung '{}'",
+                domainEvent.getHoerernummer(), domainEvent.getDomainId());
         try {
             final Path archivDatei = Path.of("var/repository/Bestellung",
                     domainEvent.getDomainId() + "-CDBestellung.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
-            logger.info("E-Mail zu Bestellung {} an Hörer {} unter {} archiviert",
-                    domainEvent.getDomainId(), domainEvent.getHoerernummer(), archivDatei);
+            logger.info("Hörer '{}': E-Mail zu Bestellung '{}' unter '{}' archiviert",
+                    domainEvent.getHoerernummer(), domainEvent.getDomainId(), archivDatei);
         } catch (IOException e) {
             logger.error(String.format(
-                    "Kann E-Mail für Bestellung %s von Hörer %s nicht archivieren:%n%s",
-                    domainEvent.getDomainId(), domainEvent.getHoerernummer(), htmlEmail),
+                    "Hörer %s: Kann E-Mail für Bestellung %s nicht archivieren:%n%s",
+                    domainEvent.getHoerernummer(), domainEvent.getDomainId(), htmlEmail),
                     e);
         }
     }

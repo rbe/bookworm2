@@ -64,20 +64,20 @@ public final class Merkliste extends DomainAggregate<Merkliste, MerklisteId> {
 
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.contains(titelnummer);
-        LOGGER.trace("Merkliste {} enthält Hörbuch {}: {}", this, titelnummer, bereitsVorhanden);
+        LOGGER.trace("Merkliste '{}' enthält Hörbuch '{}': '{}'", this, titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.add(titelnummer);
-        LOGGER.info("Hörbuch {} zum Warenkorb {} hinzugefügt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' zum Warenkorb '{}' hinzugefügt", titelnummer, this);
         DomainEventPublisher.global()
                 .publishAsync(new HoerbuechAufDieMerklisteGesetzt(hoerernummer, this, titelnummer));
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch {} aus der Merkliste {} entfernt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' aus der Merkliste '{}' entfernt", titelnummer, this);
         DomainEventPublisher.global()
                 .publishAsync(new HoerbuechVonDerMerklisteEntfernt(hoerernummer, this, titelnummer));
     }

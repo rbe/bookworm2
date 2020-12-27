@@ -126,7 +126,7 @@ public class BestellungController {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final String status = audiobookOrderService.orderStatus(orderId);
-                    LOGGER.info("Hörbuch {}: Status der Bestellung {} ist {}", titelnummer, orderId, status);
+                    LOGGER.info("Hörbuch '{}': Status der Bestellung {} ist {}", titelnummer, orderId, status);
                     return Map.of("orderStatus", status);
                 },
                 body -> CORS.response(httpRequest, body),
@@ -159,7 +159,7 @@ public class BestellungController {
     private StreamedFile daisyZipAsStream(final String titelnummer, final String orderId) {
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
         if (maybeDaisyZipInputStream.isPresent()) {
-            LOGGER.info("Bestellung {} Hörbuch {}: DAISY ZIP wird gestreamt", orderId, titelnummer);
+            LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
             return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP)
                     .attach(String.format("%s.zip", titelnummer));
         }

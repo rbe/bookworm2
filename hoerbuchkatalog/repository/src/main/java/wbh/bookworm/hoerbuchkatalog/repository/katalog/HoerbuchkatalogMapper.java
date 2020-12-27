@@ -111,7 +111,7 @@ final class HoerbuchkatalogMapper {
             try {
                 aghNummer = new AghNummer(s);
             } catch (IllegalArgumentException e) {
-                LOGGER.warn("Hörbuch {} hat eine ungültige AGH Nummer '{}'",
+                LOGGER.warn("Hörbuch '{}' hat eine ungültige AGH Nummer '{}'",
                         titelnummer, s);
             }
         }

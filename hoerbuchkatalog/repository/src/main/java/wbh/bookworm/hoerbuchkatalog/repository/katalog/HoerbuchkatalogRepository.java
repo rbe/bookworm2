@@ -128,7 +128,7 @@ public class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerb
 
     private void isHoerbuchDownloadbar(final Hoerbuch hoerbuch,
                                        final Set<AghNummer> aghNummern) {
-        LOGGER.trace("Suche AGH Nummer {} von Hörbuch {} im Download-Katalog",
+        LOGGER.trace("Suche AGH Nummer '{}' von Hörbuch '{}' im Download-Katalog",
                 hoerbuch.getAghNummer(), hoerbuch.getTitelnummer());
         boolean aghNummernVorhanden = !aghNummern.isEmpty();
         final AghNummer aghNummer = hoerbuch.getAghNummer();
@@ -140,11 +140,11 @@ public class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerb
                     null != aghNummer.getValue() && aghNummern.contains(aghNummer);
             if (downloadKatalogHatPassendeAghNummer) {
                 hoerbuch.imDownloadKatalogVorhanden();
-                LOGGER.trace("Hörbuch {} hat AGH Nummer {} und ist im Download-Katalog vorhanden",
+                LOGGER.trace("Hörbuch '{}' hat AGH Nummer '{}' und ist im Download-Katalog vorhanden",
                         hoerbuch.getTitelnummer(), hoerbuch.getAghNummer());
             } else {
                 hoerbuch.nichtDownloadKatalogVorhanden();
-                LOGGER.trace("Hörbuch {} hat keine AGH Nummer {} oder ist nicht im Download-Katalog vorhanden",
+                LOGGER.trace("Hörbuch '{}' hat keine AGH Nummer '{}' oder ist nicht im Download-Katalog vorhanden",
                         hoerbuch.getTitelnummer(), hoerbuch.getAghNummer());
             }
         }

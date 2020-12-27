@@ -134,7 +134,7 @@ public class HoerprobeController {
         final List<String> mp3s = playlist.getEntries().stream()
                 .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
                 .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 600)
-                .peek(dto -> LOGGER.debug("Hörbuch {} Kandiat für eine Hörprobe: {}", titelnummer, dto))
+                .peek(dto -> LOGGER.debug("Hörbuch '{}' Kandiat für eine Hörprobe: '{}'", titelnummer, dto))
                 .map(PlaylistEntryDTO::getIdent)
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());

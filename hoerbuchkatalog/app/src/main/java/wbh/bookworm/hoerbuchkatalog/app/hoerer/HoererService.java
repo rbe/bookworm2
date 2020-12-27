@@ -36,10 +36,10 @@ public final class HoererService {
             final Optional<Hoerer> hoerer = hoererRepository.hoerer(hoerernummer);
             if (hoerer.isPresent()) {
                 if (hoerer.get().isBekannt()) {
-                    LOGGER.debug("Hörerdaten für Hörer {} gefunden", hoerernummer);
+                    LOGGER.debug("Hörer '{}': Hörerdaten gefunden", hoerernummer);
                     return hoerer.get();
                 } else {
-                    LOGGER.warn("Keine Hörerdaten für Hörer {} gefunden", hoerernummer);
+                    LOGGER.warn("Hörer '{}': Keine Hörerdaten gefunden", hoerernummer);
                 }
             }
         }

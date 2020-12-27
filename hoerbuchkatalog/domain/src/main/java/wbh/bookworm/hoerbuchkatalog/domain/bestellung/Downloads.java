@@ -74,18 +74,18 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.containsKey(titelnummer);
-        LOGGER.trace("Downloads {} enthält Hörbuch {}: {}", this, titelnummer, bereitsVorhanden);
+        LOGGER.trace("Downloads '{}' enthält Hörbuch '{}': '{}'", this, titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.put(titelnummer, new Details(LocalDateTime.now()));
-        LOGGER.info("Hörbuch {} zu Downloads {} hinzugefügt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt", titelnummer, this);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch {} von Downloads {} entfernt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' von Downloads '{}' entfernt", titelnummer, this);
     }
 
     public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {

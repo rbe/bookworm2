@@ -71,18 +71,18 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.contains(titelnummer);
-        logger.trace("Warenkorb {} enthält Hörbuch {}: {}", this, titelnummer, bereitsVorhanden);
+        logger.trace("Warenkorb '{}' enthält Hörbuch '{}': '{}'", this, titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.add(titelnummer);
-        logger.info("Hörbuch {} zum Warenkorb {} hinzugefügt", titelnummer, this);
+        logger.info("Hörbuch '{}' zum Warenkorb '{}' hinzugefügt", titelnummer, this);
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        logger.info("Hörbuch {} aus dem Warenkorb {} entfernt", titelnummer, this);
+        logger.info("Hörbuch '{}' aus dem Warenkorb '{}' entfernt", titelnummer, this);
     }
 
     public void leeren() {

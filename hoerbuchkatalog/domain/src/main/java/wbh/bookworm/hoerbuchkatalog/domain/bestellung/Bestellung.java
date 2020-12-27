@@ -123,14 +123,12 @@ public final class Bestellung extends DomainAggregate<Bestellung, BestellungId> 
 
     public LocalDateTime aufgeben() {
         if (null == zeitpunktAbgeschickt) {
-            LOGGER.info("Bestellung {} für Hörer {} wird aufgegeben",
-                    domainId, hoerernummer);
+            LOGGER.info("Hörer '{}': Bestellung '{}' wird aufgegeben", hoerernummer, domainId);
             zeitpunktAbgeschickt = LocalDateTime.now();
             DomainEventPublisher.global()
                     .publishAsync(new BestellungAufgegeben(hoerernummer, this));
         } else {
-            LOGGER.error("Bestellung {} für Hörer {} wurde bereits abgeschickt",
-                    domainId, hoerernummer);
+            LOGGER.error("Hörer '{}': Bestellung '{}' wurde bereits abgeschickt", hoerernummer, domainId);
         }
         return zeitpunktAbgeschickt;
     }
