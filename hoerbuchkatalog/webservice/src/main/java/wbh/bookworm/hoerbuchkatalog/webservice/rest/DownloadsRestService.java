@@ -98,11 +98,15 @@ public class DownloadsRestService {
     }
 
     private String format(final LocalDateTime localDateTime) {
-        try {
-            return localDateTime.format(DATE_TIME_FORMATTER);
-        } catch (Exception e) {
-            return "";
+        String ret = "";
+        if (null != localDateTime) {
+            try {
+                ret = localDateTime.format(DATE_TIME_FORMATTER);
+            } catch (Exception e) {
+                // ignore
+            }
         }
+        return ret;
     }
 
 }

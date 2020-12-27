@@ -96,7 +96,7 @@ public final class HoerbuchAntwortKurzDTO {
     }
 
     public void setAusgeliehenAm(final String ausgeliehenAm) {
-        this.ausgeliehenAm = ausgeliehenAm;
+        this.ausgeliehenAm = null != ausgeliehenAm && !ausgeliehenAm.isBlank() ? ausgeliehenAm : "";
     }
 
     public String getRueckgabeBis() {
@@ -104,7 +104,7 @@ public final class HoerbuchAntwortKurzDTO {
     }
 
     public void setRueckgabeBis(final String rueckgabeBis) {
-        this.rueckgabeBis = rueckgabeBis;
+        this.rueckgabeBis = null != rueckgabeBis && !rueckgabeBis.isBlank() ? rueckgabeBis : "";
     }
 
     public boolean isAufDerMerkliste() {
