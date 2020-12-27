@@ -12,7 +12,6 @@ pushd /var/local
 
 set +o errexit
 mkdir java_debug 2>/dev/null
-mkdir templates 2>/dev/null
 mkdir repository 2>/dev/null
 mkdir repository/Bestellung 2>/dev/null
 mkdir repository/HtmlEmailTemplate 2>/dev/null
@@ -26,8 +25,6 @@ mkdir wbh/aktualisierung/eingangskorb 2>/dev/null
 mkdir wbh/aktualisierung/ausgangskorb 2>/dev/null
 mkdir wbh/hoerbuchkatalog 2>/dev/null
 mkdir wbh/nutzerdaten 2>/dev/null
-mkdir blista 2>/dev/null
-mkdir blista/dls 2>/dev/null
 set -o errexit
 
 popd
