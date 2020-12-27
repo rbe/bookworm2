@@ -15,6 +15,4 @@ public interface AudiobookStreamService {
 
     InputStream zipAsStream(String mandant, String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer);
 
-    Path zipAsFile(String mandant, String hoerernummer, /* TODO Mandantenspezifisch */String titelnummer);
-
 }

@@ -3,7 +3,6 @@ package wbh.bookworm.hoerbuchdienst.domain.impl;
 import javax.inject.Inject;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
@@ -20,6 +19,8 @@ import wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository.Audiobook
 import wbh.bookworm.hoerbuchdienst.domain.required.watermark.Watermarker;
 
 import aoc.mikrokosmos.io.fs.FilesUtils;
+import aoc.mikrokosmos.io.stream.StreamException;
+import aoc.mikrokosmos.io.stream.StreamsUtils;
 import aoc.mikrokosmos.io.zip.Zip;
 
 final class AudiobookZipper {
@@ -48,10 +49,15 @@ final class AudiobookZipper {
     Path watermarkedDaisyZipAsFile(final String mandant, final String hoerernummer, final String titelnummer) {
         final InputStream inputStream = watermarkedDaisyZipAsStream(mandant, hoerernummer, titelnummer);
         final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID() + ".zip");
-        LOGGER.debug("Hörer {} Hörbuch {}: DAISY ZIP Stream wird in {} gespeichert", hoerernummer, titelnummer, zipFile);
-        streamToFile(zipFile, inputStream);
-        LOGGER.info("Hörer {} Hörbuch {}: DAISY ZIP Stream wurde in {} gespeichert", hoerernummer, titelnummer, zipFile);
-        return zipFile;
+        try {
+            StreamsUtils.toFile(inputStream, zipFile);
+            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY ZIP Stream wurde in '{}' gespeichert", hoerernummer, titelnummer, zipFile);
+            return zipFile;
+        } catch (StreamException e) {
+            LOGGER.error(String.format("Hörer '%s' Hörbuch '%s': Fehler bei der Erzeugung des DAISY ZIP Streams",
+                    hoerernummer, titelnummer), e);
+            return null;
+        }
     }
 
     InputStream watermarkedDaisyZipAsStream(final String mandant, final String hoerernummer, final String titelnummer) {
@@ -116,21 +122,6 @@ final class AudiobookZipper {
         }
     }
 
-    private Path daisyZipAsFile(final String hoerernummer, final String titelnummer, final Path daisyDirectory) {
-        final long start = System.nanoTime();
-        try (final InputStream zipInputStream = daisyZipAsStream(hoerernummer, titelnummer, daisyDirectory)) {
-            final Path zipFile = temporaryDirectory.resolve(UUID.randomUUID() + ".zip");
-            streamToFile(zipFile, zipInputStream);
-            final long stop = System.nanoTime();
-            LOGGER.info("Hörer {} Hörbuch {}: {} MB in {} in {} ms = {} s geschrieben", hoerernummer, titelnummer,
-                    Files.size(zipFile) / 1_024L / 1_024L, zipFile,
-                    (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-            return zipFile;
-        } catch (IOException e) {
-            throw new AudiobookServiceException("", e);
-        }
-    }
-
     private InputStream daisyZipAsStream(final String hoerernummer, final String titelnummer, final Path daisyDirectory) {
         final long start = System.nanoTime();
         final InputStream zipInputStream;
@@ -142,15 +133,6 @@ final class AudiobookZipper {
                     (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
             return zipInputStream;
         } catch (IOException e) {
-            throw new AudiobookServiceException("", e);
-        }
-    }
-
-    private void streamToFile(final Path zipFile, final InputStream zipInputStream) {
-        try (final OutputStream outputStream = Files.newOutputStream(zipFile)) {
-            zipInputStream.transferTo(outputStream);
-            zipInputStream.close();
-        } catch (Exception e) {
             throw new AudiobookServiceException("", e);
         }
     }

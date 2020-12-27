@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookServiceException;
 
 @Singleton
 class AudiobookOrderServiceImpl implements AudiobookOrderService {
@@ -57,15 +56,21 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
         try {
             final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
-            LOGGER.info("Hörer {} Hörbuch {} Bestellung {}: DAISY ZIP erstellt", hoerernummer, titelnummer, orderId);
-            final Path orderDirectory = temporaryDirectory.resolve(orderId);
-            Files.createDirectories(orderDirectory);
-            Files.move(zipFile, orderDirectory.resolve(DAISY_ZIP));
-            orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
-            LOGGER.info("Hörer {} Hörbuch {} Bestellung {}: DAISY ZIP bereitgestellt", hoerernummer, titelnummer, orderId);
+            if (null != zipFile) {
+                LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung {}: DAISY ZIP erstellt", hoerernummer, titelnummer, orderId);
+                final Path orderDirectory = temporaryDirectory.resolve(orderId);
+                Files.createDirectories(orderDirectory);
+                Files.move(zipFile, orderDirectory.resolve(DAISY_ZIP));
+                orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
+                LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung '{}': DAISY ZIP bereitgestellt", hoerernummer, titelnummer, orderId);
+            } else {
+                orderStatus.put(orderId, ORDER_STATUS_FAILED);
+                LOGGER.error("Hörer '{}' Hörbuch '{}' Bestellung '{}': Fehler bei der Bereitstellung des DAISY ZIP", hoerernummer, titelnummer, orderId);
+            }
         } catch (Exception e) {
             orderStatus.put(orderId, ORDER_STATUS_FAILED);
-            throw new AudiobookServiceException(String.format("Hörer %s Hörbuch %s: Kann Bestellung nicht persistieren", hoerernummer, titelnummer), e);
+            LOGGER.error(String.format("Hörer '%s' Hörbuch '%s' Bestellung '%s': Kann Bestellung nicht verarbeiten",
+                    hoerernummer, titelnummer, orderId), e);
         }
     }
 

@@ -76,48 +76,14 @@ public class HoerbuchController {
 
     @Operation(hidden = true)
     @Options(uri = "/{titelnummer}")
-    public HttpResponse<String> optionsZippedAudiobookByTitelnummerAsStream(final HttpRequest<?> httpRequest,
-                                                                            @PathVariable final String titelnummer) {
+    public HttpResponse<String> optionsDaisyZipAsStream(final HttpRequest<?> httpRequest,
+                                                        @PathVariable final String titelnummer) {
         return optionsResponse(httpRequest);
     }
 
     @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
     @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
     @Get(uri = "/{titelnummer}")
-    @Produces(APPLICATION_ZIP_VALUE)
-    @Blocking
-    public HttpResponse<SystemFile> daisyZipAsFile(final HttpRequest<?> httpRequest,
-                                                   @Header("X-Bookworm-Mandant") final String xMandant,
-                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                   @PathVariable("titelnummer") final String titelnummer) {
-        return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> makeDaisyZipFile(xMandant, xHoerernummer, titelnummer),
-                dto -> CORS.response(httpRequest, dto)
-                        .contentType(APPLICATION_ZIP_VALUE)
-                        .contentLength(dto.getLength())
-                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
-                String.format("%s/%s", BASE_URL, titelnummer),
-                httpRequest);
-    }
-
-    private SystemFile makeDaisyZipFile(final String mandant, final String hoerernummer, final String titelnummer) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle DAISY Hörbuch als ZIP-Datei",
-                hoerernummer, titelnummer);
-        try {
-            final long start = System.nanoTime();
-            final Path zip = audiobookStreamService.zipAsFile(mandant, hoerernummer, titelnummer);
-            final long stop = System.nanoTime();
-            LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} ms = {} s erstellt",
-                    hoerernummer, titelnummer, (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-            return new SystemFile(zip.toFile()).attach(String.format("%s.zip", titelnummer));
-        } catch (Exception e) {
-            throw new BusinessException(EMPTY_STRING, e);
-        }
-    }
-
-    @Operation(summary = "Hörbuch (Titelnummer) als DAISY-ZIP")
-    @ApiResponse(responseCode = "200", description = "DAISY-ZIP wird als Stream geliefert")
-    @Get(uri = "/{titelnummer}/stream")
     @Produces(APPLICATION_ZIP_VALUE)
     @Blocking
     public HttpResponse<StreamedFile> daisyZipAsStream(final HttpRequest<?> httpRequest,

@@ -67,9 +67,4 @@ class AudiobookStreamServiceImpl implements AudiobookStreamService {
         return audiobookZipper.watermarkedDaisyZipAsStream(mandant, hoerernummer, titelnummer);
     }
 
-    @Override
-    public Path zipAsFile(final String mandant, final String hoerernummer, final String titelnummer) {
-        return audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
-    }
-
 }
