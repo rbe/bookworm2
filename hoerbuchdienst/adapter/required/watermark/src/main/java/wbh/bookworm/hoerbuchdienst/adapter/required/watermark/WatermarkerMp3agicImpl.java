@@ -38,7 +38,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
 
     @Override
     public String makeWatermark(final String mandant, final String hoerernummer, final String titelnummer) {
-        LOGGER.debug("Erzeuge Wasserzeichen für Mandant {}, Hörer {}, Titelnummer {}",
+        LOGGER.debug("Erzeuge Wasserzeichen für Mandant '{}', Hörer '{}', Titelnummer '{}'",
                 mandant, hoerernummer, titelnummer);
         return String.format("%s-%s-%s", mandant, hoerernummer, titelnummer);
     }
@@ -130,17 +130,17 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
         // TCOP (Copyright message), max. 30 Zeichen
         id3v2Tag.setCopyright(watermark);
         // WCOM (Commercial information)
-        //id3v2Tag.setCommercialUrl(String.format("CO:%s/%s", watermarkUrl, watermark));
+        //id3v2Tag.setCommercialUrl();
         // WCOP (Copyright/Legal infromation)
         id3v2Tag.setCopyrightUrl(watermarkUrl);
         // WOAF (Official audio file webpage)
-        id3v2Tag.setAudiofileUrl(watermarkUrl);
+        //id3v2Tag.setAudiofileUrl();
         // WOAR (Official artist/performer webpage)
         //id3v2Tag.setArtistUrl();
         // WOAS (Official audio source webpage)
-        id3v2Tag.setAudioSourceUrl(watermarkUrl);
+        //id3v2Tag.setAudioSourceUrl();
         // WPUB (Official publisher webpage)
-        id3v2Tag.setPublisherUrl("https://wbh-online.de");
+        //id3v2Tag.setPublisherUrl("https://wbh-online.de");
         // WPAY (Payment)
         //id3v2Tag.setPaymentUrl();
         // WXXX (User defined URL link)
