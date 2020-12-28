@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.micronaut.core.annotation.Introspected;
 
 import aoc.mikrokosmos.crypto.messagedigest.MessageDigester;
@@ -22,9 +24,10 @@ public final class ShardAudiobook implements Comparable<ShardAudiobook>, Seriali
 
     private final String hashValue;
 
-    public ShardAudiobook(final String objectId,
-                          final List<ShardObject> shardObjects,
-                          final ShardName shardName) {
+    @JsonCreator
+    public ShardAudiobook(@JsonProperty("objectId") final String objectId,
+                          @JsonProperty("shardObjects") final List<ShardObject> shardObjects,
+                          @JsonProperty("shardName") final ShardName shardName) {
         this.objectId = objectId;
         this.shardObjects = null != shardObjects && !shardObjects.isEmpty()
                 ? Collections.unmodifiableList(shardObjects)
