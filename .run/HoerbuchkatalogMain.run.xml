@@ -1,25 +1,23 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="HoerbuchkatalogMain" type="SpringBootApplicationConfigurationType"
-                   factoryName="Spring Boot" nameIsGenerated="true">
-        <module name="wbh.bookworm.hoerbuchkatalog.assembly"/>
-        <extension name="coverage">
-            <pattern>
-                <option name="PATTERN" value="wbh.bookworm.hoerbuchkatalog.assembly.*"/>
-                <option name="ENABLED" value="true"/>
-            </pattern>
-        </extension>
-        <option name="SPRING_BOOT_MAIN_CLASS" value="wbh.bookworm.hoerbuchkatalog.assembly.HoerbuchkatalogMain"/>
-        <option name="DEBUG_MODE" value="true"/>
-        <option name="ACTIVE_PROFILES" value="development"/>
-        <option name="PROGRAM_PARAMETERS"
-                value="--spring.profiles.active=development --spring.config.additional-location=hoerbuchkatalog/assembly/src/main/resources/application-secrets.yml"/>
-        <option name="ALTERNATIVE_JRE_PATH"/>
-        <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources"/>
-        <envs>
-            <env name="HOERBUCHKATALOG_TEMPLATE" value="hoerbuchkatalog/ui/src/main/resources/templates"/>
-        </envs>
-        <method v="2">
-            <option name="Make" enabled="true"/>
-        </method>
-    </configuration>
+  <configuration default="false" name="HoerbuchkatalogMain" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" nameIsGenerated="true">
+    <module name="wbh.bookworm.hoerbuchkatalog.assembly" />
+    <extension name="coverage">
+      <pattern>
+        <option name="PATTERN" value="wbh.bookworm.hoerbuchkatalog.assembly.*" />
+        <option name="ENABLED" value="true" />
+      </pattern>
+    </extension>
+    <option name="SPRING_BOOT_MAIN_CLASS" value="wbh.bookworm.hoerbuchkatalog.assembly.HoerbuchkatalogMain" />
+    <option name="ENABLE_JMX_AGENT" value="false" />
+    <option name="ACTIVE_PROFILES" value="development" />
+    <option name="PROGRAM_PARAMETERS" value="--spring.profiles.active=development --spring.config.additional-location=hoerbuchkatalog/assembly/src/main/resources/application-secrets.yml" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <option name="UPDATE_ACTION_UPDATE_POLICY" value="UpdateClassesAndResources" />
+    <envs>
+      <env name="HOERBUCHKATALOG_TEMPLATE" value="hoerbuchkatalog/ui/src/main/resources/templates" />
+    </envs>
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>
