@@ -10,9 +10,6 @@ services:
     ports:
       - "5671:5671"
       - "15671:15671"
-  #virenscanner:
-  #keycloakpostgres:
-  #keycloak:
   hoerbuchdienst:
     volumes:
       - type: tmpfs
