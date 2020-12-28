@@ -8,13 +8,12 @@ pushd ~/bookworm2 >/dev/null
 git fetch origin
 git checkout origin/master -- autoupdate.sh
 
-autoupdate.sh prod hbd force
+autoupdate.sh prod hbk force
 
-cnt.sh prod hbd exec hbd-rproxy \
+cnt.sh prod hbd exec cms-rproxy \
   provision.sh -e site \
   default_tls_server \
-  minio \
-  hoerbuchdienst
+  wbhonline
 
 popd >/dev/null
 
