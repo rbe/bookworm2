@@ -146,7 +146,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
         // WXXX (User defined URL link)
         //id3v2Tag.setUrl();
         // COMM (Comment)
-        id3v2Tag.setComment(watermarkUrl);
+        id3v2Tag.setComment(watermark);
     }
 
     private void id3v1(final String watermark, final String watermarkUrl, final Mp3File mp3file) {
