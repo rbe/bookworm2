@@ -26,9 +26,6 @@ find /var/local -type f -name \*.yml -print0 | xargs -r -0 chmod 660
 chmod 750 /var/local/wbh/hoerbuchkatalog
 # Daten - Nutzerdaten
 chmod 750 /var/local/wbh/nutzerdaten
-# Daten - blista DLS
-chmod 550 /var/local/blista
-chmod 750 /var/local/blista/dls
 
 # Aktualisierung der Daten
 chown root:root /var/local/wbh
