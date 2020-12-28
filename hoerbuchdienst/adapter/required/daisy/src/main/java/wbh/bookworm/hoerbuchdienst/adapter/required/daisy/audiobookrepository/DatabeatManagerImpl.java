@@ -22,6 +22,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.micronaut.context.annotation.Value;
 import io.micronaut.runtime.event.annotation.EventListener;
 import io.micronaut.scheduling.annotation.Async;
@@ -73,6 +75,8 @@ class DatabeatManagerImpl implements DatabeatManager {
         heartbeatHighWatermark = new AtomicInteger(0);
         databeatGenerationLock = new ReentrantLock();
         objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         databeatJson = Path.of("/var/local/databeat.json");
         this.objectStoragePath = objectStoragePath;
         this.audiobookStreamResolver = audiobookStreamResolver;
