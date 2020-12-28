@@ -15,22 +15,26 @@ export TZ
 
 echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
+JAVA_TOOL_OPTIONS="-Xms8192m -Xmx8192m \
+-XX:MaxDirectMemorySize=16384m \
+-XX:+UseCompressedOops \
+-XX:+HeapDumpOnOutOfMemoryError \
+-XX:HeapDumpPath=/var/local/java_debug \
+-XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
+-XX:+UnlockExperimentalVMOptions \
+-XX:+UseZGC"
+if [[ -f "/var/local/.java_debug" ]]; then
+  JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} \
+-Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=16M \
+-Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n \
+-Dcom.sun.management.jmxremote \
+-Dcom.sun.management.jmxremote.port=1099 \
+-Dcom.sun.management.jmxremote.rmi.port=1099 \
+-Dcom.sun.management.jmxremote.ssl=false \
+-Dcom.sun.management.jmxremote.authenticate=false \
+-Djava.rmi.server.hostname=\$(hostname -f)"
+fi
 java \
-  -Xms8192m -Xmx8192m \
-  -XX:+UseCompressedOops \
-  -XX:+HeapDumpOnOutOfMemoryError \
-  -XX:HeapDumpPath=/var/local/java_debug \
-  -XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
-  -XX:+UnlockExperimentalVMOptions \
-  -XX:+UseZGC \
-  -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=16M \
-  -Xrunjdwp:transport=dt_socket,address=*:5005,server=y,suspend=n \
-  -Dcom.sun.management.jmxremote \
-  -Dcom.sun.management.jmxremote.port=1099 \
-  -Dcom.sun.management.jmxremote.rmi.port=1099 \
-  -Dcom.sun.management.jmxremote.ssl=false \
-  -Dcom.sun.management.jmxremote.authenticate=false \
-  -Djava.rmi.server.hostname=${hbd.hostname} \
   -Dlogback.configurationFile=/var/local/logback.xml \
   -Dmicronaut.environments=prod \
   -Dmicronaut.config.files=/var/local/application-shard.yml \
