@@ -155,7 +155,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
             mp3file.setId3v1Tag(id3v1Tag);
         }
         id3v1Tag.setGenre(ID3v1Genres.matchGenreDescription(GENRE_SPEECH));
-        id3v1Tag.setComment(watermarkUrl); // max 30 Zeichen
+        id3v1Tag.setComment(watermark); // max 30 Zeichen
     }
 
 }
