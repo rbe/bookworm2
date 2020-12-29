@@ -15,7 +15,7 @@
         <alpine.release>3.12</alpine.release>
         <openjdk.release>14-jre-slim</openjdk.release>
         <nginx.release>1.17-alpine</nginx.release>
-        <nginx.hostname>nginx.${domain}</nginx.hostname>
+        <nginx.hostname>${domain}</nginx.hostname>
         <hbk.release>${maven.build.timestamp}</hbk.release>
         <hbk.hostname>hoerbuchkatalog.${domain}</hbk.hostname>
         <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
