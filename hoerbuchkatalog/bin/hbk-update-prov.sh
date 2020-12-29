@@ -10,7 +10,7 @@ git checkout origin/master -- autoupdate.sh
 
 autoupdate.sh prod hbk force
 
-cnt.sh prod hbd exec cms-rproxy \
+cnt.sh prod cms exec cms-rproxy \
   provision.sh -e site \
   default_tls_server \
   wbhonline
