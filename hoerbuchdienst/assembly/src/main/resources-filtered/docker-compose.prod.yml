@@ -1,11 +1,6 @@
 version: '3.7'
 
 services:
-  portainer:
-  vault:
-  kes:
-  minio:
-  mc:
   rabbitmq:
     ports:
       - "5671:5671"

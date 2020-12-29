@@ -196,18 +196,6 @@ services:
       - 443
       - 5005
 
-networks:
-  backend:
-    name: hbd-backend
-    driver: bridge
-    internal: true
-    external: false
-  frontend:
-    name: hbd-frontend
-    driver: bridge
-    internal: false
-    external: false
-
 volumes:
   portainerdata:
     driver: local
@@ -237,3 +225,15 @@ volumes:
     driver: local
   rproxycerts:
     driver: local
+
+networks:
+  backend:
+    name: hbd-backend
+    driver: bridge
+    internal: true
+    external: false
+  frontend:
+    name: hbd-frontend
+    driver: bridge
+    internal: false
+    external: false

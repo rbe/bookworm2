@@ -1,7 +1,6 @@
 version: '3.7'
 
 services:
-  hoerbuchkatalog:
   datatransfer-ssh:
     ports:
       - "2201:22"

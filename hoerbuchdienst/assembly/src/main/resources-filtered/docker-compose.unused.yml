@@ -1,0 +1,61 @@
+version: '3.7'
+
+services:
+  virenscanner:
+    image: wbh-hbd/virenscanner:${hbd.release}
+    restart: unless-stopped
+    volumes:
+      - virenscannerdata:/data
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    networks:
+      - backend
+      - frontend
+    expose:
+      - 3310
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:6.8.7
+    #image: docker.elastic.co/elasticsearch/elasticsearch:7.6.1
+    container_name: es01
+    environment:
+      - node.name=es01
+      - cluster.name=es-docker-cluster
+      - discovery.type=single-node
+      - bootstrap.memory_lock=true
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - elasticsearchdata:/usr/share/elasticsearch/data
+    networks:
+      - backend
+    expose:
+      - 9200
+      - 9300
+  elastichq:
+    image: elastichq/elasticsearch-hq:release-v3.5.12
+    networks:
+      - backend
+    ports:
+      - 5000:5000
+
+volumes:
+  virenscannerdata:
+    driver: local
+  elasticsearchdata:
+    driver: local
+
+networks:
+  backend:
+    name: hbd-backend
+    driver: bridge
+    internal: true
+    external: false
+  frontend:
+    name: hbd-frontend
+    driver: bridge
+    internal: false
+    external: false

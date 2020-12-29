@@ -7,11 +7,9 @@ services:
   vault:
     ports:
       - "8200:8200"
-  kes:
   minio:
     ports:
       - "9000:9000"
-  mc:
   rabbitmq:
     ports:
       - "5671:5671"

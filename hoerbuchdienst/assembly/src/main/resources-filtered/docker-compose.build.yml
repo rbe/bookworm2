@@ -19,7 +19,6 @@ services:
   #virenscanner:
   #  build:
   #    context: virenscanner
-  hoerbuchdienst:
   hbd-rproxy:
     build:
       context: rproxy
