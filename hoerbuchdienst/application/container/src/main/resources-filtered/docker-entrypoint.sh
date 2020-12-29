@@ -34,6 +34,8 @@ if [[ -f "/var/local/.java_debug" ]]; then
 -Dcom.sun.management.jmxremote.authenticate=false \
 -Djava.rmi.server.hostname=\$(hostname -f)"
 fi
+export JAVA_TOOL_OPTIONS
+
 java \
   -Dlogback.configurationFile=/var/local/logback.xml \
   -Dmicronaut.environments=prod \
