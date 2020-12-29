@@ -170,8 +170,9 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
             final String message = String.format("Cannot create temporary directory %s", tempDirectory.toAbsolutePath());
             throw new AudiobookStreamResolverException(message, e);
         }
-        final List<Path> allObjects = bucketObjectStorage.listAllObjects(String.format("%sDAISY/", titelnummer));
-        for (Path object : allObjects) {
+        final String daisy = String.format("%sDAISY/", titelnummer);
+        final List<Path> allObjects = bucketObjectStorage.listAllObjects(daisy);
+        for (final Path object : allObjects) {
             final Path tempMp3 = tempDirectory.resolve(object.getFileName());
             final long start = System.nanoTime();
             LOGGER.info("Trying to write '{}' to '{}'", object, tempDirectory.toAbsolutePath());
