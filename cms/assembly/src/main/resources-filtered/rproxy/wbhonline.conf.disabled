@@ -3,6 +3,7 @@ server {
     listen 443 ssl http2;
     #listen [::]:443 ssl http2;
     server_name ${cms.hostname} ${domain};
+    #server_name www-prod.wbh-online.de wbh-online.de;
     access_log /proc/self/fd/1 main;
     error_log /proc/self/fd/2 error;
     #error_log /proc/self/fd/2 debug;
