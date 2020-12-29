@@ -3,7 +3,7 @@ stream {
     upstream java_debug {
         server hoerbuchdienst:5005;
     }
-    upstream jstatd {
+    upstream visualvm_jmx {
         server hoerbuchdienst:1099;
     }
 
@@ -14,7 +14,7 @@ stream {
 
     server {
         listen 1099;
-        proxy_pass jstatd;
+        proxy_pass visualvm_jmx;
     }
 
 }

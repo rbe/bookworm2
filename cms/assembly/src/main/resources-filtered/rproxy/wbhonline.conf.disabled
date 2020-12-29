@@ -2,7 +2,7 @@ server {
 
     listen 443 ssl http2;
     #listen [::]:443 ssl http2;
-    server_name ${cms.hostname};
+    server_name ${cms.hostname} ${domain};
     access_log /proc/self/fd/1 main;
     error_log /proc/self/fd/2 error;
     #error_log /proc/self/fd/2 debug;
@@ -19,22 +19,27 @@ server {
     ssl_session_tickets off;
     ssl_stapling on;
     ssl_stapling_verify on;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
+    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 
     #
-    # General
+    # Compression
     #
 
     gzip off;
-    #gzip_types      text/plain text/css application/javascript application/json application/xml;
+    #gzip_types      text/plain text/css application/javascript application/json;
     #gzip_proxied    no-cache no-store no_last_modified private expired auth;
     #gzip_min_length 256;
     #gzip_comp_level 6;
 
+    #
+    # Security
+    #
+
     add_header X-Powered-By "";
-    # Joomla #add_header X-Frame-Options DENY;
     add_header X-Content-Type-Options nosniff;
     add_header X-XSS-Protection "1; mode=block;";
+    # Joomla #add_header X-Frame-Options DENY;
     # Joomla #add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
     # Joomla #add_header X-Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
     # Joomla #add_header X-WebKit-CSP "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
