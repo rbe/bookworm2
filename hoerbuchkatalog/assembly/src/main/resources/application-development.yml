@@ -23,6 +23,8 @@ lucene:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
+  redis:
+    host: localhost
   mail:
     host: 127.0.0.1
     port: 8025

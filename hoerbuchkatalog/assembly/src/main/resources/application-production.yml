@@ -23,6 +23,8 @@ lucene:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
+  redis:
+    host: redis
   # Siehe application-secrets.yml
   mail:
     port: 587

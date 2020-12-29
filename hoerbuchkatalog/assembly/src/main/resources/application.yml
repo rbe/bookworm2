@@ -27,6 +27,8 @@ spring:
     location: classpath:/banner/banner-starwars0.txt
   main:
     banner-mode: "console"
+  redis:
+    port: 6379
   mail:
     default-encoding: UTF-8
     protocol: smtp
