@@ -62,8 +62,8 @@ public class DownloadsRestService {
 
     @GetMapping(value = "/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> downloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                   @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         return downloadsService.downloadErlaubt(hoerernummer)
                 ? ResponseEntity.ok().build()
@@ -106,7 +106,9 @@ public class DownloadsRestService {
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
             dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
         });
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
+                "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
+        return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTOS));
     }
 
     @GetMapping(value = "/datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
