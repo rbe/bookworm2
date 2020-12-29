@@ -5,6 +5,8 @@ services:
     image: postgres:${keycloak.postgres.release}
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
       - POSTGRES_USER=keycloak
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=keycloak
@@ -23,6 +25,8 @@ services:
       - keycloakpostgres
     restart: unless-stopped
     environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
       - DB_VENDOR=postgres
       - DB_ADDR=keycloakpostgres
       - DB_PORT=5432
@@ -39,9 +43,38 @@ services:
           - ${keycloak.hostname}
     expose:
       - 8080
+  redis:
+    image: wbh-hbk/redis:${redis.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+    volumes:
+      - redisdata:/data/redis:rw
+    networks:
+      - backend
+    expose:
+      - "6379"
+  redisbackup:
+    image: wbh-hbk/redisbackup:${redis.release}
+    restart: unless-stopped
+    environment:
+      - TZ=Europe/Berlin
+      - REDIS_HOST=redis
+      - REDIS_PORT=6379
+      - REDIS_DIR=/data/redis
+      - REDIS_BGSAVE_WAIT=30
+      - BACKUP_DIR=/data/backup
+    volumes:
+      - redisdata:/data/redis:rw
+      - redisbackup:/data/backup:rw
+    networks:
+      - backend
   hoerbuchkatalog:
     image: wbh-hbk/hoerbuchkatalog:${hbk.release}
     restart: unless-stopped
+    depends_on:
+      - redis
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
@@ -84,6 +117,10 @@ services:
 
 volumes:
   keycloakpostgresdata:
+    driver: local
+  redisdata:
+    driver: local
+  redisbackup:
     driver: local
   hoerbuchkataloglocal:
     driver: local

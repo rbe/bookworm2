@@ -21,6 +21,7 @@
         <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
         <keycloak.postgres.hostname>keycloakpostgres-${domain}</keycloak.postgres.hostname>
         <keycloak.release>12.0.1</keycloak.release>
+        <redis.release>6.0-alpine</redis.release>
         <!-- Siehe auch cms.assembly -->
         <keycloak.hostname>id.${domain}</keycloak.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
@@ -198,6 +199,21 @@
                             <buildArgs>
                                 <args>
                                     <KEYCLOAK_RELEASE>${keycloak.release}</KEYCLOAK_RELEASE>
+                                </args>
+                            </buildArgs>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-redis</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <services>redis,redisbackup</services>
+                            <buildArgs>
+                                <args>
+                                    <REDIS_RELEASE>${redis.release}</REDIS_RELEASE>
                                 </args>
                             </buildArgs>
                         </configuration>
