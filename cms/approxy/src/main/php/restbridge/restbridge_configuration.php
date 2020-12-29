@@ -23,6 +23,7 @@ $mandant = '06';
 global $restBridge;
 $restBridge = [
     'DEBUG' => false,
+    'WARNING' => false,
     'TEMPLATE_NAME_PREFIX' => 'Bookworm',
     'REST_ENDPOINTS' => [
         // Suche

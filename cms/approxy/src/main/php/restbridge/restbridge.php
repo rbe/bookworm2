@@ -147,6 +147,8 @@ final class plgContentRestbridge extends JPlugin
             $content = $this->renderEmptyResult($commandName);
         } else if ($commandResult->isError()) {
             $content = $this->renderError($commandName, $commandResult);
+        } else {
+            restBridgeWarningLog('Unhandled result of command execution');
         }
 
         if (isset($this->restBridgePlugin) === true) {
@@ -216,7 +218,7 @@ final class plgContentRestbridge extends JPlugin
             $commandResult->getMeta(), []);
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Content',
             $commandResult->getMeta(), $jsonHelper->rowsWithValues(),
-            'ERROR: module ' . $commandName . '_Error_Content' . ' not defined');
+            'Custom module ' . $commandName . '_Error_Content' . ' not defined');
         $content .= $this->cmsAdapter->renderTemplate($commandName . '_Error_Footer',
             $commandResult->getMeta(), []);
         return $content;

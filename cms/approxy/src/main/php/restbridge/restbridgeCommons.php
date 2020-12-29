@@ -22,6 +22,12 @@ function isRestBridgeDebugLog()
     return $restBridge['DEBUG'];
 }//end isRestBridgeDebugLog()
 
+function isRestBridgeWarningLog()
+{
+    global $restBridge;
+    return $restBridge['WARNING'];
+}//end isRestBridgeWarningLog()
+
 function restBridgeInfoLog($msg)
 {
     error_log('INFO: ' . $msg, 0);
@@ -29,7 +35,9 @@ function restBridgeInfoLog($msg)
 
 function restBridgeWarningLog($msg)
 {
-    error_log('WARNING: ' . $msg, 0);
+    if (isRestBridgeWarningLog() === true) {
+        error_log('WARNING: ' . $msg, 0);
+    }
 }//end restBridgeWarningLog()
 
 function restBridgeErrorLog($msg)
@@ -39,7 +47,7 @@ function restBridgeErrorLog($msg)
 
 function restBridgeDebugLog($msg)
 {
-    if (isRestBridgeDebugLog()) {
+    if (isRestBridgeDebugLog() === true) {
         error_log('DEBUG: ' . $msg, 0);
     }
 }//end restBridgeDebugLog()

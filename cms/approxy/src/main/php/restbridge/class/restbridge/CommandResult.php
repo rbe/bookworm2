@@ -39,6 +39,16 @@ class CommandResult
      */
     private array $data;
 
+    /**
+     * Is data empty when object is constructed?
+     * Should prevent confusing state when updateData is used to add request data.
+     *
+     * @var boolean
+     *
+     * @since 1.0
+     */
+    private bool $dataEmpty;
+
 
     /**
      * CommandResult constructor.
@@ -58,6 +68,7 @@ class CommandResult
         $this->status = $status;
         $this->meta = $meta;
         $this->data = $data;
+        $this->dataEmpty = empty($data);
     }//end __construct()
 
 
@@ -135,7 +146,7 @@ class CommandResult
      */
     public function isDataEmpty(): bool
     {
-        return empty($this->data) === true;
+        return $this->dataEmpty === true;
     }//end isDataEmpty()
 
 
@@ -148,7 +159,7 @@ class CommandResult
      */
     public function isDataNotEmpty(): bool
     {
-        return empty($this->data) === false;
+        return $this->dataEmpty === false;
     }//end isDataNotEmpty()
 
 
