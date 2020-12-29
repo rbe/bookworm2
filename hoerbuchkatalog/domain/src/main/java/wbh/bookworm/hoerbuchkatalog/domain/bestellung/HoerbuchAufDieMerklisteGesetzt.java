@@ -11,7 +11,7 @@ import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.event.DomainAggregateWriteEvent;
 
-public final class HoerbuechAufDieMerklisteGesetzt
+public final class HoerbuchAufDieMerklisteGesetzt
         extends DomainAggregateWriteEvent<Merkliste, MerklisteId> {
 
     private static final long serialVersionUID = 1L;
@@ -20,8 +20,8 @@ public final class HoerbuechAufDieMerklisteGesetzt
 
     private final Titelnummer titelnummer;
 
-    HoerbuechAufDieMerklisteGesetzt(final Hoerernummer hoerernummer, final Merkliste merkliste,
-                                    final Titelnummer titelnummer) {
+    HoerbuchAufDieMerklisteGesetzt(final Hoerernummer hoerernummer, final Merkliste merkliste,
+                                   final Titelnummer titelnummer) {
         super(merkliste);
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;

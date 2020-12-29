@@ -11,15 +11,15 @@ import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.event.DomainAggregateWriteEvent;
 
-public final class HoerbuechVonDerMerklisteEntfernt
+public final class HoerbuchVonDerMerklisteEntfernt
         extends DomainAggregateWriteEvent<Merkliste, MerklisteId> {
 
     private final Hoerernummer hoerernummer;
 
     private final Titelnummer titelnummer;
 
-    HoerbuechVonDerMerklisteEntfernt(final Hoerernummer hoerernummer, final Merkliste merkliste,
-                                     final Titelnummer titelnummer) {
+    HoerbuchVonDerMerklisteEntfernt(final Hoerernummer hoerernummer, final Merkliste merkliste,
+                                    final Titelnummer titelnummer) {
         super(merkliste);
         this.hoerernummer = hoerernummer;
         this.titelnummer = titelnummer;
