@@ -10,12 +10,14 @@ import {WbhonlineMerkliste} from "./wbhonlineMerkliste.js";
 import {WbhonlineWarenkorb} from "./wbhonlineWarenkorb.js";
 import {WbhonlineDownloads} from "./wbhonlineDownloads.js";
 import {WbhonlineHoerprobe} from "./wbhonlineHoerprobe.js";
+import {WbhonlineCdBestellung} from "./wbhonlineCdBestellung.js";
 
 export class Wbhonline {
 
     initialize() {
         const merkliste = new WbhonlineMerkliste();
         const warenkorb = new WbhonlineWarenkorb();
+        const cdBestellung = new WbhonlineCdBestellung();
         const download = new WbhonlineDownloads();
         const hoerprobe = new WbhonlineHoerprobe();
     }

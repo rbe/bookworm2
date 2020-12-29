@@ -31,29 +31,20 @@ export class WbhonlineHoerprobe {
                 const self = this;
                 const spieleOderPausiereHoerprobe = function (event) {
                     self.buttons.disableButtons();
-                    const i = event.currentTarget.querySelector('i');
+                    const fontAwesomeElement = event.currentTarget.querySelector('i');
                     const titelnummer = self.helper.titelnummer(event.currentTarget);
-                    if (i.classList.contains('fa-volume-up')) {
-                        self.buttons.activateSpinner(i);
+                    if (fontAwesomeElement.classList.contains('fa-volume-up')) {
+                        self.buttons.activateSpinner(fontAwesomeElement);
                         self.audioplayer.spieleHoerprobeAb(titelnummer, null, event.currentTarget,
                             (anchor) => {
-                                const i = anchor.querySelector('i');
-                                self.buttons.deactivateSpinner(i);
-                                self.hoerprobeSpielt(i);
-                                self.buttons.enableAnchor(anchor);
+                                self.hoerprobeSpielt(anchor);
                             },
                             (anchor) => {
-                                const i = anchor.querySelector('i');
-                                self.buttons.deactivateSpinner(i);
-                                self.hoerprobePausiert(i);
-                                self.buttons.enableButtons();
+                                self.hoerprobePausiert(anchor);
                             });
                     } else {
                         self.audioplayer.pausiereHoerprobe(event.currentTarget, (anchor) => {
-                            const i = anchor.querySelector('i');
-                            self.hoerprobePausiert(i);
-                            self.buttons.deactivateSpinner(i);
-                            self.buttons.enableButtons();
+                            self.hoerprobePausiert(anchor);
                         });
                     }
                 };
@@ -64,14 +55,20 @@ export class WbhonlineHoerprobe {
         }
     }
 
-    hoerprobeSpielt(i) {
-        PLAY_BUTTON.forEach(value => i.classList.remove(value));
-        PAUSE_BUTTON.forEach(value => i.classList.add(value));
+    hoerprobeSpielt(anchor) {
+        const fontAwesomeElement = anchor.querySelector('i');
+        this.buttons.deactivateSpinner(fontAwesomeElement);
+        PLAY_BUTTON.forEach(value => fontAwesomeElement.classList.remove(value));
+        PAUSE_BUTTON.forEach(value => fontAwesomeElement.classList.add(value));
+        this.buttons.enableAnchor(anchor);
     }
 
-    hoerprobePausiert(i) {
-        PAUSE_BUTTON.forEach(value => i.classList.remove(value));
-        PLAY_BUTTON.forEach(value => i.classList.add(value));
+    hoerprobePausiert(anchor) {
+        const fontAwesomeElement = anchor.querySelector('i');
+        this.buttons.deactivateSpinner(fontAwesomeElement);
+        PAUSE_BUTTON.forEach(value => fontAwesomeElement.classList.remove(value));
+        PLAY_BUTTON.forEach(value => fontAwesomeElement.classList.add(value));
+        this.buttons.enableButtons();
     }
 
 }

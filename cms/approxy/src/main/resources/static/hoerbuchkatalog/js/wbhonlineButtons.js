@@ -49,15 +49,13 @@ export class WbhonlineButtons {
         i.style.pointerEvents = 'none';
         this.previousClassList.set(i.id, [...i.classList]);
         i.className = '';
-        //ENABLE_SPINNER.forEach(value => i.classList.add(value));
-        i.classList = [...ENABLE_SPINNER];
+        ENABLE_SPINNER.forEach(value => i.classList.add(value));
     }
 
     deactivateSpinner(i) {
         if (this.previousClassList.has(i.id)) {
             i.className = '';
-            //this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
-            i.classList = [...this.previousClassList.get(i.id)];
+            this.previousClassList.get(i.id).forEach(value => i.classList.add(value));
         }
         i.style.pointerEvents = '';
     }

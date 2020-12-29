@@ -168,43 +168,66 @@ export class BookwormRestClient {
     // Download
     //
 
+    downloadErlaubt(titelnummer) {
+        const url = new URL('/v1/downloads/' + titelnummer + '/erlaubt', HOERBUCHKATALOG_URL);
+        return fetch(url.toString(), {'method': 'GET'})
+            .then(response => response.ok)
+            .catch(reason => {
+                console.log('Fehler: ' + reason);
+                return false;
+            });
+    }
+
     bestelleDownload(titelnummer, element, downloadFertigCallback) {
-        this.shardLocation(titelnummer)
-            .then(shardName => {
-                const url = new URL('v1/bestellung/' + titelnummer, 'https://' + shardName);
-                fetch(url.toString(), {
-                    'method': 'POST',
-                    'mode': 'cors',
-                    'headers': {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json',
-                        'X-Bookworm-Mandant': this.mandant,
-                        'X-Bookworm-Hoerernummer': this.hoerernummer
-                    },
-                    'redirect': 'follow'
-                })
-                    .then(response => {
-                        if (response.ok) {
-                            return response.json();
-                        } else {
-                            // TODO HTTP 404 Buch nicht gefunden (Databeat noch nicht vollständig)
-                            FetchErrorHandler.handle(response);
-                        }
-                    })
-                    .then(json => {
-                        if (json && json.orderId) {
-                            console.log('orderId ist ' + json.orderId);
-                            this.warteAufDownload(shardName, titelnummer, json.orderId, element, downloadFertigCallback);
-                        } else {
-                            console.log('Kein JSON oder keine orderId bekommen');
-                        }
-                    })
-                    .catch(reason => {
-                        console.log('Fehler: ' + reason);
-                        if (undefined !== downloadFertigCallback) {
-                            downloadFertigCallback(element);
-                        }
-                    });
+        this.downloadErlaubt(titelnummer)
+            .then(ok => {
+                if (ok) {
+                    this.shardLocation(titelnummer)
+                        .then(shardName => {
+                            const url = new URL('v1/bestellung/' + titelnummer, 'https://' + shardName);
+                            fetch(url.toString(), {
+                                'method': 'POST',
+                                'mode': 'cors',
+                                'headers': {
+                                    'Accept': 'application/json',
+                                    'Content-Type': 'application/json',
+                                    'X-Bookworm-Mandant': this.mandant,
+                                    'X-Bookworm-Hoerernummer': this.hoerernummer
+                                },
+                                'redirect': 'follow'
+                            })
+                                .then(response => {
+                                    if (response.ok) {
+                                        return response.json();
+                                    } else {
+                                        // TODO HTTP 404 Buch nicht gefunden (Databeat noch nicht vollständig)
+                                        FetchErrorHandler.handle(response);
+                                    }
+                                })
+                                .then(json => {
+                                    if (json && json.orderId) {
+                                        console.log('orderId ist ' + json.orderId);
+                                        this.warteAufDownload(shardName, titelnummer, json.orderId, element, downloadFertigCallback);
+                                    } else {
+                                        console.log('Kein JSON oder keine orderId bekommen');
+                                    }
+                                })
+                                .catch(reason => {
+                                    console.log('Fehler: ' + reason);
+                                    if (undefined !== downloadFertigCallback) {
+                                        downloadFertigCallback(element);
+                                    }
+                                });
+                        })
+                        .catch(reason => {
+                            console.log('Fehler: ' + reason);
+                            if (undefined !== downloadFertigCallback) {
+                                downloadFertigCallback(element);
+                            }
+                        });
+                } else {
+                    console.log('Download ' + titelnummer + ' ist nicht erlaubt');
+                }
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
@@ -282,7 +305,7 @@ export class BookwormRestClient {
     }
 
     verbucheDownload(shardName, titelnummer) {
-        const url = new URL('v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('hoerbuchkatalog/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'PUT',
             'headers': {
@@ -309,17 +332,21 @@ export class BookwormRestClient {
     //
 
     shardLocation(titelnummer) {
-        function getRandomInt(max) {
-            return Math.floor(Math.random() * Math.floor(max));
-        }
-
-        const shardUrl = SHARD_URLS[getRandomInt(SHARD_URLS.length - 1)];
-        return fetch(shardUrl + '/v1/shard/location/' + titelnummer,
-            {'method': 'GET', 'mode': 'cors'})
+        const shardUrl = this.randomShard();
+        const url = new URL('/v1/shard/location/' + titelnummer, shardUrl);
+        return fetch(url.toString(), {'method': 'GET', 'mode': 'cors'})
             .then(response => response.text())
             .catch(reason => {
                 console.log('Fehler: ' + reason);
             });
+    }
+
+    randomShard() {
+        return SHARD_URLS[this.getRandomInt(SHARD_URLS.length - 1)];
+    }
+
+    getRandomInt(max) {
+        return Math.floor(Math.random() * Math.floor(max));
     }
 
 }

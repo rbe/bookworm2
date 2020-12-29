@@ -55,7 +55,14 @@ export class WbhonlineMerkliste {
         const aufMerkliste = merklisteButton.classList.contains('watchlist-true');
         if (aufMerkliste) {
             this.bookwormRestClient.entferneVonMerkliste(titelnummer, () => {
-                this.vonMerklisteEntfernt(merklisteButton);
+                // "Meine Merkliste": div entfernen
+                // ansonsten: CSS-Klasse des Buttons ändern
+                const div = document.querySelector('#merkliste-eintrag-' + titelnummer);
+                if (undefined !== div) {
+                    div.remove();
+                } else {
+                    this.vonMerklisteEntfernt(merklisteButton, titelnummer);
+                }
             });
         } else {
             this.bookwormRestClient.fuegeZuMerklisteHinzu(titelnummer, () => {
@@ -77,6 +84,13 @@ export class WbhonlineMerkliste {
         merklisteButton.classList.remove('watchlist-true');
         merklisteButton.classList.add('watchlist-false');
         this.buttons.setTitle(merklisteButton, 'Hörbuch auf die Merkliste setzen');
+    }
+
+    removeRow(titelnummer) {
+        const div = document.querySelector('#merliste-eintrag-' + titelnummer);
+        if (undefined !== div) {
+            div.remove();
+        }
     }
 
 }

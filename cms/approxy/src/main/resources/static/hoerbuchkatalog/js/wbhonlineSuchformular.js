@@ -11,11 +11,11 @@ const stichwortsucheUrl = '/stichwortsuche.html';
 export class WbhonlineSuchformular {
 
     initialisiereSuchformulare() {
-        const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
+        const forms = document.querySelectorAll('div[class="catalogsearch"]');
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
             if (undefined !== inputField) {
-                const button = form.querySelector('button[class*="search"]');
+                const button = form.querySelector('button[type="submit"][class*="search"]');
                 inputField.addEventListener('keyup', (event) => {
                     if (event.keyCode === 13) {
                         event.preventDefault();
@@ -48,9 +48,9 @@ export class WbhonlineSuchformular {
         if (searchParams.has('stichwort')) {
             const stichwort = decodeURIComponent(searchParams.get('stichwort'));
             document.title = 'WBH: Suche nach ' + stichwort;
-            const forms = document.querySelectorAll('form[id^="catalogsearch-"]');
+            const forms = document.querySelectorAll('div[class="catalogsearch"]');
             for (const form of forms) {
-                const inputField = form.querySelector('input[type="text"][class*="form-control"]');
+                const inputField = form.querySelector('input[type="text"][class="form-control"]');
                 if (undefined !== inputField && null !== inputField) {
                     inputField.value = stichwort;
                 }
