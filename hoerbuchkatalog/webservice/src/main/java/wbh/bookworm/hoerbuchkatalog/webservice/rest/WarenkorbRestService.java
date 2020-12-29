@@ -88,11 +88,13 @@ public final class WarenkorbRestService {
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver
                 .toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
+        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
+        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));

@@ -33,8 +33,21 @@ public class DownloadsService {
                 .orElseGet(() -> downloadsRepository.erstellen(hoerernummer));
     }
 
-    public int anzahl(final Hoerernummer hoerernummer) {
+    public int gesamtanzahl(final Hoerernummer hoerernummer) {
         return downloads(hoerernummer).getAnzahl();
+    }
+
+    public long anzahlHeute(final Hoerernummer hoerernummer) {
+        return downloads(hoerernummer).anzahlHeute();
+    }
+
+    public long anzahlAktuellerMonat(final Hoerernummer hoerernummer) {
+        return downloads(hoerernummer).anzahlAktuellerMonat();
+    }
+
+    public boolean downloadErlaubt(final Hoerernummer hoerernummer) {
+        return anzahlHeute(hoerernummer) < 10
+                && anzahlAktuellerMonat(hoerernummer) < 30;
     }
 
     /**

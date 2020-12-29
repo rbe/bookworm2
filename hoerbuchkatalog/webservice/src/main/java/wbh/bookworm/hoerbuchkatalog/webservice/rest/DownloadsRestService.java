@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,6 +60,34 @@ public class DownloadsRestService {
         return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
     }
 
+    @GetMapping(value = "/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> downloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                   @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        return downloadsService.downloadErlaubt(hoerernummer)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @GetMapping(value = "/heute", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> anzahlHeute(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
+        return ResponseEntity.ok(downloads.anzahlHeute());
+    }
+
+    @GetMapping(value = "/aktuellermonat", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> anzahlAktuellerMonat(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
+        return ResponseEntity.ok(downloads.anzahlAktuellerMonat());
+    }
+
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -67,7 +96,9 @@ public class DownloadsRestService {
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
+        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setAusgeliehenAm(format(downloads.ausgeliehenAm(titelnummer)));
@@ -88,7 +119,9 @@ public class DownloadsRestService {
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
+        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));

@@ -68,6 +68,21 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         return titelnummern.size();
     }
 
+    public long anzahlHeute() {
+        final LocalDateTime now = LocalDateTime.now();
+        return titelnummern.entrySet().stream()
+                .filter(entry -> now.isBefore(entry.getValue().getAusgeliehenAm()))
+                .count();
+    }
+
+    public long anzahlAktuellerMonat() {
+        final LocalDateTime now = LocalDateTime.now();
+        return titelnummern.entrySet().stream()
+                .filter(entry -> now.getMonth().equals(entry.getValue().getAusgeliehenAm().getMonth())
+                        && now.getYear() == entry.getValue().getAusgeliehenAm().getYear())
+                .count();
+    }
+
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.containsKey(titelnummer);
         LOGGER.trace("Downloads '{}' enthält Hörbuch '{}': '{}'", this, titelnummer, bereitsVorhanden);

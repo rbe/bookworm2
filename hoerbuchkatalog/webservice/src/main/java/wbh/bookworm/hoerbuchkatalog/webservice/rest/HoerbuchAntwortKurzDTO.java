@@ -16,6 +16,8 @@ public final class HoerbuchAntwortKurzDTO {
 
     private boolean downloadbar;
 
+    private boolean downloadErlaubt;
+
     private boolean alsDownloadGebucht;
 
     private String ausgeliehenAm;
@@ -83,6 +85,14 @@ public final class HoerbuchAntwortKurzDTO {
         this.downloadbar = downloadbar;
     }
 
+    public boolean isDownloadErlaubt() {
+        return downloadErlaubt;
+    }
+
+    public void setDownloadErlaubt(final boolean downloadErlaubt) {
+        this.downloadErlaubt = downloadErlaubt;
+    }
+
     public boolean isAlsDownloadGebucht() {
         return alsDownloadGebucht;
     }
@@ -92,19 +102,21 @@ public final class HoerbuchAntwortKurzDTO {
     }
 
     public String getAusgeliehenAm() {
-        return ausgeliehenAm;
+        return null != ausgeliehenAm && !ausgeliehenAm.isBlank()
+                ? ausgeliehenAm
+                : "";
     }
 
     public void setAusgeliehenAm(final String ausgeliehenAm) {
-        this.ausgeliehenAm = null != ausgeliehenAm && !ausgeliehenAm.isBlank() ? ausgeliehenAm : "";
+        this.ausgeliehenAm = ausgeliehenAm;
     }
 
     public String getRueckgabeBis() {
-        return rueckgabeBis;
+        return null != rueckgabeBis && !rueckgabeBis.isBlank() ? rueckgabeBis : "";
     }
 
     public void setRueckgabeBis(final String rueckgabeBis) {
-        this.rueckgabeBis = null != rueckgabeBis && !rueckgabeBis.isBlank() ? rueckgabeBis : "";
+        this.rueckgabeBis = rueckgabeBis;
     }
 
     public boolean isAufDerMerkliste() {

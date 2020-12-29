@@ -47,6 +47,8 @@ public final class HoerbuchAntwortDTO {
 
     private boolean downloadbar;
 
+    private boolean downloadErlaubt;
+
     private boolean alsDownloadGebucht;
 
     private String ausgeliehenAm;
@@ -230,6 +232,14 @@ public final class HoerbuchAntwortDTO {
 
     public void setDownloadbar(final boolean downloadbar) {
         this.downloadbar = downloadbar;
+    }
+
+    public boolean isDownloadErlaubt() {
+        return downloadErlaubt;
+    }
+
+    public void setDownloadErlaubt(final boolean downloadErlaubt) {
+        this.downloadErlaubt = downloadErlaubt;
     }
 
     public boolean isAlsDownloadGebucht() {

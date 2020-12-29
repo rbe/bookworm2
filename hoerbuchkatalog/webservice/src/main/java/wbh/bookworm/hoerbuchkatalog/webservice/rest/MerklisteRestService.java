@@ -73,12 +73,14 @@ public class MerklisteRestService {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
-            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
+        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setAufDerMerkliste(true);
+            final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
@@ -93,12 +95,14 @@ public class MerklisteRestService {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(hoerbuchAntwortKurzDTO -> {
-            hoerbuchAntwortKurzDTO.setAufDerMerkliste(true);
-            final Titelnummer titelnummer = new Titelnummer(hoerbuchAntwortKurzDTO.getTitelnummer());
-            hoerbuchAntwortKurzDTO.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
-            hoerbuchAntwortKurzDTO.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
+        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+            dto.setAufDerMerkliste(true);
+            final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
