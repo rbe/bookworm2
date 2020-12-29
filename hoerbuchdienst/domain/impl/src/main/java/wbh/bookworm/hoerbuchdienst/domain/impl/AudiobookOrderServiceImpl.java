@@ -60,9 +60,10 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
                 LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung {}: DAISY ZIP erstellt", hoerernummer, titelnummer, orderId);
                 final Path orderDirectory = temporaryDirectory.resolve(orderId);
                 Files.createDirectories(orderDirectory);
-                Files.move(zipFile, orderDirectory.resolve(DAISY_ZIP));
+                final Path daisyZip = orderDirectory.resolve(DAISY_ZIP);
+                Files.move(zipFile, daisyZip);
                 orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
-                LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung '{}': DAISY ZIP bereitgestellt", hoerernummer, titelnummer, orderId);
+                LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung '{}': DAISY ZIP unter '{}' bereitgestellt", hoerernummer, titelnummer, orderId, daisyZip);
             } else {
                 orderStatus.put(orderId, ORDER_STATUS_FAILED);
                 LOGGER.error("Hörer '{}' Hörbuch '{}' Bestellung '{}': Fehler bei der Bereitstellung des DAISY ZIP", hoerernummer, titelnummer, orderId);
