@@ -123,4 +123,21 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         }
     }
 
+    @Override
+    public Optional<Long> lastModified(final String orderId) {
+        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        final boolean orderExists = orderStatus.containsKey(orderId)
+                && Files.exists(daisyZip);
+        if (orderExists) {
+            try {
+                return Optional.of(Files.getLastModifiedTime(daisyZip).toMillis());
+            } catch (IOException e) {
+                LOGGER.error(String.format("Kann Größe des DASY ZIPs %s nicht bestimmen", orderId), e);
+                return Optional.of(-1L);
+            }
+        } else {
+            return Optional.empty();
+        }
+    }
+
 }

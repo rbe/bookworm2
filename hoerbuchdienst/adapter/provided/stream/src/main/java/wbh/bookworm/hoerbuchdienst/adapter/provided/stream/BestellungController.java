@@ -9,6 +9,9 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.nio.file.Path;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -152,8 +155,7 @@ public class BestellungController {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> daisyZipAsStream(titelnummer, orderId),
                 body -> CORS.response(httpRequest, body)
-                        .contentType(APPLICATION_ZIP)
-                        .contentLength(audiobookOrderService.fileSize(orderId).orElse(-1L)),
+                        .contentType(APPLICATION_ZIP),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
@@ -162,7 +164,9 @@ public class BestellungController {
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
         if (maybeDaisyZipInputStream.isPresent()) {
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
-            return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP)
+            return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP,
+                    LocalDateTime.now().toInstant(ZoneOffset.of("Europe/Berlin")).toEpochMilli(),
+                    audiobookOrderService.fileSize(orderId).orElse(-1L))
                     .attach(String.format("%s.zip", titelnummer));
         }
         throw new BusinessException(String.format("Bestellung %sKein Hörbuch %s gefunden", orderId, titelnummer));

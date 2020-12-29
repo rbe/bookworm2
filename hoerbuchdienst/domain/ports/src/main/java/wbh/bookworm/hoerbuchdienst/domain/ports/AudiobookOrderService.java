@@ -22,4 +22,6 @@ public interface AudiobookOrderService {
 
     Optional<Long> fileSize(String orderId);
 
+    Optional<Long> lastModified(String orderId);
+
 }
