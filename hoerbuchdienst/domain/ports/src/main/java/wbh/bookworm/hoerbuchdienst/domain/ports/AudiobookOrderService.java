@@ -20,4 +20,6 @@ public interface AudiobookOrderService {
 
     Optional<Path> fetchOrderAsFile(String orderId);
 
+    Optional<Long> fileSize(String orderId);
+
 }

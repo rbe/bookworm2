@@ -151,7 +151,9 @@ public class BestellungController {
                                                     @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> daisyZipAsStream(titelnummer, orderId),
-                body -> CORS.response(httpRequest, body),
+                body -> CORS.response(httpRequest, body)
+                        .contentType(APPLICATION_ZIP)
+                        .contentLength(audiobookOrderService.fileSize(orderId).orElse(-1L)),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
@@ -163,7 +165,7 @@ public class BestellungController {
             return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP)
                     .attach(String.format("%s.zip", titelnummer));
         }
-        throw new BusinessException("Kein Hörbuch");
+        throw new BusinessException(String.format("Bestellung %sKein Hörbuch %s gefunden", orderId, titelnummer));
     }
 
     // TODO cleanup
