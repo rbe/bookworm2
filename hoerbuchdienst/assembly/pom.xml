@@ -29,12 +29,6 @@
         <rabbitmq.hostname>rabbitmq-${domain}</rabbitmq.hostname>
         <rabbitmq.nodename>rabbitmq@${rabbitmq.hostname}</rabbitmq.nodename>
         <virenscanner.release>1.7</virenscanner.release>
-        <!--
-        <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
-        <keycloak.postgres.hostname>keycloakpostgres-${domain}</keycloak.postgres.hostname>
-        <keycloak.release>10.0.2</keycloak.release>
-        <keycloak.hostname>keycloak-${domain}</keycloak.hostname>
-        -->
         <!-- Elasticsearch
         -->
         <hbd.release>${maven.build.timestamp}</hbd.release>

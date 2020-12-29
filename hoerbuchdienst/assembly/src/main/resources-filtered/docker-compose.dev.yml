@@ -17,8 +17,6 @@ services:
   #virenscanner:
   #  ports:
   #    - "3310:3310"
-  #keycloakpostgres:
-  #keycloak:
   hoerbuchdienst:
     #volumes:
     #  - type: tmpfs

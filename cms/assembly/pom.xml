@@ -19,6 +19,8 @@
         <nginx.release>1.17-alpine</nginx.release>
         <cms.release>${maven.build.timestamp}</cms.release>
         <cms.hostname>www.${domain}</cms.hostname>
+        <!-- Siehe auch hoerbuchkatalog.deployment -->
+        <keycloak.hostname>id.${domain}</keycloak.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>

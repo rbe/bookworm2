@@ -18,6 +18,11 @@
         <nginx.hostname>nginx.${domain}</nginx.hostname>
         <hbk.release>${maven.build.timestamp}</hbk.release>
         <hbk.hostname>hoerbuchkatalog.${domain}</hbk.hostname>
+        <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
+        <keycloak.postgres.hostname>keycloakpostgres-${domain}</keycloak.postgres.hostname>
+        <keycloak.release>12.0.1</keycloak.release>
+        <!-- Siehe auch cms.assembly -->
+        <keycloak.hostname>id.${domain}</keycloak.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
         <docker-compose.dir>${project.basedir}/target/${project.artifactId}-${project.version}</docker-compose.dir>
         <docker-compose.file>${docker-compose.dir}/docker-compose.yml</docker-compose.file>
@@ -180,6 +185,21 @@
                         </goals>
                         <configuration>
                             <services>hoerbuchkatalog</services>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>build-keycloak</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                        <configuration>
+                            <services>keycloakpostgres,keycloak</services>
+                            <buildArgs>
+                                <args>
+                                    <KEYCLOAK_RELEASE>${keycloak.release}</KEYCLOAK_RELEASE>
+                                </args>
+                            </buildArgs>
                         </configuration>
                     </execution>
                 </executions>

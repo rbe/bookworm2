@@ -40,7 +40,6 @@ then
     selfsigned-openssl.sh "${kes.hostname}"
     selfsigned-openssl.sh "${minio.hostname}"
     selfsigned-openssl.sh "${rabbitmq.hostname}"
-    #selfsigned-openssl.sh "${keycloak.hostname}"
     selfsigned-openssl.sh "${hbd.hostname}"
   elif [[ -n "${domain}" ]]
   then
@@ -64,8 +63,6 @@ then
           && certbot certonly ${certonly_args} -d "${minio.hostname}"
       [[ ! -d /etc/letsencrypt/live/${rabbitmq.hostname} ]] \
           && certbot certonly ${certonly_args} -d "${rabbitmq.hostname}"
-      #[[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ]] \
-      #    && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
       [[ ! -d /etc/letsencrypt/live/${hbd.hostname} ]] \
           && certbot certonly ${certonly_args} -d "${hbd.hostname}"
       chmod 755 /etc/letsencrypt/archive
