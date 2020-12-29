@@ -44,7 +44,7 @@ services:
     expose:
       - 8080
   redis:
-    image: wbh-hbk/redis:${redis.release}
+    image: wbh-hbk/redis:${hbk.release}
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
@@ -56,7 +56,7 @@ services:
     expose:
       - "6379"
   redisbackup:
-    image: wbh-hbk/redisbackup:${redis.release}
+    image: wbh-hbk/redisbackup:${hbk.release}
     restart: unless-stopped
     environment:
       - TZ=Europe/Berlin
