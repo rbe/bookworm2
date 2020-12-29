@@ -8,12 +8,6 @@ hoerbuchkatalog:
     gesamtdat:
       filename: Gesamt.dat
       charset: ISO-8859-15
-  blista:
-    rest:
-      url: https://rest-dls-katalog.blista.de:443/v1/isofiles
-    aghnummern:
-      pathinzip: /iso.txt
-      charset: ISO-8859-15
 
 hoererdaten:
   directory: ./var/wbh/nutzerdaten
@@ -24,40 +18,16 @@ cdlieferung:
 repository:
   path: ./var
 
-blista:
-  dls:
-    downloadsProTag: 5
-    downloadsProMonat: 10
-    sftp:
-      host: rest-dls-katalog.blista.de
-      port: 95
-      bibliothek:
-      bibkennwort:
-      directory: ./var/blista/dls
-    rest:
-      werkeurl: https://rest-dls-katalog.blista.de:443/v1/werke
-      checkurl: https://rest-dls-katalog.blista.de:443/v1/check
-      bibliothek:
-      bibkennwort:
-      directory: ./var/blista/dls
-
 lucene:
   index:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
-  banner:
-    location: classpath:/banner/banner-starwars0.txt
-  main:
-    banner-mode: "console"
   mail:
     host: 127.0.0.1
     port: 8025
     username: username
     password: password
-    default-encoding: UTF-8
-    protocol: smtp
-    test-connection: true
     properties:
       mail:
         debug: true
@@ -67,41 +37,12 @@ spring:
           starttls:
             enable: true
 
-joinfaces:
-  jsf:
-    project-stage: development
-    facelets-refresh-period: 0
-    interpret-empty-string-submitted-values-as-null: true
-    state-saving-method: server
-    partial-state-saving: true
-  mojarra:
-    enable-restore-view11-compatibility: false
-
 server:
   address: 127.0.0.1
-  port: 8080
-  compression:
-    enabled: true
   error:
     whitelabel:
       enabled: false
     include-stacktrace: always
-  servlet:
-    context-path: /hoerbuchkatalog
-    session:
-      cookie:
-        name: Hoerbuchkatalog
-        comment: Hoerbuchkatalog
-        domain: localhost
-        path: /hoerbuchkatalog
-        http-only: true
-        secure: false
-        max-age: 8h
-      tracking-modes: COOKIE
-      persistent: false
-      timeout: 10m
-  http2:
-    enabled: true
 
 logging:
   config: classpath:logback-development.xml

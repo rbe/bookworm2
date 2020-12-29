@@ -1,3 +1,57 @@
+hoerbuchkatalog:
+  directory: ./var/wbh/hoerbuchkatalog
+  cron:
+    expression: 0 15 5 * * MON-FRI
+  suchergebnisse:
+    anzahl: 1000
+  wbh:
+    gesamtdat:
+      filename: Gesamt.dat
+      charset: ISO-8859-15
+
+hoererdaten:
+  directory: ./var/wbh/nutzerdaten
+
+cdlieferung:
+  directory: ./var/wbh/nutzerdaten
+
+repository:
+  path: ./var
+
+lucene:
+  index:
+    directory: ${hoerbuchkatalog.directory}/lucene
+
 spring:
-  profiles:
-    active: "development"
+  banner:
+    location: classpath:/banner/banner-starwars0.txt
+  main:
+    banner-mode: "console"
+  mail:
+    default-encoding: UTF-8
+    protocol: smtp
+    test-connection: true
+    properties:
+      mail:
+        debug: false
+        smtp:
+          debug: false
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  port: 8080
+  compression:
+    enabled: false
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: always
+  servlet:
+    context-path: /hoerbuchkatalog
+  http2:
+    enabled: true
+
+logging:
+  config: classpath:logback-development.xml

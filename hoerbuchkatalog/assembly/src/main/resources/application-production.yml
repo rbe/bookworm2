@@ -8,12 +8,6 @@ hoerbuchkatalog:
     gesamtdat:
       filename: Gesamt.dat
       charset: ISO-8859-15
-  blista:
-    rest:
-      url: https://rest-dls-katalog.blista.de:443/v1/isofiles
-    aghnummern:
-      pathinzip: /iso.txt
-      charset: ISO-8859-15
 
 hoererdaten:
   directory: /var/local/wbh/nutzerdaten
@@ -24,84 +18,21 @@ cdlieferung:
 repository:
   path: /var/local
 
-blista:
-  dls:
-    downloadsProTag: 5
-    downloadsProMonat: 10
-    sftp:
-      host: rest-dls-katalog.blista.de
-      port: 95
-      bibliothek:
-      bibkennwort:
-      directory: ./var/blista/dls
-    rest:
-      werkeurl: https://rest-dls-katalog.blista.de:443/v1/werke
-      checkurl: https://rest-dls-katalog.blista.de:443/v1/check
-      bibliothek:
-      bibkennwort:
-      directory: /var/local/blista/dls
-
 lucene:
   index:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
-  banner:
-    location: classpath:/banner/banner-starwars0.txt
-  main:
-    banner-mode: "console"
+  # Siehe application-secrets.yml
   mail:
-    host: mail
     port: 587
-    username: username
-    password: password
-    default-encoding: UTF-8
-    protocol: smtp
-    test-connection: false
-    properties:
-      mail:
-        debug: false
-        smtp:
-          debug: false
-          auth: true
-          starttls:
-            enable: true
-
-joinfaces:
-  jsf:
-    project-stage: production
-    facelets-refresh-period: 0
-    interpret-empty-string-submitted-values-as-null: true
-    state-saving-method: server
-    partial-state-saving: true
-  mojarra:
-    enable-restore-view11-compatibility: false
 
 server:
   address: 0.0.0.0
-  port: 8080
-  compression:
-    enabled: true
   error:
     whitelabel:
       enabled: false
     include-stacktrace: never
-  servlet:
-    context-path: /hoerbuchkatalog
-    session:
-      cookie:
-        name: Hoerbuchkatalog
-        comment: Hoerbuchkatalog
-        domain: wbh-online.de
-        path: /hoerbuchkatalog
-        http-only: true
-        secure: true
-        max-age: 8h
-      tracking-modes: COOKIE
-      persistent: false
-      timeout: 1h
-  http2:
-    enabled: true
 
 logging:
   config: classpath:logback-production.xml
