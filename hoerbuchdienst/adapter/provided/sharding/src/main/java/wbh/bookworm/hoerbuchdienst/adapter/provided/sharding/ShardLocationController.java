@@ -67,7 +67,6 @@ public class ShardLocationController {
     public HttpResponse<String> location(final HttpRequest<?> httpRequest,
                                          @PathVariable final String objectId) {
         final String shardName = audiobookLocationService.shardLocation(objectId);
-        LOGGER.info("Shard for object {} is {}", objectId, shardName);
         return "unknown".equals(shardName)
                 ? HttpResponse.notFound()
                 : CORS.response(httpRequest, shardName)
