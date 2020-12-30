@@ -3,7 +3,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public final class HoerbuchAntwortDTO {
+public final class HoerbuchAntwortDTO implements Comparable<HoerbuchAntwortDTO> {
 
     private String titelnummer;
 
@@ -280,6 +280,11 @@ public final class HoerbuchAntwortDTO {
 
     public void setImWarenkorb(final boolean imWarenkorb) {
         this.imWarenkorb = imWarenkorb;
+    }
+
+    @Override
+    public int compareTo(final HoerbuchAntwortDTO o) {
+        return this.titelnummer.compareTo(o.titelnummer);
     }
 
 }

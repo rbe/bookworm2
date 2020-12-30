@@ -1,6 +1,6 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
-public final class HoerbuchAntwortKurzDTO {
+public final class HoerbuchAntwortKurzDTO implements Comparable<HoerbuchAntwortKurzDTO> {
 
     private String titelnummer;
 
@@ -133,6 +133,11 @@ public final class HoerbuchAntwortKurzDTO {
 
     public void setImWarenkorb(final boolean imWarenkorb) {
         this.imWarenkorb = imWarenkorb;
+    }
+
+    @Override
+    public int compareTo(final HoerbuchAntwortKurzDTO o) {
+        return this.titelnummer.compareTo(o.titelnummer);
     }
 
 }
