@@ -7,15 +7,7 @@
 "use strict";
 
 import {FetchErrorHandler} from "./fetchErrorHandler.js";
-
-const HOERBUCHKATALOG_URL = 'https://www-prod.wbh-online.de';
-
-const SHARD_URLS = [
-    'https://hoerbuchdienst-shard11.wbh-online.de',
-    'https://hoerbuchdienst-shard12.wbh-online.de',
-    'https://hoerbuchdienst-shard13.wbh-online.de'
-];
-const DOWNLOAD_STATUS_TIMEOUT = 2500;
+import {DOWNLOAD_STATUS_TIMEOUT, HOERBUCHKATALOG_URL, SHARD_URLS} from "./wbhonlineHelper.js";
 
 export class BookwormRestClient {
 
@@ -42,7 +34,7 @@ export class BookwormRestClient {
             }
         })
             .then(response => {
-                if (response.ok && undefined !== successCallback) {
+                if (response.ok && undefined !== successCallback && null !== successCallback) {
                     successCallback();
                 } else {
                     FetchErrorHandler.handle(response);
@@ -65,7 +57,7 @@ export class BookwormRestClient {
             }
         })
             .then(response => {
-                if (response.ok && undefined !== successCallback) {
+                if (response.ok && undefined !== successCallback && null !== successCallback) {
                     successCallback();
                 } else {
                     FetchErrorHandler.handle(response);
@@ -92,7 +84,7 @@ export class BookwormRestClient {
             }
         })
             .then(response => {
-                if (response.ok && undefined !== successCallback) {
+                if (response.ok && undefined !== successCallback && null !== successCallback) {
                     successCallback();
                 } else {
                     FetchErrorHandler.handle(response);
@@ -115,7 +107,7 @@ export class BookwormRestClient {
             }
         })
             .then(response => {
-                if (response.ok && undefined !== successCallback) {
+                if (response.ok && undefined !== successCallback && null !== successCallback) {
                     successCallback();
                 } else {
                     FetchErrorHandler.handle(response);
@@ -151,7 +143,7 @@ export class BookwormRestClient {
                         }
                     })
                     .then(blob => {
-                        if (undefined !== blob && blob.size > 0) {
+                        if (undefined !== blob && null !== blob && blob.size > 0) {
                             playCallback(blob);
                         }
                     })
@@ -169,7 +161,7 @@ export class BookwormRestClient {
     //
 
     downloadErlaubt(titelnummer) {
-        const url = new URL('/v1/downloads/' + titelnummer + '/erlaubt', HOERBUCHKATALOG_URL);
+        const url = new URL('/hoerbuchkatalog/v1/downloads/erlaubt', HOERBUCHKATALOG_URL);
         return fetch(url.toString(), {'method': 'GET'})
             .then(response => response.ok)
             .catch(reason => {
@@ -214,14 +206,14 @@ export class BookwormRestClient {
                                 })
                                 .catch(reason => {
                                     console.log('Fehler: ' + reason);
-                                    if (undefined !== downloadFertigCallback) {
+                                    if (undefined !== downloadFertigCallback && null !== downloadFertigCallback) {
                                         downloadFertigCallback(element);
                                     }
                                 });
                         })
                         .catch(reason => {
                             console.log('Fehler: ' + reason);
-                            if (undefined !== downloadFertigCallback) {
+                            if (undefined !== downloadFertigCallback&& null !== downloadFertigCallback) {
                                 downloadFertigCallback(element);
                             }
                         });
@@ -231,7 +223,7 @@ export class BookwormRestClient {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (undefined !== downloadFertigCallback) {
+                if (undefined !== downloadFertigCallback && null !== downloadFertigCallback) {
                     downloadFertigCallback(element);
                 }
             });
@@ -283,14 +275,14 @@ export class BookwormRestClient {
             })
             .catch(reason => {
                 console.log('Fehler: ' + reason);
-                if (undefined !== callback) {
+                if (undefined !== callback && null !== callback) {
                     callback(element);
                 }
             });
     }
 
     downloadHoerbuch(shardName, titelnummer, orderId, element, callback) {
-        if (undefined !== callback) {
+        if (undefined !== callback && null !== callback) {
             callback(element);
         }
         const url = new URL('v1/bestellung/' + titelnummer + '/fetch/' + orderId, 'https://' + shardName);
@@ -305,7 +297,7 @@ export class BookwormRestClient {
     }
 
     verbucheDownload(shardName, titelnummer) {
-        const url = new URL('hoerbuchkatalog/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/hoerbuchkatalog/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'PUT',
             'headers': {

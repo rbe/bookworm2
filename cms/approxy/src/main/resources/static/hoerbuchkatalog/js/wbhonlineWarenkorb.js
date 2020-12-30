@@ -49,7 +49,7 @@ export class WbhonlineWarenkorb {
                 this.inDenWarenkorbGelegt(warenkorbButton);
             });
         }
-        if (undefined !== callback) {
+        if (undefined !== callback && null !== callback) {
             callback();
         }
     }

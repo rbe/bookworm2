@@ -39,18 +39,20 @@ export class WbhonlineDownloads {
 
     verfuegbar(downloadButton) {
         this.buttons.setTitle(downloadButton, 'Hörbuch herunterladen');
-        downloadButton.addEventListener('click', this.bestelleDownload);
-    }
-
-    bestelleDownload(event) {
-        this.buttons.disableButtons();
-        this.buttons.activateSpinner(event.currentTarget.querySelector('i'));
-        const titelnummer = this.helper.titelnummer(event.currentTarget);
-        this.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
-            (element) => {
-                this.buttons.deactivateSpinner(element.querySelector('i'));
-                this.buttons.enableButtons();
-            });
+        const self = this;
+        const bestelleDownload = function (event) {
+            self.buttons.disableButtons();
+            const fontAwesomeElt = event.currentTarget.querySelector('i');
+            self.buttons.activateSpinner(fontAwesomeElt);
+            const titelnummer = self.helper.titelnummer(event.currentTarget);
+            self.bookwormRestClient.bestelleDownload(titelnummer, event.currentTarget,
+                (element) => {
+                    const fontAwesomeElt = element.querySelector('i');
+                    self.buttons.deactivateSpinner(fontAwesomeElt);
+                    self.buttons.enableButtons();
+                });
+        }
+        downloadButton.addEventListener('click', bestelleDownload);
     }
 
     nichtVerfuegbar(downloadButton) {

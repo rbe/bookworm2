@@ -28,14 +28,14 @@ export class Audioplayer {
 
     spieleHoerprobeAb(titelnummer, audio, element, playCallback, pauseCallback) {
         this.bookwormRestClient.bestelleHoerprobe(titelnummer, (blob) => {
-            if (audio === undefined || audio === null) {
+            if (undefined === audio || null === audio) {
                 audio = this.createAudioElement(titelnummer);
             }
             this.audio = audio;
             audio.src = URL.createObjectURL(blob);
             audio.load();
             audio.addEventListener('play', () => {
-                if (undefined !== playCallback) {
+                if (undefined !== playCallback && null !== playCallback) {
                     playCallback(element);
                 }
             });
@@ -53,7 +53,7 @@ export class Audioplayer {
         if (this.audio) {
             this.audio.pause();
             this.cleanup(this.audio);
-            if (undefined !== callback) {
+            if (undefined !== callback && null !== callback) {
                 callback(element);
             }
         }

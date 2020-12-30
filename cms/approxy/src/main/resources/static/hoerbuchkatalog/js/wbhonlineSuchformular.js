@@ -14,7 +14,7 @@ export class WbhonlineSuchformular {
         const forms = document.querySelectorAll('div[class="catalogsearch"]');
         for (const form of forms) {
             const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-            if (undefined !== inputField) {
+            if (undefined !== inputField && null !== inputField) {
                 const button = form.querySelector('button[type="submit"][class*="search"]');
                 inputField.addEventListener('keyup', (event) => {
                     if (event.keyCode === 13) {

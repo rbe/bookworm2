@@ -7,8 +7,14 @@
 "use strict";
 
 export const HOERER_UNBEKANNT = '00000';
-
 export const LOGIN_HTML = '/anmelden.html';
+export const HOERBUCHKATALOG_URL = 'https://www-prod.wbh-online.de';
+export const SHARD_URLS = [
+    'https://hoerbuchdienst-shard11.wbh-online.de',
+    'https://hoerbuchdienst-shard12.wbh-online.de',
+    'https://hoerbuchdienst-shard13.wbh-online.de'
+];
+export const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
 export class WbhonlineHelper {
 

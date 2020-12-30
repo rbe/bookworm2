@@ -58,7 +58,7 @@ export class WbhonlineMerkliste {
                 // "Meine Merkliste": div entfernen
                 // ansonsten: CSS-Klasse des Buttons ändern
                 const div = document.querySelector('#merkliste-eintrag-' + titelnummer);
-                if (undefined !== div) {
+                if (undefined !== div && null !== div) {
                     div.remove();
                 } else {
                     this.vonMerklisteEntfernt(merklisteButton, titelnummer);
@@ -69,7 +69,7 @@ export class WbhonlineMerkliste {
                 this.zurMerklisteHinzugefuegt(merklisteButton);
             });
         }
-        if (undefined !== callback) {
+        if (undefined !== callback && null !== callback) {
             callback();
         }
     }
@@ -88,7 +88,7 @@ export class WbhonlineMerkliste {
 
     removeRow(titelnummer) {
         const div = document.querySelector('#merliste-eintrag-' + titelnummer);
-        if (undefined !== div) {
+        if (undefined !== div && null !== div) {
             div.remove();
         }
     }
