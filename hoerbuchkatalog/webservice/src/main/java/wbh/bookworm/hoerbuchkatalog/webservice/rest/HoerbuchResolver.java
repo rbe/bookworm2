@@ -35,6 +35,7 @@ class HoerbuchResolver {
         return titelnummern.stream()
                 .map(titelnummer -> hoerbuchkatalogService.hole(HOERERNUMMER, titelnummer))
                 .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortKurzDto)
+                .sorted()
                 .collect(Collectors.toUnmodifiableList());
     }
 
