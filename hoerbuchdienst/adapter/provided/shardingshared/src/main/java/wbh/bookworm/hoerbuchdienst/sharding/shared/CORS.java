@@ -39,7 +39,7 @@ public final class CORS {
                                                                 final URI uri) {
         return with(httpRequest,
                 origin -> HttpResponse.<String>temporaryRedirect(uri)
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_DOMAIN/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .body(""));
     }
@@ -47,7 +47,7 @@ public final class CORS {
     public static MutableHttpResponse<String> optionsResponse(final HttpRequest<?> httpRequest) {
         return with(httpRequest,
                 origin -> HttpResponse.<String>ok()
-                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_DOMAIN/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
                         .header(HttpHeaders.ACCESS_CONTROL_MAX_AGE, "86400")
@@ -71,7 +71,7 @@ public final class CORS {
 
     private static <T> void maybeAddOrigin(final String origin, final MutableHttpResponse<T> response) {
         if (null != origin) {
-            response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, "*"/*origin*/)
+            response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_DOMAIN/*origin*/)
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS);
         }
     }
