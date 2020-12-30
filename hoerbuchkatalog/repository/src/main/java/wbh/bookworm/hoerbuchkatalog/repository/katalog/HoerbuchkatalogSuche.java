@@ -130,6 +130,10 @@ final class HoerbuchkatalogSuche {
                 final String stichwortWildcard = String.format("*%s*", StringNormalizer.normalize(word.toLowerCase()));
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
                         BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SPRECHER1.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
+                stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SPRECHER2.luceneName(), stichwortWildcard)),
+                        BooleanClause.Occur.SHOULD);
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.TITEL.luceneName(), stichwortWildcard)),
                         BooleanClause.Occur.SHOULD);
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.UNTERTITEL.luceneName(), stichwortWildcard)),
