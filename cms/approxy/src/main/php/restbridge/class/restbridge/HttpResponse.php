@@ -14,6 +14,13 @@ use JsonException;
 final class HttpResponse
 {
 
+    /***
+     * @var string
+     *
+     * @since 1.0
+     */
+    private string $id;
+
     /**
      * @var int
      *
@@ -39,13 +46,15 @@ final class HttpResponse
     /**
      * Response constructor.
      *
+     * @param string $id Comment.
      * @param int $statusCode Comment.
      * @param string|null $body Comment.
      *
      * @since 1.0
      */
-    public function __construct(int $statusCode, string $body = null)
+    public function __construct(string $id, int $statusCode, string $body = null)
     {
+        $this->id = $id;
         $this->statusCode = $statusCode;
         $this->body = $body;
     }//end __construct()
@@ -67,20 +76,6 @@ final class HttpResponse
     /**
      * Description.
      *
-     * @return bool
-     *
-     * @since 1.0
-     */
-    public function wasSuccessful(): bool
-    {
-        return $this->statusCode >= 100 && $this->statusCode < 400;
-
-    }//end wasSuccessful()
-
-
-    /**
-     * Description.
-     *
      * @return string
      *
      * @since 1.0
@@ -89,7 +84,7 @@ final class HttpResponse
     {
         return $this->body;
 
-    }//end getBody()
+    }//end wasSuccessful()
 
 
     /**
@@ -107,7 +102,7 @@ final class HttpResponse
             $jsonResponse = json_decode($this->body, true, 512, JSON_THROW_ON_ERROR);
             if ($jsonResponse === false) {
                 //showJsonError();
-                restBridgeErrorLog('getJson: Error decoding response body as JSON: ' . json_last_error_msg());
+                restBridgeErrorLog('getJson: ' . $this->id . ' Error decoding response body as JSON: ' . json_last_error_msg());
                 $this->json = json_decode('[false]');
             } else {
                 if (is_bool($jsonResponse) === true) {
@@ -117,11 +112,25 @@ final class HttpResponse
                 }
             }
         } else {
-            restBridgeErrorLog('getJson: HTTP status ' . $this->statusCode . ', no JSON in response');
+            restBridgeErrorLog('getJson: ' . $this->id . ' HTTP status ' . $this->statusCode . ', no JSON in response');
             $this->json = json_decode('[false]');
         }
 
         return $this->json;
+
+    }//end getBody()
+
+
+    /**
+     * Description.
+     *
+     * @return bool
+     *
+     * @since 1.0
+     */
+    public function wasSuccessful(): bool
+    {
+        return $this->statusCode >= 100 && $this->statusCode < 400;
 
     }//end getJson()
 

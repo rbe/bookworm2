@@ -67,7 +67,7 @@ final class HttpClient
 
         $info = $this->responseInfo($ch);
         curl_close($ch);
-        return new HttpResponse($info['statuscode'], $responseBody);
+        return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpGET()
 
@@ -107,7 +107,7 @@ final class HttpClient
 
         $info = $this->responseInfo($ch);
         curl_close($ch);
-        return new HttpResponse($info['statuscode'], $responseBody);
+        return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpDELETE()
 
@@ -147,7 +147,7 @@ final class HttpClient
 
         $info = $this->responseInfo($ch);
         curl_close($ch);
-        return new HttpResponse($info['statuscode'], $responseBody);
+        return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpPOST()
 
@@ -187,7 +187,7 @@ final class HttpClient
 
         $info = $this->responseInfo($ch);
         curl_close($ch);
-        return new HttpResponse($info['statuscode'], $responseBody);
+        return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpDELETE()
 
