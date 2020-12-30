@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.Map;
@@ -164,12 +164,19 @@ public class BestellungController {
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
         if (maybeDaisyZipInputStream.isPresent()) {
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
+            final long lastModified = Instant.now().toEpochMilli();
+            final Long contentLength = audiobookOrderService.fileSize(orderId).orElse(-1L);
             return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP,
-                    LocalDateTime.now().toInstant(ZoneOffset.of("Europe/Berlin")).toEpochMilli(),
-                    audiobookOrderService.fileSize(orderId).orElse(-1L))
+                    lastModified, contentLength)
                     .attach(String.format("%s.zip", titelnummer));
         }
         throw new BusinessException(String.format("Bestellung %sKein Hörbuch %s gefunden", orderId, titelnummer));
+    }
+
+    private ZoneOffset berlinZoneOffset(final Instant instant) {
+        final ZoneId berlinId = ZoneId.of("Europe/Berlin");
+        final ZoneOffset berlinOffset = berlinId.getRules().getOffset(instant);
+        return ZoneOffset.of(berlinOffset.toString());
     }
 
     // TODO cleanup
