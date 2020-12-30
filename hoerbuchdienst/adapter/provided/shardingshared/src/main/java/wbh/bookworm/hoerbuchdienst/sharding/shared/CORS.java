@@ -30,7 +30,7 @@ public final class CORS {
             final MutableHttpResponse<T> response = HttpResponse.ok();
             maybeAddOrigin(origin, response);
             return response
-                    .contentType(MediaType.APPLICATION_JSON_TYPE)
+                    // TODO Sinnvoll? .contentType(MediaType.APPLICATION_JSON_TYPE)
                     .body(dto);
         });
     }
