@@ -94,7 +94,12 @@ public class DownloadsRestService {
                                                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
-        final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        final BestellungSessionId bestellungSessionId;
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        } else {
+            bestellungSessionId = null;
+        }
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
         final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
@@ -104,7 +109,9 @@ public class DownloadsRestService {
             dto.setAusgeliehenAm(format(downloads.ausgeliehenAm(titelnummer)));
             dto.setRueckgabeBis(format(downloads.rueckgabeBis(titelnummer)));
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
+            final boolean imWarenkorb = null != bestellungSessionId
+                    && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
+            dto.setImWarenkorb(imWarenkorb);
         });
         final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));

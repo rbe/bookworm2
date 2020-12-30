@@ -83,8 +83,13 @@ public final class WarenkorbRestService {
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                            @RequestHeader("X-Bookworm-BestellungSessionId") final String xBestellungSessionId) {
-        final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xBestellungSessionId);
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final BestellungSessionId bestellungSessionId;
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        } else {
+            bestellungSessionId = null;
+        }
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver
                 .toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
@@ -94,8 +99,9 @@ public final class WarenkorbRestService {
             dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
-                    bestellungSessionId, hoerernummer, titelnummer));
+            final boolean imWarenkorb = null != bestellungSessionId
+                    && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
+            dto.setImWarenkorb(imWarenkorb);
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }

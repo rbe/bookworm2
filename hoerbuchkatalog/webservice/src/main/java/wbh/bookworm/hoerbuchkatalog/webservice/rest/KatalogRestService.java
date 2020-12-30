@@ -61,7 +61,12 @@ public class KatalogRestService {
             return ResponseEntity.notFound().build();
         }
         final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
-        final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        final BestellungSessionId bestellungSessionId;
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        } else {
+            bestellungSessionId = null;
+        }
         final List<HoerbuchAntwortKurzDTO> antwort = new ArrayList<>();
         for (final Titelnummer titelnummer : suchergebnis.getTitelnummern()) {
             final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, titelnummer);
@@ -73,7 +78,9 @@ public class KatalogRestService {
             }
             dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
-            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer));
+            final boolean imWarenkorb = null != bestellungSessionId
+                    && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
+            dto.setImWarenkorb(imWarenkorb);
             antwort.add(dto);
         }
         final Map<String, Object> meta = Map.of("stichwort", stichwort,

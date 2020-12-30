@@ -72,7 +72,12 @@ public class MerklisteRestService {
                                                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        final BestellungSessionId bestellungSessionId;
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+        } else {
+            bestellungSessionId = null;
+        }
         final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
@@ -80,8 +85,9 @@ public class MerklisteRestService {
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
-            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
-                    bestellungSessionId, hoerernummer, titelnummer));
+            final boolean imWarenkorb = null != bestellungSessionId
+                    && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
+            dto.setImWarenkorb(imWarenkorb);
         });
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
     }
