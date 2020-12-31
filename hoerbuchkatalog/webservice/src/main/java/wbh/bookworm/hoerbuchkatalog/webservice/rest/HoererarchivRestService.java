@@ -64,7 +64,7 @@ public class HoererarchivRestService {
             filtered = data;
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
-                "stichwort", stichwort);
+                "stichwort", null != stichwort ? stichwort : "");
         return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
     }
 
@@ -92,7 +92,7 @@ public class HoererarchivRestService {
             filtered = data;
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
-                "stichwort", stichwort);
+                "stichwort", null != stichwort ? stichwort : "");
         return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
     }
 
@@ -135,8 +135,8 @@ public class HoererarchivRestService {
             filtered = data;
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
-                "stichwort", stichwort,
-                "startdatum", startdatum);
+                "stichwort", null != stichwort ? stichwort : "",
+                "startdatum", null != startdatum ? startdatum : "");
         return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
     }
 
