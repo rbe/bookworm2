@@ -53,7 +53,7 @@ public class HoererarchivRestService {
         }
         final List<BelastungAntwortDTO> data = hoerbuchResolver.toBelastungenAntwortDTO(belastungen);
         final List<BelastungAntwortDTO> filtered;
-        if (null != stichwort && !stichwort.isBlank()) {
+        if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             filtered = data.stream()
                     .filter(dto -> dto.getAutor().contains(stichwort)
                             || dto.getSachgebietBezeichnung().contains(stichwort)
@@ -81,7 +81,7 @@ public class HoererarchivRestService {
         }
         final List<BestellkarteAntwortDTO> data = hoerbuchResolver.toBestellkarteAntwortDTO(bestellkarten);
         final List<BestellkarteAntwortDTO> filtered;
-        if (null != stichwort && !stichwort.isBlank()) {
+        if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             filtered = data.stream()
                     .filter(dto -> dto.getAutor().contains(stichwort)
                             || dto.getSachgebietBezeichnung().contains(stichwort)
@@ -112,7 +112,7 @@ public class HoererarchivRestService {
         }
         final List<ErledigteBestellkarteAntwortDTO> data = hoerbuchResolver.toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
         List<ErledigteBestellkarteAntwortDTO> filtered;
-        if (null != stichwort && !stichwort.isBlank()) {
+        if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             filtered = data.stream()
                     .filter(dto -> dto.getAutor().contains(stichwort)
                             || dto.getSachgebietBezeichnung().contains(stichwort)
@@ -122,7 +122,7 @@ public class HoererarchivRestService {
         } else {
             filtered = data;
         }
-        if (null != startdatum && !startdatum.isBlank()) {
+        if (null != startdatum && !startdatum.isBlank() && !startdatum.equals("*")) {
             try {
                 final TemporalAccessor datum = DateTimeFormatter.ofPattern("dd.MM.yyyy").parse(startdatum);
                 filtered = filtered.stream()
