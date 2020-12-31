@@ -103,6 +103,7 @@ public class KatalogRestService {
         }
         final Map<String, Object> meta = Map.of("stichwort", null != stichwort ? stichwort : "",
                 "sachgebiet", null != sachgebiet ? sachgebiet : "",
+                "sachgebietBezeichnung", null != sachgebiet ? Sachgebiet.valueOf(sachgebiet).getDescription() : "",
                 "einstelldatum", null != einstelldatum ? einstelldatum : "",
                 "count", antwort.size());
         return !antwort.isEmpty()
