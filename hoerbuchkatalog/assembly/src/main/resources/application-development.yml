@@ -47,4 +47,26 @@ server:
     include-stacktrace: always
 
 logging:
-  config: classpath:logback-development.xml
+  level:
+    root: ERROR
+    #wbh.bookworm.hoerbuchkatalog.assembly: ERROR
+    #wbh.bookworm.hoerbuchkatalog.rest: ERROR
+    #wbh.bookworm.hoerbuchkatalog.app: ERROR
+    #wbh.bookworm.hoerbuchkatalog.repository: ERROR
+    #wbh.bookworm.hoerbuchkatalog.domain: ERROR
+    wbh.bookworm.hoerbuchkatalog: INFO
+    aoc.mikrokosmos: ERROR
+    aoc.mikrokosmos.fs: ERROR
+    aoc.mikrokosmos.ddd.event: ERROR
+    aoc.mikrokosmos.ddd.repository: ERROR
+    aoc.mikrokosmos.ddd.search: ERROR
+    eu.artofcoding: ERROR
+    org.eclipse.jetty: INFO
+    org.springframework.boot.web.embedded.jetty: DEBUG
+    #org.springframework.web.servlet.handler: ERROR
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method: INFO
+    org.springframework.web: INFO
+    org.springframework.beans.factory.support: ERROR
+    org.springframework: INFO
+    org.reflections: ERROR

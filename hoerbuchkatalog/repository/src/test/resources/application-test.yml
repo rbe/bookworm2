@@ -31,4 +31,23 @@ spring:
     port: 6379
 
 logging:
-  config: classpath:logback-test.xml
+  level:
+    root: ERROR
+    wbh.bookworm.hoerbuchkatalog.assembly: ERROR
+    wbh.bookworm.hoerbuchkatalog.rest: ERROR
+    wbh.bookworm.hoerbuchkatalog.app: ERROR
+    wbh.bookworm.hoerbuchkatalog.repository: ERROR
+    wbh.bookworm.hoerbuchkatalog.domain: ERROR
+    aoc.mikrokosmos: ERROR
+    aoc.mikrokosmos.fs: ERROR
+    aoc.mikrokosmos.ddd.event: ERROR
+    aoc.mikrokosmos.ddd.repository: ERROR
+    aoc.mikrokosmos.ddd.search: ERROR
+    eu.artofcoding: ERROR
+    org.eclipse.jetty: ERROR
+    org.springframework.web.servlet.handler: ERROR
+    org.springframework.web: ERROR
+    org.springframework.scheduling: ERROR
+    org.springframework.beans.factory.support: ERROR
+    org.springframework: ERROR
+    org.reflections: ERROR
