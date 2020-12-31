@@ -126,7 +126,7 @@ public class HoererarchivRestService {
             try {
                 final TemporalAccessor datum = DateTimeFormatter.ofPattern("dd.MM.yyyy").parse(startdatum);
                 filtered = filtered.stream()
-                        .filter(dto -> dto.getAusleihdatum().isBefore(ChronoLocalDate.from(datum)))
+                        .filter(dto -> dto.getAusleihdatum().isAfter(ChronoLocalDate.from(datum)))
                         .collect(Collectors.toUnmodifiableList());
             } catch (DateTimeParseException e) {
                 LOGGER.warn("Kann Startdatum '{}' nicht parsen", startdatum);
