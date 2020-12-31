@@ -131,8 +131,6 @@ public class HoererarchivRestService {
             } catch (DateTimeParseException e) {
                 LOGGER.warn("Kann Startdatum '{}' nicht parsen", startdatum);
             }
-        } else {
-            filtered = data;
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
                 "stichwort", null != stichwort ? stichwort : "",
