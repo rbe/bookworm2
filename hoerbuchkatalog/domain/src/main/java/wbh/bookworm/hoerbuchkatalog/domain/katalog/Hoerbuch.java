@@ -301,9 +301,10 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         if (spieldauerParsbar) {
             final String[] parts = spieldauer.split("[.,]");
             if ("00".equals(parts[1])) {
-                abgeleiteteSpieldauer = String.format("%s Stunden", parts[0]);
+                abgeleiteteSpieldauer = String.format("%d Stunden", Integer.parseInt(parts[0]));
             } else {
-                abgeleiteteSpieldauer = String.format("%s Stunden %s Minuten", parts[0], parts[1]);
+                abgeleiteteSpieldauer = String.format("%d Stunden %d Minuten",
+                        Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
             }
         }
         if ("0,00".equalsIgnoreCase(spieldauer)) {
