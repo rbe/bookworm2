@@ -152,11 +152,14 @@ final class CommandExecutor
             if ($isKeyWithValue) {
                 $key = $keyValue[0];
                 $value = $keyValue[1];
-                $parameterArray[$key] = $value;
             } else {
-                restBridgeErrorLog('analyzeParameters: Command ' . $commandName
-                    . ': Error analyzing parameter ' . print_r($p, true));
+                restBridgeWarningLog('analyzeParameters: Command ' . $commandName
+                    . ': No value for parameter ' . print_r($p, true));
+                $key = $keyValue[0];
+                $value = '';
             }
+
+            $parameterArray[$key] = $value;
         }
 
         return $parameterArray;

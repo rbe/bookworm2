@@ -45,11 +45,11 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
             foreach ($array as $key => $value) {
                 if ($value === 'HttpRequest') {
                     $array[$key] = $input->get($key, '', 'STRING');
-                } else if (strpos($value, 'Cookie') > 0) {
+                }/* else if (strpos($value, 'Cookie') > 0) {
                     $strings = explode('-', $value);
                     $cookieName = $strings[1];
                     $array[$key] = $this->getCookie($cookieName);
-                }
+                }*/
             }
             restBridgeDebugLog('resolveParameters: ' . print_r($array, true));
         } else {

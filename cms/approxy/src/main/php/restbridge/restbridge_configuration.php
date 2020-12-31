@@ -30,7 +30,7 @@ $restBridge = [
         'Stichwortsuche' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
-            'parameter_template' => '/hoerbuchkatalog/v1/katalog/stichwort/{stichwort}',
+            'parameter_template' => '/hoerbuchkatalog/v1/katalog/stichwort/{stichwort}/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         // Hörbuchdetails
@@ -140,19 +140,19 @@ $restBridge = [
         'BelastungenAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
-            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/belastungen',
+            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/belastungen/stichwort/{stichwort}',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'BestellkarteAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
-            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/bestellkarten',
+            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/bestellkarten/stichwort/{stichwort}',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'ErledigteBestellkartenAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
-            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/erledigteBestellkarten',
+            'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/erledigteBestellkarten/stichwort/{stichwort}/startdatum/{startdatum}',
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
     ],
