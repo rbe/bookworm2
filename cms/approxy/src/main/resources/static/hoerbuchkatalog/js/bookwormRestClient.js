@@ -162,7 +162,14 @@ export class BookwormRestClient {
 
     downloadErlaubt(titelnummer) {
         const url = new URL('/hoerbuchkatalog/v1/downloads/erlaubt', HOERBUCHKATALOG_URL);
-        return fetch(url.toString(), {'method': 'GET'})
+        return fetch(url.toString(), {
+            'method': 'GET',
+            'headers': {
+                'Accept': 'application/json',
+                'X-Bookworm-Mandant': this.mandant,
+                'X-Bookworm-Hoerernummer': this.hoerernummer
+            },
+        })
             .then(response => response.ok)
             .catch(reason => {
                 console.log('Fehler: ' + reason);
@@ -218,7 +225,7 @@ export class BookwormRestClient {
                             }
                         });
                 } else {
-                    console.log('Download ' + titelnummer + ' ist nicht erlaubt');
+                    alert('Download ' + titelnummer + ' ist nicht erlaubt');
                 }
             })
             .catch(reason => {
