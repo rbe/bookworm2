@@ -48,13 +48,31 @@ public class KatalogRestService {
         this.warenkorbService = warenkorbService;
     }
 
-    @GetMapping(value = "/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = {
+            "/stichwort/{stichwort}",
+            "/sachgebiet/{sachgebiet}",
+            "/einstelldatum/{einstelldatum}",
+            "/stichwort/{stichwort}/sachgebiet/{sachgebiet}",
+            "/stichwort/{stichwort}/einstelldatum/{einstelldatum}",
+            "/stichwort/{stichwort}/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}",
+            "/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}",
+    }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                                           @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
-                                                                          @PathVariable("stichwort") final String stichwort) {
+                                                                          @PathVariable(value = "stichwort", required = false) final String stichwort,
+                                                                          @PathVariable(value = "sachgebiet", required = false) final String sachgebiet,
+                                                                          @PathVariable(value = "einstelldatum", required = false) final String einstelldatum) {
         final Suchparameter suchparameter = new Suchparameter();
-        suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
+            suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
+        }
+        if (null != sachgebiet && !sachgebiet.isBlank() && !sachgebiet.equals("*")) {
+            suchparameter.hinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
+        }
+        if (null != einstelldatum && !einstelldatum.isBlank() && !einstelldatum.equals("*")) {
+            suchparameter.hinzufuegen(Suchparameter.Feld.EINSTELLDATUM, einstelldatum);
+        }
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);
         if (!suchergebnis.hatErgebnisse()) {
@@ -71,10 +89,10 @@ public class KatalogRestService {
         for (final Titelnummer titelnummer : suchergebnis.getTitelnummern()) {
             final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(hoerernummer, titelnummer);
             final HoerbuchAntwortKurzDTO dto = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
-            final Sachgebiet sachgebiet = hoerbuch.getSachgebiet();
-            if (null != sachgebiet) {
-                dto.setSachgebiet(sachgebiet.getName());
-                dto.setSachgebietBezeichnung(sachgebiet.getDescription());
+            final Sachgebiet hbSachgebiet = hoerbuch.getSachgebiet();
+            if (null != hbSachgebiet) {
+                dto.setSachgebiet(hbSachgebiet.getName());
+                dto.setSachgebietBezeichnung(hbSachgebiet.getDescription());
             }
             dto.setDownloadErlaubt(downloadErlaubt);
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
@@ -83,7 +101,9 @@ public class KatalogRestService {
             dto.setImWarenkorb(imWarenkorb);
             antwort.add(dto);
         }
-        final Map<String, Object> meta = Map.of("stichwort", stichwort,
+        final Map<String, Object> meta = Map.of("stichwort", null != stichwort ? stichwort : "",
+                "sachgebiet", null != sachgebiet ? sachgebiet : "",
+                "einstelldatum", null != einstelldatum ? einstelldatum : "",
                 "count", antwort.size());
         return !antwort.isEmpty()
                 ? ResponseEntity.ok(new AntwortDTO<>(meta, antwort))
@@ -110,8 +130,12 @@ public class KatalogRestService {
         dto.setDownloadErlaubt(downloadErlaubt);
         dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
-        final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
+        } else {
+            dto.setImWarenkorb(false);
+        }
         final Map<String, Object> meta = Map.of();
         return ResponseEntity.ok(new AntwortDTO<>(meta, dto));
     }
@@ -136,8 +160,12 @@ public class KatalogRestService {
         dto.setDownloadErlaubt(downloadErlaubt);
         dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
-        final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
+        if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
+            final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
+            dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer1));
+        } else {
+            dto.setImWarenkorb(false);
+        }
         return ResponseEntity.ok(new AntwortDTO<>(Map.of(), dto));
     }
 
