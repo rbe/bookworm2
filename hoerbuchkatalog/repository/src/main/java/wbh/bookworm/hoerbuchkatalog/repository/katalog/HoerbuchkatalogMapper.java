@@ -100,7 +100,7 @@ final class HoerbuchkatalogMapper {
                     arr[10], arr[11], arr[12], arr[13], arr[14], arr[15], arr[16], arr[17],
                     aghNummer, false);
         } catch (Exception e) {
-            LOGGER.error("", e);
+            LOGGER.error(String.format("Nicht eingelesen: %s", zeile), e);
             return null;
         }
     }
