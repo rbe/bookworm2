@@ -50,6 +50,9 @@ spring:
   main:
     banner-mode: "off"
     allow-bean-definition-overriding: true
+  redis:
+    host: localhost
+    port: 6379
   mail:
     host: 127.0.0.1
     port: 8025

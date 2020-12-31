@@ -28,6 +28,7 @@ spring:
   main:
     banner-mode: "console"
   redis:
+    host:
     port: 6379
   mail:
     default-encoding: UTF-8
