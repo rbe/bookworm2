@@ -251,7 +251,9 @@ public final class HoerbuchAntwortDTO implements Comparable<HoerbuchAntwortDTO> 
     }
 
     public String getAusgeliehenAm() {
-        return ausgeliehenAm;
+        return null != ausgeliehenAm && !ausgeliehenAm.isBlank()
+                ? ausgeliehenAm
+                : "";
     }
 
     public void setAusgeliehenAm(final String ausgeliehenAm) {
@@ -259,7 +261,7 @@ public final class HoerbuchAntwortDTO implements Comparable<HoerbuchAntwortDTO> 
     }
 
     public String getRueckgabeBis() {
-        return rueckgabeBis;
+        return null != rueckgabeBis && !rueckgabeBis.isBlank() ? rueckgabeBis : "";
     }
 
     public void setRueckgabeBis(final String rueckgabeBis) {
