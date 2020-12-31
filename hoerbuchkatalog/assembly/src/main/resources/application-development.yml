@@ -54,19 +54,20 @@ logging:
     #wbh.bookworm.hoerbuchkatalog.app: ERROR
     #wbh.bookworm.hoerbuchkatalog.repository: ERROR
     #wbh.bookworm.hoerbuchkatalog.domain: ERROR
-    wbh.bookworm.hoerbuchkatalog: INFO
-    aoc.mikrokosmos: ERROR
-    aoc.mikrokosmos.fs: ERROR
-    aoc.mikrokosmos.ddd.event: ERROR
-    aoc.mikrokosmos.ddd.repository: ERROR
-    aoc.mikrokosmos.ddd.search: ERROR
-    eu.artofcoding: ERROR
+    wbh.bookworm.hoerbuchkatalog: DEBUG
+    #aoc.mikrokosmos.fs: ERROR
+    #aoc.mikrokosmos.ddd.event: ERROR
+    #aoc.mikrokosmos.ddd.repository: ERROR
+    #aoc.mikrokosmos.ddd.search: ERROR
+    aoc.mikrokosmos: DEBUG
+    eu.artofcoding: DEBUG
     org.eclipse.jetty: INFO
     org.springframework.boot.web.embedded.jetty: DEBUG
     #org.springframework.web.servlet.handler: ERROR
     org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
-    org.springframework.web.servlet.mvc.method: INFO
+    #org.springframework.web.servlet.mvc.method: INFO
     org.springframework.web: INFO
-    org.springframework.beans.factory.support: ERROR
-    org.springframework: INFO
+    #org.springframework.beans.factory.support: ERROR
+    org.springframework.beans: ERROR
+    org.springframework: ERROR
     org.reflections: ERROR

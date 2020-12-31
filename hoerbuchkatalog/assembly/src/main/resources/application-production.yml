@@ -44,6 +44,7 @@ logging:
     wbh.bookworm.hoerbuchkatalog.app: ERROR
     wbh.bookworm.hoerbuchkatalog.repository: ERROR
     wbh.bookworm.hoerbuchkatalog.domain: ERROR
+    wbh.bookworm.hoerbuchkatalog: ERROR
     aoc.mikrokosmos: ERROR
     aoc.mikrokosmos.fs: ERROR
     aoc.mikrokosmos.ddd.event: ERROR
