@@ -71,7 +71,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public long anzahlHeute() {
         final LocalDateTime now = LocalDateTime.now();
         return titelnummern.entrySet().stream()
-                .filter(entry -> now.isBefore(entry.getValue().getAusgeliehenAm()))
+                .filter(entry -> now.isAfter(entry.getValue().getAusgeliehenAm()))
                 .count();
     }
 
@@ -130,7 +130,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 domainId, domainId, hoerernummer, titelnummern);
     }
 
-    public static class Details {
+    public static class Details implements Comparable<Details> {
 
         private final LocalDateTime ausgeliehenAm;
 
@@ -149,6 +149,11 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         public LocalDateTime getRueckgabeBis() {
             return rueckgabeBis;
+        }
+
+        @Override
+        public int compareTo(final Details o) {
+            return ausgeliehenAm.compareTo(o.ausgeliehenAm);
         }
 
     }
