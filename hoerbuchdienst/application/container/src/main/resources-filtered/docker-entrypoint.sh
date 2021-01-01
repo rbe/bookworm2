@@ -17,6 +17,7 @@ echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
 JAVA_TOOL_OPTIONS="-Xms8192m -Xmx8192m \
 -XX:MaxDirectMemorySize=16384m \
+-Djdk.nio.maxCachedBufferSize=262144 \
 -XX:+UseCompressedOops \
 -XX:+HeapDumpOnOutOfMemoryError \
 -XX:HeapDumpPath=/var/local/java_debug \
