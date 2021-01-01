@@ -13,6 +13,11 @@ elasticsearch:
 logger:
   levels:
     root: ERROR
+    wbh.bookworm.hoerbuchdienst.adapter.provided.katalog: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.provided.sharding: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.provided.stream: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.required.daisy: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.required.watermark: INFO
     wbh.bookworm.hoerbuchdienst: INFO
     io.micronaut.web.router: ERROR
     io.micronaut.web: ERROR
