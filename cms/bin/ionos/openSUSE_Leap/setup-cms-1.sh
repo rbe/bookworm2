@@ -157,9 +157,21 @@ echo "Creating users"
 groupadd -f admin
 if ! grep -c rbe /etc/passwd >/dev/null; then
   useradd -m -s /bin/bash -g admin rbe
+  usermod -G docker rbe
+  mkdir /home/rbe/.ssh
+  chmod 700 /home/rbe/.ssh
+  touch /home/rbe/.ssh/authorized_keys
+  chown -R rbe:admin /home/rbe/.ssh
+  chmod 400 /home/rbe/.ssh/authorized_keys
 fi
 if ! grep -c cew /etc/passwd >/dev/null; then
   useradd -m -s /bin/bash -g admin cew
+  usermod -G docker cew
+  mkdir /home/cew/.ssh
+  chmod 700 /home/cew/.ssh
+  touch /home/cew/.ssh/authorized_keys
+  chown -R cew:admin /home/cew/.ssh
+  chmod 400 /home/cew/.ssh/authorized_keys
 fi
 cat >/etc/sudoers.d/admin <<EOF
 rbe ALL=(ALL) NOPASSWD: ALL
