@@ -7,13 +7,6 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
-import java.io.InputStream;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -35,11 +28,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
-import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookStreamService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
-import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
-import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
+import wbh.bookworm.hoerbuchdienst.domain.ports.HoerprobeService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -63,46 +52,15 @@ public class HoerprobeController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
 
-    private static final String EMPTY_STRING = "";
-
-    private static final String[] MP3_IGNORIEREN = {
-            "buch",
-            "daisy",
-            "urheberrecht",
-            "eigentumsvermerk",
-            "verfasser",
-            "herausgeber",
-            "produktion",
-            "sprecher",
-            "gesamtspieldauer",
-            "gliederung",
-            "abweichungen",
-            "bibliographische",
-            "spieldauer",
-            "struktur",
-            "klappentexte",
-            "inhaltsverzeichnis",
-            "glossar",
-            "widmung",
-            "nachwort",
-            "literatur",
-            "tips",
-            "ende"
-    };
-
     private final AudiobookShardRedirector audiobookShardRedirector;
 
-    private final AudiobookStreamService audiobookStreamService;
-
-    private final KatalogService katalogService;
+    private final HoerprobeService hoerprobeService;
 
     @Inject
     public HoerprobeController(final AudiobookShardRedirector audiobookShardRedirector,
-                               final AudiobookStreamService audiobookStreamService,
-                               final KatalogService katalogService) {
+                               final HoerprobeService hoerprobeService) {
         this.audiobookShardRedirector = audiobookShardRedirector;
-        this.audiobookStreamService = audiobookStreamService;
-        this.katalogService = katalogService;
+        this.hoerprobeService = hoerprobeService;
     }
 
     @Operation(hidden = true)
@@ -120,49 +78,11 @@ public class HoerprobeController {
                                                   @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                   @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer),
+                () -> hoerprobeService.makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer),
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
                 String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
-    }
-
-    private byte[] makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
-                                         final String titelnummer) {
-        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-        final List<String> mp3s = playlist.getEntries().stream()
-                .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
-                .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 600)
-                .peek(dto -> LOGGER.debug("Hörbuch '{}' Kandiat für eine Hörprobe: '{}'", titelnummer, dto))
-                .map(PlaylistEntryDTO::getIdent)
-                .filter(ident -> ident.toLowerCase().endsWith("mp3"))
-                .collect(Collectors.toUnmodifiableList());
-        final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
-        final Collector<String, ?, Map<Boolean, List<String>>> stringMapCollector =
-                Collectors.partitioningBy(mp3 -> mp3Ignorieren.stream().anyMatch(mp3::contains));
-        final Map<Boolean, List<String>> filteredMp3s = mp3s.stream()
-                .map(String::toLowerCase)
-                .collect(stringMapCollector);
-        LOGGER.debug("Kandiaten für eine Hörprobe: {}", filteredMp3s);
-        if (!filteredMp3s.isEmpty()) {
-            final List<String> strings = filteredMp3s.get(false);
-            int random = new Random().nextInt(strings.size());
-            final String ident = strings.get(random);
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}' mit Wasserzeichen",
-                    xHoerernummer, titelnummer, ident);
-            try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
-                    xHoerernummer, titelnummer, ident)) {
-                LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' mit Wasserzeichen erstellt",
-                        xHoerernummer, titelnummer, ident);
-                return track.readAllBytes();
-            } catch (Exception e) {
-                throw new BusinessException(EMPTY_STRING, e);
-            }
-        } else {
-            LOGGER.error("Hörer '{}' Hörbuch '{}': Hörprobe kann nicht geliefert werden",
-                    xHoerernummer, titelnummer);
-            return new byte[0];
-        }
     }
 
 }
