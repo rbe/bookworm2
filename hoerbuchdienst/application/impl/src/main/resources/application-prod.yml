@@ -9,3 +9,21 @@ hoerbuchdienst:
 
 elasticsearch:
   httpHosts: "http://elasticsearch:9200"
+
+logger:
+  levels:
+    root: ERROR
+    wbh.bookworm.hoerbuchdienst: INFO
+    io.micronaut.web.router: ERROR
+    io.micronaut.web: ERROR
+    io.micronaut.http.server: ERROR
+    io.micronaut.http: ERROR
+    io.micronaut.scheduling: ERROR
+    io.micronaut.rabbitmq: ERROR
+    io.micronaut.context.condition: ERROR
+    io.micronaut.context.env: ERROR
+    io.micronaut.context: ERROR
+    io.micronaut.core.reflect: ERROR
+    io.micronaut.core: ERROR
+    io.micronaut: ERROR
+    io.netty: ERROR
