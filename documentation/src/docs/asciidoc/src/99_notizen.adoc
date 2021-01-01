@@ -1,0 +1,116 @@
+.REST
+https://blog.restcase.com/restful-api-authentication-basics/
+https://restfulapi.net/resource-naming/
+https://restfulapi.net/security-essentials/
+https://sookocheff.com/post/api/on-choosing-a-hypermedia-format/
+https://martinfowler.com/articles/richardsonMaturityModel.html
+https://jsonapi.org/
+
+.JavaScript
+https://jstherightway.org/
+https://www.javascripttutorial.net/es6/
+https://developer.mozilla.org/de/docs/Web/JavaScript/Guide/Using_promises
+https://www.freecodecamp.org/news/how-to-make-a-promise-out-of-a-callback-function-in-javascript-d8ec35d1f981/
+https://medium.com/@samthor/js-callbacks-to-promises-541adc46c07c
+https://theflyingmantis.medium.com/callbacks-vs-promises-and-basics-of-js-80d3d1515e81
+
+.JavaScript Obfuscate
+https://obfuscator.io/
+https://github.com/javascript-obfuscator/javascript-obfuscator
+https://www.npmjs.com/package/uglify-js
+https://www.crockford.com/jsmin.html
+https://javascriptobfuscator.com/
+https://stackoverflow.com/questions/194397/how-can-i-obfuscate-protect-javascript
+https://developers.google.com/closure/compiler/
+
+.Cookies
+https://developer.mozilla.org/en-US/docs/Web/HTTP/Cookies
+https://javascript.info/cookie
+https://wiki.selfhtml.org/wiki/Grundlagen/sichere_Cookies
+
+.Micronaut
+https://micronaut-projects.github.io/micronaut-maven-plugin/latest/
+https://guides.micronaut.io/micronaut-creating-first-graal-app/guide/index.html
+
+.Java I/O Performance
+https://developer.ibm.com/tutorials/j-nio/
+http://vanillajava.blogspot.com/2010/07/java-nio-is-faster-than-java-io-for.html
+https://www.happycoders.eu/de/java/dateien-schnell-einfach-schreiben/
+https://javapapers.com/java/java-nio-file-read-write-with-channels/
+http://tutorials.jenkov.com/java-io/fileinputstream.html#read-performance
+http://pages.cs.wisc.edu/~guo/projects/736.pdf
+https://www.oracle.com/technical-resources/articles/javase/perftuning.html
+https://github.com/romromov/java-io-benchmark
+https://octoperf.com/blog/2018/03/21/java-write-to-file/
+
+.Direct Memory (+ Netty)
+https://github.com/netty/netty/wiki/Reference-counted-objects
+https://www.java67.com/2014/01/how-to-fix-javalangoufofmemoryerror-direct-byte-buffer-java.html
+https://github.com/netty/netty/issues/6813
+https://github.com/netty/netty/issues/1574
+https://stackoverflow.com/questions/59631145/direct-buffer-memory
+https://stackoverflow.com/questions/1605332/java-nio-filechannel-versus-fileoutputstream-performance-usefulness
+https://mechanical-sympathy.blogspot.com/2012/10/compact-off-heap-structurestuples-in.html
+https://www.evanjones.ca/java-bytebuffer-leak.html
+-Djdk.nio.maxCachedBufferSize=131072   128 kB
+-Djdk.nio.maxCachedBufferSize=262144   256 kB
+-Djdk.nio.maxCachedBufferSize=1048576    1 MB
+
+.JVM
+https://www.jrebel.com/blog/jvm-options-cheat-sheet
+https://stackoverflow.com/questions/28327620/difference-between-java-options-java-tool-options-and-java-opts
+https://github.com/openjdk/jmh
+https://www.oracle.com/technical-resources/articles/javase/perftuning.html
+https://www.mcs.anl.gov/~thakur/papers/javaio-journal.pdf
+
+.JVM Microbenchmark
+https://mkyong.com/java/java-jmh-benchmark-tutorial/
+https://www.baeldung.com/java-microbenchmark-harness
+https://jaxenter.de/aus-der-java-trickkiste-microbenchmarking-24155
+
+.JVM Analyze
+https://www.ibm.com/support/pages/ibm-heapanalyzer
+https://www.ibm.com/support/pages/tools-analysing-java-heap-dumps
+https://www.ibm.com/support/pages/ibm-thread-and-monitor-dump-analyzer-java-tmda
+https://www.ibm.com/support/pages/java-core-debugging-using-ibm-thread-and-monitor-dump-analyzer-java
+
+.Accessibility
+https://a11y-guidelines.orange.com/en/web/components-examples/make-a-screen-reader-talk/
+
+.Joomla
+https://docs.joomla.org/Package
+https://docs.joomla.org/Deploying_an_Update_Server
+https://www.jah-tz.de/joomla-anleitungen/joomla-update-server.html
+https://joomla.stackexchange.com/questions/15064/update-server-for-a-package-or-individual-extention
+https://joomla.stackexchange.com/questions/22880/update-server-for-extension-type-file
+
+.Mobile Detection
+https://www.itoctopus.com/how-to-display-a-joomla-module-only-on-mobile-devices
+http://mobiledetect.net/
+https://github.com/serbanghita/Mobile-Detect
+https://kubik-rubik.de/de/dsc-device-specific-content
+https://github.com/renekreijveld/UserAgentDetector
+
+.Audio Watermark
+https://uplex.de/audiowmark/README.html
+https://code.uplex.de/stefan/audiowmark/tree/master
+https://gist.github.com/postspectacular/3318720
+https://medium.com/@docred/audio-watermarking-fun-with-python-pydub-and-ffmpeg-427f8871587
+https://www.sit.fraunhofer.de/de/angebote/projekte/wasserzeichen/audio-wasserzeichen/
+https://www.microsoft.com/en-us/download/details.aspx?id=52287
+
+.MP3
+https://squell.github.io/id3/
+https://gist.github.com/eyecatchup/0757b3d8b989fe433979db2ea7d95a01
+Homebrew: ffmpeg, id3ed, id3tool, id3v2, exiftool
+https://gist.github.com/protrolium/e0dbd4bb0f1a396fcb55
+https://icedaudio.com/site/#features
+
+.nginx Performance
+https://www.nginx.com/blog/tuning-nginx/
+https://www.nginx.com/blog/performance-tuning-tips-tricks/
+https://gist.github.com/denji/8359866
+https://www.monitis.com/blog/6-best-practices-for-optimizing-your-nginx-performance/
+
+.Screen
+https://www.gnu.org/software/screen/manual/screen.#html#
