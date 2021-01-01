@@ -12,6 +12,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import io.micronaut.core.annotation.Blocking;
@@ -65,30 +66,28 @@ public class HoerprobeController {
     private static final String EMPTY_STRING = "";
 
     private static final String[] MP3_IGNORIEREN = {
-            "Buch",
-            "DAISY",
-            "Urheberrecht",
-            "Eigentumsvermerk",
-            "Verfasser",
-            "Herausgeber",
-            "Produktion",
-            "Sprecher",
-            "Gesamtspieldauer",
-            "Gliederung",
-            "Abweichungen",
-            "Buchaufsprache",
-            "Bibliographische",
-            "Spieldauer",
-            "Struktur",
-            "Klappentexte",
-            "Buchinnenseite",
-            "Inhaltsverzeichnis",
-            "Glossar",
-            "Widmung",
-            "Nachwort",
-            "Literatur",
-            "Tips",
-            "Ende"
+            "buch",
+            "daisy",
+            "urheberrecht",
+            "eigentumsvermerk",
+            "verfasser",
+            "herausgeber",
+            "produktion",
+            "sprecher",
+            "gesamtspieldauer",
+            "gliederung",
+            "abweichungen",
+            "bibliographische",
+            "spieldauer",
+            "struktur",
+            "klappentexte",
+            "inhaltsverzeichnis",
+            "glossar",
+            "widmung",
+            "nachwort",
+            "literatur",
+            "tips",
+            "ende"
     };
 
     private final AudiobookShardRedirector audiobookShardRedirector;
@@ -139,8 +138,11 @@ public class HoerprobeController {
                 .filter(ident -> ident.toLowerCase().endsWith("mp3"))
                 .collect(Collectors.toUnmodifiableList());
         final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
+        final Collector<String, ?, Map<Boolean, List<String>>> stringMapCollector =
+                Collectors.partitioningBy(mp3 -> mp3Ignorieren.stream().anyMatch(mp3::contains));
         final Map<Boolean, List<String>> filteredMp3s = mp3s.stream()
-                .collect(Collectors.partitioningBy(mp3 -> mp3Ignorieren.stream().anyMatch(mp3::contains)));
+                .map(String::toLowerCase)
+                .collect(stringMapCollector);
         LOGGER.debug("Kandiaten für eine Hörprobe: {}", filteredMp3s);
         if (!filteredMp3s.isEmpty()) {
             final List<String> strings = filteredMp3s.get(false);
