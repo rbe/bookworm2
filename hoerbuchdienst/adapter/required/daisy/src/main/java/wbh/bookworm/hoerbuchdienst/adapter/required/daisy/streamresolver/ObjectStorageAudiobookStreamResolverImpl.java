@@ -175,7 +175,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         for (final Path object : allObjects) {
             final Path tempMp3 = tempDirectory.resolve(object.getFileName());
             final long start = System.nanoTime();
-            LOGGER.info("Trying to write '{}' to '{}'", object, tempDirectory.toAbsolutePath());
+            LOGGER.trace("Trying to write '{}' to '{}'", object, tempDirectory.toAbsolutePath());
             try (final OutputStream outputStream = Files.newOutputStream(tempMp3)) {
                 bucketObjectStorage.asStream(object.toString())
                         .transferTo(outputStream);
