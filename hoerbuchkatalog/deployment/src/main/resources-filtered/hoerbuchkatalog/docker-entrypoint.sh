@@ -24,7 +24,8 @@ JAVA_TOOL_OPTIONS="-Xms2048m -Xmx2048m \
 -XX:HeapDumpPath=/var/local/java_debug \
 -XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
 -XX:+UnlockExperimentalVMOptions \
--XX:+UseZGC"
+-XX:+UseZGC \
+-Dspring.main.banner-mode=off"
 if [[ -f "/var/local/.java_debug" ]]; then
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} \
 -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=16M \
@@ -34,12 +35,14 @@ if [[ -f "/var/local/.java_debug" ]]; then
 -Dcom.sun.management.jmxremote.rmi.port=1099 \
 -Dcom.sun.management.jmxremote.ssl=false \
 -Dcom.sun.management.jmxremote.authenticate=false \
--Djava.rmi.server.hostname=\$(hostname -f)"
+-Djava.rmi.server.hostname=\$(hostname -f) \
+-Dspring.jmx.enabled=true \
+-Dspring.liveBeansView.mbeanDomain \
+-Dspring.application.admin.enabled=true"
 fi
 export JAVA_TOOL_OPTIONS
 
 java \
-  -Dlogback.configurationFile=/var/local/logback.xml \
   -jar /usr/local/service.jar \
   --spring.profiles.active=production \
   --spring.config.additional-location=/var/local/application-secrets.yml

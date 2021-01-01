@@ -37,7 +37,6 @@ fi
 export JAVA_TOOL_OPTIONS
 
 java \
-  -Dlogback.configurationFile=/var/local/logback.xml \
   -Dmicronaut.environments=prod \
   -Dmicronaut.config.files=/var/local/application-shard.yml \
   -jar /usr/local/service.jar
