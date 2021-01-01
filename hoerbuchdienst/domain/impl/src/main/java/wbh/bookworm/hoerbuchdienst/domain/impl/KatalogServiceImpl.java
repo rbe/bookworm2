@@ -89,7 +89,8 @@ class KatalogServiceImpl implements KatalogService {
         }
         LOGGER.info("Hörbuch '{}': Erstelle Hörbuch mit Playlist", titelnummer);
         final PlaylistDTO playlistDTO = new PlaylistDTO();
-        final List<PlaylistEntryDTO> playlistEntries = audiobook.getAudiotracks().stream()
+        final List<PlaylistEntryDTO> playlistEntries = audiobook.getAudiotracks()
+                .stream()
                 .map(t -> {
                     final Double[] clips = Arrays.stream(t.getAudioclips())
                             .filter(clip -> 0L < clip.getBegin().toMillis())
