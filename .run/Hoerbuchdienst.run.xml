@@ -1,25 +1,30 @@
 <component name="ProjectRunConfigurationManager">
-    <configuration default="false" name="Hoerbuchdienst" type="Application" factoryName="Application">
-        <option name="MAIN_CLASS_NAME" value="wbh.bookworm.hoerbuchdienst.application.impl.Hoerbuchdienst"/>
-        <module name="wbh.bookworm.hoerbuchdienst.application.impl"/>
-        <option name="VM_PARAMETERS"
-                value="-Xms1g -Xmx1g -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml -Dmicronaut.openapi.views.spec=redoc.enabled=true,rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop"/>
-        <method v="2">
-            <option name="Make" enabled="true"/>
-        </method>
-    </configuration>
-    <configuration default="false" name="Hoerbuchdienst" type="docker-deploy" factoryName="docker-compose.yml"
-                   server-name="Docker">
-        <deployment type="docker-compose.yml">
-            <settings>
-                <option name="secondarySourceFiles">
-                    <list>
-                        <option value="hoerbuchdienst/assembly/target/classes/docker-compose.dev.yml"/>
-                    </list>
-                </option>
-                <option name="sourceFilePath" value="hoerbuchdienst/assembly/target/classes/docker-compose.yml"/>
-            </settings>
-        </deployment>
-        <method v="2"/>
-    </configuration>
+  <configuration default="false" name="Hoerbuchdienst" type="docker-deploy" factoryName="docker-compose.yml" server-name="Docker">
+    <deployment type="docker-compose.yml">
+      <settings>
+        <option name="secondarySourceFiles">
+          <list>
+            <option value="hoerbuchdienst/assembly/target/classes/docker-compose.dev.yml" />
+          </list>
+        </option>
+        <option name="sourceFilePath" value="hoerbuchdienst/assembly/target/classes/docker-compose.yml" />
+      </settings>
+    </deployment>
+    <method v="2" />
+  </configuration>
+  <configuration default="false" name="Hoerbuchdienst" type="MicronautRunConfigurationType" factoryName="Micronaut">
+    <module name="wbh.bookworm.hoerbuchdienst.application.impl" />
+    <option name="alternativeJrePath" />
+    <option name="alternativeJrePathEnabled" value="false" />
+    <option name="includeProvidedScope" value="true" />
+    <option name="mainClass" value="wbh.bookworm.hoerbuchdienst.application.impl.Hoerbuchdienst" />
+    <option name="passParentEnvs" value="true" />
+    <option name="programParameters" value="" />
+    <option name="shortenCommandLine" />
+    <option name="vmParameters" value="-Xms1g -Xmx1g -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml -Dmicronaut.openapi.views.spec=redoc.enabled=true,rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop" />
+    <option name="workingDirectory" value="" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
 </component>
