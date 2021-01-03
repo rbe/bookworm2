@@ -1,0 +1,9 @@
+.Installation
+----
+npm init -y && npm install webpack webpack-cli webpack-merge --save-dev
+----
+
+.Generieren
+----
+npx webpack
+----

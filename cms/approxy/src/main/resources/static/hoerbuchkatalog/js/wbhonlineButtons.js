@@ -60,4 +60,8 @@ export class WbhonlineButtons {
         i.style.pointerEvents = '';
     }
 
+    static addMultiEventListener(elt, events, fn) {
+        events.split(' ').forEach(event => elt.addEventListener(event, fn, false));
+    }
+
 }

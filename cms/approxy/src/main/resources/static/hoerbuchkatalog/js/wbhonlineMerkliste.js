@@ -37,7 +37,7 @@ export class WbhonlineMerkliste {
                     self.flipMerklisteButton(titelnummer, event.currentTarget,
                         () => self.buttons.enableAnchor(event.currentTarget));
                 }
-                merklisteButton.addEventListener('click', merklisteHandleClick);
+                WbhonlineButtons.addMultiEventListener(merklisteButton, 'click touchstart', merklisteHandleClick);
             } else {
                 this.merklisteNichtEingeloggt(merklisteButton);
             }

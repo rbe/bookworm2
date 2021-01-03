@@ -25,9 +25,9 @@ export class WbhonlineCdBestellung {
     initialize() {
         const entfernenButtons = document.querySelectorAll('a[id^="cdBestellung-"]');
         for (const entfernenButton of entfernenButtons) {
-            entfernenButton.addEventListener('click', this.removeRow());
+            WbhonlineButtons.addMultiEventListener(entfernenButton, 'click touchstart', this.removeRow());
         }
-        const bestellungSendenButton = document.querySelector('button[type="submit"][class*="bestellung-absenden"]');
+        const bestellungSendenButton = document.querySelector('button[class*="bestellung-absenden"]');
         if (undefined !== bestellungSendenButton && null !== bestellungSendenButton) {
             const self = this;
             const sendeBestellformular = function (event) {
@@ -71,7 +71,7 @@ export class WbhonlineCdBestellung {
                         alert('Fehler: ' + reason);
                     });
             }
-            bestellungSendenButton.addEventListener('click', sendeBestellformular);
+            WbhonlineButtons.addMultiEventListener(bestellungSendenButton, 'click touchstart', sendeBestellformular);
         }
     }
 

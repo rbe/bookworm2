@@ -48,7 +48,7 @@ export class WbhonlineHoerprobe {
                         });
                     }
                 };
-                hoerprobeButton.addEventListener('click', spieleOderPausiereHoerprobe);
+                WbhonlineButtons.addMultiEventListener(hoerprobeButton, 'click touchstart', spieleOderPausiereHoerprobe);
             } else {
                 this.buttons.setTitle(hoerprobeButton, 'Hörprobe nicht verfügbar');
             }

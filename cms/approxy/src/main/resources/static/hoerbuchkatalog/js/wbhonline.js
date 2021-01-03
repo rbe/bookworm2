@@ -8,14 +8,14 @@
 
 import {WbhonlineMerkliste} from "./wbhonlineMerkliste.js";
 import {WbhonlineWarenkorb} from "./wbhonlineWarenkorb.js";
+import {WbhonlineCdBestellung} from "./wbhonlineCdBestellung.js";
 import {WbhonlineDownloads} from "./wbhonlineDownloads.js";
 import {WbhonlineHoerprobe} from "./wbhonlineHoerprobe.js";
-import {WbhonlineCdBestellung} from "./wbhonlineCdBestellung.js";
 import {WbhonlineHoererarchiv} from "./wbhonlineHoererarchiv.js";
 
 export class Wbhonline {
 
-    initialize() {
+    constructor() {
         const merkliste = new WbhonlineMerkliste();
         const warenkorb = new WbhonlineWarenkorb();
         const cdBestellung = new WbhonlineCdBestellung();
@@ -25,3 +25,7 @@ export class Wbhonline {
     }
 
 }
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    const wbhonline = new Wbhonline();
+});

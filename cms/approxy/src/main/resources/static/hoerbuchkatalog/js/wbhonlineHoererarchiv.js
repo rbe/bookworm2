@@ -6,12 +6,14 @@
 
 "use strict";
 
+import {WbhonlineButtons} from "./wbhonlineButtons";
+
 export class WbhonlineHoererarchiv {
 
     suchformular() {
         const forms = document.querySelectorAll('div[id*="suche-"]');
         for (const form of forms) {
-            const button = form.querySelector('button[type="submit"][class*="search"]');
+            const button = form.querySelector('button[class*="search"]');
             const enterListener = (event) => {
                 if (event.keyCode === 13) {
                     event.preventDefault();
@@ -27,11 +29,14 @@ export class WbhonlineHoererarchiv {
                 inputStartdatum.addEventListener('keyup', enterListener);
             }
             if (undefined !== button && null !== button) {
-                button.addEventListener('click', (event) => {
-                    event.currentTarget.disabled = true;
-                    const url = this.stichwortsucheUrl(inputStichwort.value, inputStartdatum.value);
-                    window.location = url.toString();
-                });
+                const buttonListener = (event) => {
+                    if ('' !== inputStichwort.value || '' !== inputStartdatum.value) {
+                        event.currentTarget.disabled = true;
+                        const url = this.stichwortsucheUrl(inputStichwort.value, inputStartdatum.value);
+                        window.location = url.toString();
+                    }
+                };
+                WbhonlineButtons.addMultiEventListener(button, 'click touchstart', buttonListener);
             }
         }
     }
@@ -64,10 +69,18 @@ export class WbhonlineHoererarchiv {
     zeigeSuchwerte() {
         const searchParams = new URLSearchParams(window.location.search);
         if (searchParams.has('stichwort')) {
-            const stichwort = decodeURIComponent(searchParams.get('stichwort') ?? '');
-            const startdatum = decodeURIComponent(searchParams.get('startdatum') ?? '');
-            document.title = 'WBH: Suche - Stichwort:' + stichwort
-                + ' Startdatum:' + startdatum;
+            let stichwortValue = searchParams.get('stichwort');
+            if (undefined === stichwortValue) {
+                stichwortValue = '';
+            }
+            const stichwort = decodeURIComponent(stichwortValue);
+            let startdatumValue = searchParams.get('startdatum');
+            if (undefined === startdatumValue) {
+                startdatumValue = '';
+            }
+            const startdatum = decodeURIComponent(startdatumValue);
+            document.title = 'WBH: Suche - Stichwort: ' + stichwort
+                + ' Startdatum: ' + startdatum;
             const forms = document.querySelectorAll('div[id*="suche-"]');
             for (const form of forms) {
                 this.setValue(form, 'input#stichwort', stichwort);

@@ -11,13 +11,13 @@ export class FetchErrorHandler {
     static handle(response) {
         const status = response.status;
         if (status >= 200 && status < 400) {
-            console.log('FetchErrorHandler#handle: OK -- HTTP status ' + response.status);
+            // no error
         } else if (status >= 400 && status < 500) {
-            console.log('FetchErrorHandler#handle: Client Error -- HTTP status ' + response.status);
-        } else if (status >= 500) {
-            console.log('FetchErrorHandler#handle: FAILED -- HTTP status ' + response.status);
+            alert('Client error, HTTP status ' + response.status);
+        } else if (status >= 500 && status <= 511) {
+            alert('Server error, HTTP status ' + response.status);
         } else {
-            alert('Unhandled response status!');
+            alert('Unbekannter HTTP Status ' + response.status);
         }
     }
 

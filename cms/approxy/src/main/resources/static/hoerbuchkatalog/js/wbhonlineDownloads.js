@@ -52,7 +52,7 @@ export class WbhonlineDownloads {
                     self.buttons.enableButtons();
                 });
         }
-        downloadButton.addEventListener('click', bestelleDownload);
+        WbhonlineButtons.addMultiEventListener(downloadButton, 'click touchstart', bestelleDownload);
     }
 
     nichtVerfuegbar(downloadButton) {

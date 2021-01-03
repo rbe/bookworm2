@@ -8,7 +8,7 @@
 
 export const HOERER_UNBEKANNT = '00000';
 export const LOGIN_HTML = '/anmelden.html';
-export const HOERBUCHKATALOG_URL = window.location.host;
+export const HOERBUCHKATALOG_URL = window.location.protocol + '//' + window.location.host;
 export const SHARD_URLS = [
     'https://hoerbuchdienst-shard11.wbh-online.de',
     'https://hoerbuchdienst-shard12.wbh-online.de',
@@ -25,10 +25,14 @@ export class WbhonlineHelper {
     readCookie() {
         const bookwormCookie = document.cookie
             .split('; ')
-            .find(row => row.startsWith('bookworm'))
-            .split('=')[1];
-        const strings = bookwormCookie.split('--');
-        return [strings[0], strings[1]];
+            .find(row => row.startsWith('bookworm'));
+        if (undefined !== bookwormCookie && null !== bookwormCookie) {
+            const values = bookwormCookie.split('=')[1];
+            const strings = values.split('--');
+            return [strings[0], strings[1]];
+        } else {
+            return ['', ''];
+        }
     }
 
     //

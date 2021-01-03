@@ -29,7 +29,7 @@ export class WbhonlineWarenkorb {
             } else {
                 this.ausDemWarenkorbEntfernt(warenkorbButton);
             }
-            warenkorbButton.addEventListener('click', (event) => {
+            WbhonlineButtons.addMultiEventListener(warenkorbButton, 'click touchstart', (event) => {
                 this.buttons.disableAnchor(event.currentTarget);
                 const titelnummer = this.helper.titelnummer(event.currentTarget);
                 this.flipWarenkorbButton(titelnummer, warenkorbButton,

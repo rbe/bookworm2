@@ -6,14 +6,16 @@
 
 "use strict";
 
+import {WbhonlineButtons} from "./wbhonlineButtons.js";
+
 const stichwortsucheUrl = '/stichwortsuche.html';
 
-export class WbhonlineSuchformular {
+class WbhonlineSuchformular {
 
     suchformular() {
         const forms = document.querySelectorAll('div[class="catalogsearch"]');
         for (const form of forms) {
-            const button = form.querySelector('button[type="submit"][class*="search"]');
+            const button = form.querySelector('button[class*="search"]');
             const enterListener = (event) => {
                 if (event.keyCode === 13) {
                     event.preventDefault();
@@ -24,14 +26,21 @@ export class WbhonlineSuchformular {
             if (undefined !== inputField && null !== inputField) {
                 inputField.addEventListener('keyup', enterListener);
             }
-            const sachgebiete = form.querySelector('select#sachgebiet');
-            const einstelldatum = form.querySelector('input#einstelldatum');
             if (undefined !== button && null !== button) {
-                button.addEventListener('click', (event) => {
-                    event.currentTarget.disabled = true;
-                    const url = this.stichwortsucheUrl(inputField.value, sachgebiete.value, einstelldatum.value);
-                    window.location = url.toString();
-                });
+                const self = this;
+                const buttonListener = function (event) {
+                    const inputField = form.querySelector('input[type="text"][class*="form-control"]');
+                    const sachgebiete = form.querySelector('select#sachgebiet');
+                    const einstelldatum = form.querySelector('input#einstelldatum');
+                    if ('' !== inputField.value || '-- keine Auswahl --' !== sachgebiete.value || '' !== einstelldatum.value) {
+                        event.currentTarget.disabled = true;
+                        const url = self.stichwortsucheUrl(inputField.value, sachgebiete.value, einstelldatum.value);
+                        window.location = url.toString();
+                    } else {
+                        console.log(inputField.value + '--' + sachgebiete.value + '--' + einstelldatum.value);
+                    }
+                };
+                WbhonlineButtons.addMultiEventListener(button, 'click touchend', buttonListener);
             }
         }
     }
@@ -71,11 +80,19 @@ export class WbhonlineSuchformular {
         const searchParams = new URLSearchParams(window.location.search);
         if (searchParams.has('stichwort')) {
             const stichwort = decodeURIComponent(searchParams.get('stichwort'));
-            const sachgebiet = decodeURIComponent(searchParams.get('sachgebiet') ?? '');
-            const einstelldatum = decodeURIComponent(searchParams.get('einstelldatum') ?? '');
-            document.title = 'WBH: Suche - Stichwort:' + stichwort
-                + ' Sachgebiet:' + sachgebiet
-                + ' Einstelldatum:' + einstelldatum;
+            let sachgebietValue = searchParams.get('sachgebiet');
+            if (undefined === sachgebietValue) {
+                sachgebietValue = '';
+            }
+            const sachgebiet = decodeURIComponent(sachgebietValue);
+            let einstelldatumValue = searchParams.get('einstelldatum');
+            if (undefined === einstelldatumValue) {
+                einstelldatumValue = '';
+            }
+            const einstelldatum = decodeURIComponent(einstelldatumValue);
+            document.title = 'WBH: Suche - Stichwort: ' + stichwort
+                + ' Sachgebiet: ' + sachgebiet
+                + ' Einstelldatum: ' + einstelldatum;
             const forms = document.querySelectorAll('div[class="catalogsearch"]');
             for (const form of forms) {
                 this.setValue(form, 'input[type="text"][class="form-control"]', stichwort);
