@@ -13,6 +13,7 @@ RUN addgroup -g 1000 service \
 RUN apk --no-cache add bash
 COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x -- /usr/local/bin/*
+RUN echo "0 0-59/1 * * * /usr/local/bin/cleanup.sh" | crontab -
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 FROM base
