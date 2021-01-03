@@ -41,6 +41,7 @@ public final class CORS {
                 origin -> HttpResponse.<String>temporaryRedirect(uri)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_DOMAIN/*origin*/)
                         .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS)
+                        .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
                         .body(""));
     }
 
@@ -72,6 +73,7 @@ public final class CORS {
     private static <T> void maybeAddOrigin(final String origin, final MutableHttpResponse<T> response) {
         if (null != origin) {
             response.header(HttpHeaders.ACCESS_CONTROL_ALLOW_ORIGIN, ALLOWED_DOMAIN/*origin*/)
+                    .header(HttpHeaders.ACCESS_CONTROL_ALLOW_HEADERS, "*")
                     .header(HttpHeaders.ACCESS_CONTROL_ALLOW_METHODS, ALLOWED_METHODS);
         }
     }
