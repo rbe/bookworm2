@@ -39,12 +39,12 @@ server:
 logging:
   level:
     root: ERROR
-    wbh.bookworm.hoerbuchkatalog.assembly: ERROR
-    wbh.bookworm.hoerbuchkatalog.rest: ERROR
-    wbh.bookworm.hoerbuchkatalog.app: ERROR
-    wbh.bookworm.hoerbuchkatalog.repository: ERROR
-    wbh.bookworm.hoerbuchkatalog.domain: ERROR
-    wbh.bookworm.hoerbuchkatalog: ERROR
+    wbh.bookworm.hoerbuchkatalog.assembly: INFO
+    wbh.bookworm.hoerbuchkatalog.rest: INFO
+    wbh.bookworm.hoerbuchkatalog.app: INFO
+    wbh.bookworm.hoerbuchkatalog.repository: INFO
+    wbh.bookworm.hoerbuchkatalog.domain: INFO
+    wbh.bookworm.hoerbuchkatalog: INFO
     aoc.mikrokosmos: ERROR
     aoc.mikrokosmos.fs: ERROR
     aoc.mikrokosmos.ddd.event: ERROR
