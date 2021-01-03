@@ -13,7 +13,7 @@ server {
     proxy_buffering off;
 
     include docker-logging.nginx;
-    include security.nginx;
+    include security-locations.nginx;
     include hoerbuchdienst-csp.nginx;
 
     location ~* "/(favicon.ico|robots.txt|index.html)" {

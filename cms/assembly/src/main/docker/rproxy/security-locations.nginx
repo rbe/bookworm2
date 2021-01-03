@@ -2,9 +2,6 @@
 # Security
 #
 
-server_tokens off;
-server_name_in_redirect off;
-
 location ~ /\. {
     deny all;
 }

@@ -13,7 +13,7 @@ server {
 
     include docker-logging.nginx;
     include compression.nginx;
-    include security.nginx;
+    include security-locations.nginx;
 
     # CMS Joomla
     location / {
