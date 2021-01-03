@@ -25,13 +25,13 @@ import aoc.mikrokosmos.ddd.model.DomainEntity;
  */
 public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
 
-    private static final long serialVersionUID = -1L;
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
-
     public static final String TITELNUMMER_UNBEKANNT = "000000";
 
     public static final String TITEL_UNBEKANNT = "Titel unbekannt";
+
+    private static final long serialVersionUID = -1L;
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(Hoerbuch.class);
 
     private Titelnummer titelnummer; // 6 0 (nummerisch)
 
@@ -302,9 +302,11 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
             final String[] parts = spieldauer.split("[.,]");
             if ("00".equals(parts[1])) {
                 abgeleiteteSpieldauer = String.format("%d Stunden", Integer.parseInt(parts[0]));
-            } else {
+            } else if (isNotBlank(parts[0]) && isNotBlank(parts[1])) {
                 abgeleiteteSpieldauer = String.format("%d Stunden %d Minuten",
                         Integer.parseInt(parts[0]), Integer.parseInt(parts[1]));
+            } else {
+                LOGGER.warn("Spieldauer {} von Hörbuch '{}' kann nicht interpretiert werden", spieldauer, titelnummer);
             }
         }
         if ("0,00".equalsIgnoreCase(spieldauer)) {
@@ -337,12 +339,6 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         return einstelldatum;
     }
 
-    public String getEinstelldatumAufDeutsch() {
-        return null != einstelldatum
-                ? einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                : "";
-    }
-
     private void setEinstelldatum(final String einstelldatum) {
         final boolean einstelldatumGesetzt = null != einstelldatum
                 && !einstelldatum.isBlank()
@@ -354,6 +350,12 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
                 throw new IllegalArgumentException(einstelldatum, e);
             }
         }
+    }
+
+    public String getEinstelldatumAufDeutsch() {
+        return null != einstelldatum
+                ? einstelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
     public AghNummer getAghNummer() {
