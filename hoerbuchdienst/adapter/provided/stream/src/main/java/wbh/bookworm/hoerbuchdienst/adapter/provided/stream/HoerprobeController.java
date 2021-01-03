@@ -80,9 +80,13 @@ public class HoerprobeController {
     @Get(uri = "/{titelnummer}")
     @Blocking
     public HttpResponse<StreamedFile> hoerprobeAsStream(final HttpRequest<?> httpRequest,
+                                                        /*
                                                         @Header("X-Bookworm-Mandant") final String xMandant,
                                                         @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                        */
                                                         @PathVariable("titelnummer") final String titelnummer) {
+        final String xMandant = "06";
+        final String xHoerernummer = "00000";
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final Optional<InputStream> maybeInputStream = hoerprobeService.makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer);
