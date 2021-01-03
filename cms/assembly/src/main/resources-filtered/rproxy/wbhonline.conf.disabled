@@ -11,18 +11,13 @@ server {
     ssl_certificate_key ${tls.path}/www.wbh-online.de/privkey.pem;
     include tls-options.nginx;
 
+    include docker-logging.nginx;
     include compression.nginx;
     include security.nginx;
 
-    include docker-logging.nginx;
-
-    root /var/www/html;
-
-    #
-    # Joomla
-    #
-
+    # CMS Joomla
     location / {
+        root /var/www/html;
         try_files $uri $uri/ /index.php?$args =404;
         index index.php;
         expires 1d;
