@@ -23,10 +23,6 @@ lucene:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
-  banner:
-    location: classpath:/banner/banner-starwars0.txt
-  main:
-    banner-mode: "console"
   redis:
     host:
     port: 6379
