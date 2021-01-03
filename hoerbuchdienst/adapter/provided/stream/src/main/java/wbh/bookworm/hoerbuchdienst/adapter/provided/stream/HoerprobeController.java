@@ -7,6 +7,8 @@
 package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
+import java.io.InputStream;
+import java.util.Optional;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -20,6 +22,7 @@ import io.micronaut.http.annotation.Header;
 import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
+import io.micronaut.http.server.types.files.StreamedFile;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -43,12 +46,14 @@ import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 )
 @Controller(value = HoerprobeController.BASE_URL)
 @Consumes(MediaType.APPLICATION_JSON)
-@Produces(HoerprobeController.AUDIO_MP3)
+@Produces(HoerprobeController.AUDIO_MP3_VALUE)
 public class HoerprobeController {
 
     static final String BASE_URL = "/v1/hoerprobe";
 
-    static final String AUDIO_MP3 = "audio/mp3";
+    static final String AUDIO_MP3_VALUE = "audio/mp3";
+
+    static final MediaType AUDIO_MP3 = MediaType.of(AUDIO_MP3_VALUE);
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeController.class);
 
@@ -73,12 +78,16 @@ public class HoerprobeController {
     @Operation(summary = "Hörprobe eines Hörbuchs abrufen")
     @Get(uri = "/{titelnummer}")
     @Blocking
-    public HttpResponse<byte[]> hoerprobeAsStream(final HttpRequest<?> httpRequest,
-                                                  @Header("X-Bookworm-Mandant") final String xMandant,
-                                                  @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                  @PathVariable("titelnummer") final String titelnummer) {
+    public HttpResponse<StreamedFile> hoerprobeAsStream(final HttpRequest<?> httpRequest,
+                                                        @Header("X-Bookworm-Mandant") final String xMandant,
+                                                        @Header("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                        @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
-                () -> hoerprobeService.makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer),
+                () -> {
+                    final Optional<InputStream> maybeInputStream = hoerprobeService.makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer);
+                    final InputStream inputStream = maybeInputStream.orElseThrow();
+                    return new StreamedFile(inputStream, AUDIO_MP3);
+                },
                 body -> CORS.response(httpRequest, body)
                         .header("Accept-Ranges", "bytes"),
                 String.format("%s/%s", BASE_URL, titelnummer),

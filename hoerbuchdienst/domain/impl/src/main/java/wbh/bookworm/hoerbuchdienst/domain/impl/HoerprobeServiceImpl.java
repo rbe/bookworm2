@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Random;
 import java.util.stream.Collectors;
 
@@ -24,10 +25,6 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeServiceImpl.class);
 
-    private final KatalogService katalogService;
-
-    private final AudiobookStreamService audiobookStreamService;
-
     private static final String[] MP3_IGNORIEREN = {
             "buch",
             "daisy",
@@ -39,8 +36,8 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
             "sprecher",
             "gesamtspieldauer",
             "gliederung",
-            "abweichungen",
-            "bibliographische",
+            "abweichung",
+            "bibliographisch",
             "spieldauer",
             "struktur",
             "klappentexte",
@@ -53,6 +50,10 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
             "ende"
     };
 
+    private final KatalogService katalogService;
+
+    private final AudiobookStreamService audiobookStreamService;
+
     private final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
 
     @Inject
@@ -63,32 +64,47 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     }
 
     @Override
-    public byte[] makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
-                                        final String titelnummer) {
-        final List<PlaylistEntryDTO> nachZeit = kandidatenNachZeit(titelnummer);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidat für eine Hörprobe nach Zeit: '{}'", xHoerernummer, titelnummer, nachZeit);
-        final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(nachZeit);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandiaten für eine Hörprobe nach Name: {}", nachName, xHoerernummer, titelnummer);
-        if (!nachName.isEmpty()) {
-            final String ident = zufaelligerIdent(nachName);
+    public Optional<InputStream> makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
+                                                       final String titelnummer) {
+        final String ident = ermittleHoerprobe(xHoerernummer, titelnummer);
+        if (null != ident && !ident.isBlank()) {
             LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}'", xHoerernummer, titelnummer, ident);
             try (final InputStream track = audiobookStreamService
                     .trackAsStream(xMandant, xHoerernummer, titelnummer, ident)) {
                 LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' erstellt", xHoerernummer, titelnummer, ident);
-                return track.readAllBytes();
+                return Optional.of(track);
             } catch (Exception e) {
                 throw new HoerprobeServiceException("", e);
             }
         } else {
             LOGGER.error("Hörer '{}' Hörbuch '{}': Hörprobe kann nicht geliefert werden", xHoerernummer, titelnummer);
-            return new byte[0];
+            return Optional.empty();
         }
     }
 
-    private String zufaelligerIdent(final Map<Boolean, List<PlaylistEntryDTO>> playlistEntries) {
-        final List<PlaylistEntryDTO> strings = playlistEntries.get(false);
-        int random = new Random().nextInt(strings.size());
-        return strings.get(random).getIdent();
+    private String ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
+        final List<PlaylistEntryDTO> nachZeit = kandidatenNachZeit(titelnummer);
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidat für eine Hörprobe nach Zeit: '{}'", xHoerernummer, titelnummer, nachZeit);
+        final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(nachZeit);
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandiaten für eine Hörprobe nach Name: {}", nachName, xHoerernummer, titelnummer);
+        String ident = zufaelligerIdent(nachName.get(false));
+        if (ident.isBlank()) {
+            final PlaylistDTO playlist = katalogService.playlist(titelnummer);
+            final int index = Math.min(playlist.getEntries().size(), 5);
+            if (playlist.getEntries().size() - 1 >= index) {
+                ident = playlist.getEntries().get(index).getIdent();
+            }
+        }
+        return ident;
+    }
+
+    private String zufaelligerIdent(final List<PlaylistEntryDTO> playlistEntries) {
+        if (null != playlistEntries && !playlistEntries.isEmpty()) {
+            int random = new Random().nextInt(playlistEntries.size() - 1);
+            return playlistEntries.get(random).getIdent();
+        } else {
+            return "";
+        }
     }
 
     private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final List<PlaylistEntryDTO> playlistEntries) {
@@ -101,7 +117,7 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
         return playlist.getEntries().stream()
                 .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
-                .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 15 * 60)
+                .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 30 * 60)
                 .collect(Collectors.toUnmodifiableList());
     }
 

@@ -6,9 +6,12 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
+import java.io.InputStream;
+import java.util.Optional;
+
 public interface HoerprobeService {
 
-    byte[] makeHoerprobeAsStream(String xMandant, String xHoerernummer,
-                                 String titelnummer);
+    Optional<InputStream> makeHoerprobeAsStream(String xMandant, String xHoerernummer,
+                                                String titelnummer);
 
 }
