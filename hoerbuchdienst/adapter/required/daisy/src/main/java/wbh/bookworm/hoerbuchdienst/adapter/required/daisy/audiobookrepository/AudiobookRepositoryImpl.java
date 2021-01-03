@@ -160,4 +160,9 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
                 () -> null);
     }
 
+    @Override
+    public List<Path> findFilenames(final String titelnummer) {
+        return audiobookStreamResolver.list(titelnummer + "DAISY");
+    }
+
 }

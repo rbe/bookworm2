@@ -3,6 +3,7 @@ package wbh.bookworm.hoerbuchdienst.domain.impl;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -89,10 +90,10 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}", nachName, xHoerernummer, titelnummer);
         String ident = zufaelligerIdent(nachName.get(false));
         if (ident.isBlank()) {
-            final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-            final int index = Math.min(playlist.getEntries().size(), 5);
-            if (playlist.getEntries().size() - 1 >= index) {
-                ident = playlist.getEntries().get(index).getIdent();
+            final List<Path> playlist = katalogService.playlistFuerHoerprobe(titelnummer);
+            final int index = Math.min(playlist.size(), 5);
+            if (playlist.size() - 1 >= index) {
+                ident = playlist.get(index).getFileName().toString();
             }
         }
         return ident;

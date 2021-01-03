@@ -26,4 +26,6 @@ public interface AudiobookRepository {
 
     Path mp3ToTempDirectory(String titelnummer, Path tempDirectory);
 
+    List<Path> findFilenames(String titelnummer);
+
 }

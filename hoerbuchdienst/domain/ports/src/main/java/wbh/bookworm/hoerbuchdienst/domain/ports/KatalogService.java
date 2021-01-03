@@ -6,6 +6,7 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
+import java.nio.file.Path;
 import java.util.List;
 
 public interface KatalogService {
@@ -15,6 +16,8 @@ public interface KatalogService {
     TrackInfoDTO trackInfo(String hoerernummer, String titelnummer, String ident);
 
     PlaylistDTO playlist(String titelnummer);
+
+    List<Path> playlistFuerHoerprobe(String titelnummer);
 
     boolean index();
 
