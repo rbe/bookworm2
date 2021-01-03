@@ -29,7 +29,7 @@ function enable_site_conf() {
       echo "done"
     else
       echo "failed"
-      disable_nginx_conf "${site}"
+      disable_site_conf "${site}"
       exit 1
     fi
   else
