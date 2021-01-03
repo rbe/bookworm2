@@ -31,6 +31,7 @@ import io.swagger.v3.oas.annotations.info.License;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.HoerprobeService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
@@ -85,7 +86,7 @@ public class HoerprobeController {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final Optional<InputStream> maybeInputStream = hoerprobeService.makeHoerprobeAsStream(xMandant, xHoerernummer, titelnummer);
-                    final InputStream inputStream = maybeInputStream.orElseThrow();
+                    final InputStream inputStream = maybeInputStream.orElseThrow(() -> new BusinessException("Keine Hörprobe möglich"));
                     return new StreamedFile(inputStream, AUDIO_MP3);
                 },
                 body -> CORS.response(httpRequest, body)
