@@ -71,8 +71,14 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public long anzahlHeute() {
         final LocalDateTime now = LocalDateTime.now();
         return titelnummern.entrySet().stream()
-                .filter(entry -> now.isAfter(entry.getValue().getAusgeliehenAm()))
+                .filter(entry -> isSameDay(now, entry.getValue().getAusgeliehenAm()))
                 .count();
+    }
+
+    private boolean isSameDay(final LocalDateTime date1, final LocalDateTime date2) {
+        return date1.getYear() == date2.getYear()
+                && date1.getMonth() == date2.getMonth()
+                && date1.getDayOfMonth() == date2.getDayOfMonth();
     }
 
     public long anzahlAktuellerMonat() {
