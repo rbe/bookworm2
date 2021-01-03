@@ -1,0 +1,13 @@
+#
+# Compression
+#
+
+gzip off;
+#gzip_types      text/plain text/css text/javascript application/javascript application/x-javascript application/json;
+#gzip_proxied    no-cache no-store no_last_modified private expired auth;
+#gzip_vary on;
+#gzip_proxied any;
+#gzip_http_version 1.1;
+#gzip_min_length 256;
+#gzip_comp_level 6;
+#gzip_buffers 16 8k;

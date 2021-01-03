@@ -1,0 +1,25 @@
+if ($query_string ~ "base64_encode[^(]*\([^)]*\)") {
+    return 404;
+}
+if ($query_string ~* "(<|%3C)([^s]*s)+cript.*(>|%3E)") {
+    return 404;
+}
+if ($query_string ~ "GLOBALS(=|\[|\%[0-9A-Z]{0,2})") {
+    return 404;
+}
+if ($query_string ~ "_REQUEST(=|\[|\%[0-9A-Z]{0,2})") {
+    return 404;
+}
+#if (!-e $request_filename) {
+#    rewrite ^(.*)$ /index.php break;
+#}
+location ~* /configuration*.php {
+    return 404;
+}
+# Deny running scripts inside writable directories
+location ~* /(images|cache|media|logs|tmp)/.*\.(txt|html|php|pl|py|jsp|asp|sh|cgi)$ {
+    return 404;
+}
+location ~* ^/(bin|cli|files_logs|files_temp|logs|includes|language|layouts|libraries) {
+    return 404;
+}

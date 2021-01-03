@@ -2,54 +2,21 @@ server {
 
     listen 443 ssl http2;
     #listen [::]:443 ssl http2;
-    server_name ${cms.hostname} ${domain};
-    #server_name www-prod.wbh-online.de wbh-online.de;
-    access_log /proc/self/fd/1 main;
-    error_log /proc/self/fd/2 error;
-    #error_log /proc/self/fd/2 debug;
-    ssl_certificate ${tls.path}/${cms.hostname}/fullchain.pem;
-    ssl_certificate_key ${tls.path}/${cms.hostname}/privkey.pem;
-    #include /etc/letsencrypt/options-ssl-nginx.conf;
-    ssl_protocols TLSv1.2 TLSv1.3;
-    ssl_ciphers EECDH+AESGCM:EDH+AESGCM;
-    ssl_ecdh_curve secp384r1;
-    ssl_prefer_server_ciphers on;
-    ssl_session_timeout 5m;
-    ssl_session_cache shared:SSL:50m;
-    #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
-    ssl_session_tickets off;
-    ssl_stapling on;
-    ssl_stapling_verify on;
-    #add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-    add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
+    #server_name ${cms.hostname} ${domain};
+    server_name www.wbh-online.de wbh-online.de;
 
-    #
-    # Compression
-    #
+    #ssl_certificate ${tls.path}/${cms.hostname}/fullchain.pem;
+    ssl_certificate ${tls.path}/www.wbh-online.de/fullchain.pem;
+    #ssl_certificate_key ${tls.path}/${cms.hostname}/privkey.pem;
+    ssl_certificate_key ${tls.path}/www.wbh-online.de/privkey.pem;
+    include tls-options.nginx;
 
-    gzip off;
-    #gzip_types      text/plain text/css application/javascript application/json;
-    #gzip_proxied    no-cache no-store no_last_modified private expired auth;
-    #gzip_min_length 256;
-    #gzip_comp_level 6;
+    include compression.nginx;
+    include security.nginx;
 
-    #
-    # Security
-    #
-
-    add_header X-Powered-By "";
-    add_header X-Content-Type-Options nosniff;
-    add_header X-XSS-Protection "1; mode=block;";
-    # Joomla #add_header X-Frame-Options DENY;
-    # Joomla #add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
-    # Joomla #add_header X-Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
-    # Joomla #add_header X-WebKit-CSP "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
+    include docker-logging.nginx;
 
     root /var/www/html;
-
-    location ~ /\. {
-        deny all;
-    }
 
     #
     # Joomla
@@ -59,41 +26,17 @@ server {
         try_files $uri $uri/ /index.php?$args =404;
         index index.php;
         expires 1d;
-        if ($query_string ~ "base64_encode[^(]*\([^)]*\)") {
-            return 404;
-        }
-        if ($query_string ~* "(<|%3C)([^s]*s)+cript.*(>|%3E)") {
-            return 404;
-        }
-        if ($query_string ~ "GLOBALS(=|\[|\%[0-9A-Z]{0,2})") {
-            return 404;
-        }
-        if ($query_string ~ "_REQUEST(=|\[|\%[0-9A-Z]{0,2})") {
-            return 404;
-        }
-        #if (!-e $request_filename) {
-        #    rewrite ^(.*)$ /index.php break;
-        #}
-        # Deny running scripts inside writable directories
-        location ~* /(images|joomlatools_files|cache|media|logs|tmp)/.*\.(txt|html|php|pl|py|jsp|asp|sh|cgi)$ {
-            return 404;
-        }
-        location ~* /configuration*.php {
-            return 404;
-        }
-        location ~* ^/(bin|cli|files_logs|files_temp|logs|includes|language|layouts|libraries) {
-            return 404;
-        }
+        include joomla-security.nginx;
         location ~* \.(js|css)$ {
             try_files $uri =404;
             expires 24h;
         }
-        location ~* \.(png|jpe?g|gif|ico)$ {
-            try_files $uri /images/$uri =404;
-            expires 1d;
-        }
         location ~* \.(pdf|txt|xml)$ {
             try_files $uri =404;
+            expires 1d;
+        }
+        location ~* \.(png|jpe?g|gif|ico)$ {
+            try_files $uri /images/$uri =404;
             expires 1d;
         }
         location ~* \.php($|/.*\.html$)? {
@@ -110,26 +53,17 @@ server {
             if ($uri !~ "^/images/") {
                 fastcgi_pass joomla:9000;
             }
+            fastcgi_hide_header X-Powered-By;
+            add_header Server "";
         }
         location ~ \.html {
-            #add_header X-Nginx-debug-html "Location .html" always;
             try_files $uri /index.php$uri;
         }
     }
     # Proxy fuer Hörbuchkatalog REST Dienste
     location /hoerbuchkatalog/ {
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-        proxy_set_header Host $http_host;
-        proxy_connect_timeout  5s;
-        send_timeout           5s;
-        proxy_send_timeout     5s;
-        proxy_read_timeout    10s;
-        proxy_http_version 1.1;
-        proxy_set_header Connection "";
-        chunked_transfer_encoding off;
-        proxy_pass http://hoerbuchkatalog:8080;
+        include cors.nginx;
+        include hoerbuchkatalog-proxy.nginx;
     }
 
 }
