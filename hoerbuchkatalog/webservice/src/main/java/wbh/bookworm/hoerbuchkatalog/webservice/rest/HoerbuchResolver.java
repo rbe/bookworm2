@@ -28,7 +28,7 @@ class HoerbuchResolver {
         return titelnummern.stream()
                 .map(titelnummer -> hoerbuchkatalogService.hole(HOERERNUMMER, titelnummer))
                 .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortDto)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     List<HoerbuchAntwortKurzDTO> toHoerbuchAntwortKurzDTO(final List<Titelnummer> titelnummern) {
@@ -36,7 +36,7 @@ class HoerbuchResolver {
                 .map(titelnummer -> hoerbuchkatalogService.hole(HOERERNUMMER, titelnummer))
                 .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortKurzDto)
                 .sorted()
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("squid:S3864")
@@ -52,7 +52,7 @@ class HoerbuchResolver {
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("squid:S3864")
@@ -68,7 +68,7 @@ class HoerbuchResolver {
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
     @SuppressWarnings("squid:S3864")
@@ -84,7 +84,7 @@ class HoerbuchResolver {
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.toList());
     }
 
 }
