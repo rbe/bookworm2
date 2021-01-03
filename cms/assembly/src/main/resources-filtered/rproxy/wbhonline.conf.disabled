@@ -54,11 +54,13 @@ server {
         location ~ \.html {
             try_files $uri /index.php$uri;
         }
+        include joomla-csp.nginx;
     }
     # Proxy fuer Hörbuchkatalog REST Dienste
     location /hoerbuchkatalog/ {
         include cors.nginx;
         include hoerbuchkatalog-proxy.nginx;
+        include hoerbuchkatalog-csp.nginx;
     }
 
 }

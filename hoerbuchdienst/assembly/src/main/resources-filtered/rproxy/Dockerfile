@@ -33,6 +33,7 @@ ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 FROM base
 RUN openssl rand 80 >/etc/nginx/ssl_session_ticket.key
 COPY nginx.conf /etc/nginx/
+COPY *.nginx /etc/nginx/
 COPY tlsredirect.conf /etc/nginx/conf.d/
 COPY *.conf.disabled /etc/nginx/conf.d/
 RUN mkdir /etc/nginx/stream.d

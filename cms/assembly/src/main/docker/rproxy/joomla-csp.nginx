@@ -1,0 +1,7 @@
+add_header X-Powered-By "";
+add_header X-Content-Type-Options nosniff;
+add_header X-XSS-Protection "1; mode=block;";
+# Joomla #add_header X-Frame-Options DENY;
+# Joomla #add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
+# Joomla #add_header X-Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
+# Joomla #add_header X-WebKit-CSP "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' 'unsafe-inline'";
