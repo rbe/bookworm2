@@ -14,7 +14,7 @@ TZ="Europe/Berlin"
 export TZ
 
 echo "Starting cron"
-crond -b -S -d 8 -L /dev/stdout
+crond -b -d 8 -L /dev/stdout
 
 echo "Removing all/old Lucene index directories"
 rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
