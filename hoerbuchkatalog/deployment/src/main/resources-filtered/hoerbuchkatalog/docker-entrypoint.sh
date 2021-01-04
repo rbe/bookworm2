@@ -21,7 +21,7 @@ rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
 
 echo "Starting service"
 JAVA_TOOL_OPTIONS="-Xms2048m -Xmx2048m \
--XX:MaxDirectMemorySize=128m \
+-XX:MaxDirectMemorySize=32m \
 -Djdk.nio.maxCachedBufferSize=262144 \
 -XX:+UseCompressedOops \
 -XX:+HeapDumpOnOutOfMemoryError \
