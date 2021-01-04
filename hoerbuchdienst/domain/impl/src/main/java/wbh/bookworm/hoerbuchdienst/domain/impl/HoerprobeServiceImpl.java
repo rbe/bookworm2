@@ -100,9 +100,11 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     }
 
     private String zufaelligerIdent(final List<PlaylistEntryDTO> playlistEntries) {
-        if (null != playlistEntries && !playlistEntries.isEmpty()) {
+        if (null != playlistEntries && playlistEntries.size() > 1) {
             int random = new Random().nextInt(playlistEntries.size() - 1);
             return playlistEntries.get(random).getIdent();
+        } else if (null != playlistEntries && playlistEntries.size() == 1) {
+            return playlistEntries.get(0).getIdent();
         } else {
             return "";
         }
