@@ -97,11 +97,11 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         final boolean orderExists = orderStatus.containsKey(orderId)
                 && Files.exists(daisyZip);
         if (orderExists) {
-            LOGGER.info("Bestellung {} wird abgeholt", orderId);
+            LOGGER.info("Bestellung '{}' wird abgeholt", orderId);
             orderStatus.remove(orderId);
             return Optional.of(daisyZip);
         } else {
-            LOGGER.warn("Bestellung {} existiert nicht", orderId);
+            LOGGER.warn("Bestellung '{}' existiert nicht", orderId);
             return Optional.empty();
         }
     }

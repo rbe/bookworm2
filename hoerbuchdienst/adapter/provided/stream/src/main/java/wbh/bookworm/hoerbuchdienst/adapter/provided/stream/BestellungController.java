@@ -129,7 +129,7 @@ public class BestellungController {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> {
                     final String status = audiobookOrderService.orderStatus(orderId);
-                    LOGGER.info("Hörbuch '{}': Status der Bestellung {} ist {}", titelnummer, orderId, status);
+                    LOGGER.debug("Hörbuch '{}': Status der Bestellung {} ist {}", titelnummer, orderId, status);
                     return Map.of("orderStatus", status);
                 },
                 body -> CORS.response(httpRequest, body),

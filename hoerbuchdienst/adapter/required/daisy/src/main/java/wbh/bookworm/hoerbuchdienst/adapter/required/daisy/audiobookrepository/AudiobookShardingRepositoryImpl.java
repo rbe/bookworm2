@@ -110,7 +110,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         final boolean witness = redistributionAllowed.compareAndExchange(Boolean.TRUE, Boolean.FALSE);
         if (witness) {
             // success, witness == expected value
-            LOGGER.info("Successfully disallowed redistribution, witness={}", witness);
+            LOGGER.debug("Successfully disallowed redistribution, witness={}", witness);
         } else {
             // failed, witness != expected value
             LOGGER.error("Redistribution already disallowed, witness={} expected=true", witness);
@@ -131,7 +131,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
             LOGGER.error("Redistribution already allowed, witness={}, expected=false", witness);
         } else {
             // success, witness == expected value
-            LOGGER.info("Successfully allowed redistribution, witness={}", witness);
+            LOGGER.debug("Successfully allowed redistribution, witness={}", witness);
         }
     }
 
@@ -200,7 +200,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
                 .limit(2L)
                 .collect(Collectors.toUnmodifiableList());
         if (objectsToMove.isEmpty()) {
-            LOGGER.info("No objects to transfer to other shards");
+            LOGGER.debug("No objects to transfer to other shards");
         } else {
             // move all my objects now belonging to another shard
             objectsToMove.forEach(shardAudiobook -> {
@@ -217,7 +217,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
     private boolean moveToOtherShard(final ShardAudiobook shardAudiobook) {
         boolean result = true;
         final ShardName otherShardName = shardAudiobook.getShardName();
-        LOGGER.info("{} belongs to other shard {}", shardAudiobook, otherShardName);
+        LOGGER.debug("{} belongs to other shard {}", shardAudiobook, otherShardName);
         URL baseUrl = null;
         try {
             baseUrl = new URL(String.format("https://%s:%d", otherShardName.getShardName(), PORT_HTTPS));
@@ -303,7 +303,7 @@ class AudiobookShardingRepositoryImpl implements ShardingRepository {
         try {
             cacheManager.getCache("audiobookRepository")
                     .invalidate(objectId);
-            LOGGER.info("Invalidated cache for object id {}", objectId);
+            LOGGER.debug("Invalidated cache for object id {}", objectId);
         } catch (Exception e) {
             LOGGER.error(String.format("Could not invalidate cache for object id %s", objectId), e);
         }

@@ -73,7 +73,7 @@ public class TrackController {
         return optionsResponse(httpRequest);
     }
 
-    @Operation(summary = "Track eines Hörbuchs als DAISY-ZIP")
+    @Operation(summary = "Track eines Hörbuchs abrufen")
     @Get(uri = "/{titelnummer}/track/{ident}", produces = AUDIO_MP3)
     @Blocking
     public HttpResponse<byte[]> trackAsStream(final HttpRequest<?> httpRequest,
@@ -91,12 +91,9 @@ public class TrackController {
 
     private byte[] makeTrackAsStream(final String xMandant, final String xHoerernummer,
                                      final String titelnummer, final String trackIdent) {
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Track '{}' mit Wasserzeichen",
-                xHoerernummer, titelnummer, trackIdent);
         try (final InputStream track = audiobookStreamService.trackAsStream(xMandant,
                 xHoerernummer, titelnummer, trackIdent)) {
-            LOGGER.info("Hörer '{}' Hörbuch '{}': Track '{}' mit Wasserzeichen erstellt",
-                    xHoerernummer, titelnummer, trackIdent);
+            LOGGER.info("Hörer '{}' Hörbuch '{}': Track '{}' erstellt", xHoerernummer, titelnummer, trackIdent);
             return track.readAllBytes();
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);

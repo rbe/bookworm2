@@ -118,7 +118,7 @@ class DatabeatManagerImpl implements DatabeatManager {
     @EventListener
     void processEvent(final BucketObjectRemovedEvent event) {
         if ("eingangskorb".equals(event.getBucketName())) {
-            LOGGER.info("Generating Databeat as requested by {}", event);
+            LOGGER.debug("Generating Databeat as requested by {}", event);
             // TODO Just add event.getObjectName() to Databeat; what about other changes?
             generate();
         } else {
@@ -131,7 +131,7 @@ class DatabeatManagerImpl implements DatabeatManager {
     public void generate() {
         try {
             if (databeatGenerationLock.tryLock(1L, TimeUnit.SECONDS)) {
-                LOGGER.info("Generating Databeat");
+                LOGGER.debug("Generating Databeat");
                 final long start = System.currentTimeMillis();
                 final List<ObjectMetaInfo> objectMetaInfos = audiobookStreamResolver.objectsMetaInfo();
                 final Long usedBytes = objectMetaInfos.stream()
@@ -168,7 +168,7 @@ class DatabeatManagerImpl implements DatabeatManager {
     void persistDatabeat(final Databeat myDatabeat) {
         try (final OutputStream outputStream = Files.newOutputStream(databeatJson)) {
             objectMapper.writeValue(outputStream, myDatabeat);
-            LOGGER.info("Persisted Databeat with {} entries", myDatabeat.numberOfObjects());
+            LOGGER.debug("Persisted Databeat with {} entries", myDatabeat.numberOfObjects());
         } catch (IOException e) {
             LOGGER.error("Cannot persist Databeat", e);
         }

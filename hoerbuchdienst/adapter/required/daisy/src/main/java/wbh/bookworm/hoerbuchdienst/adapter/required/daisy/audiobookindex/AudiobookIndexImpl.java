@@ -54,7 +54,6 @@ class AudiobookIndexImpl implements AudiobookIndex {
     public boolean index() {
         final List<Path> paths = audiobookStreamResolver.listAll();
         final List<String> audiobooksAsJson = paths.stream()
-                .peek(p -> LOGGER.info("{}", p.getFileName()))
                 .map(p -> p.getFileName().toString().replace("DAISY", ""))
                 .map(audiobookMapper::audiobook)
                 .map(audiobook -> {

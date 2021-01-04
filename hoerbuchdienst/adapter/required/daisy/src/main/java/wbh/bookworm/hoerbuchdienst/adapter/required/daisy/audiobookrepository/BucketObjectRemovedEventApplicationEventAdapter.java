@@ -37,7 +37,7 @@ public class BucketObjectRemovedEventApplicationEventAdapter {
 
     @EventListener
     public void onStartup(final StartupEvent startupEvent) {
-        LOGGER.info("Registering bucket notification listener", startupEvent);
+        LOGGER.debug("Registering bucket notification listener", startupEvent);
         bucketObjectStorage.registerNotificationListener(objectStorageEvent -> {
                     final BucketObjectRemovedEvent event = new BucketObjectRemovedEvent(
                             objectStorageEvent.getBucketName(),

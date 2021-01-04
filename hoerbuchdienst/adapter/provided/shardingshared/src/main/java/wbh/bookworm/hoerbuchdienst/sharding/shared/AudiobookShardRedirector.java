@@ -57,7 +57,7 @@ public final class AudiobookShardRedirector {
                     .body("");
         } else {
             final String shardURI = String.format("https://%s%s", shardName, serviceUri);
-            LOGGER.info("Hörbuch '{}': Redirecting to {}", objectId, shardURI);
+            LOGGER.debug("Hörbuch '{}': Redirecting to {}", objectId, shardURI);
             result = CORS.temporaryRedirect(httpRequest, URI.create(shardURI))
                     .header(X_SHARD_LOCATION, shardName);
         }

@@ -46,7 +46,7 @@ public class CdLieferungRepositoryAktualisierer {
                     FilesUtils.move(neededFiles, verzeichnisAktualisierung, cdLieferungRepositoryConfig.getDirectory());
                     cdLieferungRepository.datenEinlesen();
                 });
-        LOGGER.info("Achte auf Dateien im Verzeichnis {}", verzeichnisAktualisierung);
+        LOGGER.info("Achte auf Dateien im Verzeichnis {}", verzeichnisAktualisierung.toAbsolutePath());
     }
 
     @PreDestroy

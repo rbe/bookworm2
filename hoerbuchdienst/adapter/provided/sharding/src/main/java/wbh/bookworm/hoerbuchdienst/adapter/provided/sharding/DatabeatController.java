@@ -48,7 +48,7 @@ public class DatabeatController {
     @Post
     @Produces(MediaType.APPLICATION_JSON)
     public HttpResponse<Boolean> generateDatabeat() {
-        LOGGER.info("Databeat generation requested");
+        LOGGER.debug("Databeat generation requested");
         shardService.generateDatabeat();
         return HttpResponse.ok(true);
     }

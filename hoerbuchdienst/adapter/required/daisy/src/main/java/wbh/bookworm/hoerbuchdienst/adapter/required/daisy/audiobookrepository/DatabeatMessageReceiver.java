@@ -33,7 +33,7 @@ final class DatabeatMessageReceiver {
             final List<ShardAudiobook> shardObjects = databeat.getShardAudiobooks();
             LOGGER.trace("Received {}", databeat);
             databeatManager.remember(databeat.getShardName(), databeat);
-            LOGGER.info("Received {} entries from {}", shardObjects.size(), xShardName);
+            LOGGER.debug("Received {} entries from {}", shardObjects.size(), xShardName);
         } else {
             LOGGER.warn("List with shard objects from {} is empty", xShardName);
         }
@@ -44,7 +44,6 @@ final class DatabeatMessageReceiver {
      */
     @EventListener
     void onShardDisappeared(final ShardDisappearedEvent event) {
-        LOGGER.debug("Removing {}'s data from cache as it disappeared", event.getShardName());
         databeatManager.forget(event.getShardName());
         LOGGER.info("Removed {}'s data from cache as it disappeared", event.getShardName());
     }

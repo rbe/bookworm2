@@ -48,7 +48,7 @@ public class HoererRepositoryAktualisierer {
                     hoererRepository.datenEinlesen();
                 });
         executorService.execute(filesystemWatcher);
-        LOGGER.info("Achte auf Dateien im Verzeichnis {}", verzeichnisAktualisierung);
+        LOGGER.info("Achte auf Dateien im Verzeichnis {}", verzeichnisAktualisierung.toAbsolutePath());
     }
 
     @PreDestroy

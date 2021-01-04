@@ -2,6 +2,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.audiobookrepository;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -35,11 +36,12 @@ class LeastUsedShardDistributionStrategyImpl implements ShardDistributionStrateg
         if (maybeTotalSize.isPresent()) {
             final double totalSizeOfAllObjects = maybeTotalSize.get();
             final double idealBytesPerShard = totalSizeOfAllObjects / (double) databeatManager.numberOfDatabeats();
-            LOGGER.info("Total size of {} objects is {} bytes = {} MB = {} GB," +
-                            " ideal size of audiobooks on every shard: {} bytes = {} MB = {} GB",
+            LOGGER.info("Total size of {} objects is {} MB = {} GB, ideal size of audiobooks on every shard: {} MB = {} GB",
                     databeatManager.numerOfObjects(),
-                    totalSizeOfAllObjects, totalSizeOfAllObjects / T24 / T24, totalSizeOfAllObjects / T24 / T24 / T24,
-                    idealBytesPerShard, idealBytesPerShard / T24 / T24, idealBytesPerShard / T24 / T24 / T24);
+                    totalSizeOfAllObjects / T24 / T24,
+                    totalSizeOfAllObjects / T24 / T24 / T24,
+                    idealBytesPerShard / T24 / T24,
+                    idealBytesPerShard / T24 / T24 / T24);
             // calculate new distribution across all shards
             // available shards
             final List<ShardName> availShards = new ArrayList<>(databeatManager.allShardNames());
