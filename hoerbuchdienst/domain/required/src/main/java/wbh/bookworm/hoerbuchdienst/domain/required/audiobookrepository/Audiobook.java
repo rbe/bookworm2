@@ -15,12 +15,16 @@ import com.fasterxml.jackson.annotation.JsonView;
 
 public final class Audiobook implements Serializable {
 
+    public static final Audiobook UNKNOWN = new Audiobook();
+
     private static final long serialVersionUID = -1L;
 
     @JsonView(AudiobookViews.SearchIndex.class)
     private String titelnummer;
 
-    /** master.smil/head/dc:identifier */
+    /**
+     * master.smil/head/dc:identifier
+     */
     @JsonView(AudiobookViews.Default.class)
     private String identifier;
 
@@ -114,8 +118,6 @@ public final class Audiobook implements Serializable {
 
     @JsonView(AudiobookViews.SearchIndex.class)
     private String sourcePublisher;
-
-    public static final Audiobook UNKNOWN = new Audiobook();
 
     /**
      * master.smil/body/ref
@@ -235,6 +237,10 @@ public final class Audiobook implements Serializable {
         this.tocItems = tocItems;
     }
 
+    public void setTocItems(final String tocItems) {
+        this.tocItems = null != tocItems && !tocItems.isBlank() ? Integer.parseInt(tocItems) : -1;
+    }
+
     public Duration getTimeInThisSmil() {
         return timeInThisSmil;
     }
@@ -269,10 +275,6 @@ public final class Audiobook implements Serializable {
 
     public List<Audiotrack> getAudiotracks() {
         return new ArrayList<>(audiotracks);
-    }
-
-    public void setTocItems(final String tocItems) {
-        this.tocItems = Integer.parseInt(tocItems);
     }
 
     public boolean addAudiotrack(final Audiotrack audiotrack) {
