@@ -1,8 +1,12 @@
-== Hörbuchdienst
+== Inbetriebnahme
 
 === Storage Server provisionieren
 
 ==== Server installieren
+
+IONOS Storage Server:
+
+* openSUSE Leap 15.1
 
 netcup Storage Server installieren:
 
@@ -17,6 +21,7 @@ Der restliche Speicherplatz kann nach Bedarf partitioniert werden."
 Der Administrator muss seinen SSH-Schlüssel für den Login auf dem Shard hinterlegen.
 Bitte `N` gegen die entsprechende Nummer ersetzen:
 
+.Linux, macOS
 [source,shell,linenum]
 ----
 ssh-keygen -R shardN.wbh-online.de
