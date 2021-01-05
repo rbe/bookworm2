@@ -8,6 +8,8 @@
 
 export const HOERER_UNBEKANNT = '00000';
 export const LOGIN_HTML = '/anmelden.html';
+export const CD_BESTELLUNG_OK_HTML = '/cd-bestellung-ok.html';
+export const CD_BESTELLUNG_FEHLER_HTML = '/cd-bestellung-fehler.html';
 export const HOERBUCHKATALOG_URL = window.location.protocol + '//' + window.location.host;
 export const SHARD_URLS = [
     'https://hoerbuchdienst-shard11.wbh-online.de',

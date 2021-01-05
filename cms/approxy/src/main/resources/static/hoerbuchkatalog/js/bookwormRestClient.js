@@ -129,9 +129,9 @@ export class BookwormRestClient {
                 fetch(url.toString(), {
                     'method': 'GET',
                     'headers': {
-                        'Accept': 'audio/mp3',
+                        'Accept': 'audio/mp3'/*,
                         'X-Bookworm-Mandant': this.mandant,
-                        'X-Bookworm-Hoerernummer': this.hoerernummer
+                        'X-Bookworm-Hoerernummer': this.hoerernummer*/
                     },
                     'redirect': 'follow'
                 })
@@ -148,7 +148,7 @@ export class BookwormRestClient {
                         }
                     })
                     .catch(reason => {
-                        console.log('Fehler: ' + reason);
+                        alert('Fehler: ' + reason);
                     });
             })
             .catch(reason => {

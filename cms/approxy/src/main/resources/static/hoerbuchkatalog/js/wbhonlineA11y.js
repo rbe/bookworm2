@@ -6,7 +6,9 @@
 
 "use strict";
 
-import {Wbhonline} from './js/wbhonline.js';
+export class WbhonlineA11y {
 
-const wbhonline = new Wbhonline('06', '80170');
-wbhonline.onDomReady();
+    alert(element) {
+    }
+
+}

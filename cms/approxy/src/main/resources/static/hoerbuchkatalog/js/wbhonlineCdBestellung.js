@@ -8,7 +8,12 @@
 
 import {BookwormRestClient} from "./bookwormRestClient.js";
 import {WbhonlineButtons} from "./wbhonlineButtons.js";
-import {HOERBUCHKATALOG_URL, WbhonlineHelper} from "./wbhonlineHelper.js";
+import {
+    CD_BESTELLUNG_FEHLER_HTML,
+    CD_BESTELLUNG_OK_HTML,
+    HOERBUCHKATALOG_URL,
+    WbhonlineHelper
+} from "./wbhonlineHelper.js";
 
 export class WbhonlineCdBestellung {
 
@@ -62,9 +67,9 @@ export class WbhonlineCdBestellung {
                 })
                     .then(response => {
                         if (response.ok) {
-                            alert('Bestellung erfolgreich aufgegeben!');
+                            window.location.pathname = CD_BESTELLUNG_OK_HTML;
                         } else {
-                            alert('Leider konnte die Bestellung nicht aufgegeben werden!');
+                            window.location.pathname = CD_BESTELLUNG_FEHLER_HTML;
                         }
                     })
                     .catch(reason => {
@@ -91,6 +96,10 @@ export class WbhonlineCdBestellung {
         const inputField = form.querySelector('input[type="text"]');
         if (undefined !== inputField && null !== inputField) {
             return inputField.value;
+        }
+        const inputEmail = form.querySelector('input[type="email"]');
+        if (undefined !== inputEmail && null !== inputEmail) {
+            return inputEmail.value;
         }
         const textarea = form.querySelector('textarea');
         if (undefined !== textarea && null !== textarea) {
