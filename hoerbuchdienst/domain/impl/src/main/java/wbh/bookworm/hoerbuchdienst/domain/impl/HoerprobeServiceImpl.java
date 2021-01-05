@@ -112,8 +112,15 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
 
     private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final List<PlaylistEntryDTO> playlistEntries) {
         return playlistEntries.stream()
-                .collect(Collectors.partitioningBy(entry ->
-                        mp3Ignorieren.stream().anyMatch(entry.getTitle()::contains)));
+                .collect(Collectors.partitioningBy(entry -> {
+                    String str = "";
+                    if (null != entry.getTitle()) {
+                        str = entry.getTitle();
+                    } else if (null != entry.getIdent()) {
+                        str = entry.getIdent();
+                    }
+                    return mp3Ignorieren.stream().anyMatch(str::contains);
+                }));
     }
 
     private List<PlaylistEntryDTO> kandidatenNachZeit(final String titelnummer) {
