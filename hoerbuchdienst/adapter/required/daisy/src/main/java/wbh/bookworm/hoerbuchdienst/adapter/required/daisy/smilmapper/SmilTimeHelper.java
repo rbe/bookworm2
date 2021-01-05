@@ -15,12 +15,20 @@ final class SmilTimeHelper {
     }
 
     static Duration parseClipNpt(final String clip) {
-        return Duration.parse(String.format("PT%sS", clip.substring(4, clip.length() - 1)));
+        if (null != clip && !clip.isBlank()) {
+            return Duration.parse(String.format("PT%sS", clip.substring(4, clip.length() - 1)));
+        } else {
+            return Duration.ZERO;
+        }
     }
 
     static Duration parseDuration(final String content) {
-        return Duration.parse(String.format("PT%sH%sM%sS",
-                content.substring(0, 2), content.substring(3, 5), content.substring(6)));
+        if (null != content && !content.isBlank()) {
+            return Duration.parse(String.format("PT%sH%sM%sS",
+                    content.substring(0, 2), content.substring(3, 5), content.substring(6)));
+        } else {
+            return Duration.ZERO;
+        }
     }
 
 }

@@ -133,17 +133,17 @@ class AudiobookMapperImpl implements AudiobookMapper {
                 .replace(" of ", " von "));
         audiobook.setSourceDate(nccReader.get(NccReader.Field.SOURCE_DATE));
         final String source = nccReader.get(NccReader.Field.SOURCE);
-        if (source.startsWith("ISBN-")) {
+        if (null != source && source.startsWith("ISBN-")) {
             audiobook.setIsbn(source.substring(5));
         }
         final String sourcePublisher = nccReader.get(NccReader.Field.SOURCE_PUBLISHER);
-        if (sourcePublisher.startsWith("Verlag: ")) {
+        if (null != sourcePublisher && sourcePublisher.startsWith("Verlag: ")) {
             audiobook.setSourcePublisher(sourcePublisher.substring(8));
         } else {
             audiobook.setSourcePublisher(sourcePublisher);
         }
         final String narrator = nccReader.get(NccReader.Field.NARRATOR);
-        if (narrator.startsWith("Sprecher: ")) {
+        if (null != narrator && narrator.startsWith("Sprecher: ")) {
             audiobook.setNarrator(narrator.substring(10));
         } else {
             audiobook.setNarrator(narrator);
@@ -159,15 +159,9 @@ class AudiobookMapperImpl implements AudiobookMapper {
             if (Meta.class.isAssignableFrom(obj.getClass())) {
                 final Meta meta = (Meta) obj;
                 switch (meta.getName()) {
-                    case "dc:identifier":
-                        audiobook.setIdentifier(meta.getContent());
-                        break;
-                    case "dc:title":
-                        audiobook.setTitle(meta.getContent());
-                        break;
-                    case "ncc:timeInThisSmil":
-                        audiobook.setTimeInThisSmil(SmilTimeHelper.parseDuration(meta.getContent()));
-                        break;
+                    case "dc:identifier" -> audiobook.setIdentifier(meta.getContent());
+                    case "dc:title" -> audiobook.setTitle(meta.getContent());
+                    case "ncc:timeInThisSmil" -> audiobook.setTimeInThisSmil(SmilTimeHelper.parseDuration(meta.getContent()));
                 }
             }
         }
@@ -187,15 +181,9 @@ class AudiobookMapperImpl implements AudiobookMapper {
             if (Meta.class.isAssignableFrom(headContentObj.getClass())) {
                 final Meta nlztMeta = (Meta) headContentObj;
                 switch (nlztMeta.getName()) {
-                    case "ncc:timeInThisSmil":
-                        audiotrack.setTimeInThisSmil(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
-                        break;
-                    case "ncc:totalElapsedTime":
-                        audiotrack.setTotalTimeElapsed(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
-                        break;
-                    case "title":
-                        audiotrack.setTitle(nlztMeta.getContent());
-                        break;
+                    case "ncc:timeInThisSmil" -> audiotrack.setTimeInThisSmil(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
+                    case "ncc:totalElapsedTime" -> audiotrack.setTotalTimeElapsed(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
+                    case "title" -> audiotrack.setTitle(nlztMeta.getContent());
                 }
             }
         }
