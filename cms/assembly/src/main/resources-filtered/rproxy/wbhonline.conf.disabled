@@ -20,19 +20,19 @@ server {
         root /var/www/html;
         try_files $uri $uri/ /index.php?$args =404;
         index index.php;
-        expires 1d;
+        expires 1h;
         include joomla-security.nginx;
         location ~* \.(js|css)$ {
             try_files $uri =404;
-            expires 24h;
+            expires 1h;
         }
         location ~* \.(pdf|txt|xml)$ {
             try_files $uri =404;
-            expires 1d;
+            expires 1h;
         }
         location ~* \.(png|jpe?g|gif|ico)$ {
             try_files $uri /images/$uri =404;
-            expires 1d;
+            expires 1h;
         }
         location ~* \.php($|/.*\.html$)? {
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
