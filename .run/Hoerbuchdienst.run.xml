@@ -21,7 +21,7 @@
     <option name="passParentEnvs" value="true" />
     <option name="programParameters" value="" />
     <option name="shortenCommandLine" />
-    <option name="vmParameters" value="-Xms1g -Xmx1g -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml -Dmicronaut.openapi.views.spec=redoc.enabled=true,rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop" />
+    <option name="vmParameters" value="-Xms1024m -Xmx2048m -XX:MaxDirectMemorySize=128m -Djdk.nio.maxCachedBufferSize=262144 -XX:+UnlockExperimentalVMOptions -XX:+UseZGC -Dmicronaut.environments=dev -Dmicronaut.config.files=classpath:application-shard.yml -Dmicronaut.openapi.views.spec=redoc.enabled=true,rapidoc.enabled=true,swagger-ui.enabled=true,swagger-ui.theme=flattop" />
     <option name="workingDirectory" value="" />
     <method v="2">
       <option name="Make" enabled="true" />
