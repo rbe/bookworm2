@@ -9,7 +9,7 @@ set -o nounset
 set -o errexit
 
 find /tmp/hoerbuchdienst \
-  -type d -maxdepth 1 \
+  -type d -mindepth 1 -maxdepth 1 \
   -mmin +30 \
   -print0 |
   xargs -r -0 rm -rf

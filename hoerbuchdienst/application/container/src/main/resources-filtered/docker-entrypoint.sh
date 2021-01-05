@@ -14,7 +14,7 @@ TZ="Europe/Berlin"
 export TZ
 
 echo "Starting cron"
-crond -b -d 8 -L /dev/stdout
+crond -b -d 8 -L /proc/self/fd/1
 
 echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
