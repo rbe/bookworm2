@@ -1,6 +1,5 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
-import java.util.List;
 import java.util.Map;
 
 public class AntwortDTO<T> {

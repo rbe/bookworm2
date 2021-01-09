@@ -7,7 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.repository.config;
 
 import wbh.bookworm.hoerbuchkatalog.repository.bestellung.BestellungAppConfig;
-import wbh.bookworm.hoerbuchkatalog.repository.downloads.DownloadsAppConfig;
+import wbh.bookworm.hoerbuchkatalog.repository.downloads.RedisDownloadsAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.email.EmailAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.katalog.KatalogAppConfig;
 import wbh.bookworm.hoerbuchkatalog.repository.lieferung.LieferungAppConfig;
@@ -27,7 +27,7 @@ import java.util.concurrent.Executors;
 @Import({
         KatalogAppConfig.class,
         BestellungAppConfig.class,
-        DownloadsAppConfig.class,
+        RedisDownloadsAppConfig.class,
         EmailAppConfig.class,
         LieferungAppConfig.class,
         NutzerdatenAppConfig.class

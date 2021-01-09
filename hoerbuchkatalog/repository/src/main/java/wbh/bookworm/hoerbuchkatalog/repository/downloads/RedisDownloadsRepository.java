@@ -4,5 +4,5 @@ import org.springframework.data.repository.CrudRepository;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
 
-public interface DownloadsRepository extends CrudRepository<Downloads, String> {
+public interface RedisDownloadsRepository extends CrudRepository<Downloads, String> {
 }

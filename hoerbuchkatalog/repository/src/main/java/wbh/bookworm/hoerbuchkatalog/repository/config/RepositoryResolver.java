@@ -52,10 +52,4 @@ public final class RepositoryResolver {
         return getBean(CdLieferungRepository.class);
     }
 
-    /*
-    public DownloadsRepository downloadsRepository() {
-        return getBean(DownloadsRepository.class);
-    }
-    */
-
 }

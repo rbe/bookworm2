@@ -8,7 +8,7 @@ import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 
 @Configuration
-public class DownloadsAppConfig {
+public class RedisDownloadsAppConfig {
 
     @Value("${spring.redis.host}")
     private String redisHost;
