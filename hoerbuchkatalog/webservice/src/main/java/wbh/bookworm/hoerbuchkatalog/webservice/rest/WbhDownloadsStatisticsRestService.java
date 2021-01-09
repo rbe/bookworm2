@@ -26,7 +26,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 @RestController
-@RequestMapping("/v1/private/downloads")
+@RequestMapping("/v1/private/statistik")
 public class WbhDownloadsStatisticsRestService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(WbhDownloadsStatisticsRestService.class);
