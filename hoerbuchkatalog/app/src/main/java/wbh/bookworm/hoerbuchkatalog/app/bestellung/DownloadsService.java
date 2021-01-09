@@ -6,6 +6,9 @@
 
 package wbh.bookworm.hoerbuchkatalog.app.bestellung;
 
+import java.util.Optional;
+import java.util.Set;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,10 @@ public class DownloadsService {
     @Autowired
     public DownloadsService(final DownloadsRepository downloadsRepository) {
         this.downloadsRepository = downloadsRepository;
+    }
+
+    public Optional<Set<Downloads>> alle() {
+        return downloadsRepository.loadAll();
     }
 
     public Downloads downloadsKopie(final Hoerernummer hoerernummer) {

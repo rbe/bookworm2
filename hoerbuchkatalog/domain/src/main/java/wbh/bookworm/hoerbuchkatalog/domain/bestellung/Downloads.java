@@ -55,6 +55,10 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         this.titelnummern = titelnummern;
     }
 
+    public Hoerernummer getHoerernummer() {
+        return hoerernummer;
+    }
+
     public Map<Titelnummer, Details> getTitelnummern() {
         final LocalDateTime now = LocalDateTime.now();
         return titelnummern.entrySet()
