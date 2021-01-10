@@ -114,7 +114,8 @@ public class DownloadsRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        hoerbuchAntwortKurzDTOS.sort(Comparator.comparing(HoerbuchAntwortKurzDTO::getAusgeliehenAm));
+        hoerbuchAntwortKurzDTOS.sort(Comparator.comparing(HoerbuchAntwortKurzDTO::getAusgeliehenAm)
+                .reversed());
         final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
         return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTOS));
