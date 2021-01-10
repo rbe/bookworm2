@@ -64,10 +64,6 @@ public class BestellungController {
 
     private static final MediaType APPLICATION_ZIP = MediaType.of(APPLICATION_ZIP_VALUE);
 
-    private static final String EMPTY_STRING = "";
-
-    private static final String DAISY_ZIP = "DAISY.zip";
-
     private final AudiobookOrderService audiobookOrderService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
