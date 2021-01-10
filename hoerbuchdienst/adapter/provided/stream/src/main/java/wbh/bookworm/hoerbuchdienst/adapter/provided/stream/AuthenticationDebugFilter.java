@@ -1,4 +1,4 @@
-package wbh.bookworm.hoerbuchdienst.sharding.shared;
+package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.MutableHttpResponse;
@@ -11,13 +11,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Filter("/**")
-public class AuthenticationFilter implements HttpServerFilter {
+public class AuthenticationDebugFilter implements HttpServerFilter {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationDebugFilter.class);
 
     @Override
     public Publisher<MutableHttpResponse<?>> doFilter(final HttpRequest<?> request,
                                                       final ServerFilterChain chain) {
+        final String origin = request.getHeaders().get("Origin");
+        LOGGER.debug("Origin={}", origin);
         final String mandant = request.getHeaders().get("X-Bookworm-Mandant");
         final String hoerernummer = request.getHeaders().get("X-Bookworm-Hoerernummer");
         if (null == mandant || mandant.isBlank() || null == hoerernummer || hoerernummer.isBlank()) {
