@@ -17,7 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
-@Filter("/**")
+//@Filter("/**")
 public class CorsOptionsFilter implements HttpServerFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(CorsOptionsFilter.class);
