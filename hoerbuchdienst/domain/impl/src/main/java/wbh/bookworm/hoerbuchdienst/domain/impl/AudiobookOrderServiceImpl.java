@@ -64,9 +64,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
             final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
             if (null != zipFile) {
                 LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung {}: DAISY ZIP erstellt", hoerernummer, titelnummer, orderId);
-                final Path orderDirectory = temporaryDirectory.resolve(orderId);
-                Files.createDirectories(orderDirectory);
-                final Path daisyZip = orderDirectory.resolve(DAISY_ZIP);
+                final Path daisyZip = daisyZipPath(orderId);
                 Files.move(zipFile, daisyZip);
                 orderStatus.put(orderId, ORDER_STATUS_SUCCESS);
                 LOGGER.info("Hörer '{}' Hörbuch '{}' Bestellung '{}': DAISY ZIP unter '{}' bereitgestellt", hoerernummer, titelnummer, orderId, daisyZip);
@@ -90,8 +88,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     public Optional<InputStream> fetchOrderAsStream(final String orderId) {
         final Path daisyZip = fetchOrderAsFile(orderId).orElseThrow();
         try {
-            final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(daisyZip,
-                    Set.of(), () -> cleanup(orderId));
+            final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(daisyZip);
             return Optional.of(Channels.newInputStream(byteChannel));
         } catch (IOException e) {
             LOGGER.error("", e);
@@ -99,14 +96,9 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         }
     }
 
-    private void cleanup(final String orderId) {
-        final Path orderDirectory = temporaryDirectory.resolve(orderId);
-        FilesUtils.cleanupTemporaryDirectory(orderDirectory);
-    }
-
     @Override
     public Optional<Path> fetchOrderAsFile(final String orderId) {
-        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        final Path daisyZip = daisyZipPath(orderId);
         final boolean orderExists = orderStatus.containsKey(orderId)
                 && Files.exists(daisyZip);
         if (orderExists) {
@@ -121,7 +113,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     @Override
     public Optional<Long> fileSize(final String orderId) {
-        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        final Path daisyZip = daisyZipPath(orderId);
         final boolean orderExists = orderStatus.containsKey(orderId)
                 && Files.exists(daisyZip);
         if (orderExists) {
@@ -138,19 +130,23 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     @Override
     public Optional<Long> lastModified(final String orderId) {
-        final Path daisyZip = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
+        final Path daisyZip = daisyZipPath(orderId);
         final boolean orderExists = orderStatus.containsKey(orderId)
                 && Files.exists(daisyZip);
         if (orderExists) {
             try {
                 return Optional.of(Files.getLastModifiedTime(daisyZip).toMillis());
             } catch (IOException e) {
-                LOGGER.error(String.format("Kann Größe des DASY ZIPs %s nicht bestimmen", orderId), e);
+                LOGGER.error(String.format("Kann letzten Modifizierungszeitpunkt des DASY ZIPs %s nicht bestimmen", orderId), e);
                 return Optional.of(-1L);
             }
         } else {
             return Optional.empty();
         }
+    }
+
+    private Path daisyZipPath(final String orderId) {
+        return temporaryDirectory.resolve(orderId + ".zip");
     }
 
 }
