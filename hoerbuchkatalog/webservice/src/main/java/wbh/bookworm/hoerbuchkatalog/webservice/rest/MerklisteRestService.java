@@ -89,7 +89,8 @@ public class MerklisteRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size());
+        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
     }
 
     @GetMapping(value = "datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -111,7 +112,10 @@ public class MerklisteRestService {
             dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size(),
+                "stichwort", null != stichwort ? stichwort : "",
+                "datumab", null != datumab ? datumab : "");
+        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
     }
 
 }

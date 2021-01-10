@@ -103,7 +103,8 @@ public final class WarenkorbRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size());
+        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
