@@ -38,10 +38,7 @@ public final class HoerbuchkatalogService {
 
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
-        LOGGER.trace("Hörer '{}': Suchparameter {} in {}", hoerernummer, suchparameter, hoerbuchkatalog);
         final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.info("Hörer '{}': Suche nach '{}' ergab {} Treffer",
-                hoerernummer, suchparameter, suchergebnis.getAnzahl());
         return suchergebnis;
     }
 

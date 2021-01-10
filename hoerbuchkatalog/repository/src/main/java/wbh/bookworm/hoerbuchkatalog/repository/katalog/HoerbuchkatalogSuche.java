@@ -97,7 +97,6 @@ final class HoerbuchkatalogSuche {
         if (!suchparameter.isWerteVorhanden()) {
             return Suchergebnis.leeresSuchergebnis(suchparameter);
         }
-        LOGGER.info("Suche nach '{}'", suchparameter);
         final BooleanQueryBuilder booleanQueryBuilder = new BooleanQueryBuilder();
         sachgebiet(booleanQueryBuilder, suchparameter);
         einstelldatum(booleanQueryBuilder, suchparameter);
@@ -112,7 +111,9 @@ final class HoerbuchkatalogSuche {
                 booleanQueryBuilder.build(), anzahlSuchergebnisse,
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         final List<Titelnummer> titelnummern = titelnummern(result);
-        return new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
+        final Suchergebnis suchergebnis = new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());
+        LOGGER.info("Suche nach '{}' ergab {} Treffer", suchparameter, suchergebnis.getAnzahl());
+        return suchergebnis;
     }
 
     private void stichwort(final BooleanQueryBuilder booleanQueryBuilder,
