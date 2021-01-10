@@ -1,5 +1,6 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -115,8 +116,8 @@ public class DownloadsRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        hoerbuchAntwortKurzDTOS.sort(Comparator.<HoerbuchAntwortKurzDTO, LocalDateTime>comparing(
-                dto -> LocalDateTime.parse(dto.getAusgeliehenAm(), DATE_TIME_FORMATTER))
+        hoerbuchAntwortKurzDTOS.sort(Comparator.<HoerbuchAntwortKurzDTO, LocalDate>comparing(
+                dto -> LocalDate.parse(dto.getAusgeliehenAm(), DATE_TIME_FORMATTER))
                 .reversed());
         final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
