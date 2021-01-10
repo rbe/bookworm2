@@ -1,0 +1,750 @@
+{
+	"info": {
+		"_postman_id": "071ed5c2-1de9-4b2c-9a97-35a9d25700ba",
+		"name": "Hörbuchkatalog V1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Bestellung Session ID abrufen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"bestellungSessionId\", jsonData.data.bestellungSessionId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{Hoerbuchkatalog_V1}}/session",
+							"host": [
+								"{{Hoerbuchkatalog_V1}}"
+							],
+							"path": [
+								"session"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Katalog",
+			"item": [
+				{
+					"name": "Stichwortsuche",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/der%20unerh%C3%B6rte",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"der%20unerh%C3%B6rte"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Suche nach Sachgebiet",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/sachgebiet/A",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"sachgebiet",
+								"A"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Suche nach Einstelldatum ab",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/einstelldatum/20.12.2020",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"einstelldatum",
+								"20.12.2020"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detailsuche",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/Bretagne/sachgebiet/A/einstelldatum/01.01.2020",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Bretagne",
+								"sachgebiet",
+								"A",
+								"einstelldatum",
+								"01.01.2020"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hörbuch-Info abrufen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/{{Titelnummer}}",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Hörbuchdetails abrufen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/{{Titelnummer}}/details",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}",
+								"details"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Merkliste",
+			"item": [
+				{
+					"name": "Titel zur Merkliste hinzufügen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{MerklisteURL}}/{{Titelnummer}}",
+							"host": [
+								"{{MerklisteURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Merkliste anzeigen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{MerklisteURL}}",
+							"host": [
+								"{{MerklisteURL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Merkliste filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{MerklisteURL}}/stichwort/Adams",
+							"host": [
+								"{{MerklisteURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Adams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Titel aus Merkliste entfernen",
+					"request": {
+						"auth": {
+							"type": "apikey"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{MerklisteURL}}/{{Titelnummer}}",
+							"host": [
+								"{{MerklisteURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CD Warenkorb",
+			"item": [
+				{
+					"name": "Titel zum Warenkorb hinzufügen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{WarenkorbURL}}/{{Titelnummer}}",
+							"host": [
+								"{{WarenkorbURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Warenkorb anzeigen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{WarenkorbURL}}",
+							"host": [
+								"{{WarenkorbURL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Titel aus Warenkorb entfernen",
+					"request": {
+						"auth": {
+							"type": "apikey"
+						},
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{WarenkorbURL}}/{{Titelnummer}}",
+							"host": [
+								"{{WarenkorbURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Warenkorb bestellen",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"value": "{{bestellungSessionId}}",
+								"type": "text"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"hoerername\": \"Herbert Hörer\",\n    \"hoereremail\": \"herbert@example.com\",\n    \"bemerkung\": \"Bemerkung\",\n    \"bestellkarteMischen\": false,\n    \"alteBestellkarteLoeschen\": false\n}\n"
+						},
+						"url": {
+							"raw": "{{WarenkorbURL}}",
+							"host": [
+								"{{WarenkorbURL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Downloads",
+			"item": [
+				{
+					"name": "Download hinzufügen",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/{{Titelnummer}}",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downloads anzeigen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}",
+							"host": [
+								"{{DownloadsURL}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kontingent - Download erlaubt?",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/erlaubt",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"erlaubt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kontingent - Downloads heute",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/heute",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"heute"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kontingent - Downloads aktueller Monat",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/aktuellermonat",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"aktuellermonat"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Hoerbuchkatalog_V1",
+			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+		},
+		{
+			"key": "SessionURL",
+			"value": "{{Hoerbuchkatalog_V1}}/session"
+		},
+		{
+			"key": "KatalogURL",
+			"value": "{{Hoerbuchkatalog_V1}}/katalog"
+		},
+		{
+			"key": "MerklisteURL",
+			"value": "{{Hoerbuchkatalog_V1}}/merkliste"
+		},
+		{
+			"key": "WarenkorbURL",
+			"value": "{{Hoerbuchkatalog_V1}}/warenkorb"
+		},
+		{
+			"key": "DownloadsURL",
+			"value": "{{Hoerbuchkatalog_V1}}/downloads"
+		},
+		{
+			"key": "Titelnummer",
+			"value": "21052"
+		}
+	]
+}

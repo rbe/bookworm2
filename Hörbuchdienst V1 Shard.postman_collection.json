@@ -1,0 +1,73 @@
+{
+	"info": {
+		"_postman_id": "fc455695-17f3-4bc4-99e6-5dbb004a9b07",
+		"name": "Hörbuchdienst V1 Shard",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Shard eines Hörbuchs abfragen",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{Hoerbuchdienst_V1}}/shard/location/21052",
+					"host": [
+						"{{Hoerbuchdienst_V1}}"
+					],
+					"path": [
+						"shard",
+						"location",
+						"21052"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Databeat erzeugen",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "{{Hostname}}/v1/shard/databeat",
+					"host": [
+						"{{Hostname}}"
+					],
+					"path": [
+						"v1",
+						"shard",
+						"databeat"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Hoerbuchdienst_V1",
+			"value": "{{Hostname}}/v1"
+		}
+	]
+}

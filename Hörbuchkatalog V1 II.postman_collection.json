@@ -1,0 +1,373 @@
+{
+	"info": {
+		"_postman_id": "886ebac5-83b8-4b22-8f9d-fcb08350b0d0",
+		"name": "Hörbuchkatalog V1 II",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Hörerdaten",
+			"item": [
+				{
+					"name": "Hörerdaten abrufen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HoererdatenURL}}",
+							"host": [
+								"{{HoererdatenURL}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hörerarchiv",
+			"item": [
+				{
+					"name": "Belastungen abfragen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/belastungen",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"belastungen"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Belastungen filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/belastungen/stichwort/Adams",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"belastungen",
+								"stichwort",
+								"Adams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bestellkarten abfragen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/bestellkarten",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"bestellkarten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Bestellkarten filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/bestellkarten/stichwort/Adams",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"bestellkarten",
+								"stichwort",
+								"Adams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Erledigte Bestellkarten abfragen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "{{Hoerernummer}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/erledigteBestellkarten",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"erledigteBestellkarten"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Erledigte Bestellkarten filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{HoererarchivURL}}/erledigteBestellkarten/stichwort/Adams/startdatum/01.01.2015",
+							"host": [
+								"{{HoererarchivURL}}"
+							],
+							"path": [
+								"erledigteBestellkarten",
+								"stichwort",
+								"Adams",
+								"startdatum",
+								"01.01.2015"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Downloads",
+			"item": [
+				{
+					"name": "Kontingent - Anzahl Downloads abrufen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/aktuellermonat",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"aktuellermonat"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Downloads filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/datumab/2010-01-01/stichwort/Adams",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"datumab",
+								"2010-01-01",
+								"stichwort",
+								"Adams"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Download-Archiv abrufen",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PrivateDownloadsURL}}/webhoer-20210108.csv",
+							"host": [
+								"{{PrivateDownloadsURL}}"
+							],
+							"path": [
+								"webhoer-20210108.csv"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Hoerbuchkatalog_V1",
+			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+		},
+		{
+			"key": "SessionURL",
+			"value": "{{Hoerbuchkatalog_V1}}/session"
+		},
+		{
+			"key": "KatalogURL",
+			"value": "{{Hoerbuchkatalog_V1}}/katalog"
+		},
+		{
+			"key": "MerklisteURL",
+			"value": "{{Hoerbuchkatalog_V1}}/merkliste"
+		},
+		{
+			"key": "WarenkorbURL",
+			"value": "{{Hoerbuchkatalog_V1}}/warenkorb"
+		},
+		{
+			"key": "DownloadsURL",
+			"value": "{{Hoerbuchkatalog_V1}}/downloads"
+		},
+		{
+			"key": "HoererdatenURL",
+			"value": "{{Hoerbuchkatalog_V1}}/hoererdaten"
+		},
+		{
+			"key": "HoererarchivURL",
+			"value": "{{Hoerbuchkatalog_V1}}/hoererarchiv"
+		},
+		{
+			"key": "Titelnummer",
+			"value": "21052"
+		},
+		{
+			"key": "PrivateDownloadsURL",
+			"value": "{{Hoerbuchkatalog_V1}}/private/downloads"
+		}
+	]
+}
