@@ -3,7 +3,6 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -102,7 +101,8 @@ public class DownloadsRestService {
         } else {
             bestellungSessionId = null;
         }
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(downloads.getTitelnummern().keySet()));
+        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
+                new ArrayList<>(downloads.getTitelnummern().keySet()));
         final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
             dto.setDownloadErlaubt(downloadErlaubt);
@@ -115,7 +115,9 @@ public class DownloadsRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        hoerbuchAntwortKurzDTOS.sort(Comparator.reverseOrder());
+        hoerbuchAntwortKurzDTOS.sort(Comparator.<HoerbuchAntwortKurzDTO, LocalDateTime>comparing(
+                dto -> LocalDateTime.parse(dto.getAusgeliehenAm(), DATE_TIME_FORMATTER))
+                .reversed());
         final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
         return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTOS));
