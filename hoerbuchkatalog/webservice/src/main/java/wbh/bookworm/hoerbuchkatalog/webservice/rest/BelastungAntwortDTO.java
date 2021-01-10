@@ -27,6 +27,8 @@ public final class BelastungAntwortDTO {
 
     private String sprecher1;
 
+    private String sprecher2;
+
     private String spieldauer;
 
     public LocalDate getBelastungsdatum() {
@@ -97,6 +99,14 @@ public final class BelastungAntwortDTO {
 
     public void setSprecher1(final String sprecher1) {
         this.sprecher1 = sprecher1;
+    }
+
+    public String getSprecher2() {
+        return sprecher2;
+    }
+
+    public void setSprecher2(final String sprecher2) {
+        this.sprecher2 = sprecher2;
     }
 
     public String getSpieldauer() {

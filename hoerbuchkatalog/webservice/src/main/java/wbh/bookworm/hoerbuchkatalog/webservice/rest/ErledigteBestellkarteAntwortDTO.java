@@ -25,6 +25,8 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     private String sprecher1;
 
+    private String sprecher2;
+
     private String spieldauer;
 
     private LocalDate ausleihdatum;
@@ -83,6 +85,14 @@ public final class ErledigteBestellkarteAntwortDTO {
 
     public void setSprecher1(final String sprecher1) {
         this.sprecher1 = sprecher1;
+    }
+
+    public String getSprecher2() {
+        return sprecher2;
+    }
+
+    public void setSprecher2(final String sprecher2) {
+        this.sprecher2 = sprecher2;
     }
 
     public String getSpieldauer() {

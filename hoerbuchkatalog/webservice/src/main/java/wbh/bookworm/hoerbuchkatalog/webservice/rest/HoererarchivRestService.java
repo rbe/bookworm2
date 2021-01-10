@@ -5,6 +5,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.TemporalAccessor;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -54,11 +55,13 @@ public class HoererarchivRestService {
         final List<BelastungAntwortDTO> data = hoerbuchResolver.toBelastungenAntwortDTO(belastungen);
         final List<BelastungAntwortDTO> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
+            final String s = stichwort.toLowerCase();
             filtered = data.stream()
-                    .filter(dto -> dto.getAutor().contains(stichwort)
-                            || dto.getSachgebietBezeichnung().contains(stichwort)
-                            || dto.getTitel().contains(stichwort)
-                            || dto.getSprecher1().contains(stichwort))
+                    .filter(dto -> dto.getAutor().toLowerCase().contains(s)
+                            || dto.getSachgebietBezeichnung().toLowerCase().contains(s)
+                            || dto.getTitel().toLowerCase().contains(s)
+                            || dto.getSprecher1().toLowerCase().contains(s)
+                            || dto.getSprecher2().toLowerCase().contains(s))
                     .collect(Collectors.toUnmodifiableList());
         } else {
             filtered = data;
@@ -82,11 +85,13 @@ public class HoererarchivRestService {
         final List<BestellkarteAntwortDTO> data = hoerbuchResolver.toBestellkarteAntwortDTO(bestellkarten);
         final List<BestellkarteAntwortDTO> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
+            final String s = stichwort.toLowerCase();
             filtered = data.stream()
-                    .filter(dto -> dto.getAutor().contains(stichwort)
-                            || dto.getSachgebietBezeichnung().contains(stichwort)
-                            || dto.getTitel().contains(stichwort)
-                            || dto.getSprecher1().contains(stichwort))
+                    .filter(dto -> dto.getAutor().toLowerCase().contains(s)
+                            || dto.getSachgebietBezeichnung().toLowerCase().contains(s)
+                            || dto.getTitel().toLowerCase().contains(s)
+                            || dto.getSprecher1().toLowerCase().contains(s)
+                            || dto.getSprecher2().toLowerCase().contains(s))
                     .collect(Collectors.toUnmodifiableList());
         } else {
             filtered = data;
@@ -113,11 +118,13 @@ public class HoererarchivRestService {
         final List<ErledigteBestellkarteAntwortDTO> data = hoerbuchResolver.toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
         List<ErledigteBestellkarteAntwortDTO> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
+            final String s = stichwort.toLowerCase();
             filtered = data.stream()
-                    .filter(dto -> dto.getAutor().contains(stichwort)
-                            || dto.getSachgebietBezeichnung().contains(stichwort)
-                            || dto.getTitel().contains(stichwort)
-                            || dto.getSprecher1().contains(stichwort))
+                    .filter(dto -> dto.getAutor().toLowerCase().contains(s)
+                            || dto.getSachgebietBezeichnung().toLowerCase().contains(s)
+                            || dto.getTitel().toLowerCase().contains(s)
+                            || dto.getSprecher1().toLowerCase().contains(s)
+                            || dto.getSprecher2().toLowerCase().contains(s))
                     .collect(Collectors.toUnmodifiableList());
         } else {
             filtered = data;
