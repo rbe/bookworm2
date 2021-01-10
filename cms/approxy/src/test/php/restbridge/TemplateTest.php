@@ -12,6 +12,7 @@ use restbridge\Template;
 
 require_once '../../../../../vendor/phpunit/phpunit/src/Framework/TestCase.php';
 require_once '../../../main/php/restbridge/class/restbridge/Template.php';
+require_once '../../../main/php/restbridge/restbridgeCommons.php';
 
 class TemplateTest extends TestCase
 {
@@ -29,7 +30,7 @@ class TemplateTest extends TestCase
         echo "test0Row\n";
         $template = new Template("This template shows {meta.count} rows: {key} and {bool}\n");
         $rowsWithValues = [];
-        $result = $template->renderToString(['count' => 0], $rowsWithValues);
+        $result = $template->renderToString(['count' => 0], $rowsWithValues, [['bool'=>'nixda']]);
         $this->assertNotNull($result);
         print_r($result);
 

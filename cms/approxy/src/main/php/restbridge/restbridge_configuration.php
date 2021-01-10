@@ -141,18 +141,28 @@ $restBridge = [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/belastungen/stichwort/{stichwort}',
+            'standard_values' => [
+                'stichwort' => '*',
+            ],
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'BestellkarteAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/bestellkarten/stichwort/{stichwort}',
+            'standard_values' => [
+                'stichwort' => '*',
+            ],
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
         'ErledigteBestellkartenAnzeigen' => [
             'url' => $HOERBUCHKATALOG_URL,
             'method' => 'GET',
             'parameter_template' => '/hoerbuchkatalog/v1/hoererarchiv/erledigteBestellkarten/stichwort/{stichwort}/startdatum/{startdatum}',
+            'standard_values' => [
+                'stichwort' => '*',
+                'startdatum' => '*',
+            ],
             'headers' => $HOERBUCHKATALOG_HEADERS,
         ],
     ],

@@ -16,6 +16,12 @@ require_once __DIR__ . '/restbridge_configuration.php';
 $environment = new Environment();
 $environment->checkPhpVersion();
 
+function isRestBridgeTraceLog()
+{
+    global $restBridge;
+    return $restBridge['TRACE'];
+}//end isRestBridgeTraceLog()
+
 function isRestBridgeDebugLog()
 {
     global $restBridge;
@@ -51,6 +57,13 @@ function restBridgeDebugLog($msg)
         error_log('DEBUG: ' . $msg, 0);
     }
 }//end restBridgeDebugLog()
+
+function restBridgeTraceLog($msg)
+{
+    if (isRestBridgeTraceLog() === true) {
+        error_log('TRACE: ' . $msg, 0);
+    }
+}//end restBridgeTraceLog()
 
 // Enable debugging?
 if (isRestBridgeDebugLog() === true) {

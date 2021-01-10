@@ -43,15 +43,31 @@ final class Template
      *
      * @param array $meta Meta data.
      * @param array $rowsWithValues Rows with values.
+     * @param array $standardValues Standard values for templates.
      *
      * @return string Content: template with {placeholder} substituted with value.
-     * @since  version
+     *
+     * @since  1.0
      */
-    public function renderToString(array $meta, array $rowsWithValues): string
+    public function renderToString(array $meta, array $rowsWithValues, array $standardValues = []): string
     {
-        $contentAfterMeta = $this->replaceMeta($this->template, $meta);
-        $contentAfterData = $this->replaceData($contentAfterMeta, $rowsWithValues);
-        return empty($contentAfterData) === false ? $contentAfterData : $contentAfterMeta;
+        restBridgeTraceLog('$this->template=' . $this->template);
+        restBridgeTraceLog('$rowsWithValues=' . print_r($rowsWithValues, true));
+        $contentAfterMeta = empty($meta) === false
+            ? $this->replaceMeta($this->template, $meta)
+            : $this->template;
+        restBridgeTraceLog('$contentAfterMeta = ' . $contentAfterMeta);
+        $contentAfterData = empty($rowsWithValues) === false
+            ? $this->replaceData($contentAfterMeta, $rowsWithValues)
+            : $contentAfterMeta;
+        restBridgeTraceLog('$contentAfterData = ' . $contentAfterData);
+        $contentAfterStdVal = empty($standardValues) === false
+            ? $this->replaceData($contentAfterData, $standardValues)
+            : $contentAfterData;
+        restBridgeTraceLog('$contentAfterStdVal = ' . $contentAfterStdVal);
+        $content = empty($contentAfterStdVal) === false ? $contentAfterStdVal : $contentAfterMeta;
+        restBridgeTraceLog('$content = ' . $content);
+        return $this->cleanup($content);
 
     }//end renderToString()
 
@@ -77,12 +93,15 @@ final class Template
                 $key = '{' . $match . '}';
                 if (array_key_exists($match, $row) === true) {
                     $value = $this->value($row, $match);
+                    restBridgeTraceLog('replaceData: Key ' . $key . '=' . print_r($value, true));
+                    if (isset($value) && empty($value) === false) {
+                        $content = str_replace($key, $value, $content);
+                    } else {
+                        restBridgeTraceLog('replaceData: No value for key "' . $key . '" found in ' . print_r($row, true));
+                    }
                 } else {
-                    restBridgeWarningLog('replaceData: No value found for "' . $key . '" in ' . print_r($row, true));
-                    $value = '';
+                    restBridgeTraceLog('replaceData: Key "' . $key . '" not found in ' . print_r($row, true));
                 }
-
-                $content = str_replace($key, $value, $content);
             }
 
             $ret .= $content;
@@ -108,6 +127,20 @@ final class Template
         return $value;
 
     }//end value()
+
+
+    private function cleanup(string $template): string
+    {
+        preg_match_all('/\{([A-Za-z0-9_]+)*\}/', $template, $matches);
+        $content = $template;
+        foreach ($matches[1] as $match) {
+            $key = '{' . $match . '}';
+            $content = str_replace($key, '', $content);
+        }
+
+        return $content;
+
+    }//end cleanup()
 
 
 }//end class

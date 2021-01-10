@@ -66,7 +66,8 @@ final class RestRequestReply
     {
         $url = $this->restEndpoint['url'];
         $urlParameterTemplate = new Template($this->restEndpoint['parameter_template']);
-        $urlParameter = $urlParameterTemplate->renderToString([], [$parameters]);
+        $urlParameter = $urlParameterTemplate->renderToString([], [$parameters],
+            [$this->restEndpoint['standard_values']]);
         $httpClient = new HttpClient(isRestBridgeDebugLog());
         $method = strtoupper($this->restEndpoint['method']);
         if ($method === 'GET') {
