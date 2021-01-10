@@ -42,8 +42,6 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
-import aoc.mikrokosmos.io.fs.FilesUtils;
-
 import static wbh.bookworm.hoerbuchdienst.sharding.shared.CORS.optionsResponse;
 
 @OpenAPIDefinition(
@@ -154,8 +152,9 @@ public class BestellungController {
                                                     @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> daisyZipAsStream(titelnummer, orderId),
-                body -> CORS.response(httpRequest, body)
-                        .contentType(APPLICATION_ZIP),
+                streamedFile -> CORS.response(httpRequest, streamedFile)
+                        .contentType(APPLICATION_ZIP)
+                        .contentLength(streamedFile.getLength()),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
@@ -177,12 +176,6 @@ public class BestellungController {
         final ZoneId berlinId = ZoneId.of("Europe/Berlin");
         final ZoneOffset berlinOffset = berlinId.getRules().getOffset(instant);
         return ZoneOffset.of(berlinOffset.toString());
-    }
-
-    // TODO cleanup
-    private void cleanup(final String orderId) {
-        final Path orderDirectory = temporaryDirectory.resolve(orderId).resolve(DAISY_ZIP);
-        FilesUtils.cleanupTemporaryDirectory(orderDirectory);
     }
 
 }

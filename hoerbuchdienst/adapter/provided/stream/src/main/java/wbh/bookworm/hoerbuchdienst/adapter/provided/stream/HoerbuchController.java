@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.nio.file.Path;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -22,7 +21,6 @@ import io.micronaut.http.annotation.Options;
 import io.micronaut.http.annotation.PathVariable;
 import io.micronaut.http.annotation.Produces;
 import io.micronaut.http.server.types.files.StreamedFile;
-import io.micronaut.http.server.types.files.SystemFile;
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.info.Contact;
@@ -92,9 +90,9 @@ public class HoerbuchController {
                                                        @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> makeDaisyZipStream(xMandant, xHoerernummer, titelnummer),
-                dto -> CORS.response(httpRequest, dto)
+                streamedFile -> CORS.response(httpRequest, streamedFile)
                         .contentType(APPLICATION_ZIP_VALUE)
-                        .contentLength(dto.getLength())
+                        .contentLength(streamedFile.getLength())
                         .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
                 String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);

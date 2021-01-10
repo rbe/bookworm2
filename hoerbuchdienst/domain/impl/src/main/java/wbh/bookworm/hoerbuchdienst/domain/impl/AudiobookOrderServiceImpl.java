@@ -9,10 +9,13 @@ package wbh.bookworm.hoerbuchdienst.domain.impl;
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.micronaut.context.annotation.Value;
@@ -21,6 +24,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
+
+import aoc.mikrokosmos.io.fs.DeleteOnCloseSeekableByteChannel;
+import aoc.mikrokosmos.io.fs.FilesUtils;
 
 @Singleton
 class AudiobookOrderServiceImpl implements AudiobookOrderService {
@@ -84,11 +90,18 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     public Optional<InputStream> fetchOrderAsStream(final String orderId) {
         final Path daisyZip = fetchOrderAsFile(orderId).orElseThrow();
         try {
-            return Optional.of(Files.newInputStream(daisyZip));
+            final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(daisyZip,
+                    Set.of(), () -> cleanup(orderId));
+            return Optional.of(Channels.newInputStream(byteChannel));
         } catch (IOException e) {
             LOGGER.error("", e);
             return Optional.empty();
         }
+    }
+
+    private void cleanup(final String orderId) {
+        final Path orderDirectory = temporaryDirectory.resolve(orderId);
+        FilesUtils.cleanupTemporaryDirectory(orderDirectory);
     }
 
     @Override
