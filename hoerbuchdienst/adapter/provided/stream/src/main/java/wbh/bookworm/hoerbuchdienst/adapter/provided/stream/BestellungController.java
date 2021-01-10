@@ -39,6 +39,7 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
+import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.AudiobookShardRedirector;
 import wbh.bookworm.hoerbuchdienst.sharding.shared.CORS;
 
@@ -66,6 +67,8 @@ public class BestellungController {
 
     private final AudiobookOrderService audiobookOrderService;
 
+    private final KatalogService katalogService;
+
     private final AudiobookShardRedirector audiobookShardRedirector;
 
     @Value("${hoerbuchdienst.temporary.path}")
@@ -73,8 +76,10 @@ public class BestellungController {
 
     @Inject
     public BestellungController(final AudiobookOrderService audiobookOrderService,
+                                final KatalogService katalogService,
                                 final AudiobookShardRedirector audiobookShardRedirector) {
         this.audiobookOrderService = audiobookOrderService;
+        this.katalogService = katalogService;
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
 
@@ -159,13 +164,16 @@ public class BestellungController {
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
         if (maybeDaisyZipInputStream.isPresent()) {
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
+            final String titel = katalogService.audiobookInfo(titelnummer).getTitel()
+                    .replace(' ', '_')
+                    .replaceAll("[^\\p{ASCII}]", "");
             final long lastModified = Instant.now().toEpochMilli();
             final Long contentLength = audiobookOrderService.fileSize(orderId).orElse(-1L);
             return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP,
                     lastModified, contentLength)
-                    .attach(String.format("%s.zip", titelnummer));
+                    .attach(String.format("%s-%s.zip", titelnummer, titel));
         }
-        throw new BusinessException(String.format("Bestellung %sKein Hörbuch %s gefunden", orderId, titelnummer));
+        throw new BusinessException(String.format("Bestellung %s: Hörbuch %s nicht gefunden", orderId, titelnummer));
     }
 
     private ZoneOffset berlinZoneOffset(final Instant instant) {
