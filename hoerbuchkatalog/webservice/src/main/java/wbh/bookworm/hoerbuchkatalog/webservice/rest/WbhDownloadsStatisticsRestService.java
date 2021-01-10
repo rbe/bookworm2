@@ -88,8 +88,8 @@ public class WbhDownloadsStatisticsRestService {
                 /* ABFRDT */now.format(DATUM),
                 /* ABFRZT */now.format(ZEIT),
                 /* STATUS */"0",
-                /* AUSLDT, Ausleihdatum */now.format(DATUM),
-                /* AUSLZT, Ausleihdatum */now.format(ZEIT),
+                /* AUSLDT, Ausleihdatum */e.getValue().getAusgeliehenAm().format(DATUM),
+                /* AUSLZT, Ausleihdatum */e.getValue().getAusgeliehenAm().format(ZEIT),
                 /* RUEGDT */e.getValue().getRueckgabeBis().format(DATUM),
                 /* RUEGZT */e.getValue().getRueckgabeBis().format(ZEIT));
     }
