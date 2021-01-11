@@ -50,6 +50,7 @@ class HoerbuchResolver {
                     antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
                     antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSprecher2(hoerbuch.getSprecher2());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toList());
@@ -66,6 +67,7 @@ class HoerbuchResolver {
                     antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
                     antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSprecher2(hoerbuch.getSprecher2());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toList());
@@ -82,6 +84,7 @@ class HoerbuchResolver {
                     antwortDTO.setSachgebiet(hoerbuch.getSachgebiet().getName());
                     antwortDTO.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
                     antwortDTO.setSprecher1(hoerbuch.getSprecher1());
+                    antwortDTO.setSprecher2(hoerbuch.getSprecher2());
                     antwortDTO.setSpieldauer(hoerbuch.getSpieldauer());
                 })
                 .collect(Collectors.toList());
