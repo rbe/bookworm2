@@ -128,6 +128,7 @@ final class WbhRestBridgePlugin extends AbstractRestBridgePlugin
 
         if (isset($bestellungSessionId) === true) {
             $value = $hoerernummer . '--' . $bestellungSessionId;
+            // TODO cookie is set more than once
             $this->cmsAdapter->setCookie('bookworm', $value);
         } else {
             restBridgeErrorLog('bookwormCookie: Could not create cookie');

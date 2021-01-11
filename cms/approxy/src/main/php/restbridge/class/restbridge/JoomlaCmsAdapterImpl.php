@@ -205,6 +205,7 @@ class JoomlaCmsAdapterImpl implements CmsAdapter
         $app = JFactory::getApplication();
         $cookie = $app->input->cookie;
         $time = time() + self::MIN_15;
+        // TODO check if cookie is already in response?
         $cookie->set($name, $value, $time,
             $app->get('cookie_path', '/'),
             $app->get('cookie_domain'),
