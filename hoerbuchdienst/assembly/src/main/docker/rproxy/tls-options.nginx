@@ -6,7 +6,5 @@ ssl_session_timeout 5m;
 ssl_session_cache shared:SSL:50m;
 #ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem;
 ssl_session_tickets off;
-#add_header Strict-Transport-Security "max-age=31536000; includeSubDomains; preload" always;
-add_header Strict-Transport-Security "max-age=31536000; includeSubDomains" always;
 ssl_stapling on;
 ssl_stapling_verify on;

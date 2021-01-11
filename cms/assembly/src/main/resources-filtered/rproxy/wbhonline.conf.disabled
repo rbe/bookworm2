@@ -25,14 +25,20 @@ server {
         location ~* \.(js|css)$ {
             try_files $uri =404;
             expires 1h;
+            include tls-headers.nginx;
+            include joomla-csp.nginx;
         }
         location ~* \.(pdf|txt|xml)$ {
             try_files $uri =404;
             expires 1h;
+            include tls-headers.nginx;
+            include joomla-csp.nginx;
         }
         location ~* \.(png|jpe?g|gif|ico)$ {
             try_files $uri /images/$uri =404;
             expires 1h;
+            include tls-headers.nginx;
+            include joomla-csp.nginx;
         }
         location ~* \.php($|/.*\.html$)? {
             fastcgi_split_path_info ^(.+\.php)(/.+)$;
@@ -50,14 +56,18 @@ server {
             }
             fastcgi_hide_header X-Powered-By;
             add_header Server "";
+            include tls-headers.nginx;
+            include joomla-csp.nginx;
         }
         location ~ \.html {
             try_files $uri /index.php$uri;
+            include tls-headers.nginx;
+            include joomla-csp.nginx;
         }
-        include joomla-csp.nginx;
     }
     # Proxy fuer Hörbuchkatalog REST Dienste
     location /hoerbuchkatalog/ {
+        include tls-headers.nginx;
         include cors.nginx;
         include hoerbuchkatalog-proxy.nginx;
         include hoerbuchkatalog-csp.nginx;
