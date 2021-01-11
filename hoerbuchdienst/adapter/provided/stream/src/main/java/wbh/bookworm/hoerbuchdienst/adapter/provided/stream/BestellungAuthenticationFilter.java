@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.adapter.provided.api.BusinessException;
 
-@Filter({"/v1/bestellung", "/v1/bestellung/**"})
+// TODO @Filter({"/v1/bestellung", "/v1/bestellung/**"})
 public class BestellungAuthenticationFilter implements HttpServerFilter {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BestellungAuthenticationFilter.class);
