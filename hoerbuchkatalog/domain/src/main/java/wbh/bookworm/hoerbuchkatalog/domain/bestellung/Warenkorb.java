@@ -77,12 +77,12 @@ public abstract class Warenkorb extends DomainAggregate<Warenkorb, WarenkorbId> 
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.add(titelnummer);
-        logger.info("Hörbuch '{}' zum Warenkorb '{}' hinzugefügt", titelnummer, this);
+        logger.info("Hörbuch '{}' zum Warenkorb '{}' hinzugefügt", titelnummer, this.getDomainId());
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        logger.info("Hörbuch '{}' aus dem Warenkorb '{}' entfernt", titelnummer, this);
+        logger.info("Hörbuch '{}' aus dem Warenkorb '{}' entfernt", titelnummer, this.getDomainId());
     }
 
     public void leeren() {
