@@ -110,7 +110,7 @@ public final class WatermarkerMp3agicImpl implements Watermarker {
             mp3file.save(watermarkedMp3File.toAbsolutePath().toString());
             Files.move(watermarkedMp3File, mp3, StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException | NotSupportedException | UnsupportedTagException | InvalidDataException e) {
-            throw new WatermarkerException("", e);
+            throw new WatermarkerException(String.format("%s konnte nicht verarbeitet werden", mp3), e);
         }
     }
 

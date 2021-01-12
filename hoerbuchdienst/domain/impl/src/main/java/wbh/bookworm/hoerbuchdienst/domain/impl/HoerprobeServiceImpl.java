@@ -75,7 +75,7 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
                 LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' erstellt", xHoerernummer, titelnummer, ident);
                 return Optional.of(track);
             } catch (Exception e) {
-                throw new HoerprobeServiceException("", e);
+                throw new HoerprobeServiceException(String.format("Hörbuch '%s'", titelnummer), e);
             }
         } else {
             LOGGER.error("Hörer '{}' Hörbuch '{}': Hörprobe kann nicht geliefert werden", xHoerernummer, titelnummer);
