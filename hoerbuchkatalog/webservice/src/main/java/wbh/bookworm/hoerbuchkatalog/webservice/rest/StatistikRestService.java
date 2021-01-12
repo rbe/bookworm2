@@ -27,26 +27,30 @@ import wbh.bookworm.shared.domain.Titelnummer;
 
 @RestController
 @RequestMapping("/v1/private/statistik")
-public class WbhDownloadsStatisticsRestService {
+public class StatistikRestService {
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(WbhDownloadsStatisticsRestService.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(StatistikRestService.class);
 
     private static final DateTimeFormatter DATUM = DateTimeFormatter.ofPattern("yyyyMMdd");
 
     private static final DateTimeFormatter ZEIT = DateTimeFormatter.ofPattern("HHmmss");
+
+    private static final String TEXT_CSV_VALUE = "text/csv";
+
+    private static final MediaType TEXT_CSV = MediaType.valueOf(TEXT_CSV_VALUE);
 
     private final DownloadsService downloadsService;
 
     private final HoerbuchkatalogService hoerbuchkatalogService;
 
     @Autowired
-    public WbhDownloadsStatisticsRestService(final DownloadsService downloadsService,
-                                             final HoerbuchkatalogService hoerbuchkatalogService) {
+    public StatistikRestService(final DownloadsService downloadsService,
+                                final HoerbuchkatalogService hoerbuchkatalogService) {
         this.downloadsService = downloadsService;
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 
-    @GetMapping(value = "webhoer-{datum}.csv", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "webhoer-{datum}.csv", produces = TEXT_CSV_VALUE)
     public ResponseEntity<byte[]> downloadsHeuteAbrufen(@PathVariable final String datum) {
         final LocalDateTime datumZeit = LocalDate.parse(datum, DATUM).atStartOfDay();
         final byte[] body = erstelleCsvDatei(LocalDateTime.now(), datumZeit);
