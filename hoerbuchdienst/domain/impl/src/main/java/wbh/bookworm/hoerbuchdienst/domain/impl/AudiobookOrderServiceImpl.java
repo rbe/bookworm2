@@ -15,7 +15,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.micronaut.context.annotation.Value;
@@ -26,14 +25,11 @@ import org.slf4j.LoggerFactory;
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
 
 import aoc.mikrokosmos.io.fs.DeleteOnCloseSeekableByteChannel;
-import aoc.mikrokosmos.io.fs.FilesUtils;
 
 @Singleton
 class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AudiobookOrderServiceImpl.class);
-
-    private static final String DAISY_ZIP = "DAISY.zip";
 
     private static final String ORDER_STATUS_PROCESSING = "PROCESSING";
 
