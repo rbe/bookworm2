@@ -10,11 +10,11 @@ RUN apk --no-cache add tzdata \
     && echo "${TZ}" >/etc/timezone
 #RUN apk add --no-cache libcap \
 #    && setcap cap_setgid=ep /bin/busybox
-RUN apk add --no-cache sudo
-RUN echo "service ALL=(ALL) NOPASSWD: /usr/sbin/crond" >/etc/sudoers.d/service
 RUN apk add --no-cache busybox-suid
 RUN addgroup -g 1000 service \
     && adduser -u 100 -D -S -G service service
+RUN apk add --no-cache sudo
+RUN echo "service ALL=(ALL) NOPASSWD: /usr/sbin/crond" >/etc/sudoers.d/service
 RUN apk --no-cache add bash
 COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
 RUN chmod +x -- /usr/local/bin/*
