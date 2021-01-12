@@ -38,8 +38,7 @@ public final class HoerbuchkatalogService {
 
     public Suchergebnis suchen(final Hoerernummer hoerernummer, final Suchparameter suchparameter) {
         final Hoerbuchkatalog hoerbuchkatalog = repositoryResolver.hoerbuchkatalog();
-        final Suchergebnis suchergebnis = hoerbuchkatalog.suchen(suchparameter);
-        return suchergebnis;
+        return hoerbuchkatalog.suchen(suchparameter);
     }
 
     public boolean hoerbuchVorhanden(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {

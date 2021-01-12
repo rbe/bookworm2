@@ -46,13 +46,9 @@ final class HoerbuchkatalogSuche {
 
     private final LuceneIndex luceneIndex;
 
-    private final int anzahlSuchergebnisse;
-
     HoerbuchkatalogSuche(final ApplicationContext applicationContext,
-                         final DomainId<String> hoerbuchkatalogDomainId,
-                         final int anzahlSuchergebnisse) {
+                         final DomainId<String> hoerbuchkatalogDomainId) {
         luceneIndex = applicationContext.getBean(LuceneIndex.class, hoerbuchkatalogDomainId.getValue());
-        this.anzahlSuchergebnisse = anzahlSuchergebnisse;
     }
 
     void indiziere(final Set<Hoerbuch> hoerbuecher) {
@@ -108,7 +104,7 @@ final class HoerbuchkatalogSuche {
         lowercaseWildcard(booleanQueryBuilder, ohneSachgebietUndEinstelldatum);
         stichwort(booleanQueryBuilder, suchparameter);
         final LuceneQuery.Result result = LuceneQuery.query(luceneIndex,
-                booleanQueryBuilder.build(), anzahlSuchergebnisse,
+                booleanQueryBuilder.build(), suchparameter.getMaxAnzahlSuchergebnisse(),
                 Suchparameter.Feld.AUTOR.name(), Suchparameter.Feld.TITEL.name());
         final List<Titelnummer> titelnummern = titelnummern(result);
         final Suchergebnis suchergebnis = new Suchergebnis(suchparameter, titelnummern, result.getTotalMatchingCount());

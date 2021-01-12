@@ -173,9 +173,8 @@ public class HoerbuchkatalogRepository/* TODO extends JsonDomainRepository<Hoerb
     private void initialisiereSuche(final DomainId<String> hoerbuchkatalogId,
                                     final Hoerbuchkatalog hoerbuchkatalog) {
         LOGGER.trace("Initialisiere Suchindex für Hörbuchkatalog {}", hoerbuchkatalogId);
-        final HoerbuchkatalogSuche hoerbuchkatalogSuche = new HoerbuchkatalogSuche(
-                applicationContext, hoerbuchkatalogId,
-                hoerbuchkatalogConfig.getAnzahlSuchergebnisse());
+        final HoerbuchkatalogSuche hoerbuchkatalogSuche =
+                new HoerbuchkatalogSuche(applicationContext, hoerbuchkatalogId);
         // TODO Nur on-demand, wenn kein Index besteht
         hoerbuchkatalogSuche.indiziere(hoerbuchkatalog.alle());
         hoerbuchkatalog.setHoerbuchkatalogSuche(hoerbuchkatalogSuche);

@@ -66,12 +66,15 @@ public class KatalogRestService {
         final Suchparameter suchparameter = new Suchparameter();
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
-        }
-        if (null != sachgebiet && !sachgebiet.isBlank() && !sachgebiet.equals("*")) {
-            suchparameter.hinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
+            suchparameter.setMaxAnzahlSuchergebnisse(1_000);
         }
         if (null != einstelldatum && !einstelldatum.isBlank() && !einstelldatum.equals("*")) {
             suchparameter.hinzufuegen(Suchparameter.Feld.EINSTELLDATUM, einstelldatum);
+            suchparameter.setMaxAnzahlSuchergebnisse(1_000);
+        }
+        if (null != sachgebiet && !sachgebiet.isBlank() && !sachgebiet.equals("*")) {
+            suchparameter.hinzufuegen(Suchparameter.Feld.SACHGEBIET, sachgebiet);
+            suchparameter.setMaxAnzahlSuchergebnisse(-1);
         }
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Suchergebnis suchergebnis = hoerbuchkatalogService.suchen(hoerernummer, suchparameter);

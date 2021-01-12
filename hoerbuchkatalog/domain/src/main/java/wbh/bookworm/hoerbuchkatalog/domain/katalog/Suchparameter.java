@@ -6,11 +6,12 @@
 
 package wbh.bookworm.hoerbuchkatalog.domain.katalog;
 
-import aoc.mikrokosmos.ddd.model.DomainValueObject;
-
+import java.io.Serial;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.Objects;
+
+import aoc.mikrokosmos.ddd.model.DomainValueObject;
 
 /**
  * Value Object
@@ -18,49 +19,32 @@ import java.util.Objects;
  */
 public final class Suchparameter extends DomainValueObject {
 
+    @Serial
     private static final long serialVersionUID = -1L;
 
-    public enum Feld {
+    private int maxAnzahlSuchergebnisse;
 
-        TITELNUMMER("Titelnummer", "titelnummer"),
-        STICHWORT("Stichwort", "stichwort"),
-        SACHGEBIET("Sachgebiet", "sachgebiet"),
-        AUTOR("Autor", "autor"),
-        TITEL("Titel", "titel"),
-        ERLAEUTERUNG("Erläuterung", "erlaeuterung"),
-        SUCHWOERTER("Suchwörter", "suchwoerter"),
-        UNTERTITEL("Untertitel", "untertitel"),
-        SPRECHER("Sprecher", "sprecher"),
-        SPRECHER1("Sprecher1", "sprecher1"),
-        SPRECHER2("Sprecher2", "sprecher2"),
-        EINSTELLDATUM("Einstelldatum", "einstelldatum");
-
-        private final String label;
-
-        private final String luceneName;
-
-        Feld(final String label, final String luceneName) {
-            this.label = label;
-            this.luceneName = luceneName;
-        }
-
-        public String getLabel() {
-            return label;
-        }
-
-        public String luceneName() {
-            return luceneName;
-        }
-
-    }
-
-    private Map<Feld, String> felderMitWerten = new EnumMap<>(Feld.class);
+    private final Map<Feld, String> felderMitWerten = new EnumMap<>(Feld.class);
 
     public Suchparameter() {
+        this.maxAnzahlSuchergebnisse = -1;
+    }
+
+    public Suchparameter(int maxAnzahlSuchergebnisse) {
+        this.maxAnzahlSuchergebnisse = maxAnzahlSuchergebnisse;
     }
 
     public Suchparameter(Suchparameter suchparameter) {
+        this.maxAnzahlSuchergebnisse = suchparameter.maxAnzahlSuchergebnisse;
         this.felderMitWerten.putAll(suchparameter.felderMitWerten);
+    }
+
+    public int getMaxAnzahlSuchergebnisse() {
+        return maxAnzahlSuchergebnisse;
+    }
+
+    public void setMaxAnzahlSuchergebnisse(final int maxAnzahlSuchergebnisse) {
+        this.maxAnzahlSuchergebnisse = maxAnzahlSuchergebnisse;
     }
 
     public Suchparameter hinzufuegen(final Feld feld, final String value) {
@@ -91,7 +75,7 @@ public final class Suchparameter extends DomainValueObject {
 
     public Feld[] getFeldnamenMitWerten() {
         return felderMitWerten.entrySet().stream()
-                .filter(e->null!=e.getValue()&&!e.getValue().isBlank())
+                .filter(e -> null != e.getValue() && !e.getValue().isBlank())
                 .map(Map.Entry::getKey)
                 .toArray(Feld[]::new);
     }
@@ -130,6 +114,40 @@ public final class Suchparameter extends DomainValueObject {
     public String toString() {
         return String.format("Suchparameter{%s" +
                 "}", alsText());
+    }
+
+    public enum Feld {
+
+        TITELNUMMER("Titelnummer", "titelnummer"),
+        STICHWORT("Stichwort", "stichwort"),
+        SACHGEBIET("Sachgebiet", "sachgebiet"),
+        AUTOR("Autor", "autor"),
+        TITEL("Titel", "titel"),
+        ERLAEUTERUNG("Erläuterung", "erlaeuterung"),
+        SUCHWOERTER("Suchwörter", "suchwoerter"),
+        UNTERTITEL("Untertitel", "untertitel"),
+        SPRECHER("Sprecher", "sprecher"),
+        SPRECHER1("Sprecher1", "sprecher1"),
+        SPRECHER2("Sprecher2", "sprecher2"),
+        EINSTELLDATUM("Einstelldatum", "einstelldatum");
+
+        private final String label;
+
+        private final String luceneName;
+
+        Feld(final String label, final String luceneName) {
+            this.label = label;
+            this.luceneName = luceneName;
+        }
+
+        public String getLabel() {
+            return label;
+        }
+
+        public String luceneName() {
+            return luceneName;
+        }
+
     }
 
 }
