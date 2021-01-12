@@ -11,10 +11,12 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.xml.bind.JAXBElement;
 import java.io.InputStream;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -103,7 +105,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
             for (final Ref ref : refs) {
                 final String filename = filenameFromSrc(ref);
                 final InputStream refStream = audiobookStreamResolver.trackAsStream(titelnummer, filename);
-                audiobook.addAudiotrack(fromRef(ref, refStream));
+                audiobook.addAudiotrack(fromRef(titelnummer, ref, refStream));
             }
         } catch (ObjectStorageException e) {
             throw new AudiobookMapperException(e);
@@ -128,7 +130,13 @@ class AudiobookMapperImpl implements AudiobookMapper {
         audiobook.setDate(nccReader.get(NccReader.Field.DATE));
         audiobook.setAuthor(nccReader.get(NccReader.Field.CREATOR));
         audiobook.setLanguage(nccReader.get(NccReader.Field.LANGUAGE));
-        audiobook.setTotalTime(SmilTimeHelper.parseDuration(nccReader.get(NccReader.Field.TOTAL_TIME)));
+        final String nccTotalTime = nccReader.get(NccReader.Field.TOTAL_TIME);
+        final Optional<Duration> maybeTotalTime = SmilTimeHelper.parseDuration(nccTotalTime);
+        if (maybeTotalTime.isPresent()) {
+            audiobook.setTotalTime(maybeTotalTime.get());
+        } else {
+            LOGGER.warn("Hörbuch '{}' hat keine totalTime", audiobook.getTitelnummer());
+        }
         audiobook.setSetInfo(nccReader.get(NccReader.Field.SET_INFO)
                 .replace(" of ", " von "));
         audiobook.setSourceDate(nccReader.get(NccReader.Field.SOURCE_DATE));
@@ -161,7 +169,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
                 switch (meta.getName()) {
                     case "dc:identifier" -> audiobook.setIdentifier(meta.getContent());
                     case "dc:title" -> audiobook.setTitle(meta.getContent());
-                    case "ncc:timeInThisSmil" -> audiobook.setTimeInThisSmil(SmilTimeHelper.parseDuration(meta.getContent()));
+                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parseDuration(meta.getContent()).ifPresent(audiobook::setTimeInThisSmil);
                 }
             }
         }
@@ -173,7 +181,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
         return refs;
     }
 
-    private Audiotrack fromRef(final Ref ref, final InputStream refStream) {
+    private Audiotrack fromRef(final String titelnummer, final Ref ref, final InputStream refStream) {
         final Smil smil = smilReader.from(refStream);
         final Audiotrack audiotrack = new Audiotrack();
         audiotrack.setSource(ref.getSrc());
@@ -181,9 +189,10 @@ class AudiobookMapperImpl implements AudiobookMapper {
             if (Meta.class.isAssignableFrom(headContentObj.getClass())) {
                 final Meta nlztMeta = (Meta) headContentObj;
                 switch (nlztMeta.getName()) {
-                    case "ncc:timeInThisSmil" -> audiotrack.setTimeInThisSmil(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
-                    case "ncc:totalElapsedTime" -> audiotrack.setTotalTimeElapsed(SmilTimeHelper.parseDuration(nlztMeta.getContent()));
+                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTimeInThisSmil);
+                    case "ncc:totalElapsedTime" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTotalTimeElapsed);
                     case "title" -> audiotrack.setTitle(nlztMeta.getContent());
+                    default -> throw new IllegalStateException("Unexpected value: " + nlztMeta.getName());
                 }
             }
         }
@@ -199,9 +208,15 @@ class AudiobookMapperImpl implements AudiobookMapper {
                                 for (final JAXBElement<?> seq2ContentElement : seq2.getSeqContent()) {
                                     if (seq2ContentElement.getName().getLocalPart().equals("audio")) {
                                         final Audio audio = (Audio) seq2ContentElement.getValue();
+                                        final Optional<Duration> maybeBegin = SmilTimeHelper.parseClipNpt(audio.getClipBegin());
+                                        final Optional<Duration> maybeEnd = SmilTimeHelper.parseClipNpt(audio.getClipEnd());
+                                        if (maybeBegin.isEmpty()|| maybeEnd.isEmpty()) {
+                                            LOGGER.warn("Hörbuch '{}' Track 'title={}/src={}' hat keinen Beginn {} oder Ende {}",
+                                                    titelnummer, audiotrack.getTitle(), audiotrack.getSource(), maybeBegin, maybeEnd);
+                                        }
                                         final Audioclip audioclip = new Audioclip(audio.getSrc(),
-                                                SmilTimeHelper.parseClipNpt(audio.getClipBegin()),
-                                                SmilTimeHelper.parseClipNpt(audio.getClipEnd()));
+                                                maybeBegin.orElse(Duration.ZERO),
+                                                maybeEnd.orElse(Duration.ZERO));
                                         audiotrack.add(audioclip);
                                     }
                                 }
