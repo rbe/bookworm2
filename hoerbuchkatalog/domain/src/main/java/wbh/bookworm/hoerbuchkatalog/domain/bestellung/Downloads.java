@@ -95,18 +95,18 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     public boolean enthalten(final Titelnummer titelnummer) {
         final boolean bereitsVorhanden = titelnummern.containsKey(titelnummer);
-        LOGGER.trace("Downloads '{}' enthält Hörbuch '{}': '{}'", this, titelnummer, bereitsVorhanden);
+        LOGGER.trace("Downloads '{}' enthält Hörbuch '{}': '{}'", this.getDomainId(), titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
 
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.put(titelnummer, new Details(LocalDateTime.now()));
-        LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt", titelnummer, this.getDomainId());
     }
 
     public void entfernen(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch '{}' von Downloads '{}' entfernt", titelnummer, this);
+        LOGGER.info("Hörbuch '{}' von Downloads '{}' entfernt", titelnummer, this.getDomainId());
     }
 
     public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {
@@ -136,7 +136,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     @Override
     public String toString() {
-        return String.format("Merkliste{domainId=%s, merklisteId=%s, hoerernummer=%s, titelnummern=%s}",
+        return String.format("Downloads{domainId=%s, merklisteId=%s, hoerernummer=%s, titelnummern=%s}",
                 domainId, domainId, hoerernummer, titelnummern);
     }
 
