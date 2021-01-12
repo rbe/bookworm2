@@ -14,7 +14,7 @@ TZ="Europe/Berlin"
 export TZ
 
 echo "Starting cron"
-crond -b -d 8 -L /proc/self/fd/1
+sudo crond -b -l 0 -d 0 -L /proc/self/fd/1
 
 echo "Removing all/old Lucene index directories"
 rm -rf /var/local/wbh/hoerbuchkatalog/lucene/*
@@ -46,8 +46,7 @@ if [[ -f "/var/local/.java_debug" ]]; then
 fi
 export JAVA_TOOL_OPTIONS
 
-java \
-  -jar /usr/local/service.jar \
+java -jar /usr/local/service.jar \
   --spring.profiles.active=production \
   --spring.config.additional-location=/var/local/application-secrets.yml
 

@@ -14,7 +14,7 @@ TZ="Europe/Berlin"
 export TZ
 
 echo "Starting cron"
-crond -b -d 8 -L /proc/self/fd/1
+sudo crond -b -l 0 -d 0 -L /proc/self/fd/1
 
 echo "Starting service"
 export MICRONAUT_CONFIG_FILES=""
@@ -26,7 +26,9 @@ JAVA_TOOL_OPTIONS="-Xms8192m -Xmx8192m \
 -XX:HeapDumpPath=/var/local/java_debug \
 -XX:ErrorFile=/var/local/java_debug/java_error_%p.log \
 -XX:+UnlockExperimentalVMOptions \
--XX:+UseZGC"
+-XX:+UseZGC \
+-Dmicronaut.environments=prod \
+-Dmicronaut.config.files=/var/local/application-shard.yml"
 if [[ -f "/var/local/.java_debug" ]]; then
   JAVA_TOOL_OPTIONS="${JAVA_TOOL_OPTIONS} \
 -Xlog:gc=info,gc+stats:file=/var/local/java_debug/gc.log:time,uptime,pid:filecount=16,filesize=16M \
@@ -40,10 +42,7 @@ if [[ -f "/var/local/.java_debug" ]]; then
 fi
 export JAVA_TOOL_OPTIONS
 
-java \
-  -Dmicronaut.environments=prod \
-  -Dmicronaut.config.files=/var/local/application-shard.yml \
-  -jar /usr/local/service.jar
+java -jar /usr/local/service.jar
 
 #if [ -x "$(which jstatd)" ]; then
 #  cat >/var/local/jstatd.policy <<EOF
