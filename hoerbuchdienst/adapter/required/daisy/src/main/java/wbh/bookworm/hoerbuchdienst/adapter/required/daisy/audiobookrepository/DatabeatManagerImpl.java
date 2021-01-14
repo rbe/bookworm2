@@ -118,7 +118,7 @@ class DatabeatManagerImpl implements DatabeatManager {
     @EventListener
     void processEvent(final BucketObjectRemovedEvent event) {
         if ("eingangskorb".equals(event.getBucketName())) {
-            LOGGER.debug("Generating Databeat as requested by {}", event);
+            LOGGER.info("Generating Databeat as requested by {}", event);
             // TODO Just add event.getObjectName() to Databeat; what about other changes?
             generate();
         } else {
@@ -160,6 +160,7 @@ class DatabeatManagerImpl implements DatabeatManager {
                 LOGGER.warn("Could not acquire lock, generation already running");
             }
         } catch (InterruptedException e) {
+            databeatGenerationLock.unlock();
             LOGGER.error("", e);
             Thread.currentThread().interrupt();
         }
