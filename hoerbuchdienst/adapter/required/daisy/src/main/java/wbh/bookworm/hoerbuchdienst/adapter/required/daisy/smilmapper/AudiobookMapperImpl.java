@@ -192,7 +192,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
                     case "ncc:timeInThisSmil" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTimeInThisSmil);
                     case "ncc:totalElapsedTime" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTotalTimeElapsed);
                     case "title" -> audiotrack.setTitle(nlztMeta.getContent());
-                    default -> throw new IllegalStateException("Unexpected value: " + nlztMeta.getName());
+                    // ignore default -> throw new IllegalStateException("Unexpected value: " + nlztMeta.getName());
                 }
             }
         }
