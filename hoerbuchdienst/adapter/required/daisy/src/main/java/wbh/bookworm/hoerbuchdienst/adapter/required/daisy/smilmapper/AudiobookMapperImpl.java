@@ -181,6 +181,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
         return refs;
     }
 
+    @SuppressWarnings("squid:S131")
     private Audiotrack fromRef(final String titelnummer, final Ref ref, final InputStream refStream) {
         final Smil smil = smilReader.from(refStream);
         final Audiotrack audiotrack = new Audiotrack();
