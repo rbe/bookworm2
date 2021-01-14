@@ -6,8 +6,6 @@
 
 package wbh.bookworm.hoerbuchkatalog.repository.katalog;
 
-import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.slf4j.Logger;
@@ -19,6 +17,10 @@ import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchergebnis;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Suchparameter;
+
+import aoc.mikrokosmos.lang.strings.StringNormalizer;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(classes = {KatalogTestAppConfig.class})
 @ExtendWith(SpringExtension.class)
@@ -44,7 +46,7 @@ class HoerbuchkatalogSucheTest {
         LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
-        Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
+        assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + stichwort + "' im Hörbuchkatalog gefunden");
     }
 
@@ -54,24 +56,66 @@ class HoerbuchkatalogSucheTest {
         final String stichwort = "Adler";
         suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, stichwort);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
-        Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
+        assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + stichwort + "' im Hörbuchkatalog gefunden");
     }
 
     @Test
-    @Disabled
-    void shouldFindeHoerbuecherMitMehrerenEingaben() {
+    void shouldFindeHoerbuecherMitAutor() {
         final Suchparameter suchparameter = new Suchparameter();
         final String wert = "Alfred Hitchcock".toLowerCase();
         suchparameter.hinzufuegen(Suchparameter.Feld.AUTOR, wert);
         final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
-        LOGGER.debug("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
         sucheregebnis.getTitelnummern().forEach(
                 titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
-        Assertions.assertTrue(sucheregebnis.getAnzahl() > 0,
+        assertTrue(sucheregebnis.getAnzahl() > 0,
+                "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
+    }
+
+    @Test
+    void shouldFindeHoerbuecherMitAutor2() {
+        final Suchparameter suchparameter = new Suchparameter();
+        //final String wert = "Hitchcock, Alfred".toLowerCase();
+        String wert = "Hitchcock,Alfred".toLowerCase();
+        wert = StringNormalizer.normalize(wert);
+        suchparameter.hinzufuegen(Suchparameter.Feld.AUTOR, wert);
+        final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
+        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        sucheregebnis.getTitelnummern().forEach(
+                titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
+        assertTrue(sucheregebnis.getAnzahl() > 0,
+                "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
+    }
+
+    @Test
+    void shouldFindeHoerbuecherMitSprecher() {
+        final Suchparameter suchparameter = new Suchparameter();
+        String wert = "Elke Große-Woestmann".toLowerCase();
+        //wert = StringNormalizer.normalize(wert);
+        suchparameter.hinzufuegen(Suchparameter.Feld.SPRECHER1, wert);
+        final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
+        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        sucheregebnis.getTitelnummern().forEach(
+                titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
+        assertTrue(sucheregebnis.getAnzahl() > 0,
+                "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
+    }
+
+    @Test
+    void shouldFindeHoerbuecherMitSprecherAnhandStichwort() {
+        final Suchparameter suchparameter = new Suchparameter();
+        String wert = "Elke Große-Woestmann".toLowerCase();
+        //wert = StringNormalizer.normalize(wert);
+        suchparameter.hinzufuegen(Suchparameter.Feld.STICHWORT, wert);
+        final Suchergebnis sucheregebnis = hoerbuchkatalog.suchen(suchparameter);
+        LOGGER.info("{} Suchergebnisse", sucheregebnis.getAnzahl());
+        sucheregebnis.getTitelnummern().forEach(
+                titelnummer -> LOGGER.info("Suchergebnis: Titelnummer#{}", titelnummer));
+        assertTrue(sucheregebnis.getAnzahl() > 0,
                 "Kein Suchergebnis für '" + wert + "' im Hörbuchkatalog gefunden");
     }
 

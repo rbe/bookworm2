@@ -117,14 +117,16 @@ final class HoerbuchkatalogSuche {
         if (suchparameter.wertVorhanden(Suchparameter.Feld.STICHWORT)) {
             final String stichwort = suchparameter.wert(Suchparameter.Feld.STICHWORT);
             final BooleanQuery.Builder stichwoerterQuery = new BooleanQuery.Builder();
-            final String[] words = stichwort.split("\\s+");
+            final String[] words = stichwort.split("[\\s+ ,-/]");
             stichwoerterQuery.setMinimumNumberShouldMatch(words.length);
             for (final String word : words) {
                 final BooleanQuery.Builder stichwortQuery = new BooleanQuery.Builder();
                 stichwortQuery.setMinimumNumberShouldMatch(1);
                 stichwortQuery.add(new TermQuery(new Term(Suchparameter.Feld.TITELNUMMER.luceneName(), word)),
                         BooleanClause.Occur.SHOULD);
-                final String stichwortWildcard = String.format("*%s*", StringNormalizer.normalize(word.toLowerCase()));
+                String normalize = StringNormalizer.normalize(word.toLowerCase());
+                normalize = normalize.replace('-', '*');
+                final String stichwortWildcard = String.format("*%s*", normalize);
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.AUTOR.luceneName(), stichwortWildcard)),
                         BooleanClause.Occur.SHOULD);
                 stichwortQuery.add(new WildcardQuery(new Term(Suchparameter.Feld.SPRECHER1.luceneName(), stichwortWildcard)),
