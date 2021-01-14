@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -85,11 +86,10 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 && date1.getDayOfMonth() == date2.getDayOfMonth();
     }
 
-    public long anzahlAktuellerMonat() {
-        final LocalDateTime now = LocalDateTime.now();
+    public long anzahlAusleihzeitraum() {
+        final LocalDateTime beginnAusleihzeitraum = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(30L);
         return titelnummern.entrySet().stream()
-                .filter(entry -> now.getMonth().equals(entry.getValue().getAusgeliehenAm().getMonth())
-                        && now.getYear() == entry.getValue().getAusgeliehenAm().getYear())
+                .filter(entry -> entry.getValue().getAusgeliehenAm().isAfter(beginnAusleihzeitraum))
                 .count();
     }
 

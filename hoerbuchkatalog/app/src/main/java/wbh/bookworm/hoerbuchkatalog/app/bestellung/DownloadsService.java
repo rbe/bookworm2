@@ -48,13 +48,13 @@ public class DownloadsService {
         return downloads(hoerernummer).anzahlHeute();
     }
 
-    public long anzahlAktuellerMonat(final Hoerernummer hoerernummer) {
-        return downloads(hoerernummer).anzahlAktuellerMonat();
+    public long anzahlAusleihzeitraum(final Hoerernummer hoerernummer) {
+        return downloads(hoerernummer).anzahlAusleihzeitraum();
     }
 
     public boolean downloadErlaubt(final Hoerernummer hoerernummer) {
         return anzahlHeute(hoerernummer) < 10
-                && anzahlAktuellerMonat(hoerernummer) < 30;
+                && anzahlAusleihzeitraum(hoerernummer) < 30;
     }
 
     /**

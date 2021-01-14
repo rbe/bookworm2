@@ -629,7 +629,7 @@
 					"response": []
 				},
 				{
-					"name": "Kontingent - Downloads heute",
+					"name": "Kontingent - Anzahl heute",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -662,7 +662,7 @@
 					"response": []
 				},
 				{
-					"name": "Kontingent - Downloads aktueller Monat",
+					"name": "Kontingent - Anzahl aktueller Ausleihzeitraum",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -683,12 +683,12 @@
 							}
 						],
 						"url": {
-							"raw": "{{DownloadsURL}}/aktuellermonat",
+							"raw": "{{DownloadsURL}}/ausleihzeitraum",
 							"host": [
 								"{{DownloadsURL}}"
 							],
 							"path": [
-								"aktuellermonat"
+								"ausleihzeitraum"
 							]
 						}
 					},

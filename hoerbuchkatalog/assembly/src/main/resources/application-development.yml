@@ -49,16 +49,16 @@ server:
 logging:
   level:
     root: ERROR
-    #wbh.bookworm.hoerbuchkatalog.assembly: ERROR
-    #wbh.bookworm.hoerbuchkatalog.rest: ERROR
-    #wbh.bookworm.hoerbuchkatalog.app: ERROR
-    #wbh.bookworm.hoerbuchkatalog.repository: ERROR
-    #wbh.bookworm.hoerbuchkatalog.domain: ERROR
+    wbh.bookworm.hoerbuchkatalog.assembly: DEBUG
+    wbh.bookworm.hoerbuchkatalog.webservice: DEBUG
+    wbh.bookworm.hoerbuchkatalog.app: DEBUG
+    wbh.bookworm.hoerbuchkatalog.repository: DEBUG
+    wbh.bookworm.hoerbuchkatalog.domain: DEBUG
     wbh.bookworm.hoerbuchkatalog: DEBUG
-    #aoc.mikrokosmos.fs: ERROR
-    #aoc.mikrokosmos.ddd.event: ERROR
-    #aoc.mikrokosmos.ddd.repository: ERROR
-    #aoc.mikrokosmos.ddd.search: ERROR
+    aoc.mikrokosmos.fs: DEBUG
+    aoc.mikrokosmos.ddd.event: DEBUG
+    aoc.mikrokosmos.ddd.repository: DEBUG
+    aoc.mikrokosmos.ddd.search: DEBUG
     aoc.mikrokosmos: DEBUG
     eu.artofcoding: DEBUG
     org.eclipse.jetty: INFO

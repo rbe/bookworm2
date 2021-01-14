@@ -40,7 +40,7 @@ logging:
   level:
     root: ERROR
     wbh.bookworm.hoerbuchkatalog.assembly: INFO
-    wbh.bookworm.hoerbuchkatalog.rest: INFO
+    wbh.bookworm.hoerbuchkatalog.webservice: INFO
     wbh.bookworm.hoerbuchkatalog.app: INFO
     wbh.bookworm.hoerbuchkatalog.repository: INFO
     wbh.bookworm.hoerbuchkatalog.domain: INFO

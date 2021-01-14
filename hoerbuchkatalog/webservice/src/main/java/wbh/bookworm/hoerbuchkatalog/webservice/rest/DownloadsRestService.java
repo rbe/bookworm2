@@ -81,13 +81,13 @@ public class DownloadsRestService {
         return ResponseEntity.ok(downloads.anzahlHeute());
     }
 
-    @GetMapping(value = "/aktuellermonat", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Long> anzahlAktuellerMonat(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+    @GetMapping(value = "/ausleihzeitraum", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Long> ausleihzeitraum(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
-        return ResponseEntity.ok(downloads.anzahlAktuellerMonat());
+        return ResponseEntity.ok(downloads.anzahlAusleihzeitraum());
     }
 
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
@@ -119,7 +119,7 @@ public class DownloadsRestService {
         hoerbuchAntwortKurzDTOS.sort(Comparator.<HoerbuchAntwortKurzDTO, LocalDate>comparing(
                 dto -> LocalDate.parse(dto.getAusgeliehenAm(), DATE_TIME_FORMATTER))
                 .reversed());
-        final Map<String, Object> meta = Map.of("anzahlMonat", downloadsService.anzahlAktuellerMonat(hoerernummer),
+        final Map<String, Object> meta = Map.of("anzahlAusleihzeitraum", downloadsService.anzahlAusleihzeitraum(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
         return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTOS));
     }

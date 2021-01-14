@@ -293,39 +293,6 @@
 			"name": "Downloads",
 			"item": [
 				{
-					"name": "Kontingent - Anzahl Downloads abrufen",
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "X-Bookworm-Mandant",
-								"type": "text",
-								"value": "{{Mandant}}"
-							},
-							{
-								"key": "X-Bookworm-Hoerernummer",
-								"type": "text",
-								"value": "{{Hoerernummer}}"
-							},
-							{
-								"key": "X-Bookworm-BestellungSessionId",
-								"type": "text",
-								"value": "{{bestellungSessionId}}"
-							}
-						],
-						"url": {
-							"raw": "{{DownloadsURL}}/aktuellermonat",
-							"host": [
-								"{{DownloadsURL}}"
-							],
-							"path": [
-								"aktuellermonat"
-							]
-						}
-					},
-					"response": []
-				},
-				{
 					"name": "Downloads filtern",
 					"request": {
 						"method": "GET",
