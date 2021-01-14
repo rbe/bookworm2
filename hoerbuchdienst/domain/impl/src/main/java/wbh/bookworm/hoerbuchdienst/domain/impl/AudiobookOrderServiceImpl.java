@@ -82,14 +82,18 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     @Override
     public Optional<InputStream> fetchOrderAsStream(final String orderId) {
-        final Path daisyZip = fetchOrderAsFile(orderId).orElseThrow();
-        try {
-            final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(daisyZip);
-            return Optional.of(Channels.newInputStream(byteChannel));
-        } catch (IOException e) {
-            LOGGER.error("", e);
-            return Optional.empty();
+        final Optional<Path> maybeDaisyZip = fetchOrderAsFile(orderId);
+        if (maybeDaisyZip.isPresent()) {
+            try {
+                final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(maybeDaisyZip.get());
+                return Optional.of(Channels.newInputStream(byteChannel));
+            } catch (IOException e) {
+                LOGGER.error("", e);
+            }
+        } else {
+            LOGGER.error("Bestellung '{}' existiert nicht", orderId);
         }
+        return Optional.empty();
     }
 
     @Override
