@@ -16,7 +16,7 @@ RUN addgroup -g 1000 service \
 RUN apk add --no-cache sudo
 RUN echo "service ALL=(ALL) NOPASSWD: /usr/sbin/crond" >/etc/sudoers.d/service
 RUN apk --no-cache add bash
-COPY --chown=service target/classes/docker-entrypoint.sh /usr/local/bin/
+COPY --chown=service target/classes/*.sh /usr/local/bin/
 RUN chmod +x -- /usr/local/bin/*
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
