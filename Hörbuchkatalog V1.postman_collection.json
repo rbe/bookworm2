@@ -110,13 +110,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{KatalogURL}}/sachgebiet/A",
+							"raw": "{{KatalogURL}}/sachgebiet/B",
 							"host": [
 								"{{KatalogURL}}"
 							],
 							"path": [
 								"sachgebiet",
-								"A"
+								"B"
 							]
 						}
 					},

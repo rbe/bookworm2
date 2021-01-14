@@ -199,16 +199,89 @@
 							}
 						],
 						"url": {
-							"raw": "{{HoererarchivURL}}/erledigteBestellkarten/stichwort/Adams/startdatum/01.01.2015",
+							"raw": "{{HoererarchivURL}}/erledigteBestellkarten/stichwort/amanda/startdatum/01.01.2015",
 							"host": [
 								"{{HoererarchivURL}}"
 							],
 							"path": [
 								"erledigteBestellkarten",
 								"stichwort",
-								"Adams",
+								"amanda",
 								"startdatum",
 								"01.01.2015"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Katalog",
+			"item": [
+				{
+					"name": "Stichwortsuche - Autor Elke Große-Woestmann",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/Elke%20Gro%C3%9Fe-Woestmann",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Elke%20Gro%C3%9Fe-Woestmann"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stichwortsuche - Autor mit Komma",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/Gro%C3%9Fe-Woestmann%2C%20Elke",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Gro%C3%9Fe-Woestmann%2C%20Elke"
 							]
 						}
 					},
@@ -287,19 +360,24 @@
 						}
 					},
 					"response": []
-				},
+				}
+			]
+		},
+		{
+			"name": "Statistik",
+			"item": [
 				{
 					"name": "Download-Archiv abrufen",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{PrivateDownloadsURL}}/webhoer-20210108.csv",
+							"raw": "{{PrivateStatistikURL}}/webhoer-20210104.csv",
 							"host": [
-								"{{PrivateDownloadsURL}}"
+								"{{PrivateStatistikURL}}"
 							],
 							"path": [
-								"webhoer-20210108.csv"
+								"webhoer-20210104.csv"
 							]
 						}
 					},
@@ -366,8 +444,8 @@
 			"value": "21052"
 		},
 		{
-			"key": "PrivateDownloadsURL",
-			"value": "{{Hoerbuchkatalog_V1}}/private/downloads"
+			"key": "PrivateStatistikURL",
+			"value": "{{Hoerbuchkatalog_V1}}/private/statistik"
 		}
 	]
 }
