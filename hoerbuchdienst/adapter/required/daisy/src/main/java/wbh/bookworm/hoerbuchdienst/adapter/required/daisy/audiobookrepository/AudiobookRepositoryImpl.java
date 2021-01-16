@@ -144,8 +144,9 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
 
     @Override
     public InputStream trackAsStream(final String titelnummer, final String ident) {
+        final String filename = ident.endsWith(".mp3") ? ident : String.format("%s.mp3", ident);
         return whileServicing("trackAsStream",
-                () -> audiobookStreamResolver.trackAsStream(titelnummer, String.format("%s.mp3", ident)),
+                () -> audiobookStreamResolver.trackAsStream(titelnummer, filename),
                 () -> null);
     }
 
