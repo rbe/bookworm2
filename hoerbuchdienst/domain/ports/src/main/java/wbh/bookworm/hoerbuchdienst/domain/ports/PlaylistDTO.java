@@ -6,12 +6,14 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public final class PlaylistDTO implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -8820698782758681073L;
 
     private final List<PlaylistEntryDTO> entries;
@@ -34,6 +36,11 @@ public final class PlaylistDTO implements Serializable {
 
     public void addAll(final List<PlaylistEntryDTO> entries) {
         this.entries.addAll(entries);
+    }
+
+    @Override
+    public String toString() {
+        return String.format("PlaylistDTO{entries=%s}", entries);
     }
 
 }

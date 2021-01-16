@@ -69,12 +69,12 @@ class AudiobookMapperImpl implements AudiobookMapper {
             audiobook = createAudiobook(titelnummer, audiobookStreamResolver);
             // TODO Audiobook 'null' created
             if (null == audiobook) {
-                throw new IllegalStateException();
+                throw new IllegalStateException("Hörbuch '" + titelnummer + "' nicht gefunden");
             }
             LOGGER.debug("Audiobook '{}' created", audiobook.getIdentifier());
         } catch (AudiobookMapperException e) {
             audiobook = null;
-            LOGGER.error("", e);
+            LOGGER.error(String.format("Hörbuch '%s'", titelnummer), e);
         }
         return audiobook;
     }
@@ -104,13 +104,13 @@ class AudiobookMapperImpl implements AudiobookMapper {
             final List<Ref> refs = fromMasterSmil(audiobook, audiobookStreamResolver.masterSmilStream(titelnummer));
             for (final Ref ref : refs) {
                 final String filename = filenameFromSrc(ref);
-                final InputStream refStream = audiobookStreamResolver.trackAsStream(titelnummer, filename);
+                final InputStream refStream = audiobookStreamResolver.smilStream(titelnummer, filename);
                 audiobook.addAudiotrack(fromRef(titelnummer, ref, refStream));
             }
         } catch (ObjectStorageException e) {
             throw new AudiobookMapperException(e);
         } catch (AudiobookStreamResolverException | AudiobookMapperException e) {
-            LOGGER.error("", e);
+            LOGGER.error(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -210,7 +210,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
                                         final Audio audio = (Audio) seq2ContentElement.getValue();
                                         final Optional<Duration> maybeBegin = SmilTimeHelper.parse(audio.getClipBegin().substring(4));
                                         final Optional<Duration> maybeEnd = SmilTimeHelper.parse(audio.getClipEnd().substring(4));
-                                        if (maybeBegin.isEmpty()|| maybeEnd.isEmpty()) {
+                                        if (maybeBegin.isEmpty() || maybeEnd.isEmpty()) {
                                             LOGGER.warn("Hörbuch '{}' Track 'title={}/src={}' hat keinen Beginn {} oder Ende {}",
                                                     titelnummer, audiotrack.getTitle(), audiotrack.getSource(), maybeBegin, maybeEnd);
                                         }

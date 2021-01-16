@@ -78,7 +78,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         try {
             return bucketObjectStorage.listAllObjects(titelnummer);
         } catch (ObjectStorageException e) {
-            throw new AudiobookStreamResolverException("", e);
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -87,7 +87,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         try {
             return bucketObjectStorage.asStream(String.format("%sDAISY/ncc.html", titelnummer));
         } catch (ObjectStorageException e) {
-            throw new AudiobookStreamResolverException("", e);
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -96,7 +96,17 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         try {
             return bucketObjectStorage.asStream(String.format("%sDAISY/master.smil", titelnummer));
         } catch (ObjectStorageException e) {
-            throw new AudiobookStreamResolverException("", e);
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
+        }
+    }
+
+    @Override
+    public InputStream smilStream(/* TODO Mandantenspezifisch */final String titelnummer, final String smil) {
+        try {
+            final String filename = smil.endsWith(".smil") ? smil : String.format("%s.smil", smil);
+            return bucketObjectStorage.asStream(String.format("%sDAISY/%s", titelnummer, filename));
+        } catch (ObjectStorageException e) {
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -106,7 +116,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
             final String filename = ident.endsWith(".mp3") ? ident : String.format("%s.mp3", ident);
             return bucketObjectStorage.asStream(String.format("%sDAISY/%s", titelnummer, filename));
         } catch (ObjectStorageException e) {
-            throw new AudiobookStreamResolverException("", e);
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -115,7 +125,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
         try {
             return bucketObjectStorage.asZip(String.format("%sDAISY", titelnummer));
         } catch (ObjectStorageException e) {
-            throw new AudiobookStreamResolverException("", e);
+            throw new AudiobookStreamResolverException(String.format("Hörbuch '%s'", titelnummer), e);
         }
     }
 
@@ -183,7 +193,7 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
                 final long stop = System.nanoTime();
                 LOGGER.debug("Copyied {} to {} in {} ms", object, tempMp3, (stop - start) / 1_000_000L);
             } catch (IOException e) {
-                throw new AudiobookStreamResolverException("", e);
+                throw new AudiobookStreamResolverException(String.format("Hörbuch %s", titelnummer), e);
             }
         }
         return tempDirectory;

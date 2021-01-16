@@ -24,6 +24,8 @@ public interface AudiobookStreamResolver {
 
     InputStream masterSmilStream(/*TODO Mandantenspezifisch*/String titelnummer);
 
+    InputStream smilStream(/* TODO Mandantenspezifisch */ String titelnummer, String smil);
+
     InputStream trackAsStream(/*TODO Mandantenspezifisch*/String titelnummer, String ident);
 
     InputStream zipAsStream(/*TODO Mandantenspezifisch*/String titelnummer);
