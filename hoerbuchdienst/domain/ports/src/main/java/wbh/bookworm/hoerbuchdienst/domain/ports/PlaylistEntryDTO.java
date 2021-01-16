@@ -47,12 +47,14 @@ public final class PlaylistEntryDTO implements Serializable {
         return clips;
     }
 
-    public double getSeconds() {
-        return Arrays.stream(clips).mapToDouble(Double::doubleValue).sum();
+    public double getMilliseconds() {
+        return Arrays.stream(clips)
+                .mapToDouble(Double::doubleValue)
+                .sum();
     }
 
     public Duration getDuration() {
-        return Duration.of((long) (getSeconds() * 1_000), ChronoUnit.MILLIS);
+        return Duration.of((long) getMilliseconds(), ChronoUnit.MILLIS);
     }
 
     @Override

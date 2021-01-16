@@ -6,12 +6,14 @@
 
 package wbh.bookworm.hoerbuchdienst.domain.required.audiobookrepository;
 
+import java.io.Serial;
 import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
 
 public final class Audioclip implements Serializable {
 
+    @Serial
     private static final long serialVersionUID = -1L;
 
     private final String filename;

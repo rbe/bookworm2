@@ -28,6 +28,15 @@ class SmilTimeHelperTest {
     }
 
     @Test
+    void shouldParseHoursMinutesSeconds2() {
+        long secs = 16*60+55L;
+        //
+        Duration duration = SmilTimeHelper.parse("00:16:55").orElseThrow();
+        System.out.println(duration);
+        assertEquals(Duration.of(secs, ChronoUnit.SECONDS), duration);
+    }
+
+    @Test
     void shouldParseMinutesSeconds() {
         long secs = 10 + 5 * 60L;
         //
