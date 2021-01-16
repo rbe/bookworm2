@@ -39,17 +39,17 @@ server:
 logging:
   level:
     root: ERROR
-    wbh.bookworm.hoerbuchkatalog.assembly: INFO
+    wbh.bookworm.hoerbuchkatalog.assembly: ERROR
     wbh.bookworm.hoerbuchkatalog.webservice: INFO
     wbh.bookworm.hoerbuchkatalog.app: INFO
     wbh.bookworm.hoerbuchkatalog.repository: INFO
     wbh.bookworm.hoerbuchkatalog.domain: INFO
-    wbh.bookworm.hoerbuchkatalog: INFO
+    wbh.bookworm.hoerbuchkatalog: ERROR
     aoc.mikrokosmos: ERROR
     aoc.mikrokosmos.fs: ERROR
     aoc.mikrokosmos.ddd.event: ERROR
     aoc.mikrokosmos.ddd.repository: ERROR
-    aoc.mikrokosmos.ddd.search: ERROR
+    aoc.mikrokosmos.ddd.search: INFO
     eu.artofcoding: ERROR
     org.eclipse.jetty: ERROR
     org.springframework.web.servlet.handler: ERROR
