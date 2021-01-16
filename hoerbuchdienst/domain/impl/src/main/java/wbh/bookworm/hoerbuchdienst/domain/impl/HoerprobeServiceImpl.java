@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Random;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import wbh.bookworm.hoerbuchdienst.domain.ports.HoerprobeServiceException;
 import wbh.bookworm.hoerbuchdienst.domain.ports.KatalogService;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistDTO;
 import wbh.bookworm.hoerbuchdienst.domain.ports.PlaylistEntryDTO;
+
+import static java.util.function.Predicate.not;
 
 @Singleton
 public final class HoerprobeServiceImpl implements HoerprobeService {
@@ -51,11 +54,22 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
             "ende"
     };
 
+    private static final Predicate<PlaylistEntryDTO> nachNamePredicate = entry -> {
+        String str = "";
+        if (null != entry.getTitle()) {
+            str = entry.getTitle();
+        } else if (null != entry.getIdent()) {
+            str = entry.getIdent();
+        }
+        return List.of(MP3_IGNORIEREN).stream().anyMatch(not(str::contains));
+    };
+
+    private final Predicate<PlaylistEntryDTO> nachZeitPredicate = entry ->
+            entry.getDuration().toSeconds() > 10L && entry.getDuration().toMinutes() < 10L;
+
     private final KatalogService katalogService;
 
     private final AudiobookStreamService audiobookStreamService;
-
-    private final List<String> mp3Ignorieren = List.of(MP3_IGNORIEREN);
 
     @Inject
     public HoerprobeServiceImpl(final KatalogService katalogService,
@@ -67,8 +81,9 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     @Override
     public Optional<InputStream> makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
                                                        final String titelnummer) {
-        final String ident = ermittleHoerprobe(xHoerernummer, titelnummer);
-        if (null != ident && !ident.isBlank()) {
+        final Optional<String> maybeIdent = ermittleHoerprobe(xHoerernummer, titelnummer);
+        if (maybeIdent.isPresent()) {
+            final String ident = maybeIdent.get();
             LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}'", xHoerernummer, titelnummer, ident);
             try (final InputStream track = audiobookStreamService
                     .trackAsStream(xMandant, xHoerernummer, titelnummer, ident)) {
@@ -83,63 +98,54 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         }
     }
 
-    private String ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
-        String ident = "";
-        final Map<Boolean, List<PlaylistEntryDTO>> nachZeit = kandidatenNachZeit(titelnummer);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Zeit: '{}'",
-                xHoerernummer, titelnummer, nachZeit);
-        if (!nachZeit.isEmpty()) {
-            ident = zufaelligerIdent(nachZeit.get(true));
-        } else {
-            final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(titelnummer);
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}",
-                    xHoerernummer, titelnummer, nachName);
-            if (!nachName.isEmpty()) {
-                ident = zufaelligerIdent(nachName.get(false));
-            }
-        }
-        if (ident.isBlank()) {
-            final List<Path> playlist = katalogService.playlistFuerHoerprobe(titelnummer);
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, wähle zufälligen Kandidaten aus Playlist: {}",
-                    xHoerernummer, titelnummer, playlist);
-            final int index = Math.min(playlist.size(), 5);
-            if (playlist.size() - 1 >= index) {
-                ident = playlist.get(index).getFileName().toString();
-            }
-        }
-        return ident;
+    private Optional<String> ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
+        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
+        return zufaelligerIdent(kandidatenNachZeitUndName(playlist).get(true))
+                .or(() -> zufaelligerIdent(kandidatenNachZeit(playlist).get(true)))
+                .or(() -> zufaelligerIdent(kandidatenNachName(playlist).get(true)))
+                .or(() -> {
+                    final List<Path> mp3s = katalogService.playlistFuerHoerprobe(titelnummer);
+                    LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, wähle zufälligen Kandidaten aus Playlist: {}",
+                            xHoerernummer, titelnummer, mp3s);
+                    final int index = Math.min(mp3s.size(), new Random().nextInt(mp3s.size() - 1));
+                    if (mp3s.size() - 1 >= index) {
+                        return Optional.of(mp3s.get(index).getFileName().toString());
+                    }
+                    return Optional.empty();
+                });
     }
 
-    private String zufaelligerIdent(final List<PlaylistEntryDTO> playlistEntries) {
+    private Optional<String> zufaelligerIdent(final List<PlaylistEntryDTO> playlistEntries) {
         if (null != playlistEntries && playlistEntries.size() > 1) {
             int random = new Random().nextInt(playlistEntries.size() - 1);
-            return playlistEntries.get(random).getIdent();
+            return Optional.of(playlistEntries.get(random).getIdent());
         } else if (null != playlistEntries && playlistEntries.size() == 1) {
-            return playlistEntries.get(0).getIdent();
+            return Optional.of(playlistEntries.get(0).getIdent());
         } else {
-            return "";
+            return Optional.empty();
         }
     }
 
-    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final String titelnummer) {
-        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-        return playlist.getEntries().stream()
-                .collect(Collectors.partitioningBy(entry -> {
-                    String str = "";
-                    if (null != entry.getTitle()) {
-                        str = entry.getTitle();
-                    } else if (null != entry.getIdent()) {
-                        str = entry.getIdent();
-                    }
-                    return mp3Ignorieren.stream().anyMatch(str::contains);
-                }));
+    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachZeitUndName(final PlaylistDTO playlist) {
+        final Map<Boolean, List<PlaylistEntryDTO>> playlistEntries = playlist.getEntries().stream()
+                .collect(Collectors.partitioningBy(entry ->
+                        nachNamePredicate.test(entry) && nachZeitPredicate.test(entry)));
+        LOGGER.debug("Hörbuch '{}': Kandidaten für eine Hörprobe nach Zeit und Name: '{}'", playlist.getTitelnummer(), playlistEntries);
+        return playlistEntries;
     }
 
-    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachZeit(final String titelnummer) {
-        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-        return playlist.getEntries().stream()
-                .collect(Collectors.partitioningBy(entry ->
-                        entry.getDuration().toSeconds() > 10L && entry.getDuration().toMinutes() < 10));
+    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final PlaylistDTO playlist) {
+        final Map<Boolean, List<PlaylistEntryDTO>> playlistEntries = playlist.getEntries().stream()
+                .collect(Collectors.partitioningBy(nachNamePredicate));
+        LOGGER.debug("Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: '{}'", playlist.getTitelnummer(), playlistEntries);
+        return playlistEntries;
+    }
+
+    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachZeit(final PlaylistDTO playlist) {
+        final Map<Boolean, List<PlaylistEntryDTO>> playlistEntries = playlist.getEntries().stream()
+                .collect(Collectors.partitioningBy(nachZeitPredicate));
+        LOGGER.debug("Hörbuch '{}': Kandidaten für eine Hörprobe nach Zeit: '{}'", playlist.getTitelnummer(), playlistEntries);
+        return playlistEntries;
     }
 
 }
