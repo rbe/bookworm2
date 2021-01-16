@@ -51,7 +51,7 @@ rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
 echo "done"
 echo "Building Mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
-docker run \
+ret=$docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
@@ -60,8 +60,12 @@ docker run \
   -e MAVEN_OPTS="${MAVEN_OPTS}" \
   wbh-bookworm/builder:1 \
   ash -c "${MAVEN_INIT} && ${MAVEN_BUILD}" |
-  tee build-mikrokosmos.bookworm.log
+  tee build-mikrokosmos.bookworm.log)
 popd >/dev/null
+if [ ${ret} -gt 0 ]; then
+  echo "BUILD FAILED"
+  exit ${ret}
+fi
 echo "done"
 
 echo "Removing WBH Bookworm artifacts from local Maven cache"
@@ -82,6 +86,10 @@ ret=$(docker run \
   ash -c "${MAVEN_INIT} && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
   tee build-wbh.bookworm.log)
 popd >/dev/null
+if [ ${ret} -gt 0 ]; then
+  echo "BUILD FAILED"
+  exit ${ret}
+fi
 echo "done"
 
-exit ${ret}
+exit 0
