@@ -13,32 +13,33 @@ const STICHWORTSUCHE_URL = '/stichwortsuche.html';
 class WbhonlineSuchformular {
 
     suchformular() {
-        const forms = document.querySelectorAll('div[class="catalogsearch"]');
-        for (const form of forms) {
-            const button = form.querySelector('button[class*="search"]');
-            const enterListener = (event) => {
-                if (event.keyCode === 13) {
-                    event.preventDefault();
-                    button.click();
-                }
+        const button = document.querySelector('button#suchen');
+        const enterListener = (event) => {
+            if (event.keyCode === 13) {
+                event.preventDefault();
+                button.click();
+            }
+        };
+        const inputField = document.querySelector('input#stichwort');
+        if (undefined !== inputField && null !== inputField) {
+            inputField.addEventListener('keyup', enterListener);
+        }
+        const inputStartdatum = document.querySelector('input#startdatum');
+        if (undefined !== inputStartdatum && null !== inputStartdatum) {
+            inputStartdatum.addEventListener('keyup', enterListener);
+        }
+        if (undefined !== button && null !== button) {
+            const self = this;
+            const buttonListener = function (event) {
+                event.currentTarget.disabled = true;
+                const inputField = document.querySelector('input#stichwort');
+                const sachgebiete = document.querySelector('select#sachgebiet');
+                const einstelldatum = document.querySelector('input#einstelldatum');
+                const startdatum = document.querySelector('input#startdatum');
+                const url = self.erstelleUrl(inputField, sachgebiete, einstelldatum, startdatum);
+                window.location = url.toString();
             };
-            const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-            if (undefined !== inputField && null !== inputField) {
-                inputField.addEventListener('keyup', enterListener);
-            }
-            if (undefined !== button && null !== button) {
-                const self = this;
-                const buttonListener = function (event) {
-                    event.currentTarget.disabled = true;
-                    const inputField = form.querySelector('input[type="text"][class*="form-control"]');
-                    const sachgebiete = form.querySelector('select#sachgebiet');
-                    const einstelldatum = form.querySelector('input#einstelldatum');
-                    const startdatum = form.querySelector('input#startdatum');
-                    const url = self.erstelleUrl(inputField, sachgebiete, einstelldatum, startdatum);
-                    window.location = url.toString();
-                };
-                WbhonlineButtons.addMultiEventListener(button, 'click touchend', buttonListener);
-            }
+            WbhonlineButtons.addMultiEventListener(button, 'click touchend', buttonListener);
         }
     }
 
@@ -89,30 +90,14 @@ class WbhonlineSuchformular {
 
     zeigeSuchwerte() {
         const searchParams = new URLSearchParams(window.location.search);
-        document.title = 'WBH: Suche -';
         const stichwort = this.decode(searchParams.get('stichwort'));
-        if ('' !== stichwort) {
-            document.title += ' Stichwort: ' + stichwort;
-        }
         const sachgebiet = this.decode(searchParams.get('sachgebiet'));
-        if ('' !== sachgebiet) {
-            document.title += ' Sachgebiet: ' + sachgebiet;
-        }
         const einstelldatum = this.decode(searchParams.get('einstelldatum'));
-        if ('' !== einstelldatum) {
-            document.title += ' Einstelldatum: ' + einstelldatum;
-        }
         const startdatum = this.decode(searchParams.get('startdatum'));
-        if ('' !== startdatum) {
-            document.title += ' Startdatum: ' + startdatum;
-        }
-        const forms = document.querySelectorAll('div[class="catalogsearch"]');
-        for (const form of forms) {
-            this.setValue(form, 'input[type="text"][class="form-control"]', stichwort);
-            this.setValue(form, 'select#sachgebiet', sachgebiet);
-            this.setValue(form, 'input#einstelldatum', einstelldatum);
-            this.setValue(form, 'input#startdatum', startdatum);
-        }
+        this.setValue(document, 'input#stichwort', stichwort);
+        this.setValue(document, 'select#sachgebiet', sachgebiet);
+        this.setValue(document, 'input#einstelldatum', einstelldatum);
+        this.setValue(document, 'input#startdatum', startdatum);
     }
 
     decode(val, def = '') {
