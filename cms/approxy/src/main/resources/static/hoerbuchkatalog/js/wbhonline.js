@@ -11,6 +11,7 @@ import {WbhonlineWarenkorb} from "./wbhonlineWarenkorb.js";
 import {WbhonlineCdBestellung} from "./wbhonlineCdBestellung.js";
 import {WbhonlineDownloads} from "./wbhonlineDownloads.js";
 import {WbhonlineHoerprobe} from "./wbhonlineHoerprobe.js";
+import {WbhonlineA11y} from "./wbhonlineA11y.js";
 
 export class Wbhonline {
 
@@ -20,6 +21,8 @@ export class Wbhonline {
         const cdBestellung = new WbhonlineCdBestellung();
         const download = new WbhonlineDownloads();
         const hoerprobe = new WbhonlineHoerprobe();
+        const a11y = new WbhonlineA11y();
+        a11y.setupAccesskeys();
     }
 
 }

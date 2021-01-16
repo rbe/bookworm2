@@ -8,7 +8,19 @@
 
 export class WbhonlineA11y {
 
-    alert(element) {
+    fireAccesskey(element) {
+        element.addEventListener('click', (event) => {
+            event.preventDefault();
+            element.scrollIntoViewIfNeeded();
+            element.focus();
+        });
+    }
+
+    setupAccesskeys() {
+        const elements = document.querySelectorAll('a[accesskey]');
+        for (const elt of elements) {
+            this.fireAccesskey(elt);
+        }
     }
 
 }
