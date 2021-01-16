@@ -84,11 +84,12 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     public Optional<InputStream> fetchOrderAsStream(final String orderId) {
         final Optional<Path> maybeDaisyZip = fetchOrderAsFile(orderId);
         if (maybeDaisyZip.isPresent()) {
+            LOGGER.info("Bestellung '{}' wird abgeholt", orderId);
             try {
                 final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(maybeDaisyZip.get());
                 return Optional.of(Channels.newInputStream(byteChannel));
             } catch (IOException e) {
-                LOGGER.error("", e);
+                LOGGER.error(String.format("Bestellung '%s'", orderId), e);
             }
         } else {
             LOGGER.error("Bestellung '{}' existiert nicht", orderId);
@@ -102,11 +103,9 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
         final boolean orderExists = orderStatus.containsKey(orderId)
                 && Files.exists(daisyZip);
         if (orderExists) {
-            LOGGER.info("Bestellung '{}' wird abgeholt", orderId);
             orderStatus.remove(orderId);
             return Optional.of(daisyZip);
         } else {
-            LOGGER.warn("Bestellung '{}' existiert nicht", orderId);
             return Optional.empty();
         }
     }

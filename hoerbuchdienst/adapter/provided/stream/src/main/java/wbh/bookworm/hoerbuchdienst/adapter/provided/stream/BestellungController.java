@@ -173,7 +173,7 @@ public class BestellungController {
                     lastModified, contentLength)
                     .attach(String.format("%s-%s.zip", titelnummer, titel));
         }
-        throw new BusinessException(String.format("Bestellung %s: Hörbuch %s nicht gefunden", orderId, titelnummer));
+        throw new BusinessException(String.format("Bestellung '%s' zu Hörbuch '%s' nicht gefunden", orderId, titelnummer));
     }
 
     private ZoneOffset berlinZoneOffset(final Instant instant) {
