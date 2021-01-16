@@ -161,7 +161,7 @@ export class BookwormRestClient {
     //
 
     downloadErlaubt(titelnummer) {
-        const url = new URL('/hoerbuchkatalog/v1/downloads/erlaubt', HOERBUCHKATALOG_URL);
+        const url = new URL('/hoerbuchkatalog/v1/downloads/' + titelnummer + '/erlaubt', HOERBUCHKATALOG_URL);
         return fetch(url.toString(), {
             'method': 'GET',
             'headers': {
@@ -220,7 +220,7 @@ export class BookwormRestClient {
                         })
                         .catch(reason => {
                             console.log('Fehler: ' + reason);
-                            if (undefined !== downloadFertigCallback&& null !== downloadFertigCallback) {
+                            if (undefined !== downloadFertigCallback && null !== downloadFertigCallback) {
                                 downloadFertigCallback(element);
                             }
                         });
