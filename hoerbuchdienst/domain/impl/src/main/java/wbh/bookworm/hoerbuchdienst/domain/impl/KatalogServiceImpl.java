@@ -85,7 +85,7 @@ class KatalogServiceImpl implements KatalogService {
     public PlaylistDTO playlist(final String titelnummer) {
         final Audiobook audiobook = audiobookRepository.find(titelnummer);
         if (null == audiobook) {
-            throw new IllegalStateException("Hörbuch nicht gefunden");
+            throw new IllegalStateException("Hörbuch '" + titelnummer + "' nicht gefunden");
         }
         final PlaylistDTO playlistDTO = new PlaylistDTO();
         final List<PlaylistEntryDTO> playlistEntries = audiobook.getAudiotracks()
@@ -96,13 +96,15 @@ class KatalogServiceImpl implements KatalogService {
                             .map(clip -> clip.getBegin().toMillis() / 1_000.0d)
                             .collect(Collectors.toUnmodifiableList())
                             .toArray(Double[]::new);
-                    return new PlaylistEntryDTO(t.getTitle(),
+                    final PlaylistEntryDTO playlistEntryDTO = new PlaylistEntryDTO(t.getTitle(),
                             t.getAudioclips()[0].getFilename(),
                             clips);
+                    LOGGER.debug("{}", playlistEntryDTO);
+                    return playlistEntryDTO;
                 })
                 .collect(Collectors.toUnmodifiableList());
         playlistDTO.addAll(playlistEntries);
-        LOGGER.debug("Hörbuch '{}': Playlist erstellt", titelnummer);
+        LOGGER.debug("Hörbuch '{}': Playlist erstellt: {}", titelnummer, playlistDTO);
         applicationEventPublisher.publishEvent(new PlaylistCreatedEvent());
         return playlistDTO;
     }

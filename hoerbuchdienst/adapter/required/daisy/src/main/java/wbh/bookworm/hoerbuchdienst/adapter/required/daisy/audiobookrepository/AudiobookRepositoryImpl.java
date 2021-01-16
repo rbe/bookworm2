@@ -167,7 +167,7 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     public List<Path> findMp3s(final String titelnummer) {
         return audiobookStreamResolver.list(titelnummer + "DAISY")
                 .stream()
-                .filter(path -> path.getFileName().endsWith(".mp3"))
+                .filter(path -> path.getFileName().toString().endsWith(".mp3"))
                 .collect(Collectors.toUnmodifiableList());
     }
 

@@ -85,11 +85,11 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
 
     private String ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
         final List<PlaylistEntryDTO> nachZeit = kandidatenNachZeit(titelnummer);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidat für eine Hörprobe nach Zeit: '{}'",
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Zeit: '{}'",
                 xHoerernummer, titelnummer, nachZeit);
         final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(nachZeit);
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}",
-                nachName, xHoerernummer, titelnummer);
+                xHoerernummer, titelnummer, nachName);
         String ident = zufaelligerIdent(nachName.get(false));
         if (ident.isBlank()) {
             final List<Path> playlist = katalogService.playlistFuerHoerprobe(titelnummer);
