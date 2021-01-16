@@ -60,8 +60,13 @@ export class WbhonlineButtons {
         i.style.pointerEvents = '';
     }
 
-    static addMultiEventListener(elt, events, fn) {
-        events.split(' ').forEach(event => elt.addEventListener(event, fn, false));
+    static addMultiEventListener(elt, events, fn = null) {
+        events.split(' ').forEach(event => elt.addEventListener(event, (e) => {
+            e.preventDefault();
+            if (null != fn) {
+                fn(e);
+            }
+        }, false));
     }
 
 }
