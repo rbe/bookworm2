@@ -97,6 +97,17 @@ class LocalDiskAudiobookStreamResolverImpl implements AudiobookStreamResolver {
     }
 
     @Override
+    public InputStream smilStream(final String titelnummer, final String smil) {
+        try {
+            return Files.newInputStream(audiobookDirectory
+                    .resolve(String.format("%sDAISY", titelnummer))
+                    .resolve(String.format("%s.smil", smil)));
+        } catch (IOException e) {
+            throw new AudiobookStreamResolverException("", e);
+        }
+    }
+
+    @Override
     public InputStream trackAsStream(final String titelnummer, final String ident) {
         try {
             return Files.newInputStream(audiobookDirectory
