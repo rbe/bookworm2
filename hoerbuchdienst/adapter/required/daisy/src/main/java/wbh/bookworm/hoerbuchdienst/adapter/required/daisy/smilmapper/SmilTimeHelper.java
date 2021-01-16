@@ -8,7 +8,11 @@ package wbh.bookworm.hoerbuchdienst.adapter.required.daisy.smilmapper;
 
 import java.time.Duration;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,27 +25,43 @@ final class SmilTimeHelper {
         throw new AssertionError();
     }
 
-    static Optional<Duration> parseClipNpt(final String clip) {
-        if (null != clip && !clip.isBlank()) {
-            try {
-                return Optional.of(Duration.parse(String.format("PT%sS", clip.substring(4, clip.length() - 1))));
-            } catch (DateTimeParseException e) {
-                LOGGER.warn("Kann {} nicht parsen", clip);
-            }
-        }
-        return Optional.empty();
+    private static long countColons(final String str) {
+        return str.chars()
+                .filter(i -> Objects.equals((int) ':', i))
+                .count();
     }
 
-    static Optional<Duration> parseDuration(final String content) {
-        if (null != content && !content.isBlank()) {
-            try {
-                return Optional.of(Duration.parse(String.format("PT%sH%sM%sS",
-                        content.substring(0, 2), content.substring(3, 5), content.substring(6))));
-            } catch (DateTimeParseException e) {
-                LOGGER.warn("Kann {} nicht parsen", content);
+    private static Stream<Integer[]> strsBetweenColons(final String str) {
+        final List<Integer[]> list = new ArrayList<>();
+        int lastPos = 0;
+        int pos = str.indexOf(':');
+        if (-1 < pos) {
+            while (-1 < pos) {
+                list.add(new Integer[]{lastPos, pos});
+                lastPos = pos + 1;
+                pos = str.indexOf(':', pos + 1);
             }
+            list.add(new Integer[]{lastPos, str.length()});
+            return list.stream();
         }
-        return Optional.empty();
+        return Stream.empty();
+    }
+
+    static Optional<Duration> parse(final String str) {
+        final Object[] strs = strsBetweenColons(str)
+                .map(a -> str.substring(a[0], a[1]))
+                .toArray(Object[]::new);
+        try {
+            return switch ((int) countColons(str)) {
+                case 0 -> Optional.of(Duration.parse(String.format("PT%sS", strs)));
+                case 1 -> Optional.of(Duration.parse(String.format("PT%sM%sS", strs)));
+                case 2 -> Optional.of(Duration.parse(String.format("PT%sH%sM%sS", strs)));
+                default -> throw new IllegalStateException("Unexpected value: " + (int) countColons(str));
+            };
+        } catch (DateTimeParseException e) {
+            LOGGER.warn("Kann Dauer '{}' nicht parsen", str);
+            return Optional.empty();
+        }
     }
 
 }

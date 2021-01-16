@@ -97,7 +97,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
         }
     }
 
-    private void read(Audiobook audiobook) {
+    private void read(final Audiobook audiobook) {
         final String titelnummer = audiobook.getTitelnummer();
         try {
             fromNcc(audiobook, audiobookStreamResolver.nccHtmlStream(titelnummer));
@@ -112,7 +112,6 @@ class AudiobookMapperImpl implements AudiobookMapper {
         } catch (AudiobookStreamResolverException | AudiobookMapperException e) {
             LOGGER.error("", e);
         }
-
     }
 
     String filenameFromSrc(final Ref ref) {
@@ -131,7 +130,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
         audiobook.setAuthor(nccReader.get(NccReader.Field.CREATOR));
         audiobook.setLanguage(nccReader.get(NccReader.Field.LANGUAGE));
         final String nccTotalTime = nccReader.get(NccReader.Field.TOTAL_TIME);
-        final Optional<Duration> maybeTotalTime = SmilTimeHelper.parseDuration(nccTotalTime);
+        final Optional<Duration> maybeTotalTime = SmilTimeHelper.parse(nccTotalTime);
         if (maybeTotalTime.isPresent()) {
             audiobook.setTotalTime(maybeTotalTime.get());
         } else {
@@ -169,7 +168,7 @@ class AudiobookMapperImpl implements AudiobookMapper {
                 switch (meta.getName()) {
                     case "dc:identifier" -> audiobook.setIdentifier(meta.getContent());
                     case "dc:title" -> audiobook.setTitle(meta.getContent());
-                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parseDuration(meta.getContent()).ifPresent(audiobook::setTimeInThisSmil);
+                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parse(meta.getContent()).ifPresent(audiobook::setTimeInThisSmil);
                 }
             }
         }
@@ -190,8 +189,8 @@ class AudiobookMapperImpl implements AudiobookMapper {
             if (Meta.class.isAssignableFrom(headContentObj.getClass())) {
                 final Meta nlztMeta = (Meta) headContentObj;
                 switch (nlztMeta.getName()) {
-                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTimeInThisSmil);
-                    case "ncc:totalElapsedTime" -> SmilTimeHelper.parseDuration(nlztMeta.getContent()).ifPresent(audiotrack::setTotalTimeElapsed);
+                    case "ncc:timeInThisSmil" -> SmilTimeHelper.parse(nlztMeta.getContent()).ifPresent(audiotrack::setTimeInThisSmil);
+                    case "ncc:totalElapsedTime" -> SmilTimeHelper.parse(nlztMeta.getContent()).ifPresent(audiotrack::setTotalTimeElapsed);
                     case "title" -> audiotrack.setTitle(nlztMeta.getContent());
                     // ignore default -> throw new IllegalStateException("Unexpected value: " + nlztMeta.getName());
                 }
@@ -209,8 +208,8 @@ class AudiobookMapperImpl implements AudiobookMapper {
                                 for (final JAXBElement<?> seq2ContentElement : seq2.getSeqContent()) {
                                     if (seq2ContentElement.getName().getLocalPart().equals("audio")) {
                                         final Audio audio = (Audio) seq2ContentElement.getValue();
-                                        final Optional<Duration> maybeBegin = SmilTimeHelper.parseClipNpt(audio.getClipBegin());
-                                        final Optional<Duration> maybeEnd = SmilTimeHelper.parseClipNpt(audio.getClipEnd());
+                                        final Optional<Duration> maybeBegin = SmilTimeHelper.parse(audio.getClipBegin());
+                                        final Optional<Duration> maybeEnd = SmilTimeHelper.parse(audio.getClipEnd());
                                         if (maybeBegin.isEmpty()|| maybeEnd.isEmpty()) {
                                             LOGGER.warn("Hörbuch '{}' Track 'title={}/src={}' hat keinen Beginn {} oder Ende {}",
                                                     titelnummer, audiotrack.getTitle(), audiotrack.getSource(), maybeBegin, maybeEnd);
