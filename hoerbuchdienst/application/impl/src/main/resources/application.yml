@@ -67,21 +67,3 @@ rabbitmq:
   servers:
     default:
       automatic-recovery-enabled: true
-
-logger:
-  levels:
-    root: ERROR
-    wbh.bookworm.hoerbuchdienst: ERROR
-    io.micronaut.web.router: ERROR
-    io.micronaut.web: ERROR
-    io.micronaut.http.server: ERROR
-    io.micronaut.http: ERROR
-    io.micronaut.scheduling: ERROR
-    io.micronaut.rabbitmq: ERROR
-    io.micronaut.context.condition: ERROR
-    io.micronaut.context.env: ERROR
-    io.micronaut.context: ERROR
-    io.micronaut.core.reflect: ERROR
-    io.micronaut.core: ERROR
-    io.micronaut: ERROR
-    io.netty: ERROR

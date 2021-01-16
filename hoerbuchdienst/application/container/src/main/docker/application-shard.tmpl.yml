@@ -12,3 +12,26 @@ objectstorage:
     url: http://minio:9000
     access_key:
     secure_key:
+
+logger:
+  levels:
+    root: ERROR
+    wbh.bookworm.hoerbuchdienst.adapter.provided.katalog: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.provided.sharding: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.provided.stream: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.required.daisy: INFO
+    wbh.bookworm.hoerbuchdienst.adapter.required.watermark: INFO
+    wbh.bookworm.hoerbuchdienst: INFO
+    io.micronaut.web.router: ERROR
+    io.micronaut.web: ERROR
+    io.micronaut.http.server: ERROR
+    io.micronaut.http: ERROR
+    io.micronaut.scheduling: ERROR
+    io.micronaut.rabbitmq: ERROR
+    io.micronaut.context.condition: ERROR
+    io.micronaut.context.env: ERROR
+    io.micronaut.context: ERROR
+    io.micronaut.core.reflect: ERROR
+    io.micronaut.core: ERROR
+    io.micronaut: ERROR
+    io.netty: ERROR
