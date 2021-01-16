@@ -84,13 +84,13 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     @Override
     public Optional<InputStream> makeHoerprobeAsStream(final String xMandant, final String xHoerernummer,
                                                        final String titelnummer) {
-        final Optional<String> maybeIdent = ermittleHoerprobe(xHoerernummer, titelnummer);
+        final Optional<PlaylistEntryDTO> maybeIdent = ermittleHoerprobe(xHoerernummer, titelnummer);
         if (maybeIdent.isPresent()) {
-            final String ident = maybeIdent.get();
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}'", xHoerernummer, titelnummer, ident);
+            final PlaylistEntryDTO playlistEntry = maybeIdent.get();
+            LOGGER.debug("Hörer '{}' Hörbuch '{}': Erstelle Hörprobe '{}'", xHoerernummer, titelnummer, playlistEntry);
             try (final InputStream track = audiobookStreamService
-                    .trackAsStream(xMandant, xHoerernummer, titelnummer, ident)) {
-                LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' erstellt", xHoerernummer, titelnummer, ident);
+                    .trackAsStream(xMandant, xHoerernummer, titelnummer, playlistEntry.getIdent())) {
+                LOGGER.info("Hörer '{}' Hörbuch '{}': Hörprobe '{}' erstellt", xHoerernummer, titelnummer, playlistEntry);
                 return Optional.of(track);
             } catch (Exception e) {
                 throw new HoerprobeServiceException(String.format("Hörbuch '%s'", titelnummer), e);
@@ -101,29 +101,30 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         }
     }
 
-    private Optional<String> ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
+    private Optional<PlaylistEntryDTO> ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
-        return zufaelligerIdent(kandidatenNachZeitUndName(playlist).get(true))
-                .or(() -> zufaelligerIdent(kandidatenNachZeit(playlist).get(true)))
-                .or(() -> zufaelligerIdent(kandidatenNachName(playlist).get(true)))
+        return zufaellig(kandidatenNachZeitUndName(playlist).get(true))
+                .or(() -> zufaellig(kandidatenNachZeit(playlist).get(true)))
+                .or(() -> zufaellig(kandidatenNachName(playlist).get(true)))
                 .or(() -> {
                     final List<Path> mp3s = katalogService.playlistFuerHoerprobe(titelnummer);
                     LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, wähle zufälligen Kandidaten aus Playlist: {}",
                             xHoerernummer, titelnummer, mp3s);
                     final int index = Math.min(mp3s.size(), new Random().nextInt(mp3s.size() - 1));
                     if (mp3s.size() - 1 >= index) {
-                        return Optional.of(mp3s.get(index).getFileName().toString());
+                        final String t = mp3s.get(index).getFileName().toString();
+                        return Optional.of(new PlaylistEntryDTO(t, t));
                     }
                     return Optional.empty();
                 });
     }
 
-    private Optional<String> zufaelligerIdent(final List<PlaylistEntryDTO> playlistEntries) {
+    private Optional<PlaylistEntryDTO> zufaellig(final List<PlaylistEntryDTO> playlistEntries) {
         if (null != playlistEntries && playlistEntries.size() > 1) {
             int random = new Random().nextInt(playlistEntries.size() - 1);
-            return Optional.of(playlistEntries.get(random).getIdent());
+            return Optional.of(playlistEntries.get(random));
         } else if (null != playlistEntries && playlistEntries.size() == 1) {
-            return Optional.of(playlistEntries.get(0).getIdent());
+            return Optional.of(playlistEntries.get(0));
         } else {
             return Optional.empty();
         }
