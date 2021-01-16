@@ -70,7 +70,7 @@ echo "done"
 HOSTNAME="$(hostname -f)"
 echo "Building WBH Bookworm for ${HOSTNAME}"
 pushd "${execdir}" >/dev/null
-docker run \
+ret=$(docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
@@ -80,8 +80,8 @@ docker run \
   -Ddomain=${HOSTNAME}" \
   wbh-bookworm/builder:1 \
   ash -c "${MAVEN_INIT} && mvn ${MAVEN_CMD_LINE_ARGS} -P bookworm.docker.${env} clean install" |
-  tee build-wbh.bookworm.log
+  tee build-wbh.bookworm.log)
 popd >/dev/null
 echo "done"
 
-exit 0
+exit ${ret}
