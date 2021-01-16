@@ -61,7 +61,9 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         } else if (null != entry.getIdent()) {
             str = entry.getIdent();
         }
-        return List.of(MP3_IGNORIEREN).stream().anyMatch(not(str::contains));
+        str = str.toLowerCase();
+        return List.of(MP3_IGNORIEREN).stream()
+                .anyMatch(not(str::contains));
     };
 
     private final Predicate<PlaylistEntryDTO> nachZeitPredicate = entry ->
