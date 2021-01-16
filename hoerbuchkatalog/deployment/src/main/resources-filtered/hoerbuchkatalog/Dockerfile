@@ -27,6 +27,7 @@ COPY --chown=service application-production.yml /var/local/
 COPY --chown=service application-secrets.tmpl.yml /var/local/application-secrets.yml
 RUN /usr/local/bin/perms.sh
 USER service:service
+RUN echo "* */10 * * * /usr/local/bin/cleanup.sh" | crontab -
 VOLUME ["/var/local"]
 WORKDIR /var/local
 EXPOSE 8080/tcp 5005/tcp
