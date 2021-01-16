@@ -56,7 +56,7 @@ final class HttpClient
             $preCallback($ch);
         }
 
-        restBridgeDebugLog(sprintf("GET %s\n", $url));
+        restBridgeDebugLog(sprintf("GET %s", $url));
         if ($this->debug) {
             curl_setopt($ch, CURLOPT_VERBOSE, true);
         }
@@ -67,6 +67,8 @@ final class HttpClient
 
         $info = $this->responseInfo($ch);
         curl_close($ch);
+        restBridgeDebugLog(sprintf("GET %s, HTTP response: %s",
+            print_r($responseBody, true), $url));
         return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpGET()
