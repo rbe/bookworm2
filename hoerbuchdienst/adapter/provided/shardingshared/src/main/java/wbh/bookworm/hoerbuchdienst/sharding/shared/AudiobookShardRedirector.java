@@ -33,15 +33,16 @@ public final class AudiobookShardRedirector {
                                                    final Function<? super T, ? extends HttpResponse<T>> httpResponseSupplier,
                                                    final String serviceUri,
                                                    final HttpRequest<?> httpRequest) {
-        final HttpResponse<T> result;
+        final HttpResponse<T> response;
         final boolean locatedLocal = audiobookLocationService.isLocatedLocal(titelnummer);
         if (locatedLocal) {
             final T audiobook = audiobookSupplier.get();
-            result = httpResponseSupplier.apply(audiobook);
+            response = httpResponseSupplier.apply(audiobook);
+            LOGGER.debug("Http Response Headers: {}", response.getHeaders().asMap());
         } else {
-            result = (HttpResponse<T>) tryRedirectToOwningShard(titelnummer, serviceUri, httpRequest);
+            response = (HttpResponse<T>) tryRedirectToOwningShard(titelnummer, serviceUri, httpRequest);
         }
-        return result;
+        return response;
     }
 
     private HttpResponse<String> tryRedirectToOwningShard(final String objectId,
