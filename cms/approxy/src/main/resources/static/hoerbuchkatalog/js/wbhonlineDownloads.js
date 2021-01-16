@@ -57,11 +57,13 @@ export class WbhonlineDownloads {
 
     nichtVerfuegbar(downloadButton) {
         this.buttons.setTitle(downloadButton, 'Hörbuch nicht als Download verfügbar');
+        WbhonlineButtons.addMultiEventListener(downloadButton, 'click touchstart');
     }
 
     nichtMoeglich(downloadButton) {
-        //downloadButton.href = LIMIT_UEBERSCHRITTEN_HTML;
+        downloadButton.classList.remove('order-download-true', 'order-download-false');
         this.buttons.setTitle(downloadButton, 'Sie haben die maximale Anzahl an Downloads erreicht!');
+        WbhonlineButtons.addMultiEventListener(downloadButton, 'click touchstart');
     }
 
     nichtEingeloggt(downloadButton) {
