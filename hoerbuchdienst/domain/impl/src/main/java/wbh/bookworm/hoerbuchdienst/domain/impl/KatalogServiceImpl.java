@@ -109,7 +109,7 @@ class KatalogServiceImpl implements KatalogService {
 
     @Override
     public List<Path> playlistFuerHoerprobe(final String titelnummer) {
-        return audiobookRepository.findFilenames(titelnummer);
+        return audiobookRepository.findMp3s(titelnummer);
     }
 
     // TODO Automatisieren; hier nur für Testzwecke

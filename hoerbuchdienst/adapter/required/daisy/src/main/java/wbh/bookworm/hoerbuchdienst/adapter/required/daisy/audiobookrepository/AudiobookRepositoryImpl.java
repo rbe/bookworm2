@@ -109,7 +109,7 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
                 () -> {
                     final Audiobook audiobook = audiobookMapper.audiobook(titelnummer);
                     if (null == audiobook) {
-                        throw new AudiobookRepositoryException(String.format("Hörbuch %s nicht gefunden", titelnummer));
+                        throw new AudiobookRepositoryException(String.format("Hörbuch '%s' nicht gefunden", titelnummer));
                     } else {
                         return audiobook;
                     }
@@ -121,19 +121,22 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     public Path trackAsFile(final String hoerernummer, final String titelnummer, final String ident) {
         return whileServicing("trackAsFile",
                 () -> {
-                    final String tempId = String.format("%sDAISY-%s-%s.mp3", titelnummer, ident, UUID.randomUUID());
-                    final Path tempMp3File = temporaryDirectory.resolve(hoerernummer).resolve(tempId);
+                    final String tempId = String.format("%s-%sDAISY-%s-%s.mp3", hoerernummer, titelnummer, UUID.randomUUID(), ident);
+                    final Path tempMp3File = temporaryDirectory.resolve(tempId);
                     try {
                         Files.createDirectories(tempMp3File.getParent());
                     } catch (IOException e) {
-                        throw new AudiobookRepositoryException("", e);
+                        final String message = String.format("Hörer '%s' Hörbuch '%s': %s",
+                                hoerernummer, titelnummer, tempMp3File.getParent().toAbsolutePath().toString());
+                        throw new AudiobookRepositoryException(message, e);
                     }
                     try (final InputStream trackAsStream = trackAsStream(titelnummer, ident);
                          final OutputStream tempMp3Stream = Files.newOutputStream(tempMp3File, StandardOpenOption.CREATE)) {
                         trackAsStream.transferTo(tempMp3Stream);
                         return tempMp3File;
                     } catch (IOException e) {
-                        throw new AudiobookRepositoryException("", e);
+                        final String message = String.format("Hörer '%s' Hörbuch '%s'", hoerernummer, titelnummer);
+                        throw new AudiobookRepositoryException(message, e);
                     }
                 },
                 () -> null);
@@ -142,7 +145,7 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     @Override
     public InputStream trackAsStream(final String titelnummer, final String ident) {
         return whileServicing("trackAsStream",
-                () -> audiobookStreamResolver.trackAsStream(titelnummer, ident),
+                () -> audiobookStreamResolver.trackAsStream(titelnummer, String.format("%s.mp3", ident)),
                 () -> null);
     }
 
@@ -161,8 +164,11 @@ final class AudiobookRepositoryImpl implements AudiobookRepository {
     }
 
     @Override
-    public List<Path> findFilenames(final String titelnummer) {
-        return audiobookStreamResolver.list(titelnummer + "DAISY");
+    public List<Path> findMp3s(final String titelnummer) {
+        return audiobookStreamResolver.list(titelnummer + "DAISY")
+                .stream()
+                .filter(path -> path.getFileName().endsWith(".mp3"))
+                .collect(Collectors.toUnmodifiableList());
     }
 
 }

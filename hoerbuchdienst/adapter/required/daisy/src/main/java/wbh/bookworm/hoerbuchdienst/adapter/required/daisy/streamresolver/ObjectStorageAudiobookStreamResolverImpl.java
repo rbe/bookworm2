@@ -103,7 +103,8 @@ class ObjectStorageAudiobookStreamResolverImpl implements AudiobookStreamResolve
     @Override
     public InputStream trackAsStream(/* TODO Mandantenspezifisch */final String titelnummer, final String ident) {
         try {
-            return bucketObjectStorage.asStream(String.format("%sDAISY/%s", titelnummer, ident));
+            final String filename = ident.endsWith(".mp3") ? ident : String.format("%s.mp3", ident);
+            return bucketObjectStorage.asStream(String.format("%sDAISY/%s", titelnummer, filename));
         } catch (ObjectStorageException e) {
             throw new AudiobookStreamResolverException("", e);
         }

@@ -85,12 +85,16 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
 
     private String ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
         final List<PlaylistEntryDTO> nachZeit = kandidatenNachZeit(titelnummer);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidat für eine Hörprobe nach Zeit: '{}'", xHoerernummer, titelnummer, nachZeit);
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidat für eine Hörprobe nach Zeit: '{}'",
+                xHoerernummer, titelnummer, nachZeit);
         final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(nachZeit);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}", nachName, xHoerernummer, titelnummer);
+        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}",
+                nachName, xHoerernummer, titelnummer);
         String ident = zufaelligerIdent(nachName.get(false));
         if (ident.isBlank()) {
             final List<Path> playlist = katalogService.playlistFuerHoerprobe(titelnummer);
+            LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, Playlist für Hörprobe: {}",
+                    xHoerernummer, titelnummer, playlist);
             final int index = Math.min(playlist.size(), 5);
             if (playlist.size() - 1 >= index) {
                 ident = playlist.get(index).getFileName().toString();
