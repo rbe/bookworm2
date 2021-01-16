@@ -1,0 +1,185 @@
+{
+	"info": {
+		"_postman_id": "886ebac5-83b8-4b22-8f9d-fcb08350b0d0",
+		"name": "Hörbuchkatalog V1 II",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Katalog",
+			"item": [
+				{
+					"name": "Stichwortsuche - Autor Elke Große-Woestmann",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/Elke%20Gro%C3%9Fe-Woestmann",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Elke%20Gro%C3%9Fe-Woestmann"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Stichwortsuche - Autor mit Komma",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/Gro%C3%9Fe-Woestmann%2C%20Elke",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"Gro%C3%9Fe-Woestmann%2C%20Elke"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Downloads",
+			"item": [
+				{
+					"name": "Downloads filtern",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/datumab/2010-01-01/stichwort/Adams",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"datumab",
+								"2010-01-01",
+								"stichwort",
+								"Adams"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Hoerbuchkatalog_V1",
+			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+		},
+		{
+			"key": "SessionURL",
+			"value": "{{Hoerbuchkatalog_V1}}/session"
+		},
+		{
+			"key": "KatalogURL",
+			"value": "{{Hoerbuchkatalog_V1}}/katalog"
+		},
+		{
+			"key": "MerklisteURL",
+			"value": "{{Hoerbuchkatalog_V1}}/merkliste"
+		},
+		{
+			"key": "WarenkorbURL",
+			"value": "{{Hoerbuchkatalog_V1}}/warenkorb"
+		},
+		{
+			"key": "DownloadsURL",
+			"value": "{{Hoerbuchkatalog_V1}}/downloads"
+		},
+		{
+			"key": "HoererdatenURL",
+			"value": "{{Hoerbuchkatalog_V1}}/hoererdaten"
+		},
+		{
+			"key": "HoererarchivURL",
+			"value": "{{Hoerbuchkatalog_V1}}/hoererarchiv"
+		},
+		{
+			"key": "Titelnummer",
+			"value": "21052"
+		},
+		{
+			"key": "PrivateStatistikURL",
+			"value": "{{Hoerbuchkatalog_V1}}/private/statistik"
+		}
+	]
+}

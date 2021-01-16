@@ -1,0 +1,99 @@
+{
+	"info": {
+		"_postman_id": "4d0e0c5a-24c5-4a3d-b133-181e826b6ffb",
+		"name": "Hörbuchkatalog V1 WBH Admin",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Statistik",
+			"item": [
+				{
+					"name": "Download-Archiv abrufen",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{PrivateStatistikURL}}/webhoer-20210104.csv",
+							"host": [
+								"{{PrivateStatistikURL}}"
+							],
+							"path": [
+								"webhoer-20210104.csv"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Hörer",
+			"item": [
+				{
+					"name": "Hörer freiputzen -- Download entfernen",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"value": "{{Mandant}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"value": "",
+								"description": "Biite hier die Hörernummer eintragen!",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{PrivateHoereradminURL}}/freiputzen",
+							"host": [
+								"{{PrivateHoereradminURL}}"
+							],
+							"path": [
+								"freiputzen"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "Hoerbuchkatalog_V1",
+			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+		},
+		{
+			"key": "PrivateStatistikURL",
+			"value": "{{Hoerbuchkatalog_V1}}/private/statistik"
+		},
+		{
+			"key": "PrivateHoereradminURL",
+			"value": "{{Hoerbuchkatalog_V1}}/private/hoereradmin"
+		}
+	]
+}
