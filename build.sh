@@ -51,7 +51,7 @@ rm -rf "${MAVEN_REPO}/aoc/mikrokosmos"
 echo "done"
 echo "Building Mikrokosmos"
 pushd "${execdir}"/../mikrokosmos >/dev/null
-ret=$docker run \
+ret=$(docker run \
   --rm \
   --name maven \
   --mount type=bind,source=/var/run/docker.sock,destination=/var/run/docker.sock \
