@@ -25,7 +25,6 @@ ARG JAR_FILE
 COPY --chown=service target/dependency/${JAR_FILE} /usr/local/service.jar
 COPY --chown=service target/classes/application-shard.tmpl.yml /var/local/
 RUN touch /var/local/application-shard.yml
-COPY --chown=service target/classes/logback.xml /var/local/
 RUN mkdir /var/local/java_debug
 RUN find /var/local -type d -print0 | xargs -0 chown service:service \
    && find /var/local -type d -print0 | xargs -0 chmod 755
