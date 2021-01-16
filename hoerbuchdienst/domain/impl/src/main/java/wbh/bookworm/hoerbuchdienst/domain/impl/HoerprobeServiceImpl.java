@@ -56,14 +56,15 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
 
     private static final Predicate<PlaylistEntryDTO> nachNamePredicate = entry -> {
         String str = "";
-        if (null != entry.getTitle()) {
+        if (null != entry.getTitle() && !entry.getTitle().isBlank()) {
             str = entry.getTitle();
-        } else if (null != entry.getIdent()) {
+        } else if (null != entry.getIdent() && !entry.getIdent().isBlank()) {
             str = entry.getIdent();
         }
         str = str.toLowerCase();
-        return List.of(MP3_IGNORIEREN).stream()
-                .anyMatch(not(str::contains));
+        return List.of(MP3_IGNORIEREN)
+                .stream()
+                .allMatch(not(str::contains));
     };
 
     private final Predicate<PlaylistEntryDTO> nachZeitPredicate = entry ->
