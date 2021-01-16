@@ -42,14 +42,21 @@ final class SmilTimeHelper {
                 pos = str.indexOf(':', pos + 1);
             }
             list.add(new Integer[]{lastPos, str.length()});
-            return list.stream();
+        } else {
+            list.add(new Integer[]{0, str.length()});
         }
-        return Stream.empty();
+        return list.stream();
     }
 
     static Optional<Duration> parse(final String str) {
-        final Object[] strs = strsBetweenColons(str)
-                .map(a -> str.substring(a[0], a[1]))
+        final String s;
+        if (str.endsWith("s")) {
+            s = str.substring(0, str.length() - 1);
+        } else {
+            s = str;
+        }
+        final Object[] strs = strsBetweenColons(s)
+                .map(a -> s.substring(a[0], a[1]))
                 .toArray(Object[]::new);
         try {
             return switch ((int) countColons(str)) {

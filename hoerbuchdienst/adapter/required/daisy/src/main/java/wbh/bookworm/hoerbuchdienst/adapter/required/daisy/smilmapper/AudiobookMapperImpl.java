@@ -208,8 +208,8 @@ class AudiobookMapperImpl implements AudiobookMapper {
                                 for (final JAXBElement<?> seq2ContentElement : seq2.getSeqContent()) {
                                     if (seq2ContentElement.getName().getLocalPart().equals("audio")) {
                                         final Audio audio = (Audio) seq2ContentElement.getValue();
-                                        final Optional<Duration> maybeBegin = SmilTimeHelper.parse(audio.getClipBegin());
-                                        final Optional<Duration> maybeEnd = SmilTimeHelper.parse(audio.getClipEnd());
+                                        final Optional<Duration> maybeBegin = SmilTimeHelper.parse(audio.getClipBegin().substring(4));
+                                        final Optional<Duration> maybeEnd = SmilTimeHelper.parse(audio.getClipEnd().substring(4));
                                         if (maybeBegin.isEmpty()|| maybeEnd.isEmpty()) {
                                             LOGGER.warn("Hörbuch '{}' Track 'title={}/src={}' hat keinen Beginn {} oder Ende {}",
                                                     titelnummer, audiotrack.getTitle(), audiotrack.getSource(), maybeBegin, maybeEnd);
