@@ -7,6 +7,8 @@
 package wbh.bookworm.hoerbuchdienst.domain.ports;
 
 import java.io.Serializable;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 
 public final class PlaylistEntryDTO implements Serializable {
@@ -49,9 +51,13 @@ public final class PlaylistEntryDTO implements Serializable {
         return Arrays.stream(clips).mapToDouble(Double::doubleValue).sum();
     }
 
+    public Duration getDuration() {
+        return Duration.of((long) (getSeconds() * 1_000), ChronoUnit.MILLIS);
+    }
+
     @Override
     public String toString() {
-        return String.format("PlaylistEntryDTO{title='%s', ident='%s'}", title, ident);
+        return String.format("PlaylistEntryDTO{title='%s', ident='%s', duration=%s}", title, ident, getDuration());
     }
 
 }

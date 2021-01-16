@@ -4,7 +4,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.InputStream;
 import java.nio.file.Path;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -27,6 +26,7 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     private static final Logger LOGGER = LoggerFactory.getLogger(HoerprobeServiceImpl.class);
 
     private static final String[] MP3_IGNORIEREN = {
+            "",
             "buch",
             "daisy",
             "urheberrecht",
@@ -84,16 +84,23 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
     }
 
     private String ermittleHoerprobe(final String xHoerernummer, final String titelnummer) {
-        final List<PlaylistEntryDTO> nachZeit = kandidatenNachZeit(titelnummer);
+        String ident = "";
+        final Map<Boolean, List<PlaylistEntryDTO>> nachZeit = kandidatenNachZeit(titelnummer);
         LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Zeit: '{}'",
                 xHoerernummer, titelnummer, nachZeit);
-        final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(nachZeit);
-        LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}",
-                xHoerernummer, titelnummer, nachName);
-        String ident = zufaelligerIdent(nachName.get(false));
+        if (!nachZeit.isEmpty()) {
+            ident = zufaelligerIdent(nachZeit.get(true));
+        } else {
+            final Map<Boolean, List<PlaylistEntryDTO>> nachName = kandidatenNachName(titelnummer);
+            LOGGER.debug("Hörer '{}' Hörbuch '{}': Kandidaten für eine Hörprobe nach Name: {}",
+                    xHoerernummer, titelnummer, nachName);
+            if (!nachName.isEmpty()) {
+                ident = zufaelligerIdent(nachName.get(false));
+            }
+        }
         if (ident.isBlank()) {
             final List<Path> playlist = katalogService.playlistFuerHoerprobe(titelnummer);
-            LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, Playlist für Hörprobe: {}",
+            LOGGER.debug("Hörer '{}' Hörbuch '{}': Keinen Kandidaten gefunden, wähle zufälligen Kandidaten aus Playlist: {}",
                     xHoerernummer, titelnummer, playlist);
             final int index = Math.min(playlist.size(), 5);
             if (playlist.size() - 1 >= index) {
@@ -114,8 +121,9 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
         }
     }
 
-    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final List<PlaylistEntryDTO> playlistEntries) {
-        return playlistEntries.stream()
+    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachName(final String titelnummer) {
+        final PlaylistDTO playlist = katalogService.playlist(titelnummer);
+        return playlist.getEntries().stream()
                 .collect(Collectors.partitioningBy(entry -> {
                     String str = "";
                     if (null != entry.getTitle()) {
@@ -127,12 +135,11 @@ public final class HoerprobeServiceImpl implements HoerprobeService {
                 }));
     }
 
-    private List<PlaylistEntryDTO> kandidatenNachZeit(final String titelnummer) {
+    private Map<Boolean, List<PlaylistEntryDTO>> kandidatenNachZeit(final String titelnummer) {
         final PlaylistDTO playlist = katalogService.playlist(titelnummer);
         return playlist.getEntries().stream()
-                .sorted(Comparator.comparing(PlaylistEntryDTO::getSeconds))
-                .filter(dto -> dto.getSeconds() > 10 && dto.getSeconds() < 30 * 60)
-                .collect(Collectors.toUnmodifiableList());
+                .collect(Collectors.partitioningBy(entry ->
+                        entry.getDuration().toSeconds() > 10L && entry.getDuration().toMinutes() < 10));
     }
 
 }
