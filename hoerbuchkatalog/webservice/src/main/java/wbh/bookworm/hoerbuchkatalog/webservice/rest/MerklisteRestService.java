@@ -78,12 +78,11 @@ public class MerklisteRestService {
         } else {
             bestellungSessionId = null;
         }
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
             dto.setAufDerMerkliste(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
-            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
             final boolean imWarenkorb = null != bestellungSessionId
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
@@ -102,12 +101,11 @@ public class MerklisteRestService {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
             dto.setAufDerMerkliste(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
-            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
             dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));

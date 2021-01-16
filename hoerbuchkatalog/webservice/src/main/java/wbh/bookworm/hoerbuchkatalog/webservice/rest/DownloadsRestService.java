@@ -63,11 +63,23 @@ public class DownloadsRestService {
     }
 
     @GetMapping(value = "/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Void> downloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+    public ResponseEntity<Void> neuerDownloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         return downloadsService.downloadErlaubt(hoerernummer)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+    }
+
+    @GetMapping(value = "/{titelnummer}/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Void> downloadTitelErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                     @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
+                                                     @PathVariable final String titelnummer) {
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Titelnummer titelnummer1 = new Titelnummer(titelnummer);
+        return downloadsService.downloadErlaubt(hoerernummer, titelnummer1)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -104,9 +116,8 @@ public class DownloadsRestService {
         }
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
                 new ArrayList<>(downloads.getTitelnummern().keySet()));
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
-            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, Titelnummer.of(dto.getTitelnummer())));
             dto.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setAusgeliehenAm(format(downloads.ausgeliehenAm(titelnummer)));

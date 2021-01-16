@@ -93,10 +93,9 @@ public final class WarenkorbRestService {
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer);
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver
                 .toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
-            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
             final boolean imWarenkorb = null != bestellungSessionId

@@ -7,10 +7,10 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalUnit;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
@@ -33,6 +33,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private final transient Map<Titelnummer, Details> titelnummern;
 
+    private transient Predicate<Map.Entry<Titelnummer, Details>> ausleihzeitraumPredicate;
+
     /**
      * Copy constructor
      */
@@ -41,6 +43,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         this.hoerernummer = new Hoerernummer(downloads.hoerernummer.getValue());
         this.titelnummern = new HashMap<>();
         this.titelnummern.putAll(downloads.titelnummern);
+        init();
     }
 
     public Downloads(final DownloadsId downloadsId, final Hoerernummer hoerernummer) {
@@ -54,6 +57,13 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         super(downloadsId);
         this.hoerernummer = hoerernummer;
         this.titelnummern = titelnummern;
+        init();
+    }
+
+    private void init() {
+        final LocalDateTime beginnAusleihzeitraum = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(30L);
+        ausleihzeitraumPredicate = entry ->
+                entry.getValue().getAusgeliehenAm().isAfter(beginnAusleihzeitraum);
     }
 
     public Hoerernummer getHoerernummer() {
@@ -61,16 +71,15 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public Map<Titelnummer, Details> getTitelnummern() {
-        final LocalDateTime now = LocalDateTime.now();
         return titelnummern.entrySet()
                 .stream()
-                .filter(e -> now.isBefore(e.getValue().getRueckgabeBis()))
+                .filter(ausleihzeitraumPredicate)
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @JsonIgnore
     public int getAnzahl() {
-        return titelnummern.size();
+        return getTitelnummern().size();
     }
 
     public long anzahlHeute() {
@@ -87,14 +96,13 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public long anzahlAusleihzeitraum() {
-        final LocalDateTime beginnAusleihzeitraum = LocalDateTime.now().toLocalDate().atStartOfDay().minusDays(30L);
         return titelnummern.entrySet().stream()
-                .filter(entry -> entry.getValue().getAusgeliehenAm().isAfter(beginnAusleihzeitraum))
+                .filter(ausleihzeitraumPredicate)
                 .count();
     }
 
     public boolean enthalten(final Titelnummer titelnummer) {
-        final boolean bereitsVorhanden = titelnummern.containsKey(titelnummer);
+        final boolean bereitsVorhanden = getTitelnummern().containsKey(titelnummer);
         LOGGER.trace("Downloads '{}' enthält Hörbuch '{}': '{}'", this.getDomainId(), titelnummer, bereitsVorhanden);
         return bereitsVorhanden;
     }
@@ -102,11 +110,6 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public void hinzufuegen(final Titelnummer titelnummer) {
         titelnummern.put(titelnummer, new Details(LocalDateTime.now()));
         LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt", titelnummer, this.getDomainId());
-    }
-
-    public void entfernen(final Titelnummer titelnummer) {
-        titelnummern.remove(titelnummer);
-        LOGGER.info("Hörbuch '{}' von Downloads '{}' entfernt", titelnummer, this.getDomainId());
     }
 
     public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {

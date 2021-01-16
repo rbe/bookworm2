@@ -81,7 +81,6 @@ public class KatalogRestService {
         if (!suchergebnis.hatErgebnisse()) {
             return ResponseEntity.notFound().build();
         }
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
         final BestellungSessionId bestellungSessionId;
         if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
             bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
@@ -97,7 +96,8 @@ public class KatalogRestService {
                 dto.setSachgebiet(hbSachgebiet.getName());
                 dto.setSachgebietBezeichnung(hbSachgebiet.getDescription());
             }
-            dto.setDownloadErlaubt(downloadErlaubt);
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
+            dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));
             final boolean imWarenkorb = null != bestellungSessionId
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
@@ -132,8 +132,7 @@ public class KatalogRestService {
         if (null != sachgebiet) {
             dto.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
-        dto.setDownloadErlaubt(downloadErlaubt);
+        dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer1));
         dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
         if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
@@ -162,8 +161,7 @@ public class KatalogRestService {
         if (null != sachgebiet) {
             dto.setSachgebietBezeichnung(sachgebiet.getDescription());
         }
-        final boolean downloadErlaubt = downloadsService.downloadErlaubt(hoerernummer);
-        dto.setDownloadErlaubt(downloadErlaubt);
+        dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer1));
         dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer1));
         dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer1));
         if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
