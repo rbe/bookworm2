@@ -137,6 +137,10 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
         this.downloadbar = downloadbar;
     }
 
+    private static boolean isBlank(final String str) {
+        return null == str || str.isBlank();
+    }
+
     private static boolean isNotBlank(final String str) {
         return null != str && !str.isBlank();
     }
@@ -300,7 +304,9 @@ public final class Hoerbuch extends DomainEntity<Hoerbuch, Titelnummer> {
                 && (spieldauer.contains(",") || spieldauer.contains("."));
         if (spieldauerParsbar) {
             final String[] parts = spieldauer.split("[.,]");
-            if ("00".equals(parts[1])) {
+            if (isBlank(parts[0]) && isNotBlank(parts[1])) {
+                abgeleiteteSpieldauer = String.format("%d Minuten", Integer.parseInt(parts[1]));
+            } else if ("00".equals(parts[1])) {
                 abgeleiteteSpieldauer = String.format("%d Stunden", Integer.parseInt(parts[0]));
             } else if (isNotBlank(parts[0]) && isNotBlank(parts[1])) {
                 abgeleiteteSpieldauer = String.format("%d Stunden %d Minuten",
