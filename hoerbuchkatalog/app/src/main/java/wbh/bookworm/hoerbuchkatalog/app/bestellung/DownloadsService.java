@@ -54,7 +54,8 @@ public class DownloadsService {
     }
 
     public boolean downloadErlaubt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return downloads(hoerernummer).enthalten(titelnummer);
+        return downloadErlaubt(hoerernummer)
+                || downloads(hoerernummer).enthalten(titelnummer);
     }
 
     /**
