@@ -25,7 +25,7 @@ public final class BestellungSessionId extends DomainSingleValueObject<String, S
 
     @Override
     public boolean checkValue(final String s) {
-        return s.length() >= 25;
+        return s.length() >= 24;
     }
 
 }
