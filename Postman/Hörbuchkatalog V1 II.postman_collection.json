@@ -6,6 +6,52 @@
 	},
 	"item": [
 		{
+			"name": "Session",
+			"item": [
+				{
+					"name": "Bestellung Session ID abrufen",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"var jsonData = JSON.parse(responseBody);",
+									"postman.setEnvironmentVariable(\"bestellungSessionId\", jsonData.data.bestellungSessionId);",
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{Hoerbuchkatalog_V1}}/session",
+							"host": [
+								"{{Hoerbuchkatalog_V1}}"
+							],
+							"path": [
+								"session"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Katalog",
 			"item": [
 				{

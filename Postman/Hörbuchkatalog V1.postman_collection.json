@@ -6,52 +6,6 @@
 	},
 	"item": [
 		{
-			"name": "Session",
-			"item": [
-				{
-					"name": "Bestellung Session ID abrufen",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"exec": [
-									"var jsonData = JSON.parse(responseBody);",
-									"postman.setEnvironmentVariable(\"bestellungSessionId\", jsonData.data.bestellungSessionId);",
-									""
-								],
-								"type": "text/javascript"
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "X-Bookworm-Mandant",
-								"type": "text",
-								"value": "{{Mandant}}"
-							},
-							{
-								"key": "X-Bookworm-Hoerernummer",
-								"type": "text",
-								"value": "{{Hoerernummer}}"
-							}
-						],
-						"url": {
-							"raw": "{{Hoerbuchkatalog_V1}}/session",
-							"host": [
-								"{{Hoerbuchkatalog_V1}}"
-							],
-							"path": [
-								"session"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
 			"name": "Katalog",
 			"item": [
 				{
@@ -579,11 +533,6 @@
 								"key": "X-Bookworm-Hoerernummer",
 								"type": "text",
 								"value": "{{Hoerernummer}}"
-							},
-							{
-								"key": "X-Bookworm-BestellungSessionId",
-								"type": "text",
-								"value": "{{bestellungSessionId}}"
 							}
 						],
 						"url": {
@@ -596,7 +545,7 @@
 					"response": []
 				},
 				{
-					"name": "Kontingent - Download erlaubt?",
+					"name": "Kontingent - Neuer Download erlaubt?",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -609,11 +558,6 @@
 								"key": "X-Bookworm-Hoerernummer",
 								"type": "text",
 								"value": "{{Hoerernummer}}"
-							},
-							{
-								"key": "X-Bookworm-BestellungSessionId",
-								"type": "text",
-								"value": "{{bestellungSessionId}}"
 							}
 						],
 						"url": {
@@ -622,6 +566,35 @@
 								"{{DownloadsURL}}"
 							],
 							"path": [
+								"erlaubt"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Kontingent - Download Titel erlaubt?",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							}
+						],
+						"url": {
+							"raw": "{{DownloadsURL}}/{{Titelnummer}}/erlaubt",
+							"host": [
+								"{{DownloadsURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}",
 								"erlaubt"
 							]
 						}
@@ -642,11 +615,6 @@
 								"key": "X-Bookworm-Hoerernummer",
 								"type": "text",
 								"value": "{{Hoerernummer}}"
-							},
-							{
-								"key": "X-Bookworm-BestellungSessionId",
-								"type": "text",
-								"value": "{{bestellungSessionId}}"
 							}
 						],
 						"url": {
@@ -662,7 +630,7 @@
 					"response": []
 				},
 				{
-					"name": "Kontingent - Anzahl aktueller Ausleihzeitraum",
+					"name": "Kontingent - Anzahl im Ausleihzeitraum",
 					"request": {
 						"method": "GET",
 						"header": [
@@ -675,11 +643,6 @@
 								"key": "X-Bookworm-Hoerernummer",
 								"type": "text",
 								"value": "{{Hoerernummer}}"
-							},
-							{
-								"key": "X-Bookworm-BestellungSessionId",
-								"type": "text",
-								"value": "{{bestellungSessionId}}"
 							}
 						],
 						"url": {
