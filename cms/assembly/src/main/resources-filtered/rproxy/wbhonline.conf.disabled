@@ -65,12 +65,18 @@ server {
             include joomla-csp.nginx;
         }
     }
+
     # Proxy fuer Hörbuchkatalog REST Dienste
-    location /hoerbuchkatalog/ {
+    location /hoerbuchkatalog/v1/ {
         include tls-headers.nginx;
         include cors.nginx;
         include hoerbuchkatalog-proxy.nginx;
         include hoerbuchkatalog-csp.nginx;
+    }
+
+    # Google
+    location = /hoerbuchkatalog/ {
+        return 301 https://www.wbh-online.de/;
     }
 
 }
