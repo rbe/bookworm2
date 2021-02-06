@@ -14,6 +14,25 @@ Dazu gehören:
 * relevante Stakeholder und deren Erwartungshaltung.
 ****
 
+Stakeholder:
+
+[plantuml,01_akteure,svg]
+----
+include::01_akteure.puml[]
+----
+
+* Anbieter, eine Hörbücherei
+* Nutzer, ein:e Hörer:in
+* Entwicklung, ein Architekt, Entwickler und Administrator
+
+Geschäftsziele:
+
+* Die Hörbücherei möchte ihren Hörern Hörbücher zum Download anbieten
+* Die Hörbücherei möchte ihren Hörern Hörproben anbieten
+* Die Hörbücherei möchte ihren Hörern Hörbücher als CD anbieten
+
+Fachliche Anforderungen:
+
 === Aufgabenstellung
 
 [role="arc42help"]

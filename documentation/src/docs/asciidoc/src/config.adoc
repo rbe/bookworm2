@@ -18,7 +18,7 @@
 :table-caption: Tabelle
 
 // where are images located?
-:imagesdir: ./images
+:imagesdir: images
 
 :source-highlighter: rouge
 :rouge-style: base16.solarized.dark

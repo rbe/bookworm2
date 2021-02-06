@@ -1,0 +1,30 @@
+@startuml
+
+!include plantuml/Skin.iuml
+!include plantuml/Systeme.iuml!CMS
+!include plantuml/Systeme.iuml!HBK
+
+title "Integration CMS und Hörbuchkatalog per REST Bridge Plugin"
+
+left to right direction
+
+component_CMS {
+    component_CMS_RestBridgePlugin
+    component_CMS_PageRenderer
+    component_CMS_Library
+    PageRenderer .l.> RestBridgePlugin : "{ RestBridge : Template }"
+    RestBridgePlugin .l.> Library : "Custom Module mit\n**Template**-Syntax"
+}
+
+database_CMS
+interface_RDBMS_SQL
+RDBMS -l- RDBMS_SQL
+RestBridgePlugin .d.> RDBMS_SQL : "Community Builder\nHörernummer"
+Library .> RDBMS_SQL : "Template abrufen"
+
+component_HBK
+interface_HBK_Katalog
+HBK - HBK_Katalog
+RestBridgePlugin ..> HBK_Katalog : "Daten abrufen"
+
+@enduml

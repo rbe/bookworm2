@@ -38,7 +38,96 @@ Alternativ oder ergänzend können Sie eine Tabelle verwenden.
 Der Titel gibt den Namen Ihres Systems wieder; die drei Spalten sind: Kommunikationsbeziehung, Eingabe, Ausgabe.
 ****
 
+[plantuml,03_anwendungsfaelle_cms,svg]
+----
+include::03_anwendungsfaelle_cms.puml[]
+----
+
+[plantuml,03_anwendungsfaelle_hoerbuch,svg]
+----
+include::03_anwendungsfaelle_hoerbuch.puml[]
+----
+
+UC1: Datenaustausch Hörerdaten
+Die WBH möchte Daten über ihre Hörer bereitstellen, um sie dem jeweiligen Hörer anzeigen zu können.
+Dies erfolgt über die Übertragung von Daten durch System_WBH an Bookworm.
+
+UC2: Datenaustausch Hörbücher der Hörer
+Die WBH möchte Daten über die von den Hörern:
+
+* ausgeliehenen (aktuell beim Hörer befindliche) Hörbüchern
+* bereits bestellten Hörbüchern
+* früher ausgeliehenen und bereits zurückgegebene Hörbüchern (Archiv) bereitstellen, um sie dem jeweiligen Hörer anzeigen zu können.
+Dies erfolgt per Übertragung von Datensätzen durch System_WBH an Bookworm.
+Voraussetzung: UC1 wurde durchgeführt.
+
+UC3: Anmeldung des Hörers an der Web GUI
+Der Hörer möchte sich an Bookworm anmelden, um weitere Use Cases durchführen zu können.
+Er muss dazu ein Login bestehend aus Benutzername und Passwort angeben.
+Nach dem Login wird ihm die Startseite des internen Bereichs präsentiert.
+Voraussetzung: UC1 wurde durchgeführt.
+Siehe auch: UC4-6.
+
+UC4: Anzeige Stammdaten des Hörers
+Der Hörer ruft seine Personendaten auf.
+Ihm werden seine Personendaten angezeigt:
+
+* Stammdaten: Personendaten des Hörers
+** Anzeige folgender Daten: x, x, x, ...
+
+Voraussetzung: UC3 wurde durchgeführt.
+
+UC5: Anzeige der Hörerkarte des Hörers Der Hörer ruft seine Hörerkarte/Bestellkarte auf.
+Ihm werden seine aktuell bestellten Hörbücher angezeigt:
+
+* Hörerkarte: Aktuelle Hörerkarte
+** Link zur aktuellen Karte
+** Auflistung der Buchtitel
+** Ausschluß Anzeige bereits gelieferter Titel, max. 400
+Voraussetzung: UC3 wurde durchgeführt.
+
+UC6: Anzeige Hörbucher-Archiv des Hörers
+Der Hörer ruft sein Archiv auf. Ihm werden seine bisher bestellten und bereits zurückgegebenen(???) Hörbücher (Archiv) angezeigt.
+
+* Archiv: Liste bisheriger Ausleihe
+** Link zum Archiv
+** Auflistung der Buchtitel sortiert nach Titelnr.
+** Suche nach Titel
+** Anzeige ab eingegebenes Startdatum
+** Sortiermöglichkeit nach Nr./Titel/Datum
+
+Voraussetzung: UC3 wurde durchgeführt.
+
+UC7: Abmeldung vom System
+Der Hörer muss sich nach der Nutzung vom System abmelden.
+Nach der Abmeldung wird er zurück auf die Startseite der WBH Webseite geleitet.
+Voraussetzung: UC3 wurde durchgeführt.
+
+UC8: Registration/Passwort für den Hörer
+Der Hörer hat zunächst kein Passwort, um sich am System anzumelden (siehe UC3).
+Dem Hörer wird dazu durch das Joomla CMS angeboten, sich zu registrieren.
+Er erhält nach Eingabe der notwendigen Daten eine E-Mail zur Feststellung der Authentizität.
+Im Anschluß an seinen Klick auf den Bestätigungslink erhält die WBH eine Nachricht über die Registrierung und schaltet den User im System manuell frei.
+Der User kann sich nun anmelden.
+Voraussetzung: UC1 wurde durchgeführt.
+
+UC9: Freischaltung eines Hörers nach Registration
+Die WBH möchte einen neu registrierten Benutzer (siehe UC8) freischalten.
+Dazu meldet sie sich am Joomla CMS an und nutzt die Nutzerverwaltung zur Freischaltung des Benutzers.
+Voraussetzung: UC2, UC8 wurde durchgeführt.
+
+Entscheidungen
+UC3/8/9: Benutzer + Registrierung
+
+* Registrierung des Hörers via Joomla CMS Nutzerverwaltung
+* Bookworm bekommt per Anbindung an Datenbank (von Joomla) Informationen über Benutzer/Passwort und kann damit das Login durchführen
+
 **<Diagramm und/oder Tabelle>**
+
+[plantuml,03_fachlicher_kontext,svg]
+----
+include::03_fachlicher_kontext.puml[]
+----
 
 **<optional: Erläuterung der externen fachlichen Schnittstellen>**
 
@@ -60,6 +149,11 @@ Beispielsweise UML Deployment-Diagramme mit den Kanälen zu Nachbarsystemen, beg
 ****
 
 **<Diagramm oder Tabelle>**
+
+[plantuml,03_technischer_kontext,svg]
+----
+include::03_technischer_kontext.puml[]
+----
 
 **<optional: Erläuterung der externen technischen Schnittstellen>**
 

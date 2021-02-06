@@ -1,0 +1,51 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+!include plantuml/Skin.iuml
+!include plantuml/Akteure.iuml!Hoerbuechereien
+!include plantuml/Akteure.iuml!Entwicklung
+!include plantuml/Akteure.iuml!Hoerer
+!include plantuml/Akteure.iuml!Nutzer
+
+'left to right direction
+top to bottom direction
+
+title "Akteure"
+
+together {
+    package "Hörbüchereien" as pkg_Anbieter {
+        actor_WBH
+        actor_Wien
+        WBH - Wien : Partner
+    }
+    package "Entwicklung" as pkg_Entwicklung {
+        actor_medienhof
+        actor_AoC
+        actor_App
+    }
+    medienhof ..> WBH : entwickelt\nfür
+    AoC .> WBH : entwickelt\nfür
+    App .> WBH : entwickelt\nfür
+}
+
+package "Hörer:innen" as pkg_Hoerer {
+    actor_abstractHoerer
+    actor_NichtAngemledeterHoerer
+    NichtAngemledeterHoerer -u- Hoerer
+    actor_AngemeldeterHoerer
+    AngemledeterHoerer -u- Hoerer
+    actor_Angehoeriger
+    Angehoeriger -r- Hoerer : Vertreter
+}
+WBH -d- Hoerer : bietet an
+Wien -d- Hoerer : bietet an
+
+package "Nutzer" as pkg_Nutzer {
+    actor_UnbekannterNutzer
+    actor_Suchmaschine
+    Suchmaschine -u- UnbekannterNutzer
+    actor_Hacker
+    Hacker -u- UnbekannterNutzer
+}
+
+@enduml

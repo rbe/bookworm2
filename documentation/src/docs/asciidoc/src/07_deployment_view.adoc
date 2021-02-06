@@ -48,6 +48,21 @@ Für mehrere Umgebungen oder alternative Deployments kopieren Sie diesen Teil vo
 
 _**<Übersichtsdiagramm>**_
 
+[plantuml,07_cmshbk,svg]
+----
+include::07_cmshbk_1.puml[]
+----
+
+[plantuml,07_hoerbuchdienst_level1,svg]
+----
+include::07_hoerbuchdienst_level1.puml[]
+----
+
+[plantuml,07_hoerbuchdienst_shard_level1,svg]
+----
+include::07_hoerbuchdienst_shard_level1.puml[]
+----
+
 Begründung:: _<Erläuternder Text>_
 
 Qualitäts- und/oder Leistungsmerkmale:: _<Erläuternder Text>_

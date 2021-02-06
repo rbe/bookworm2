@@ -35,7 +35,7 @@ Damit ermöglichen Sie Kommunikation auf abstrakterer Ebene, ohne zu viele Imple
 .Form
 Die Bausteinsicht ist eine hierarchische Sammlung von Blackboxen und Whiteboxen (siehe Abbildung unten) und deren Beschreibungen.
 
-image:05_building_blocks-DE.png["Baustein Sichten"]
+image:images/05_building_blocks-DE.png["Baustein Sichten"]
 
 *Ebene 1* ist die Whitebox-Beschreibung des Gesamtsystems, zusammen mit Blackbox-Beschreibungen der darin enthaltenen Bausteine.
 
@@ -67,7 +67,10 @@ Im schlimmsten Fall müssen Sie Syntax, Semantik, Protokolle, Fehlerverhalten, R
 Im besten Fall kommen Sie mit Beispielen oder einfachen Signaturen zurecht.
 ****
 
-_**<Übersichtsdiagramm>**_
+[plantuml,05_level1.svg,svg]
+----
+include::05_wbhonline_blackbox.puml[]
+----
 
 Begründung:: _<Erläuternder Text>_
 

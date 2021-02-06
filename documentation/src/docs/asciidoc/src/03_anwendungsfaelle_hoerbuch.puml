@@ -1,0 +1,50 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+!include plantuml/Skin.iuml
+
+title "Anwendungsfälle Hörbücher"
+
+left to right direction
+
+actor WBH <<Anbieter>>
+actor Hoerer <<Nutzer>>
+
+rectangle wbh-online.de <<System>> {
+    component "Hörbuchkatalog" <<Subsystem>> as HBK
+    usecase (HBK1:\n**Katalog bereitstellen**) as HBK1
+    usecase (HBK2:\n**Katalog durchsuchen**) as HBK2
+    usecase (HBK3:\n**Hörbuch-Details ansehen**) as HBK3
+    usecase (HBK4:\n**Download-Statistik abrufen**) as HBK4
+    usecase (HBK5:\n**Hörbuch auf**\n**Merkliste setzen**) as HBK5
+
+    component "Hörbuchdienst" <<Subsystem>> as HBD
+    usecase (HBD1:\n**DAISY-Hörbuch bereitstellen**) as HBD1
+    usecase (HBD2:\n**Hörprobe anfordern**) as HBD2
+    usecase (HBD3:\n**Hörbuch herunterladen**) as HBD3
+}
+
+HBK - HBD
+
+HBK1 -u-> HBK
+HBK2 -d-> HBK
+HBK3 -d-> HBK
+HBK4 -u-> HBK
+HBK5 -d-> HBK
+
+WBH -l- HBK1
+Hoerer - HBK2
+Hoerer - HBK3
+WBH - HBK4
+Hoerer - HBK5
+
+HBD1 -u-> HBD
+HBD2 -d-> HBD
+HBD3 -l-> HBD : Hörbuch erzeugen
+HBD3 -l-> HBK : Download vermerken
+
+WBH - HBD1
+Hoerer - HBD2
+Hoerer - HBD3
+
+@enduml

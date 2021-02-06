@@ -32,3 +32,22 @@ Sie sollten relevante Begriffe klar definieren, so dass alle Beteiligten
 |_<Begriff-2_
 |_<Definition-2>_
 |===
+
+Analysis Model	Angemeldeter Hörer
+Analysis Model	blista
+Analysis Model	Bookworm			Das System.
+Analysis Model	CD
+Analysis Model	Download
+Analysis Model	Gesamt.dat
+Analysis Model	Hörbuch	Hörbüchern, Hörbücher
+Analysis Model	Hörbuchkatalog
+Analysis Model	Hörer	Hörern, Hörers
+Analysis Model	Hörerdaten
+Analysis Model	iso.txt
+Analysis Model	Katalogverwalter
+Analysis Model	Kundenverwalter
+Analysis Model	Merkliste
+Analysis Model	Personendaten
+Analysis Model	Stammdaten
+Analysis Model	Unbekannter Hörer
+Analysis Model	Warenkorb

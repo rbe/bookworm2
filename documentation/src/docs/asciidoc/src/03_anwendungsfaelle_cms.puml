@@ -1,0 +1,17 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+!include plantuml/Skin.iuml
+
+title "Anwendungsfälle CMS"
+
+left to right direction
+
+actor WBH
+actor Hoerer
+
+rectangle wbh-online.de <<System>> {
+    component CMS
+}
+
+@enduml

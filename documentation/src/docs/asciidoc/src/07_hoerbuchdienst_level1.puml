@@ -1,0 +1,65 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+!include plantuml/Skin.iuml
+
+'left to right direction
+top to bottom direction
+
+package "Hörbuchdienst" as hoerbuchdienst {
+    node shard1 as "Shard1" {
+        package shard1_Container as "Container" {
+            node "Vault" as shard1_Vault
+            node "KES" as shard1_KES
+            node "MinIO" as shard1_S3
+            queue "RabbitMQ" as shard1_RabbitMQ
+            node "Hörbuchdienst" as shard1_Hoerbuchdienst
+            shard1_KES - shard1_Vault
+            shard1_S3 - shard1_KES
+            shard1_Hoerbuchdienst -d- shard1_S3
+            shard1_Hoerbuchdienst - shard1_RabbitMQ
+        }
+        storage "Hardware\nRAID" as shard1_Storage
+        shard1_Container - shard1_Storage
+    }
+    node shard2 as "Shard2" {
+        package shard2_Container as "Container" {
+            node "Vault" as shard2_Vault
+            node "KES" as shard2_KES
+            node "MinIO" as shard2_S3
+            queue "RabbitMQ" as shard2_RabbitMQ
+            node "Hörbuchdienst" as shard2_Hoerbuchdienst
+            shard2_KES - shard2_Vault
+            shard2_S3 - shard2_KES
+            shard2_Hoerbuchdienst -u- shard2_S3
+            shard2_Hoerbuchdienst - shard2_RabbitMQ
+        }
+        storage "Hardware\nRAID" as shard2_Storage
+        shard2_Container - shard2_Storage
+    }
+    node shard3 as "Shard3" {
+        package shard3_Container as "Container" {
+            node "Vault" as shard3_Vault
+            node "KES" as shard3_KES
+            node "MinIO" as shard3_S3
+            queue "RabbitMQ" as shard3_RabbitMQ
+            node "Hörbuchdienst" as shard3_Hoerbuchdienst
+            shard3_KES - shard3_Vault
+            shard3_S3 - shard3_KES
+            shard3_Hoerbuchdienst -- shard3_S3
+            shard3_Hoerbuchdienst - shard3_RabbitMQ
+        }
+        storage "Hardware\nRAID" as shard3_Storage
+        shard3_Container - shard3_Storage
+    }
+    shard1_RabbitMQ -u- shard2_RabbitMQ
+    shard1_RabbitMQ -u- shard3_RabbitMQ
+    shard2_RabbitMQ -u- shard3_RabbitMQ
+}
+
+note top of hoerbuchdienst
+Es existieren derzeit 4 Shards
+mit je 5 TB Storage 
+end note
+
+@enduml

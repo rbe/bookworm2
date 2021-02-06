@@ -1,0 +1,36 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+!include plantuml/Skin.iuml
+
+title "Fachlicher Kontext"
+
+left to right direction
+'top to bottom direction
+
+rectangle wbh-online.de <<System>> {
+    node CMS as "CMS"
+    node "Hörbuchkatalog" as Hoerbuchkatalog
+    node "Hörbuchdienst" as Hoerbuchdienst
+}
+
+rectangle Hoerbucherei <<Anbieter>> as "Hörbücherei" {
+    actor Admin
+    actor "Hörerberatung" as Hoererberatung
+}
+
+rectangle Nutzer {
+    actor "Hörer" as Hoerer <<Nutzer>>
+    actor "Angehöriger" as Angehoeriger <<Vertreter>>
+    Angehoeriger -l- Hoerer : <<handelt für>>
+    Hoerer -u-> CMS : "Online-Angebot\nnutzen"
+    Hoerer -u-> Hoerbuchkatalog : "Online-Angebot\nnutzen"
+    Hoerer -u-> Hoerbuchdienst : "Hörbuch\nherunterladen"
+}
+
+Admin -d-> Hoerbuchkatalog : "Katalog und\nHörerdaten\nhochladen"
+Admin -d-> Hoerbuchdienst : "DAISY-Hörbucher\nhochladen"
+Hoererberatung -d-> CMS : "Artikel pflegen"
+Hoererberatung -d-> CMS : "Support für Hörer"
+
+@enduml

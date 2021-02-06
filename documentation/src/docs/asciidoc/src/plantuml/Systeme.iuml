@@ -1,0 +1,19 @@
+@startuml(id=CMS)
+!define component_CMS component "Joomla!" as CMS <<System>>
+!define component_CMS_RestBridgePlugin component "REST Bridge Plugin" as RestBridgePlugin
+!define component_CMS_PageRenderer component "Page Renderer" as PageRenderer
+!define component_CMS_Library component "CMS Library" as Library
+!define database_CMS database "RDBMS (MySQL)" as RDBMS <<Repository>>
+!define interface_RDBMS_SQL interface SQL as RDBMS_SQL
+@enduml
+
+@startuml(id=HBK)
+!define component_HBK component Hoerbuchkatalog as HBK <<System>>
+!define interface_HBK_Katalog interface "Katalog" as HBK_Katalog <<REST>>
+!define interface_HBK_REST interface REST
+@enduml
+
+@startuml(id=HBD)
+!define component_HBD component Hoerbuchdienst as HBD <<System>>
+!define interface_HBD_Bestellung interface "Bestellung" as HBD_Bestellung <<REST>>
+@enduml

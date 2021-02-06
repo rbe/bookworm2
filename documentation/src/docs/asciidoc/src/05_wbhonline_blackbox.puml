@@ -1,0 +1,34 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+!include plantuml/Skin.iuml
+
+left to right direction
+
+actor WBH
+component "Web Browser" as WBH_WebBrowser
+component "S3 Browser" as WBH_S3Browser
+
+actor "Hörer:in" as Hoerer
+component "Web Browser" as Hoerer_WebBrowser
+
+package wbh-online.de {
+    component CMS
+    component "Hörbuchkatalog" as Hoerbuchkatalog
+    CMS - Hoerbuchkatalog
+    component "Hörbuchdienst" as Hoerbuchdienst
+}
+
+Hoerer -d- Hoerer_WebBrowser
+Hoerer_WebBrowser -d- CMS
+Hoerer_WebBrowser -r- Hoerbuchkatalog
+Hoerer_WebBrowser -r- Hoerbuchdienst
+
+WBH -u- WBH_S3Browser
+WBH_S3Browser -u- Hoerbuchdienst
+WBH -u- WBH_WebBrowser
+WBH_WebBrowser -u- CMS
+WBH_WebBrowser -u- Hoerbuchkatalog
+WBH_WebBrowser -u- Hoerbuchdienst
+
+@enduml

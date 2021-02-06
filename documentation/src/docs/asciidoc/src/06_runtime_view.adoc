@@ -39,9 +39,17 @@ Nutzen Sie beispielsweise:
 *  <hier Laufzeitdiagramm oder Ablaufbeschreibung einfügen>
 *  <hier Besonderheiten bei dem Zusammenspiel der Bausteine in diesem Szenario erläutern>
 
+[plantuml,06_hoerbuch_bereitstellen.svg,svg]
+----
+include::06_hoerbuch_bereitstellen.puml[]
+----
+
 === _<Bezeichnung Laufzeitszenario 2>_
 
-...
+[plantuml,06_hoerbuch_als_download_bestellen.svg,svg]
+----
+include::06_hoerbuch_als_download_bestellen.puml[]
+----
 
 === _<Bezeichnung Laufzeitszenario n>_
 

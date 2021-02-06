@@ -1,0 +1,23 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+!include plantuml/Skin.iuml
+
+autonumber
+
+actor WBHAdmin AS "WBH-Admin"
+participant WBHArchiv as "WBH-Archiv"
+participant S3Browser as "S3-Browser"
+participant S3 as "Hoerbuchdienst S3"
+
+WBHAdmin -> WBHArchiv : DAISY-ZIP erzeugen
+WBHAdmin <-- WBHArchiv : ZIP-Datei
+WBHAdmin -> S3Browser : Öffnen
+S3Browser -> S3 : Anmelden
+S3Browser <-- S3
+WBHAdmin -> S3Browser : ZIP-Datei in Eingangskorb legen
+S3Browser -> S3 : ZIP-Datei hochladen
+S3Browser <-- S3
+S3Browser -> WBHAdmin : Rückmeldung
+
+@enduml

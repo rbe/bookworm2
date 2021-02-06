@@ -1,0 +1,58 @@
+@startuml
+'https://plantuml.com/component-diagram
+
+!include plantuml/Skin.iuml
+
+title "Technischer Kontext"
+
+'left to right direction
+top to bottom direction
+
+rectangle wbh-online.de <<System>> {
+    node "Hörbuchkatalog" as HBK
+    interface HBK_SFTP as "SFTP"
+    HBK -d- HBK_SFTP
+    interface HBK_HTTP as "HTTP"
+    HBK -u- HBK_HTTP
+    node "Hörbuchdienst" as HBD
+    interface HBD_HTTP as "Public/HTTP"
+    HBD -u- HBD_HTTP
+    interface HBD_ADMIN_HTTP as "Admin/HTTP"
+    HBD -l- HBD_ADMIN_HTTP
+    interface HBD_S3 as "S3"
+    HBD -d- HBD_S3
+    node CMS
+    CMS .> HBD_ADMIN_HTTP
+    interface "Admin/HTTP" as CMS_ADMIN_HTTP
+    CMS -d- CMS_ADMIN_HTTP
+    interface "Public/HTTP" as CMS_PUBLIC_HTTP
+    CMS -l- CMS_PUBLIC_HTTP
+}
+
+rectangle medienhof {
+    node CoolerPC
+    CoolerPC .u.> CMS_ADMIN_HTTP
+    CoolerPC .u.> HBD_S3
+}
+
+rectangle "Hörbücherei" as Hoerbuecherei <<Anbieter>> {
+    node AS400 as "IBM i"
+    interface AS400_Datei
+    AS400 - AS400_Datei
+    node PC
+    PC .l.> AS400_Datei : "Dateiabruf"
+    PC .d.> CMS_ADMIN_HTTP
+    PC .u.> HBK_SFTP
+    PC .u.> HBD_S3
+}
+
+component "Web Browser oder\nMobile Device" as Browser
+Browser .> CMS_PUBLIC_HTTP
+Browser .> HBK_HTTP
+Browser .d.> HBD_HTTP
+'FA5_MOBILE_ALT(Mobile,Mobile Device) #LightYellow
+'Mobile -d- CMS_PUBLIC_HTTP
+'Mobile -d- HBK_HTTP
+'Mobile -d- HBD_HTTP
+
+@enduml

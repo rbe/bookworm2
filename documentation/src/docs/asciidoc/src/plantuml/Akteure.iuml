@@ -1,0 +1,27 @@
+' Hörbüchereien
+@startuml(id=Hoerbuechereien)
+!define actor_WBH "WBH Münster" as WBH <<Anbieter>>
+!define actor_Wien "BSVÖ Wien" as Wien <<Anbieter>>
+@enduml
+
+' Entwicklung
+@startuml(id=Entwicklung)
+!define actor_medienhof medienhof <<Entwickler>>
+!define actor_AoC "Art of Codfing" as AoC <<Architekt,\nEntwickler,\nAdministrator>>
+!define actor_App App <<Entwickler>>
+@enduml
+
+' Hörer:innen
+@startuml(id=Hoerer)
+!define actor_abstractHoerer "{abstract}\nHörer:in" as Hoerer <<Nutzer>>
+!define actor_NichtAngemledeterHoerer "Nicht angemeldeter\nHörer:in" as NichtAngemledeterHoerer <<Nutzer>>
+!define actor_AngemeldeterHoerer "Angemeldeter\nHörer:in" as AngemledeterHoerer <<Nutzer>>
+!define actor_Angehoeriger "Angehörige:r" as Angehoeriger <<Nutzer>>
+@enduml
+
+' Nutzer
+@startuml(id=Nutzer)
+!define actor_UnbekannterNutzer "{abstract}\nUnbekannter Nutzer" as UnbekannterNutzer
+!define actor_Suchmaschine "Suchmaschine" as Suchmaschine
+!define actor_Hacker Hacker <<Angreifer>>
+@enduml

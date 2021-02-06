@@ -1,0 +1,38 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+!include plantuml/Skin.iuml
+
+title "DAISY-Hörbuch als Download bestellen"
+
+autonumber
+
+actor Hoerer as "Hörer"
+participant Browser as "Web Browser"
+participant CMS as "CMS"
+participant Hoerbuchkatalog as "Hörbuchkatalog"
+participant Hoerbuchdienst as "Hörbuchdienst/Shard<n>"
+participant S3 as "S3/Shard<n>"
+
+Hoerer -> Browser : wbh-online.de aufrufen
+Browser -> CMS : Suche durchführen
+CMS -> Hoerbuchkatalog : Suchindex abfragen (REST)
+CMS <-- Hoerbuchkatalog : Suchergebnis (JSON)
+Browser <-- CMS : Suchergebnis (HTML)
+Hoerer <-- Browser : Suchergebnis
+Hoerer -> Hoerer : Hörbuch auswählen
+Hoerer -> Browser : Download anfordern
+Browser -> Hoerbuchdienst : Ort des Hörbuchs abfragen (REST)
+Hoerbuchdienst -> Hoerbuchdienst : Shard nachsehen
+Browser <-- Hoerbuchdienst : DNS-Name des Shards
+Browser -> Hoerbuchdienst : Download anfordern (REST)
+Hoerbuchdienst -> S3 : Hörbuch anfordern
+Hoerbuchdienst <-- S3 : SMIL/MP3s
+Hoerbuchdienst -> Hoerbuchdienst : Wasserzeichen anbringen
+Hoerbuchdienst -> Hoerbuchdienst : DAISY-ZIP erzeugen
+Browser <-- Hoerbuchdienst : DAISY-ZIP (Stream)
+Browser -> Hoerbuchkatalog : Download vermerken (REST)
+Browser <-- Hoerbuchkatalog : Antwort (JSON)
+Hoerer <-- Browser : Hörbuch als Download
+
+@enduml

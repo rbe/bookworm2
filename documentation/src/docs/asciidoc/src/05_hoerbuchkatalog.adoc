@@ -1,3 +1,6 @@
 == Hörbuchkatalog
 
-tbd
+[plantuml,05_cms_restbridge_plugin,svg]
+----
+include::05_cms_restbridge_plugin.puml[]
+----

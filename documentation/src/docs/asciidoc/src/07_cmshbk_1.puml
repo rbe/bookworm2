@@ -1,0 +1,24 @@
+@startuml
+'https://plantuml.com/deployment-diagram
+
+left to right direction
+'top to bottom direction
+
+package wbh-online.de {
+    rectangle netcup {
+        node "**Test**\ncms/hbk" as node_test {
+            component "CMS" as test_CMS {
+                database test_MySQL
+            }
+            component "Hörbuchkatalog" as test_Hoerbuchkatalog
+        }
+    }
+    node "**Prod**\ncms/hbk" as node_prod {
+        component "CMS" as prod_CMS {
+            database prod_MySQL
+        }
+        component "Hörbuchkatalog" as prod_Hoerbuchkatalog
+    }
+}
+
+@enduml
