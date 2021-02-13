@@ -20,7 +20,7 @@
         <hbk.hostname>hoerbuchkatalog.${domain}</hbk.hostname>
         <keycloak.postgres.release>12-alpine</keycloak.postgres.release>
         <keycloak.postgres.hostname>keycloakpostgres-${domain}</keycloak.postgres.hostname>
-        <keycloak.release>12.0.1</keycloak.release>
+        <keycloak.release>12.0.2</keycloak.release>
         <redis.release>6.0-alpine</redis.release>
         <!-- Siehe auch cms.assembly -->
         <keycloak.hostname>id.${domain}</keycloak.hostname>

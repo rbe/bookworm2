@@ -27,6 +27,46 @@ services:
   admin-ssh:
     image: wbh-hbk/admin-ssh:${HBK_RELEASE}
     restart: "no"
+  keycloakpostgres:
+    image: postgres:${KEYCLOAK_POSTGRES_RELEASE}
+    restart: "no"
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=keycloak
+      - POSTGRES_HOST=postgres
+    ports:
+      - "5432:5432"
+  keycloak:
+    image: jboss/keycloak:${KEYCLOAK_RELEASE}
+    depends_on:
+      - keycloakpostgres
+    restart: "no"
+    environment:
+      - TZ=Europe/Berlin
+      - LANG=en_US.UTF-8
+      - DB_VENDOR=postgres
+      - DB_ADDR=keycloakpostgres
+      - DB_PORT=5432
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=password
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=Pa55w0rd
+      - KEYCLOAK_STATISTICS=true
+      #- PROXY_ADDRESS_FORWARDING=true
+      #- KEYCLOAK_LOGLEVEL=DEBUG
+      #- DEBUG=true
+      #- DEBUG_PORT='*:5005'
+    #command: -c standalone.xml
+    ports:
+      - "5005:5005"
+      - "8080:8080"
+      - "8443:8443"
+      - "9990:9990"
+      - "9993:9993"
   # hoerbuchdienst
   vault:
     image: wbh-hbd/vault:${HBD_RELEASE}
@@ -60,3 +100,9 @@ services:
     ports:
       - "8081:80"
       - "8444:443"
+
+networks:
+  frontend:
+    driver: bridge
+    external: false
+    internal: true
