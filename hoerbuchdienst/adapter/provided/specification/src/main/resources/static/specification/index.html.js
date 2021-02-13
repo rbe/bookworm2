@@ -15,8 +15,9 @@ window.onload = function () {
     this.view_url = swagger_view_urls['swagger-ui'];
     this.service = '';
     // services
-    const services = document.querySelectorAll('ul#service li');
+    const services = document.querySelectorAll('div#service div');
     for (const service of services) {
+        console.log(service);
         service.addEventListener('click', (e) => {
             for (const service of services) {
                 service.style = 'background: white';
@@ -30,8 +31,9 @@ window.onload = function () {
         });
     }
     // swagger-view
-    const swagger_views = document.querySelectorAll('ul#swagger-view li');
+    const swagger_views = document.querySelectorAll('div#swagger-view div');
     for (const swagger_view of swagger_views) {
+        console.log(swagger_view);
         swagger_view.addEventListener('click', (e) => {
             for (const swagger_view of swagger_views) {
                 swagger_view.style = 'background: white';
