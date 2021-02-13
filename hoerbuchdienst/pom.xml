@@ -21,9 +21,9 @@
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <!-- Micronaut -->
-        <micronaut.version>2.2.2</micronaut.version>
+        <micronaut.version>2.3.1</micronaut.version>
         <micronaut-test.version>2.3.1</micronaut-test.version>
-        <mapstruct.version>1.4.0.Final</mapstruct.version>
+        <mapstruct.version>1.4.2.Final</mapstruct.version>
     </properties>
     <modules>
         <module>adapter</module>
@@ -181,7 +181,7 @@
                             <path>
                                 <groupId>io.micronaut.openapi</groupId>
                                 <artifactId>micronaut-openapi</artifactId>
-                                <version>2.2.2</version>
+                                <version>${micronaut.version}</version>
                             </path>
                         </annotationProcessorPaths>
                     </configuration>
