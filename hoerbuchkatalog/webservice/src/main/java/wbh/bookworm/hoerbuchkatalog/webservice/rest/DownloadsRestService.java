@@ -8,6 +8,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -27,6 +31,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
+@Tag(name = "Downloads", description = "")
 @RestController
 @RequestMapping("/v1/downloads")
 public class DownloadsRestService {
@@ -52,6 +57,10 @@ public class DownloadsRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @PutMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -62,6 +71,10 @@ public class DownloadsRestService {
         return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> neuerDownloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -72,6 +85,10 @@ public class DownloadsRestService {
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/{titelnummer}/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> downloadTitelErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -84,6 +101,10 @@ public class DownloadsRestService {
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/heute", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> anzahlHeute(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                             @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -93,6 +114,10 @@ public class DownloadsRestService {
         return ResponseEntity.ok(downloads.anzahlHeute());
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/ausleihzeitraum", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Long> ausleihzeitraum(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                 @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -102,6 +127,10 @@ public class DownloadsRestService {
         return ResponseEntity.ok(downloads.anzahlAusleihzeitraum());
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,

@@ -2,6 +2,10 @@ package wbh.bookworm.hoerbuchkatalog.webservice.rest;
 
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -14,6 +18,7 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.shared.domain.Hoerernummer;
 
+@Tag(name = "", description = "")
 @RestController
 @RequestMapping("/v1/session")
 public final class SessionRestService {
@@ -25,6 +30,10 @@ public final class SessionRestService {
         this.bestellungService = bestellungService;
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<Map<String, String>>> bestellungSessionId(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {

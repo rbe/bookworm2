@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +29,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Sachgebiet;
 import wbh.bookworm.shared.domain.Titelnummer;
 
+@Tag(name = "Katalog", description = "")
 @RestController
 @RequestMapping("/v1/katalog")
 public class KatalogRestService {
@@ -48,6 +53,10 @@ public class KatalogRestService {
         this.warenkorbService = warenkorbService;
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = {
             "/stichwort/{stichwort}",
             "/sachgebiet/{sachgebiet}",
@@ -116,6 +125,10 @@ public class KatalogRestService {
                 : ResponseEntity.notFound().build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<HoerbuchAntwortKurzDTO>> info(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                    @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -145,6 +158,10 @@ public class KatalogRestService {
         return ResponseEntity.ok(new AntwortDTO<>(meta, dto));
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "/{titelnummer}/details", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<HoerbuchAntwortDTO>> details(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                   @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,

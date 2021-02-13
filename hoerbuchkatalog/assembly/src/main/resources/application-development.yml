@@ -56,6 +56,9 @@ logging:
     wbh.bookworm.hoerbuchkatalog.domain: DEBUG
     wbh.bookworm.hoerbuchkatalog: DEBUG
     aoc.mikrokosmos.fs: DEBUG
+    aoc.mikrokosmos.io.dataformat.CsvFormat: INFO
+    aoc.mikrokosmos.io.dataformat.LineFileParser: INFO
+    aoc.mikrokosmos.io: DEBUG
     aoc.mikrokosmos.ddd.event: DEBUG
     aoc.mikrokosmos.ddd.repository: DEBUG
     aoc.mikrokosmos.ddd.search: DEBUG

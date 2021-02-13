@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +27,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
+@Tag(name = "Merkliste", description = "")
 @RestController
 @RequestMapping("/v1/merkliste")
 public class MerklisteRestService {
@@ -46,6 +51,10 @@ public class MerklisteRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @PutMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -56,6 +65,10 @@ public class MerklisteRestService {
         return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @DeleteMapping(value = "{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> entfernen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -66,6 +79,10 @@ public class MerklisteRestService {
         return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
@@ -92,6 +109,10 @@ public class MerklisteRestService {
         return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
     }
 
+    @Operation(summary = "")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhaltGefiltert(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,

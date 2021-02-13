@@ -9,6 +9,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +29,7 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.shared.domain.Titelnummer;
 
+@Tag(name = "Statistik", description = "")
 @RestController
 @RequestMapping("/v1/private/statistik")
 public class StatistikRestService {
@@ -50,6 +55,10 @@ public class StatistikRestService {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 
+    @Operation(summary = "webhoer.csv für einen bestimmten Tag abrufen")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "")
+    })
     @GetMapping(value = "webhoer-{datum}.csv", produces = TEXT_CSV_VALUE)
     public ResponseEntity<byte[]> downloadsHeuteAbrufen(@PathVariable final String datum) {
         final LocalDateTime datumZeit = LocalDate.parse(datum, DATUM).atStartOfDay();

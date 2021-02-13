@@ -53,6 +53,10 @@ server:
   http2:
     enabled: true
 
+springdoc:
+  api-docs:
+    path: /swagger
+
 logging:
   level:
     root: ERROR
@@ -62,6 +66,9 @@ logging:
     wbh.bookworm.hoerbuchkatalog.repository: ERROR
     wbh.bookworm.hoerbuchkatalog.domain: ERROR
     aoc.mikrokosmos: ERROR
+    aoc.mikrokosmos.io.dataformat.CsvFormat: ERROR
+    aoc.mikrokosmos.io.dataformat.LineFileParser: ERROR
+    aoc.mikrokosmos.io: ERROR
     aoc.mikrokosmos.fs: ERROR
     aoc.mikrokosmos.ddd.event: ERROR
     aoc.mikrokosmos.ddd.repository: ERROR
