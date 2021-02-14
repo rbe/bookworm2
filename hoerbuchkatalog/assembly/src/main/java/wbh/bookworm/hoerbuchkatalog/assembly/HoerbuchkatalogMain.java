@@ -22,6 +22,7 @@ import org.springframework.boot.web.servlet.ServletComponentScan;
         title = "Hoerbuchkatalog",
         version = "1.0.0",
         description = "Hoerbuchkatalog",
+        termsOfService = "",
         license = @License(name = "All rights reserved", url = "https://www.art-of-coding.eu"),
         contact = @Contact(url = "https://www.art-of-coding.eu", name = "Ralf", email = "ralf@art-of-coding.eu")
 ))
