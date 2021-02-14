@@ -57,37 +57,42 @@ public class DownloadsRestService {
         this.hoerbuchResolver = hoerbuchResolver;
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "Download vermerken")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "")
+            @ApiResponse(responseCode = "200", description = ""),
+            @ApiResponse(responseCode = "403", description = "Download nicht erlaubt")
     })
     @PutMapping(value = "/{titelnummer}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> fuegeHinzu(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                            @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
                                            @PathVariable final String titelnummer) {
-        final boolean b = downloadsService.hinzufuegen(new Hoerernummer(xHoerernummer),
-                new Titelnummer(titelnummer));
-        return b ? ResponseEntity.ok().build() : ResponseEntity.unprocessableEntity().build();
+        final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
+        final Titelnummer titelnummer1 = new Titelnummer(titelnummer);
+        return downloadsService.ausleihen(hoerernummer, titelnummer1)
+                ? ResponseEntity.ok().build()
+                : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "Sind Downloads aktuell erlaubt?")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "")
+            @ApiResponse(responseCode = "200", description = ""),
+            @ApiResponse(responseCode = "403", description = "Downloads nicht erlaubt")
     })
     @GetMapping(value = "/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> neuerDownloadErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
                                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        return downloadsService.downloadErlaubt(hoerernummer)
+        return downloadsService.neuerDownloadErlaubt(hoerernummer)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "Download dieses Titels erlaubt?")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "")
+            @ApiResponse(responseCode = "200", description = ""),
+            @ApiResponse(responseCode = "403", description = "Download nicht erlaubt")
     })
     @GetMapping(value = "/{titelnummer}/erlaubt", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> downloadTitelErlaubt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
@@ -101,7 +106,7 @@ public class DownloadsRestService {
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "Anzahl heutiger Bestellungen von Hörbüchern")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "")
     })
@@ -114,7 +119,7 @@ public class DownloadsRestService {
         return ResponseEntity.ok(downloads.anzahlHeute());
     }
 
-    @Operation(summary = "")
+    @Operation(summary = "Anzahl Bestellungen von Hörbüchern im aktuellen Ausleihzeitraum")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "")
     })
@@ -146,9 +151,10 @@ public class DownloadsRestService {
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
                 new ArrayList<>(downloads.getTitelnummern().keySet()));
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
-            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, Titelnummer.of(dto.getTitelnummer())));
-            dto.setAlsDownloadGebucht(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
+            dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
+            dto.setAlsDownloadGebucht(true);
+            dto.setAnzahlDownloads(downloadsService.anzahlDownloads(hoerernummer, titelnummer));
             dto.setAusgeliehenAm(format(downloads.ausgeliehenAm(titelnummer)));
             dto.setRueckgabeBis(format(downloads.rueckgabeBis(titelnummer)));
             dto.setAufDerMerkliste(merklisteService.enthalten(hoerernummer, titelnummer));

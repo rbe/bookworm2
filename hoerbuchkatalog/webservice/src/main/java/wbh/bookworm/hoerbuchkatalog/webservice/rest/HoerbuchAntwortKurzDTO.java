@@ -20,6 +20,8 @@ public final class HoerbuchAntwortKurzDTO implements Comparable<HoerbuchAntwortK
 
     private boolean alsDownloadGebucht;
 
+    private int anzahlDownloads;
+
     private String ausgeliehenAm;
 
     private String rueckgabeBis;
@@ -99,6 +101,14 @@ public final class HoerbuchAntwortKurzDTO implements Comparable<HoerbuchAntwortK
 
     public void setAlsDownloadGebucht(final boolean alsDownloadGebucht) {
         this.alsDownloadGebucht = alsDownloadGebucht;
+    }
+
+    public int getAnzahlDownloads() {
+        return anzahlDownloads;
+    }
+
+    public void setAnzahlDownloads(final int anzahlDownloads) {
+        this.anzahlDownloads = anzahlDownloads;
     }
 
     public String getAusgeliehenAm() {
