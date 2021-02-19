@@ -7,23 +7,46 @@
 </head>
 <body>
 <div class="container">
+    <button id="play">Play</button>
+    <button id="unmute">Unmute</button>
+</div>
+<div class="container">
     <div class="row no-gutters">
         <div class="col-sm-12 column action">
-            <a id="hoerprobe-21052" aria-label="H&ouml;rprobe" class="button hoerprobe-true" title="H&ouml;rprobe">
+            <a tabindex="0" id="hoerprobe-21052" aria-label="H&ouml;rprobe" class="button hoerprobe-true" title="H&ouml;rprobe">
                 <i class="fas fa-volume-up fa"></i>
             </a>
-            <a id="warenkorb-21052" aria-label="H&ouml;rbuch als CD bestellen" class="button order-cd-false" title="H&ouml;rbuch als CD bestellen">
+            <a tabindex="0" id="warenkorb-21052" aria-label="H&ouml;rbuch als CD bestellen" class="button order-cd-false"
+               title="H&ouml;rbuch als CD bestellen">
                 <i class="fas fa-compact-disc"></i>
             </a>
-            <a id="download-21052" aria-label="H&ouml;rbuch herunterladen" class="button order-download-true" title="H&ouml;rbuch herunterladen">
+            <a tabindex="0" id="download-21052" aria-label="H&ouml;rbuch herunterladen" class="button order-download-true"
+               title="H&ouml;rbuch herunterladen">
                 <i class="fas fa-book-reader"></i>
             </a>
-            <a id="merkliste-21052" aria-label="H&ouml;rbuch auf die Merkliste setzen" class="button watchlist-false" title="H&ouml;rbuch auf die Merkliste setzen">
+            <a tabindex="0" id="merkliste-21052" aria-label="H&ouml;rbuch auf die Merkliste setzen" class="button watchlist-false"
+               title="H&ouml;rbuch auf die Merkliste setzen">
                 <i class="fas fa-bookmark"></i>
             </a>
         </div>
     </div>
 </div>
-<script type="module" src="dist/wbhonline.prod.js"></script>
+<div class="container">
+    <script>
+        function triggerAlert() {
+            var alertEl = document.querySelector('.alert');
+            alertEl.setAttribute("role", "alert");
+        }
+    </script>
+    <button tabindex="0" type="button" onclick="triggerAlert()">Trigger alert</button>
+    <p aria-atomic="true" class="alert">The alert will trigger when the button is pressed.</p>
+</div>
+<script src="dist-dev/wbhonline.js"></script>
+<script type="module" src="hoerbuchkatalog/js/audioplayer.js"></script>
+<script type="module">
+    import {Audioplayer} from "./hoerbuchkatalog/js/audioplayer.js";
+    const audioplayer = new Audioplayer('06', '80007');
+    audioplayer.startEngines();
+</script>
 </body>
 </html>
