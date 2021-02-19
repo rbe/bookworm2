@@ -11,7 +11,7 @@ services:
   assets-ssh:
     image: wbh-cms/assets-ssh:${CMS_RELEASE}
     restart: "no"
-  rproxy:
+  cms-rproxy:
     image: wbh-cms/rproxy:${CMS_RELEASE}
     restart: "no"
     ports:
