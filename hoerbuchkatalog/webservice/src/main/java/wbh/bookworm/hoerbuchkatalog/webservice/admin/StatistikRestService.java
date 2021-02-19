@@ -1,4 +1,4 @@
-package wbh.bookworm.hoerbuchkatalog.webservice.statistik;
+package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -78,6 +78,7 @@ public class StatistikRestService {
                 .getBytes(StandardCharsets.ISO_8859_1);
     }
 
+    // TODO Downloads#bestellungenVom(LocalDateTime)
     private List<String> getCollect(final LocalDateTime now, final LocalDateTime datum,
                                     final Downloads download) {
         return download.getTitelnummern()

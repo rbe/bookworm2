@@ -41,15 +41,15 @@ public class DownloadsService {
     }
 
     public long anzahlHeute(final Hoerernummer hoerernummer) {
-        return downloads(hoerernummer).anzahlHeute();
+        return downloads(hoerernummer).anzahlHeutigerBestellungen();
     }
 
     public long anzahlAusleihzeitraum(final Hoerernummer hoerernummer) {
-        return downloads(hoerernummer).anzahlAusleihzeitraum();
+        return downloads(hoerernummer).anzahlBestellungenImAusleihzeitraum();
     }
 
-    public boolean neuerDownloadErlaubt(final Hoerernummer hoerernummer) {
-        return downloads(hoerernummer).neuerDownloadErlaubt();
+    public boolean neueBestellungErlaubt(final Hoerernummer hoerernummer) {
+        return downloads(hoerernummer).neueBestellungErlaubt();
     }
 
     public boolean downloadErlaubt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
@@ -57,7 +57,7 @@ public class DownloadsService {
     }
 
     public int anzahlDownloads(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return downloads(hoerernummer).anzahlDownloads(titelnummer).orElse(-1);
+        return downloads(hoerernummer).anzahlDownloads(titelnummer);
     }
 
     /**
@@ -66,12 +66,8 @@ public class DownloadsService {
     public boolean ausleihen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
         final Downloads downloads = downloads(hoerernummer);
         final boolean ausgeliehen = downloads.ausleihen(titelnummer);
-        //if (downloads.imAusleihzeitraumEnthalten(titelnummer)) {
         downloadsRepository.save(downloads);
         return ausgeliehen;
-        /*} else {
-            return false;
-        }*/
     }
 
     public boolean enthalten(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {

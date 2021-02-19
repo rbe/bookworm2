@@ -15,7 +15,9 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import org.springframework.core.env.Environment;
 
+import java.nio.file.Path;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -28,6 +30,17 @@ import java.util.concurrent.Executors;
 public class NutzerdatenAppConfig {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(NutzerdatenAppConfig.class);
+
+    private final String repositoryPath;
+
+    public NutzerdatenAppConfig(final Environment environment) {
+        repositoryPath = environment.getProperty("repository.path");
+    }
+
+    @Bean
+    public HoererProfilRepository hoererProfilRepository() {
+        return new HoererProfilRepository(Path.of(repositoryPath));
+    }
 
     @Bean
     @ConditionalOnMissingBean({ExecutorService.class})

@@ -30,7 +30,7 @@ public class HoererRepository {
 
     private final ApplicationContext applicationContext;
 
-    private AtomicReference<HoererMapper> aktuellerHoererMapper;
+    private final AtomicReference<HoererMapper> aktuellerHoererMapper;
 
     @Autowired
     public HoererRepository(final ApplicationContext applicationContext) {

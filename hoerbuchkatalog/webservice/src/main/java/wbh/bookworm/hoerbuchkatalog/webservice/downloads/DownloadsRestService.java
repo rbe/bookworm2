@@ -87,7 +87,7 @@ public class DownloadsRestService {
                                                      @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
                                                      @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
-        return downloadsService.neuerDownloadErlaubt(hoerernummer)
+        return downloadsService.neueBestellungErlaubt(hoerernummer)
                 ? ResponseEntity.ok().build()
                 : ResponseEntity.status(HttpStatus.FORBIDDEN).build();
     }
@@ -119,7 +119,7 @@ public class DownloadsRestService {
                                             @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
-        return ResponseEntity.ok(downloads.anzahlHeute());
+        return ResponseEntity.ok(downloads.anzahlHeutigerBestellungen());
     }
 
     @Operation(summary = "Anzahl Bestellungen von Hörbüchern im aktuellen Ausleihzeitraum")
@@ -132,7 +132,7 @@ public class DownloadsRestService {
                                                 @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
-        return ResponseEntity.ok(downloads.anzahlAusleihzeitraum());
+        return ResponseEntity.ok(downloads.anzahlBestellungenImAusleihzeitraum());
     }
 
     @Operation(summary = "")

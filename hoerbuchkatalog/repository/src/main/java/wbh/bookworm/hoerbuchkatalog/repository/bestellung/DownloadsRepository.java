@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.repository.bestellung;
 
 import java.nio.file.Path;
+import java.util.Collections;
 import java.util.Optional;
 
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
@@ -27,7 +28,8 @@ public class DownloadsRepository extends JsonDomainRepository<Downloads, Downloa
     }
 
     public Downloads erstellen(final Hoerernummer hoerernummer) {
-        return new Downloads(downloadsIdIdFuerHoerer(hoerernummer), hoerernummer);
+        return new Downloads(downloadsIdIdFuerHoerer(hoerernummer), hoerernummer,
+                30, 10, 5, Collections.emptyMap());
     }
 
     public Optional<Downloads> load(final Hoerernummer hoerernummer) {

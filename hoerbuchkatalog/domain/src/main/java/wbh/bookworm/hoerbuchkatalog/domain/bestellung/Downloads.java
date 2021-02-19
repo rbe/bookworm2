@@ -10,7 +10,6 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -25,74 +24,109 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
 import aoc.mikrokosmos.ddd.model.DomainAggregate;
+import aoc.mikrokosmos.ddd.specification.Specification;
+
+import static aoc.mikrokosmos.ddd.specification.Specification.not;
 
 public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Downloads.class);
 
-    private static final int ANZAHL_DOWNLOADS_PROTAG = 10;
-
-    private static final int ANZAHL_DOWNLOADS_PROAUSLEIHZEITRAUM = 30;
-
-    private static final int ANZAHL_DOWNLOADS_PROHOERBUCH = 5;
-
     @JsonProperty
     private final Hoerernummer hoerernummer;
 
-    private final transient Map<Titelnummer, Details> titelnummern;
+    private final HashMap<Titelnummer, Details> titelnummern;
 
-    private transient Predicate<Map.Entry<Titelnummer, Details>> anzahlHeutePredicate = entry ->
-            isSameDay(LocalDateTime.now(), entry.getValue().getAusgeliehenAm());
+    private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlBestellungenHeutePredicate;
 
-    private transient Predicate<Map.Entry<Titelnummer, Details>> ausleihzeitraumPredicate = entry ->
-            entry.getValue().getAusgeliehenAm().isAfter(LocalDateTime.now().toLocalDate()
-                    .atStartOfDay().minusDays(ANZAHL_DOWNLOADS_PROAUSLEIHZEITRAUM));
+    private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlBestellungenAusleihzeitraumPredicate;
 
-    private transient Predicate<Map.Entry<Titelnummer, Details>> anzahlDownloadsPredicate = entry ->
-            entry.getValue().getAnzahlDownloads() < ANZAHL_DOWNLOADS_PROHOERBUCH;
+    private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlDownloadsProHoerbuchPredicate;
+
+    private final transient Rules rules;
+
+    private int anzahlBestellungenProAusleihzeitraum;
+
+    private int anzahlBestellungenProTag;
+
+    private int anzahlDownloadsProHoerbuch;
 
     /**
      * Copy constructor
      */
     public Downloads(final Downloads downloads) {
-        super(new DownloadsId(downloads.domainId.getValue()));
-        this.hoerernummer = new Hoerernummer(downloads.hoerernummer.getValue());
-        this.titelnummern = new HashMap<>();
-        this.titelnummern.putAll(downloads.titelnummern);
-    }
-
-    public Downloads(final DownloadsId downloadsId, final Hoerernummer hoerernummer) {
-        this(downloadsId, hoerernummer, new HashMap<>());
+        this(downloads.domainId, downloads.hoerernummer, downloads.anzahlBestellungenProAusleihzeitraum,
+                downloads.anzahlBestellungenProTag, downloads.anzahlDownloadsProHoerbuch,
+                downloads.titelnummern);
     }
 
     @JsonCreator
     public Downloads(@JsonProperty("domainId") final DownloadsId downloadsId,
                      @JsonProperty("hoerernummer") final Hoerernummer hoerernummer,
+                     @JsonProperty("anzahlBestellungenProAusleihzeitraum") final int anzahlBestellungenProAusleihzeitraum,
+                     @JsonProperty("anzahlBestellungenProTag") final int anzahlBestellungenProTag,
+                     @JsonProperty("anzahlDownloadsProHoerbuch") final int anzahlDownloadsProHoerbuch,
                      @JsonProperty("titelnummern") final Map<Titelnummer, Details> titelnummern) {
         super(downloadsId);
         this.hoerernummer = hoerernummer;
-        this.titelnummern = titelnummern;
+        this.titelnummern = new HashMap<>();
+        this.titelnummern.putAll(titelnummern);
+        this.anzahlBestellungenProAusleihzeitraum = anzahlBestellungenProAusleihzeitraum;
+        this.anzahlBestellungenProTag = anzahlBestellungenProTag;
+        this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch;
+        anzahlBestellungenAusleihzeitraumPredicate = entry ->
+                entry.getValue().getAusgeliehenAm().isAfter(LocalDateTime.now().toLocalDate()
+                        .atStartOfDay().minusDays(30));
+        anzahlBestellungenHeutePredicate = entry ->
+                isSameDay(LocalDateTime.now(), entry.getValue().getAusgeliehenAm());
+        anzahlDownloadsProHoerbuchPredicate = entry ->
+                entry.getValue().getAnzahlDownloads() < anzahlDownloadsProHoerbuch;
+        this.rules = new Rules();
     }
 
     public Hoerernummer getHoerernummer() {
         return hoerernummer;
     }
 
+    public int getAnzahlBestellungenProAusleihzeitraum() {
+        return anzahlBestellungenProAusleihzeitraum;
+    }
+
+    public void setAnzahlBestellungenProAusleihzeitraum(final int anzahlBestellungenProAusleihzeitraum) {
+        this.anzahlBestellungenProAusleihzeitraum = anzahlBestellungenProAusleihzeitraum;
+    }
+
+    public int getAnzahlBestellungenProTag() {
+        return anzahlBestellungenProTag;
+    }
+
+    public void setAnzahlBestellungenProTag(final int anzahlBestellungenProTag) {
+        this.anzahlBestellungenProTag = anzahlBestellungenProTag;
+    }
+
+    public int getAnzahlDownloadsProHoerbuch() {
+        return anzahlDownloadsProHoerbuch;
+    }
+
+    public void setAnzahlDownloadsProHoerbuch(final int anzahlDownloadsProHoerbuch) {
+        this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch;
+    }
+
     public Map<Titelnummer, Details> getTitelnummern() {
         return titelnummern.entrySet()
                 .stream()
-                .filter(ausleihzeitraumPredicate)
+                .filter(anzahlBestellungenAusleihzeitraumPredicate)
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
     @JsonIgnore
-    public int getAnzahl() {
+    public int anzahlBestellungen() {
         return getTitelnummern().size();
     }
 
-    public long anzahlHeute() {
+    public long anzahlHeutigerBestellungen() {
         return titelnummern.entrySet().stream()
-                .filter(anzahlHeutePredicate)
+                .filter(anzahlBestellungenHeutePredicate)
                 .count();
     }
 
@@ -102,25 +136,26 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 && date1.getDayOfMonth() == date2.getDayOfMonth();
     }
 
-    public long anzahlAusleihzeitraum() {
+    public long anzahlBestellungenImAusleihzeitraum() {
         return titelnummern.entrySet().stream()
-                .filter(ausleihzeitraumPredicate)
+                .filter(anzahlBestellungenAusleihzeitraumPredicate)
                 .count();
     }
 
-    public Optional<Integer> anzahlDownloads(final Titelnummer titelnummer) {
+    public Integer anzahlDownloads(final Titelnummer titelnummer) {
         return titelnummern.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(titelnummer))
-                .filter(ausleihzeitraumPredicate)
+                .filter(anzahlBestellungenAusleihzeitraumPredicate)
                 .findFirst()
                 .map(Map.Entry::getValue)
-                .map(Details::getAnzahlDownloads);
+                .map(Details::getAnzahlDownloads)
+                .orElse(0);
     }
 
     public boolean imAusleihzeitraumEnthalten(final Titelnummer titelnummer) {
         return titelnummern.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(titelnummer))
-                .allMatch(ausleihzeitraumPredicate);
+                .allMatch(anzahlBestellungenAusleihzeitraumPredicate);
     }
 
     public boolean ausleihen(final Titelnummer titelnummer) {
@@ -157,27 +192,13 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         return vorhanden ? titelnummern.get(titelnummer).getRueckgabeBis() : null;
     }
 
-    public boolean neuerDownloadErlaubt() {
-        return anzahlHeute() < ANZAHL_DOWNLOADS_PROTAG
-                && anzahlAusleihzeitraum() < ANZAHL_DOWNLOADS_PROAUSLEIHZEITRAUM;
+    public boolean neueBestellungErlaubt() {
+        return rules.bestellungErlaubt.isSatisfied(null);
     }
 
-    // TODO Specification Pattern
     public boolean downloadErlaubt(final Titelnummer titelnummer) {
-        // Fall 1:
-        // - Titel ist nicht in der Download-Liste im Ausleihzeitraum enthalten und
-        // - Kontingent (pro Tag, pro Ausleihzeitraum) erlaubt download
-        // - Download-Zähler wird auf 1 gesetzt
-        boolean fall1 = !imAusleihzeitraumEnthalten(titelnummer)
-                && anzahlHeute() < ANZAHL_DOWNLOADS_PROTAG
-                && anzahlAusleihzeitraum() < ANZAHL_DOWNLOADS_PROAUSLEIHZEITRAUM;
-        // Fall 2:
-        // - Titel ist in der Download-Liste im Ausleihzeitraum enthalten und
-        // - Ausleihzeitraum passt und
-        // - es wurden noch nicht 5 Downloads getätigt
-        boolean fall2 = imAusleihzeitraumEnthalten(titelnummer)
-                && anzahlDownloads(titelnummer).orElse(ANZAHL_DOWNLOADS_PROHOERBUCH + 1) < ANZAHL_DOWNLOADS_PROHOERBUCH;
-        return fall1 || fall2;
+        return rules.titelKannHeruntergeladenWerden.or(rules.titelKannBestelltWerden)
+                .isSatisfied(titelnummer);
     }
 
     @Override
@@ -265,6 +286,56 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         @Override
         public int compareTo(final Details o) {
             return ausgeliehenAm.compareTo(o.ausgeliehenAm);
+        }
+
+    }
+
+    private class Rules {
+
+        final Specification<Titelnummer> bestellungErlaubt = new BestellungErlaubt();
+
+        // Fall 1:
+        // - Titel ist nicht in der Download-Liste im Ausleihzeitraum enthalten und
+        // - Kontingent (pro Tag, pro Ausleihzeitraum) erlaubt download
+        // - Download-Zähler wird auf 1 gesetzt
+        final Specification<Titelnummer> titelKannBestelltWerden =
+                not(new ImAusleihzeitraum()).and(new BestellungErlaubt());
+
+        // Fall 2:
+        // - Titel ist in der Download-Liste im Ausleihzeitraum enthalten und
+        // - Ausleihzeitraum passt und
+        // - es wurden noch nicht 5 Downloads getätigt
+        final Specification<Titelnummer> titelKannHeruntergeladenWerden =
+                new ImAusleihzeitraum().and(new DownloadErlaubt());
+
+    }
+
+    private class ImAusleihzeitraum implements Specification<Titelnummer> {
+
+        @Override
+        public boolean isSatisfied(final Titelnummer titelnummer) {
+            return titelnummern.entrySet().stream()
+                    .filter(entry -> entry.getKey().equals(titelnummer))
+                    .allMatch(anzahlBestellungenAusleihzeitraumPredicate);
+        }
+
+    }
+
+    private class BestellungErlaubt implements Specification<Titelnummer> {
+
+        @Override
+        public boolean isSatisfied(final Titelnummer titelnummer) {
+            return anzahlHeutigerBestellungen() < anzahlBestellungenProTag
+                    && anzahlBestellungenImAusleihzeitraum() < anzahlBestellungenProAusleihzeitraum;
+        }
+
+    }
+
+    private class DownloadErlaubt implements Specification<Titelnummer> {
+
+        @Override
+        public boolean isSatisfied(final Titelnummer titelnummer) {
+            return anzahlDownloads(titelnummer) < anzahlDownloadsProHoerbuch;
         }
 
     }

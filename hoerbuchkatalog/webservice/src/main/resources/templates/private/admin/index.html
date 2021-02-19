@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="de" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>WBH Admin</title>
+    <script type="application/javascript" th:src="@{/v1/private/admin/index.js}" th:defer="defer"></script>
+</head>
+<body>
+<form id="abfrage" action="#" th:action="@{/v1/private/admin/abfrage}" th:object="${admin}" method="post">
+    <table>
+        <tr>
+            <td><label th:text="#{hoerernummer}"/></td>
+            <td><input type="text" value="" th:field="*{hoerernummer}"/></td>
+            <td>00000 für "alle Hörer" verwenden.</td>
+        </tr>
+        <tr>
+            <td><input id="query" type="submit" value="Kontingent anzeigen"/></td>
+        </tr>
+    </table>
+</form>
+<form id="kontingent" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${admin}" method="post">
+    <input type="hidden" id="hoerernummer" name="hoerernummer" th:value="*{hoerernummer}">
+    <table>
+        <tr>
+            <td><label th:text="#{anzahlBestellungenProAusleihzeitraum}"/></td>
+            <td><input type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}"/></td>
+        </tr>
+        <tr>
+            <td><label th:text="#{anzahlBestellungenProTag}"/></td>
+            <td><input type="number" th:field="*{anzahlBestellungenProTag}"/></td>
+        </tr>
+        <tr>
+            <td><label th:text="#{anzahlDownloadsProHoerbuch}"/></td>
+            <td><input type="number" th:field="*{anzahlDownloadsProHoerbuch}"/></td>
+        </tr>
+        <tr>
+            <td><input type="submit" value="Kontingent setzen"/></td>
+        </tr>
+    </table>
+</form>
+<span th:each="r : ${result}" th:text="${r}"></span>
+</body>
+</html>
