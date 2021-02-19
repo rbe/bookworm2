@@ -1,0 +1,72 @@
+hoerbuchkatalog:
+  directory: ./var/wbh/hoerbuchkatalog
+  cron:
+    expression: 0 15 5 * * MON-FRI
+  suchergebnisse:
+    anzahl: 1000
+  wbh:
+    gesamtdat:
+      filename: Gesamt.dat
+      charset: ISO-8859-15
+
+hoererdaten:
+  directory: ./var/wbh/nutzerdaten
+
+cdlieferung:
+  directory: ./var/wbh/nutzerdaten
+
+repository:
+  path: ./var
+
+lucene:
+  index:
+    directory: ${hoerbuchkatalog.directory}/lucene
+
+spring:
+  redis:
+    host: localhost
+  mail:
+    host: 127.0.0.1
+    port: 8025
+    username: username
+    password: password
+    properties:
+      mail:
+        debug: true
+        smtp:
+          debug: true
+          auth: true
+          starttls:
+            enable: true
+
+server:
+  address: 127.0.0.1
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: always
+
+logging:
+  level:
+    root: ERROR
+    #wbh.bookworm.hoerbuchkatalog.assembly: ERROR
+    #wbh.bookworm.hoerbuchkatalog.rest: ERROR
+    #wbh.bookworm.hoerbuchkatalog.app: ERROR
+    #wbh.bookworm.hoerbuchkatalog.repository: ERROR
+    #wbh.bookworm.hoerbuchkatalog.domain: ERROR
+    wbh.bookworm.hoerbuchkatalog: INFO
+    aoc.mikrokosmos: ERROR
+    aoc.mikrokosmos.fs: ERROR
+    aoc.mikrokosmos.ddd.event: ERROR
+    aoc.mikrokosmos.ddd.repository: ERROR
+    aoc.mikrokosmos.ddd.search: ERROR
+    eu.artofcoding: ERROR
+    org.eclipse.jetty: INFO
+    org.springframework.boot.web.embedded.jetty: DEBUG
+    #org.springframework.web.servlet.handler: ERROR
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method: INFO
+    org.springframework.web: INFO
+    org.springframework.beans.factory.support: ERROR
+    org.springframework: INFO
+    org.reflections: ERROR
