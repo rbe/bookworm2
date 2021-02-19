@@ -12,8 +12,9 @@ import {WbhonlineCdBestellung} from "./wbhonlineCdBestellung.js";
 import {WbhonlineDownloads} from "./wbhonlineDownloads.js";
 import {WbhonlineHoerprobe} from "./wbhonlineHoerprobe.js";
 import {WbhonlineA11y} from "./wbhonlineA11y.js";
+import {WbhonlineSuchformular} from "./wbhonlineSuchformular.js";
 
-export class Wbhonline {
+class Wbhonline {
 
     constructor() {
         const merkliste = new WbhonlineMerkliste();
@@ -21,6 +22,7 @@ export class Wbhonline {
         const cdBestellung = new WbhonlineCdBestellung();
         const download = new WbhonlineDownloads();
         const hoerprobe = new WbhonlineHoerprobe();
+        const suchformular = new WbhonlineSuchformular();
         const a11y = new WbhonlineA11y();
         a11y.setupAccesskeys();
     }

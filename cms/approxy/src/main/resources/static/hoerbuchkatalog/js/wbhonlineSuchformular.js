@@ -10,7 +10,12 @@ import {WbhonlineButtons} from "./wbhonlineButtons.js";
 
 const STICHWORTSUCHE_URL = '/stichwortsuche.html';
 
-class WbhonlineSuchformular {
+export class WbhonlineSuchformular {
+
+    constructor() {
+        this.zeigeSuchwerte();
+        this.suchformular();
+    }
 
     suchformular() {
         const button = document.querySelector('button#suchen');
@@ -117,14 +122,4 @@ class WbhonlineSuchformular {
         return null !== value && '' !== value && '*' !== value;
     }
 
-    initialisiere() {
-        this.zeigeSuchwerte();
-        this.suchformular();
-    }
-
 }
-
-document.addEventListener('DOMContentLoaded', (event) => {
-    const suchformular = new WbhonlineSuchformular();
-    suchformular.initialisiere();
-});
