@@ -45,7 +45,11 @@ export class Audioplayer {
             audio.addEventListener('ended', () => {
                 this.cleanup(audio);
             });
-            audio.play();
+            audio.play()
+                .catch(reason => {
+                    console.log(reason);
+                    pauseCallback(element);
+                });
         });
     }
 
