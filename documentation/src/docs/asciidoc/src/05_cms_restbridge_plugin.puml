@@ -1,6 +1,6 @@
 @startuml
 
-!include plantuml/Skin.iuml
+!include plantuml/Skinparams.iuml
 !include plantuml/Systeme.iuml!CMS
 !include plantuml/Systeme.iuml!HBK
 

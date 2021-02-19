@@ -1,0 +1,26 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+skinparam monochrome true
+skinparam ResponseMessageBelowArrow true
+
+autonumber
+
+participant Browser
+participant CMS as CMS
+participant "Hörbuchkatalog" as HBK
+participant "Hörbuchdienst" as HBD
+participant "ID Provider" as IDP
+
+Browser -> CMS++ : Login
+CMS -> CMS : Session erzeugen
+Browser <-- CMS--
+Browser -> CMS++ : Hörbuch herunterladen
+CMS -> CMS : Hörernummer in Session\nnachsehen
+CMS -> IDP++ : Authenticate
+IDP -> IDP : Validate credentials
+CMS <-- IDP-- : JWT
+CMS -> CMS : Access Token -> Cookie\noder Session/Datenbank
+Browser <-- CMS-- : Cookie mit Access Token
+
+@enduml

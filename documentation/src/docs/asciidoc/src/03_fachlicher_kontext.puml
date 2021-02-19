@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/component-diagram
 
-!include plantuml/Skin.iuml
+!include plantuml/Skinparams.iuml
 
 title "Fachlicher Kontext"
 

@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
-!include plantuml/Skin.iuml
+!include plantuml/Skinparams.iuml
 
 autonumber
 

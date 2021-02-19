@@ -1,6 +1,8 @@
 @startuml
 'https://plantuml.com/deployment-diagram
 
+!include plantuml/Skinparams.iuml
+
 left to right direction
 'top to bottom direction
 

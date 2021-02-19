@@ -1,7 +1,7 @@
 @startuml
 'https://plantuml.com/use-case-diagram
 
-!include plantuml/Skin.iuml
+!include plantuml/Skinparams.iuml
 !include plantuml/Akteure.iuml!Hoerbuechereien
 !include plantuml/Akteure.iuml!Entwicklung
 !include plantuml/Akteure.iuml!Hoerer

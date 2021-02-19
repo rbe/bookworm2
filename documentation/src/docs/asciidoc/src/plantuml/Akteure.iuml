@@ -7,7 +7,7 @@
 ' Entwicklung
 @startuml(id=Entwicklung)
 !define actor_medienhof medienhof <<Entwickler>>
-!define actor_AoC "Art of Codfing" as AoC <<Architekt,\nEntwickler,\nAdministrator>>
+!define actor_AoC "Art of Coding" as AoC <<Architekt,\nEntwickler,\nAdministrator>>
 !define actor_App App <<Entwickler>>
 @enduml
 
