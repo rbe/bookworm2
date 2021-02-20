@@ -29,8 +29,6 @@
         <rabbitmq.hostname>rabbitmq-${domain}</rabbitmq.hostname>
         <rabbitmq.nodename>rabbitmq@${rabbitmq.hostname}</rabbitmq.nodename>
         <virenscanner.release>1.7</virenscanner.release>
-        <!-- Elasticsearch
-        -->
         <hbd.release>${maven.build.timestamp}</hbd.release>
         <hbd.hostname>hoerbuchdienst-${domain}</hbd.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>
