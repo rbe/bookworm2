@@ -8,11 +8,15 @@ top to bottom direction
 
 package wbh-online.de {
     node shard1 as "Shard1" {
+        cloud Frontend
+        cloud Backend
         component "Vault" as shard1_Vault <<Secrets Management>>
+        shard1_Vault - Backend
         component "KES" as shard1_KES <<Key Management>>
+        shard1_KES -- Backend
         component "S3" as shard1_S3 <<Object Storage>> {
-            storage "eingangskorb" as shard1_eingangskorb
-            storage "hoerbuchdienst" as shard1_hoerbuchdienst
+            storage "eingangskorb" as shard1_S3_eingangskorb
+            storage "hoerbuchdienst" as shard1_S3_hoerbuchdienst
         }
         shard1_KES - shard1_Vault
         shard1_S3 -d- shard1_KES
@@ -21,9 +25,12 @@ package wbh-online.de {
             queue "Databeat" as shard1_Databeat
         }
         component "Hörbuchdienst" as shard1_Hoerbuchdienst <<System>>
-        shard1_Hoerbuchdienst -d- shard1_hoerbuchdienst
+        shard1_Hoerbuchdienst -d- shard1_S3_hoerbuchdienst
         shard1_Hoerbuchdienst -d- shard1_Heartbeat
         shard1_Hoerbuchdienst -d- shard1_Databeat
+        component "nginx" as rproxy <<Reverse Proxy>>
+        rproxy -d- shard1_Hoerbuchdienst
+        rproxy -u- Frontend
     }
 }
 
