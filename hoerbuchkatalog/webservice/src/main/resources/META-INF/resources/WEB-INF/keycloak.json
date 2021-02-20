@@ -1,0 +1,11 @@
+{
+  "auth-server-url": "http://localhost:8081/auth",
+  "ssl-required": "none",
+  "realm": "dev",
+  "public-client": true,
+  "resource": "microservice",
+  "credentials": {
+    "secret": "b1e2b616-192d-4383-96e4-e4c9f6b63ace"
+  },
+  "use-resource-role-mappings": "true"
+}

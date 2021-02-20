@@ -24,6 +24,7 @@
         <maven.compiler.target>15</maven.compiler.target>
         <!-- Spring -->
         <spring-boot.version>2.4.2</spring-boot.version>
+        <keycloak.release>12.0.3</keycloak.release>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -124,6 +125,13 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-test-autoconfigure</artifactId>
                 <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.keycloak.bom</groupId>
+                <artifactId>keycloak-adapter-bom</artifactId>
+                <version>${keycloak.release}</version>
+                <type>pom</type>
+                <scope>import</scope>
             </dependency>
         </dependencies>
     </dependencyManagement>

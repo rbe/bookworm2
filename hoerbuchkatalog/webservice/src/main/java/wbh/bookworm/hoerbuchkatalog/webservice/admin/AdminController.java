@@ -1,5 +1,7 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Map;
 
@@ -20,6 +22,12 @@ public class AdminController {
                 "result", ""
         );
         return new ModelAndView("/private/admin/index", map);
+    }
+
+    @GetMapping(path = "/logout")
+    public String logout(HttpServletRequest request) throws ServletException {
+        request.logout();
+        return "/v1/private/admin";
     }
 
 }

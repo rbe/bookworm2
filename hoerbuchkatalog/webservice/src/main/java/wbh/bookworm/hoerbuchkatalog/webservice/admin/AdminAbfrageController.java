@@ -1,5 +1,6 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.Map;
@@ -17,6 +18,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Controller
 @RequestMapping("/v1/private/admin/abfrage")
+@RolesAllowed("admin")
 public class AdminAbfrageController {
 
     private final HoererService hoererService;

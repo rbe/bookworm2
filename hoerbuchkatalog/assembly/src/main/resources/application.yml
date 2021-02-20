@@ -53,6 +53,30 @@ server:
   http2:
     enabled: true
 
+keycloak:
+  auth-server-url: http://localhost:8081/auth
+  ssl-required: none
+  public-client: true
+  realm: dev
+  resource: microservice
+  credentials:
+    secret: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+  use-resource-role-mappings: true
+#  principal-attribute: preferred_username
+
+management:
+  context-path: /actuator
+  security:
+    enabled: false
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+  endpoint:
+    health:
+      enabled: true
+      show-details: ALWAYS
+
 springdoc:
   api-docs:
     path: /swagger
@@ -74,6 +98,7 @@ logging:
     aoc.mikrokosmos.ddd.repository: ERROR
     aoc.mikrokosmos.ddd.search: ERROR
     eu.artofcoding: ERROR
+    org.keycloak: DEBUG
     org.eclipse.jetty: ERROR
     org.springframework.web.servlet.handler: ERROR
     org.springframework.web: ERROR

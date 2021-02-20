@@ -1,5 +1,6 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
+import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Controller
 @RequestMapping("/v1/private/admin/kontingent")
+@RolesAllowed("admin")
 public class AdminKontingentController {
 
     private final HoererService hoererService;
