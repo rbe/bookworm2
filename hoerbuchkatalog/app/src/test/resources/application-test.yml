@@ -1,5 +1,5 @@
 hoerbuchkatalog:
-  directory: var/wbh/hoerbuchkatalog
+  directory: target/var/wbh/hoerbuchkatalog
   cron:
     expression: 0 15 5 * * MON-FRI
   suchergebnisse:
@@ -8,21 +8,15 @@ hoerbuchkatalog:
     gesamtdat:
       filename: Gesamt.dat
       charset: ISO-8859-15
-  blista:
-    rest:
-      url: https://rest-dls-katalog.blista.de:443/v1/isofiles
-    aghnummern:
-      pathinzip: /iso.txt
-      charset: ISO-8859-15
 
 hoererdaten:
-  directory: var/wbh/nutzerdaten
+  directory: target/var/wbh/nutzerdaten
 
 cdlieferung:
-  directory: var/wbh/nutzerdaten
+  directory: target/var/wbh/nutzerdaten
 
 repository:
-  path: var
+  path: target/var
 
 lucene:
   index:
@@ -30,7 +24,8 @@ lucene:
 
 spring:
   main:
-    allow-bean-definition-overriding: true
+    banner-mode: "off"
+    #allow-bean-definition-overriding: true
   redis:
     host: localhost
     port: 6379

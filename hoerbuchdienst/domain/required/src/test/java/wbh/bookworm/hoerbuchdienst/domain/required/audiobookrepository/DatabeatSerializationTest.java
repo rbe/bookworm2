@@ -18,7 +18,7 @@ import org.junit.jupiter.api.TestMethodOrder;
 
 @MicronautTest
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
-class DatabeatSerializationTest {
+public class DatabeatSerializationTest {
 
     private final ObjectMapper objectMapper;
 

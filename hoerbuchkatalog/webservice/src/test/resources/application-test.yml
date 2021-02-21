@@ -23,7 +23,6 @@ lucene:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
-  profiles: test
   main:
     banner-mode: "off"
   redis:

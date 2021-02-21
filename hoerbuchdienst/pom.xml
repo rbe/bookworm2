@@ -12,11 +12,7 @@
     <name>wbh-online.de Hörbuchdienst</name>
     <packaging>pom</packaging>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <jdk.version>14</jdk.version>
-        <maven.compiler.target>${jdk.version}</maven.compiler.target>
-        <maven.compiler.source>${jdk.version}</maven.compiler.source>
+        <!-- Maven -->
         <maven-surefire-plugin.version>2.22.2</maven-surefire-plugin.version>
         <maven-failsafe-plugin.version>2.22.2</maven-failsafe-plugin.version>
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
@@ -136,6 +132,8 @@
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>${maven-surefire-plugin.version}</version>
                     <configuration>
+                        <forkCount>0</forkCount>
+                        <reuseForks>false</reuseForks>
                         <detail>true</detail>
                         <includes>
                             <include>%regex[.*]</include>

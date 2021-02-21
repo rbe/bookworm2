@@ -21,13 +21,14 @@
         </developer>
     </developers>
     <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- Maven -->
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.require.version>3.6</maven.require.version>
         <maven.build.timestamp.format>yyyy-MM-dd'T'HH-mm-ss</maven.build.timestamp.format>
         <!-- Java -->
-        <maven.compiler.source>11</maven.compiler.source>
-        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.source>15</maven.compiler.source>
+        <maven.compiler.target>15</maven.compiler.target>
         <!-- Mikrokosmos -->
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <!-- Jackson -->
@@ -460,6 +461,8 @@
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
                         <configuration>
+                            <forkCount>0</forkCount>
+                            <reuseForks>false</reuseForks>
                             <argLine>${surefireArgLine}</argLine>
                         </configuration>
                         <dependencies>

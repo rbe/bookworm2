@@ -34,10 +34,3 @@ rabbitmq:
       uri: amqp://guest:guest@localhost
       nio-params:
         enableHostnameVerification: true
-
-elasticsearch:
-  httpHosts: "http://localhost:9200"
-
-#jackson:
-#  serialization:
-#    writeDatesAsTimestamps: false

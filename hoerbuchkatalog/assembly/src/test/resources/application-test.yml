@@ -23,6 +23,8 @@ lucene:
     directory: ${hoerbuchkatalog.directory}/lucene
 
 spring:
+  main:
+    banner-mode: "off"
   redis:
     host: localhost
   mail:
