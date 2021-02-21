@@ -46,8 +46,8 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
                 .antMatchers("/**/private/**").hasRole("admin")
                 .anyRequest().permitAll()
         ;
-        http.csrf()
-                .ignoringAntMatchers("/actuator/**");
+        http.csrf().disable();
+        //.ignoringAntMatchers("/actuator/**");
     }
 
 }
