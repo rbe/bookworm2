@@ -1,12 +1,17 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
+import org.keycloak.adapters.KeycloakDeployment;
+import org.keycloak.adapters.KeycloakDeploymentBuilder;
+import org.keycloak.adapters.spi.HttpFacade;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;
+import org.keycloak.adapters.springboot.KeycloakSpringBootProperties;
 import org.keycloak.adapters.springsecurity.KeycloakConfiguration;
 import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticationProvider;
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -35,7 +40,7 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     }
 
     @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    protected void configure(final HttpSecurity http) throws Exception {
         super.configure(http);
         http
                 .logout()
@@ -54,8 +59,24 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     }
 
     @Bean
-    public KeycloakConfigResolver keycloakConfigResolver() {
-        return new KeycloakSpringBootConfigResolver();
+    @Primary
+    public KeycloakConfigResolver keycloakConfigResolver(final KeycloakSpringBootProperties properties) {
+        return new MyKeycloakSpringBootConfigResolver(properties);
+    }
+
+    public class MyKeycloakSpringBootConfigResolver extends KeycloakSpringBootConfigResolver {
+
+        private final KeycloakDeployment keycloakDeployment;
+
+        public MyKeycloakSpringBootConfigResolver(final KeycloakSpringBootProperties properties) {
+            keycloakDeployment = KeycloakDeploymentBuilder.build(properties);
+        }
+
+        @Override
+        public KeycloakDeployment resolve(final HttpFacade.Request facade) {
+            return keycloakDeployment;
+        }
+
     }
 
     /*
