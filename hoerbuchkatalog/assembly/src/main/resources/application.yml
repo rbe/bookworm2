@@ -44,6 +44,27 @@ spring:
           auth: true
           starttls:
             enable: true
+  security:
+    oauth2:
+      client:
+        registration:
+          keycloak:
+            client-id: ${OAUTH2_CLIENT_ID}
+            client-secret: ${OAUTH2_CLIENT_SECRET}
+            client-name: Microservice
+            authorization-grant-type: authorization_code
+            redirect-uri: '{baseUrl}/login/oauth2/code/{registrationId}'
+            scope:
+              - openid
+              - profile
+              - email
+        provider:
+          keycloak:
+            authorization-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/auth
+            token-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/token
+            user-info-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/userinfo
+            jwk-set-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/certs
+            user-name-attribute: preferred_username
 
 server:
   port: 8080
