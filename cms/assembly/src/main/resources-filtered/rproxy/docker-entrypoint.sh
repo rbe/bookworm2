@@ -51,7 +51,7 @@ then
       && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
     [[ ! -d /etc/letsencrypt/live/${hbk.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${hbk.hostname}"
-    [[ ! -d /etc/letsencrypt/live/"${cms.hostname}" ]] \
+    [[ ! -d /etc/letsencrypt/live/${cms.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${cms.hostname}"
     [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
     [[ -d /etc/letsencrypt/live ]] && chmod 755 /etc/letsencrypt/live

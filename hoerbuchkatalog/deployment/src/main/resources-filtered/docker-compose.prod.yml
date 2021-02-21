@@ -7,3 +7,18 @@ services:
   admin-ssh:
     ports:
       - "2202:22"
+  keycloakpostgres:
+    environment:
+      - POSTGRES_DB=keycloak
+      - POSTGRES_USER=keycloak
+      - POSTGRES_PASSWORD=Pa55w0rd
+  keycloak:
+    environment:
+      - DB_DATABASE=keycloak
+      - DB_USER=keycloak
+      - DB_PASSWORD=Pa55w0rd
+      - KEYCLOAK_USER=admin
+      - KEYCLOAK_PASSWORD=Pa55w0rd
+  hoerbuchkatalog:
+    environment:
+      - OAUTH2_BASEURL=http://keycloak:8080/auth
