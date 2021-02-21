@@ -3,7 +3,7 @@ version: '3.7'
 services:
   maven:
     build:
-      context: openjdk14-maven-docker
+      context: openjdk15-maven-docker
     image: wbh-bookworm/builder:1
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
