@@ -23,17 +23,18 @@ public class DownloadsRepository extends JsonDomainRepository<Downloads, Downloa
         super(Downloads.class, DownloadsId.class, storagePath);
     }
 
-    private DownloadsId downloadsIdIdFuerHoerer(final Hoerernummer hoerernummer) {
-        return new DownloadsId(hoerernummer + "-Downloads");
-    }
-
     public Downloads erstellen(final Hoerernummer hoerernummer) {
-        return new Downloads(downloadsIdIdFuerHoerer(hoerernummer), hoerernummer,
+        final DownloadsId downloadsId = downloadsIdIdFuerHoerer(hoerernummer);
+        return new Downloads(downloadsId, hoerernummer,
                 30, 10, 5, Collections.emptyMap());
     }
 
     public Optional<Downloads> load(final Hoerernummer hoerernummer) {
         return super.load(downloadsIdIdFuerHoerer(hoerernummer));
+    }
+
+    private DownloadsId downloadsIdIdFuerHoerer(final Hoerernummer hoerernummer) {
+        return new DownloadsId(hoerernummer + "-Downloads");
     }
 
 }

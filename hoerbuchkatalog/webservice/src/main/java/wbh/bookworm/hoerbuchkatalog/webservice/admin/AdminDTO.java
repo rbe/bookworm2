@@ -9,6 +9,8 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 public class AdminDTO implements Serializable {
 
+    private Boolean alleHoerer;
+
     private Hoerernummer hoerernummer;
 
     @Min(value = 0, message = "")
@@ -22,6 +24,14 @@ public class AdminDTO implements Serializable {
     @Min(value = 0, message = "")
     @Max(value = 10, message = "")
     private Integer anzahlDownloadsProHoerbuch;
+
+    public Boolean getAlleHoerer() {
+        return alleHoerer;
+    }
+
+    public void setAlleHoerer(final Boolean alleHoerer) {
+        this.alleHoerer = alleHoerer;
+    }
 
     public Hoerernummer getHoerernummer() {
         return Optional.ofNullable(hoerernummer).orElse(Hoerernummer.UNBEKANNT);

@@ -6,7 +6,7 @@ import wbh.bookworm.shared.domain.Hoerernummer;
 
 public class TemplateDTO implements Serializable {
 
-    private Hoerernummer hoerernummer = Hoerernummer.UNBEKANNT;
+    private Hoerernummer hoerernummer;
 
     private Integer anzahlBestellungenProAusleihzeitraum;
 

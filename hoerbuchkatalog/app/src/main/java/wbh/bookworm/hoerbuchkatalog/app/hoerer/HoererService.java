@@ -27,16 +27,12 @@ public final class HoererService {
 
     private final HoererRepository hoererRepository;
 
-    private final HoererProfilRepository hoererProfilRepository;
-
     private final DownloadsRepository downloadsRepository;
 
     @Autowired
     public HoererService(final HoererRepository hoererRepository,
-                         final HoererProfilRepository hoererProfilRepository,
                          final DownloadsRepository downloadsRepository) {
         this.hoererRepository = hoererRepository;
-        this.hoererProfilRepository = hoererProfilRepository;
         this.downloadsRepository = downloadsRepository;
     }
 
@@ -97,16 +93,16 @@ public final class HoererService {
         downloadsRepository.save(downloads);
     }
 
-    public void neueAnzahlBestellungenProAusleihzeitraum(int anzahlBestellungen) {
-        neueAnzahlBestellungenProAusleihzeitraum(Hoerernummer.UNBEKANNT, anzahlBestellungen);
-    }
-
-    public void neueAnzahlBestellungenProTag(int anzahlBestellungen) {
-        neueAnzahlBestellungenProTag(Hoerernummer.UNBEKANNT, anzahlBestellungen);
-    }
-
-    public void neueAnzahlDownloadsProHoerbuch(final int anzahlDownloadsProHoerbuch) {
-        neueAnzahlDownloadsProHoerbuch(Hoerernummer.UNBEKANNT, anzahlDownloadsProHoerbuch);
+    public boolean freiputzen(final Hoerernummer hoerernummer) {
+        final Optional<Downloads> maybeDownloads = downloadsRepository.load(hoerernummer);
+        if (maybeDownloads.isPresent()) {
+            final Downloads downloads = maybeDownloads.get();
+            downloads.freiputzen();
+            downloadsRepository.save(downloads);
+            return true;
+        } else {
+            return false;
+        }
     }
 
 }

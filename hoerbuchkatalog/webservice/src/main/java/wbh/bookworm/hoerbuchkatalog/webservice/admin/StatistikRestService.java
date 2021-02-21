@@ -81,7 +81,7 @@ public class StatistikRestService {
     // TODO Downloads#bestellungenVom(LocalDateTime)
     private List<String> getCollect(final LocalDateTime now, final LocalDateTime datum,
                                     final Downloads download) {
-        return download.getTitelnummern()
+        return download.titelnummernImAusleihzeitraum()
                 .entrySet()
                 .stream()
                 .filter(e -> isSameDay(datum, e))

@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -32,10 +33,13 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(Downloads.class);
 
+    private static final int AUSLEIHZEITRAUM_TAGE = 30;
+
     @JsonProperty
     private final Hoerernummer hoerernummer;
 
-    private final HashMap<Titelnummer, Details> titelnummern;
+    @JsonProperty
+    private final Map<Titelnummer, Details> titelnummern;
 
     private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlBestellungenHeutePredicate;
 
@@ -45,10 +49,13 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private final transient Rules rules;
 
+    @JsonProperty
     private int anzahlBestellungenProAusleihzeitraum;
 
+    @JsonProperty
     private int anzahlBestellungenProTag;
 
+    @JsonProperty
     private int anzahlDownloadsProHoerbuch;
 
     /**
@@ -63,20 +70,25 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     @JsonCreator
     public Downloads(@JsonProperty("domainId") final DownloadsId downloadsId,
                      @JsonProperty("hoerernummer") final Hoerernummer hoerernummer,
-                     @JsonProperty("anzahlBestellungenProAusleihzeitraum") final int anzahlBestellungenProAusleihzeitraum,
-                     @JsonProperty("anzahlBestellungenProTag") final int anzahlBestellungenProTag,
-                     @JsonProperty("anzahlDownloadsProHoerbuch") final int anzahlDownloadsProHoerbuch,
+                     @JsonProperty(value = "anzahlBestellungenProAusleihzeitraum", defaultValue = "30") final int anzahlBestellungenProAusleihzeitraum,
+                     @JsonProperty(value = "anzahlBestellungenProTag", defaultValue = "10") final int anzahlBestellungenProTag,
+                     @JsonProperty(value = "anzahlDownloadsProHoerbuch", defaultValue = "5") final int anzahlDownloadsProHoerbuch,
                      @JsonProperty("titelnummern") final Map<Titelnummer, Details> titelnummern) {
         super(downloadsId);
         this.hoerernummer = hoerernummer;
         this.titelnummern = new HashMap<>();
-        this.titelnummern.putAll(titelnummern);
-        this.anzahlBestellungenProAusleihzeitraum = anzahlBestellungenProAusleihzeitraum;
-        this.anzahlBestellungenProTag = anzahlBestellungenProTag;
-        this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch;
+        if (!titelnummern.isEmpty()) {
+            this.titelnummern.putAll(titelnummern);
+        }
+        this.anzahlBestellungenProAusleihzeitraum = anzahlBestellungenProAusleihzeitraum == 0
+                ? 30 : anzahlBestellungenProAusleihzeitraum;
+        this.anzahlBestellungenProTag = anzahlBestellungenProTag == 0
+                ? 10 : anzahlBestellungenProTag;
+        this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch == 0
+                ? 5 : anzahlDownloadsProHoerbuch;
         anzahlBestellungenAusleihzeitraumPredicate = entry ->
                 entry.getValue().getAusgeliehenAm().isAfter(LocalDateTime.now().toLocalDate()
-                        .atStartOfDay().minusDays(30));
+                        .atStartOfDay().minusDays(AUSLEIHZEITRAUM_TAGE));
         anzahlBestellungenHeutePredicate = entry ->
                 isSameDay(LocalDateTime.now(), entry.getValue().getAusgeliehenAm());
         anzahlDownloadsProHoerbuchPredicate = entry ->
@@ -112,7 +124,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch;
     }
 
-    public Map<Titelnummer, Details> getTitelnummern() {
+    @JsonIgnore
+    public Map<Titelnummer, Details> titelnummernImAusleihzeitraum() {
         return titelnummern.entrySet()
                 .stream()
                 .filter(anzahlBestellungenAusleihzeitraumPredicate)
@@ -121,7 +134,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     @JsonIgnore
     public int anzahlBestellungen() {
-        return getTitelnummern().size();
+        return titelnummernImAusleihzeitraum().size();
     }
 
     public long anzahlHeutigerBestellungen() {
@@ -159,27 +172,27 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public boolean ausleihen(final Titelnummer titelnummer) {
-        if (downloadErlaubt(titelnummer)) {
-            titelnummern.putIfAbsent(titelnummer, new Details(LocalDateTime.now()));
-            final Details details = titelnummern.get(titelnummer);
-            // Ausleihdatum aktualisieren?
-            if (details.rueckgabeBis.isAfter(LocalDateTime.now())) {
-                details.jetztAusleihen();
-            }
-            details.zaehleDownload();
-            LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt/Download gezählt: {}",
-                    titelnummer, this.getDomainId(), details.getAnzahlDownloads());
-            return true;
-        } else {
-            LOGGER.warn("Hörbuch '{}' wurde bereits heruntergeladen", titelnummer);
-            return false;
+        titelnummern.putIfAbsent(titelnummer, Details.neu());
+        final Details details = titelnummern.get(titelnummer);
+        // Ausleihdatum aktualisieren?
+        if (details.rueckgabeBis.isAfter(LocalDateTime.now())) {
+            details.jetztAusleihen();
         }
+        details.zaehleDownload();
+        LOGGER.info("Hörbuch '{}' zu Downloads '{}' hinzugefügt/Download gezählt: {}",
+                titelnummer, this.getDomainId(), details.getAnzahlDownloads());
+        return true;
     }
 
     public void zurueckgeben(final Titelnummer titelnummer) {
         titelnummern.remove(titelnummer);
         LOGGER.info("Hörbuch '{}' aus Downloads '{}' entfernt/Hörbuch zurückgegeben",
                 titelnummer, this.getDomainId());
+    }
+
+    public void freiputzen() {
+        titelnummern.values()
+                .forEach(Downloads.Details::resetDownloads);
     }
 
     public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {
@@ -225,37 +238,39 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Details implements Comparable<Details> {
 
-        public static final int DAYS = 30;
-
         private LocalDateTime ausgeliehenAm;
 
-        @JsonIgnore
         private LocalDateTime rueckgabeBis;
 
         private int anzahlDownloads;
 
-        public Details(@JsonProperty("ausgeliehenAm") final LocalDateTime ausgeliehenAm) {
-            this.ausgeliehenAm = ausgeliehenAm;
-            this.rueckgabeBis = ausgeliehenAm.plusDays(DAYS);
-            this.anzahlDownloads = 0;
-        }
-
         @JsonCreator
         public Details(@JsonProperty("ausgeliehenAm") final LocalDateTime ausgeliehenAm,
+                       @JsonProperty("rueckgabeBis") final LocalDateTime rueckgabeBis,
                        @JsonProperty("anzahlDownloads") final int anzahlDownloads) {
             this.ausgeliehenAm = ausgeliehenAm;
-            this.rueckgabeBis = ausgeliehenAm.plusDays(DAYS);
+            this.rueckgabeBis = Optional.ofNullable(rueckgabeBis)
+                    .orElse(ausgeliehenAm.plusDays(AUSLEIHZEITRAUM_TAGE));
             this.anzahlDownloads = anzahlDownloads;
         }
 
-        public LocalDateTime getAusgeliehenAm() {
-            return ausgeliehenAm;
+        private Details() {
+        }
+
+        public static Details neu() {
+            final Details details = new Details();
+            details.jetztAusleihen();
+            return details;
         }
 
         public void jetztAusleihen() {
             ausgeliehenAm = LocalDateTime.now();
-            rueckgabeBis = ausgeliehenAm.plusDays(DAYS);
+            rueckgabeBis = ausgeliehenAm.plusDays(AUSLEIHZEITRAUM_TAGE);
             anzahlDownloads = 0;
+        }
+
+        public LocalDateTime getAusgeliehenAm() {
+            return ausgeliehenAm;
         }
 
         public LocalDateTime getRueckgabeBis() {
@@ -268,6 +283,10 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         public void zaehleDownload() {
             anzahlDownloads++;
+        }
+
+        public void resetDownloads() {
+            anzahlDownloads = 0;
         }
 
         @Override

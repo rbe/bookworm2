@@ -152,7 +152,7 @@ public class DownloadsRestService {
             bestellungSessionId = null;
         }
         final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
-                new ArrayList<>(downloads.getTitelnummern().keySet()));
+                new ArrayList<>(downloads.titelnummernImAusleihzeitraum().keySet()));
         hoerbuchAntwortKurzDTOS.forEach(dto -> {
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));

@@ -3,41 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <title>WBH Admin</title>
-    <script type="application/javascript" th:src="@{/v1/private/admin/index.js}" th:defer="defer"></script>
+    <!--script type="application/javascript" th:src="@{/v1/private/admin/index.js}" th:defer="defer"></script-->
 </head>
 <body>
-<form id="abfrage" action="#" th:action="@{/v1/private/admin/abfrage}" th:object="${admin}" method="post">
-    <table>
-        <tr>
-            <td><label th:text="#{hoerernummer}"/></td>
-            <td><input type="text" value="" th:field="*{hoerernummer}"/></td>
-            <td>00000 für "alle Hörer" verwenden.</td>
-        </tr>
-        <tr>
-            <td><input id="query" type="submit" value="Kontingent anzeigen"/></td>
-        </tr>
-    </table>
-</form>
-<form id="kontingent" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${admin}" method="post">
-    <input type="hidden" id="hoerernummer" name="hoerernummer" th:value="*{hoerernummer}">
-    <table>
-        <tr>
-            <td><label th:text="#{anzahlBestellungenProAusleihzeitraum}"/></td>
-            <td><input type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}"/></td>
-        </tr>
-        <tr>
-            <td><label th:text="#{anzahlBestellungenProTag}"/></td>
-            <td><input type="number" th:field="*{anzahlBestellungenProTag}"/></td>
-        </tr>
-        <tr>
-            <td><label th:text="#{anzahlDownloadsProHoerbuch}"/></td>
-            <td><input type="number" th:field="*{anzahlDownloadsProHoerbuch}"/></td>
-        </tr>
-        <tr>
-            <td><input type="submit" value="Kontingent setzen"/></td>
-        </tr>
-    </table>
-</form>
-<span th:each="r : ${result}" th:text="${r}"></span>
+<div class="intro">
+    <p></p>
+</div>
+<div class="kontingent">
+    <p>1 Hörer</p>
+    <form id="kontingentForm" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${hoerer}" method="post">
+        <input type="hidden" id="modus" name="modus" value=""/>
+        <table>
+            <tr>
+                <td><label for="hoerernummer">Hörernummer</td>
+                <td><input id="hoerernummer" type="text" value="" th:field="*{hoerernummer}"/></td>
+            </tr>
+            <tr>
+                <td><label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label></td>
+                <td><input id="proAusleihzeitraum" type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}"/></td>
+            </tr>
+            <tr>
+                <td><label for="proTag">Anzahl von Download-Bestellungen pro Tag</label></td>
+                <td><input id="proTag" type="number" value="" th:field="*{anzahlBestellungenProTag}"/></td>
+            </tr>
+            <tr>
+                <td><label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label></td>
+                <td><input id="proHoerbuch" type="number" value="" th:field="*{anzahlDownloadsProHoerbuch}"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="abfragen" type="submit" name="abfragen" value="Kontingent abfragen"/>
+                    <input id="setzen" type="submit" name="setzen" value="Kontingent setzen"/>
+                    <input id="freiputzen" type="submit" name="freiputzen" value="Freiputzen"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="kontingent">
+    <p>Alle Hörer</p>
+    <form id="alleHoererkontingentForm" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${alle}" method="post">
+        <input type="hidden" id="alleHoerer" name="alleHoerer" value="true"/>
+        <table>
+            <tr>
+                <td><label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label></td>
+                <td><input id="proAusleihzeitraum" type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}"/></td>
+            </tr>
+            <tr>
+                <td><label for="proTag">Anzahl von Download-Bestellungen pro Tag</label></td>
+                <td><input id="proTag" type="number" value="" th:field="*{anzahlBestellungenProTag}"/></td>
+            </tr>
+            <tr>
+                <td><label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label></td>
+                <td><input id="proHoerbuch" type="number" value="" th:field="*{anzahlDownloadsProHoerbuch}"/></td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="setzen" type="submit" name="setzen" value="Kontingent setzen"/>
+                </td>
+            </tr>
+        </table>
+    </form>
+</div>
+<div class="nachrichten">
+    <div class="eintrag" th:each="r : ${result}" th:text="${r}"></div>
+</div>
 </body>
 </html>
