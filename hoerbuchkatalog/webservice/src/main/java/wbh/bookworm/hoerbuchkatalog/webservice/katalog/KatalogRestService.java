@@ -65,7 +65,7 @@ public class KatalogRestService {
             "/autor/{autor}",
             "/stichwort/{stichwort}/sachgebiet/{sachgebiet}",
             "/stichwort/{stichwort}/einstelldatum/{einstelldatum}",
-            "/stichwort/{stichwort}/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}/titel/{tite}/autor/{autor}",
+            "/stichwort/{stichwort}/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}/titel/{titel}/autor/{autor}",
             "/sachgebiet/{sachgebiet}/einstelldatum/{einstelldatum}",
     }, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Antwort<List<HoerbuchInfo>>> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
