@@ -5,6 +5,7 @@ import org.keycloak.adapters.springsecurity.authentication.KeycloakAuthenticatio
 import org.keycloak.adapters.springsecurity.config.KeycloakWebSecurityConfigurerAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.core.authority.mapping.SimpleAuthorityMapper;
 import org.springframework.security.core.session.SessionRegistryImpl;
@@ -14,9 +15,9 @@ import org.springframework.security.web.authentication.session.SessionAuthentica
 /**
  * https://oidcdebugger.com
  */
-//@EnableGlobalMethodSecurity(jsr250Enabled = true)
+@EnableGlobalMethodSecurity(jsr250Enabled = true)
 @KeycloakConfiguration
-public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
+public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter {
 
     @Autowired
     public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
@@ -34,12 +35,17 @@ public class KeycloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
     protected void configure(HttpSecurity http) throws Exception {
         super.configure(http);
         http
+                .logout()
+                .addLogoutHandler((request, response, authentication) -> {
+                })
+                .logoutSuccessUrl("/")
+                .and()
                 .authorizeRequests()
-                .antMatchers("/**").anonymous()
                 .antMatchers("/actuator", "/actuator/**").anonymous()
                 .antMatchers("/sba", "/sba/**").anonymous()
                 .antMatchers("/**/private/**").hasRole("admin")
-                .anyRequest().permitAll();
+                .anyRequest().permitAll()
+        ;
         http.csrf()
                 .ignoringAntMatchers("/actuator/**");
     }

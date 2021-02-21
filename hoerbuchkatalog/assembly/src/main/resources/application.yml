@@ -22,6 +22,11 @@ lucene:
   index:
     directory: ${hoerbuchkatalog.directory}/lucene
 
+OAUTH2_BASEURL: http://localhost:8081/auth
+OAUTH2_REALM: dev
+OAUTH2_CLIENT_ID: microservice
+OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+
 spring:
   redis:
     host:
@@ -48,21 +53,21 @@ server:
     whitelabel:
       enabled: false
     include-stacktrace: always
-  servlet:
-    context-path: /hoerbuchkatalog
+#  servlet:
+#    context-path: /hoerbuchkatalog
   http2:
     enabled: true
 
 keycloak:
-  auth-server-url: http://localhost:8081/auth
+  auth-server-url: ${OAUTH2_BASEURL}
   ssl-required: none
-  public-client: true
-  realm: dev
-  resource: microservice
+  realm: ${OAUTH2_REALM}
+  resource: ${OAUTH2_CLIENT_ID}
   credentials:
-    secret: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+    secret: ${OAUTH2_CLIENT_SECRET}
+  public-client: true
   use-resource-role-mappings: true
-#  principal-attribute: preferred_username
+  principal-attribute: preferred_username
 
 management:
   context-path: /actuator

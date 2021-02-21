@@ -7,5 +7,6 @@
   "credentials": {
     "secret": "b1e2b616-192d-4383-96e4-e4c9f6b63ace"
   },
-  "use-resource-role-mappings": "true"
+  "use-resource-role-mappings": "true",
+  "principal-attribute": "preferred_username"
 }

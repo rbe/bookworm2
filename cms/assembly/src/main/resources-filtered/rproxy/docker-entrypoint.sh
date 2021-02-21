@@ -34,7 +34,7 @@ then
   if [[ "${tld}" == "local" ]]
   then
     echo "Creating self-signed TLS server certificates"
-    #selfsigned-openssl.sh "${keycloak.hostname}"
+    selfsigned-openssl.sh "${keycloak.hostname}"
     selfsigned-openssl.sh "${cms.hostname}"
   elif [[ -n "${domain}" ]]
   then
@@ -45,15 +45,11 @@ then
         --hsts
         --staple-ocsp --must-staple
         -n"
-    if [[ ! -d /etc/letsencrypt/live/"${cms.hostname}" ]]; then
-      #[[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ]] \
-      #    && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
-      echo "Generating new TLS certificate for ${cms.hostname}"
-      [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
-      certbot certonly ${certonly_args} -d "${cms.hostname}"
-    else
-      echo "TLS certificate for ${cms.hostname} already generated"
-    fi
+    [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
+    [[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ]] \
+      && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
+    [[ ! -d /etc/letsencrypt/live/"${cms.hostname}" ]] \
+      && certbot certonly ${certonly_args} -d "${cms.hostname}"
     [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
     [[ -d /etc/letsencrypt/live ]] && chmod 755 /etc/letsencrypt/live
   else

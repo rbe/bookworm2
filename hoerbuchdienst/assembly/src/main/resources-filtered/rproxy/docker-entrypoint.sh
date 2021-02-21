@@ -65,10 +65,10 @@ then
           && certbot certonly ${certonly_args} -d "${rabbitmq.hostname}"
       [[ ! -d /etc/letsencrypt/live/${hbd.hostname} ]] \
           && certbot certonly ${certonly_args} -d "${hbd.hostname}"
-      chmod 755 /etc/letsencrypt/archive
+      [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
       chown 100:101 /etc/letsencrypt/archive/"${rabbitmq.hostname}"
       chown 100:101 /etc/letsencrypt/archive/"${rabbitmq.hostname}"/*
-      chmod 755 /etc/letsencrypt/live
+      [[ -d /etc/letsencrypt/live ]] && chmod 755 /etc/letsencrypt/live
   else
     echo "Unknown domain, no TLS certificates generated"
   fi
