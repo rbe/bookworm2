@@ -12,9 +12,9 @@ autoupdate.sh prod hbd force
 
 cnt.sh prod hbd exec hbd-rproxy \
   provision.sh -e site \
-  default_tls_server \
-  minio \
-  hoerbuchdienst
+    default_tls_server \
+    minio \
+    hoerbuchdienst
 
 popd >/dev/null
 
