@@ -2,13 +2,13 @@ package wbh.bookworm.hoerbuchkatalog.webservice.api;
 
 import java.util.Map;
 
-public final class AntwortDTO<T> {
+public final class Antwort<T> {
 
     private final Map<String, Object> meta;
 
     private final T data;
 
-    public AntwortDTO(final Map<String, Object> meta, final T data) {
+    public Antwort(final Map<String, Object> meta, final T data) {
         this.meta = meta;
         this.data = data;
     }

@@ -6,7 +6,6 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 
-import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
 import wbh.bookworm.shared.domain.AghNummer;
 import wbh.bookworm.shared.domain.Sachgebiet;
 import wbh.bookworm.shared.domain.Titelnummer;
@@ -18,9 +17,9 @@ public abstract class HoerbuchMapper {
 
     @Mapping(target = "produktionsjahr", source = "prodJahr")
     @Mapping(target = "produktionsort", source = "prodOrt")
-    public abstract HoerbuchAntwortDTO convertToHoerbuchAntwortDto(Hoerbuch hoerbuch);
+    public abstract Hoerbuch convertToHoerbuchAntwortDto(wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch hoerbuch);
 
-    public abstract HoerbuchAntwortKurzDTO convertToHoerbuchAntwortKurzDto(Hoerbuch hoerbuch);
+    public abstract HoerbuchInfo convertToHoerbuchAntwortKurzDto(wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch hoerbuch);
 
     public String map(Titelnummer value) {
         return null != value ? value.getValue() : "";
@@ -31,7 +30,7 @@ public abstract class HoerbuchMapper {
     }
 
     @AfterMapping
-    public void setSachgebietBezeichnung(@MappingTarget HoerbuchAntwortKurzDTO dto, Hoerbuch hoerbuch) {
+    public void setSachgebietBezeichnung(@MappingTarget HoerbuchInfo dto, wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch hoerbuch) {
         dto.setSachgebietBezeichnung(hoerbuch.getSachgebiet().getDescription());
     }
 

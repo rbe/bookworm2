@@ -1,31 +1,30 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.io.Serializable;
+import java.util.Optional;
 
 import wbh.bookworm.shared.domain.Hoerernummer;
 
-public class TemplateDTO implements Serializable {
+public class Kontingent implements Serializable {
 
     private Hoerernummer hoerernummer;
 
+    @Min(value = 0, message = "")
+    @Max(value = 100, message = "")
     private Integer anzahlBestellungenProAusleihzeitraum;
 
+    @Min(value = 0, message = "")
+    @Max(value = 30, message = "")
     private Integer anzahlBestellungenProTag;
 
+    @Min(value = 0, message = "")
+    @Max(value = 10, message = "")
     private Integer anzahlDownloadsProHoerbuch;
 
-    public TemplateDTO() {
-    }
-
-    public TemplateDTO(final AdminDTO adminDTO) {
-        this.hoerernummer = adminDTO.getHoerernummer();
-        this.anzahlBestellungenProAusleihzeitraum = adminDTO.getAnzahlBestellungenProAusleihzeitraum();
-        this.anzahlBestellungenProTag = adminDTO.getAnzahlBestellungenProTag();
-        this.anzahlDownloadsProHoerbuch = adminDTO.getAnzahlDownloadsProHoerbuch();
-    }
-
     public Hoerernummer getHoerernummer() {
-        return hoerernummer;
+        return Optional.ofNullable(hoerernummer).orElse(Hoerernummer.UNBEKANNT);
     }
 
     public void setHoerernummer(final Hoerernummer hoerernummer) {
@@ -33,7 +32,7 @@ public class TemplateDTO implements Serializable {
     }
 
     public Integer getAnzahlBestellungenProAusleihzeitraum() {
-        return anzahlBestellungenProAusleihzeitraum;
+        return Optional.ofNullable(anzahlBestellungenProAusleihzeitraum).orElse(-1);
     }
 
     public void setAnzahlBestellungenProAusleihzeitraum(final Integer anzahlBestellungenProAusleihzeitraum) {
@@ -41,7 +40,7 @@ public class TemplateDTO implements Serializable {
     }
 
     public Integer getAnzahlBestellungenProTag() {
-        return anzahlBestellungenProTag;
+        return Optional.ofNullable(anzahlBestellungenProTag).orElse(-1);
     }
 
     public void setAnzahlBestellungenProTag(final Integer anzahlBestellungenProTag) {
@@ -49,7 +48,7 @@ public class TemplateDTO implements Serializable {
     }
 
     public Integer getAnzahlDownloadsProHoerbuch() {
-        return anzahlDownloadsProHoerbuch;
+        return Optional.ofNullable(anzahlDownloadsProHoerbuch).orElse(-1);
     }
 
     public void setAnzahlDownloadsProHoerbuch(final Integer anzahlDownloadsProHoerbuch) {

@@ -28,8 +28,8 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
-import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchAntwortKurzDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
+import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchInfo;
 import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchResolver;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
@@ -140,9 +140,9 @@ public class DownloadsRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                           @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+    public ResponseEntity<Antwort<List<HoerbuchInfo>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                              @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final Downloads downloads = downloadsService.downloadsKopie(hoerernummer);
         final BestellungSessionId bestellungSessionId;
@@ -151,9 +151,9 @@ public class DownloadsRestService {
         } else {
             bestellungSessionId = null;
         }
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
+        final List<HoerbuchInfo> hoerbuchInfos = hoerbuchResolver.toHoerbuchAntwortKurzDTO(
                 new ArrayList<>(downloads.titelnummernImAusleihzeitraum().keySet()));
-        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+        hoerbuchInfos.forEach(dto -> {
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
             dto.setAlsDownloadGebucht(true);
@@ -165,12 +165,12 @@ public class DownloadsRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        hoerbuchAntwortKurzDTOS.sort(Comparator.<HoerbuchAntwortKurzDTO, LocalDate>comparing(
+        hoerbuchInfos.sort(Comparator.<HoerbuchInfo, LocalDate>comparing(
                 dto -> LocalDate.parse(dto.getAusgeliehenAm(), DATE_TIME_FORMATTER))
                 .reversed());
         final Map<String, Object> meta = Map.of("anzahlAusleihzeitraum", downloadsService.anzahlAusleihzeitraum(hoerernummer),
                 "anzahlHeute", downloadsService.anzahlHeute(hoerernummer));
-        return ResponseEntity.ok(new AntwortDTO<>(meta, hoerbuchAntwortKurzDTOS));
+        return ResponseEntity.ok(new Antwort<>(meta, hoerbuchInfos));
     }
 
     private String format(final LocalDateTime localDateTime) {

@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public final class HoererAntwortDTO implements Serializable {
+public final class Hoerer implements Serializable {
 
     private String mandant;
 

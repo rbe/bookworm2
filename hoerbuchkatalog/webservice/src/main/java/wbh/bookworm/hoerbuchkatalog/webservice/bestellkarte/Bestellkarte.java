@@ -4,16 +4,14 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.webservice.belastung;
+package wbh.bookworm.hoerbuchkatalog.webservice.bestellkarte;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public final class BelastungAntwortDTO {
+public final class Bestellkarte {
 
-    private LocalDate belastungsdatum;
-
-    private String boxnummer;
+    private String hoerernummer;
 
     private String sachgebiet;
 
@@ -31,26 +29,14 @@ public final class BelastungAntwortDTO {
 
     private String spieldauer;
 
-    public LocalDate getBelastungsdatum() {
-        return belastungsdatum;
+    private LocalDate letztesBestelldatum;
+
+    public String getHoerernummer() {
+        return hoerernummer;
     }
 
-    public void setBelastungsdatum(final LocalDate belastungsdatum) {
-        this.belastungsdatum = belastungsdatum;
-    }
-
-    public String getBelastungsdatumAufDeutsch() {
-        return null != belastungsdatum
-                ? belastungsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                : "";
-    }
-
-    public String getBoxnummer() {
-        return boxnummer;
-    }
-
-    public void setBoxnummer(final String boxnummer) {
-        this.boxnummer = boxnummer;
+    public void setHoerernummer(final String hoerernummer) {
+        this.hoerernummer = hoerernummer;
     }
 
     public String getSachgebiet() {
@@ -115,6 +101,20 @@ public final class BelastungAntwortDTO {
 
     public void setSpieldauer(final String spieldauer) {
         this.spieldauer = spieldauer;
+    }
+
+    public LocalDate getLetztesBestelldatum() {
+        return letztesBestelldatum;
+    }
+
+    public void setLetztesBestelldatum(final LocalDate letztesBestelldatum) {
+        this.letztesBestelldatum = letztesBestelldatum;
+    }
+
+    public String getLetztesBestelldatumAufDeutsch() {
+        return null != letztesBestelldatum
+                ? letztesBestelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
     }
 
 }

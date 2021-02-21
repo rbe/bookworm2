@@ -4,14 +4,16 @@
  * All rights reserved. Use is subject to license terms.
  */
 
-package wbh.bookworm.hoerbuchkatalog.webservice.bestellkarte;
+package wbh.bookworm.hoerbuchkatalog.webservice.belastung;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public final class BestellkarteAntwortDTO {
+public final class Belastung {
 
-    private String hoerernummer;
+    private LocalDate belastungsdatum;
+
+    private String boxnummer;
 
     private String sachgebiet;
 
@@ -29,14 +31,26 @@ public final class BestellkarteAntwortDTO {
 
     private String spieldauer;
 
-    private LocalDate letztesBestelldatum;
-
-    public String getHoerernummer() {
-        return hoerernummer;
+    public LocalDate getBelastungsdatum() {
+        return belastungsdatum;
     }
 
-    public void setHoerernummer(final String hoerernummer) {
-        this.hoerernummer = hoerernummer;
+    public void setBelastungsdatum(final LocalDate belastungsdatum) {
+        this.belastungsdatum = belastungsdatum;
+    }
+
+    public String getBelastungsdatumAufDeutsch() {
+        return null != belastungsdatum
+                ? belastungsdatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
+                : "";
+    }
+
+    public String getBoxnummer() {
+        return boxnummer;
+    }
+
+    public void setBoxnummer(final String boxnummer) {
+        this.boxnummer = boxnummer;
     }
 
     public String getSachgebiet() {
@@ -101,20 +115,6 @@ public final class BestellkarteAntwortDTO {
 
     public void setSpieldauer(final String spieldauer) {
         this.spieldauer = spieldauer;
-    }
-
-    public LocalDate getLetztesBestelldatum() {
-        return letztesBestelldatum;
-    }
-
-    public void setLetztesBestelldatum(final LocalDate letztesBestelldatum) {
-        this.letztesBestelldatum = letztesBestelldatum;
-    }
-
-    public String getLetztesBestelldatumAufDeutsch() {
-        return null != letztesBestelldatum
-                ? letztesBestelldatum.format(DateTimeFormatter.ofPattern("dd.MM.yyyy"))
-                : "";
     }
 
 }

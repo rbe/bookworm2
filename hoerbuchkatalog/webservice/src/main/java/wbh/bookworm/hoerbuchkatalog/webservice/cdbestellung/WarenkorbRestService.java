@@ -31,8 +31,8 @@ import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.CdWarenkorb;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerername;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
-import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchAntwortKurzDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
+import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchInfo;
 import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchResolver;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
@@ -100,9 +100,9 @@ public final class WarenkorbRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                           @RequestHeader("X-Bookworm-BestellungSessionId") final String xBestellungSessionId) {
+    public ResponseEntity<Antwort<List<HoerbuchInfo>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                              @RequestHeader("X-Bookworm-BestellungSessionId") final String xBestellungSessionId) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId;
         if (null != xBestellungSessionId && !xBestellungSessionId.isBlank()) {
@@ -111,9 +111,9 @@ public final class WarenkorbRestService {
             bestellungSessionId = null;
         }
         final CdWarenkorb cdWarenkorb = warenkorbService.cdWarenkorbKopie(bestellungSessionId, hoerernummer);
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver
+        final List<HoerbuchInfo> hoerbuchInfos = hoerbuchResolver
                 .toHoerbuchAntwortKurzDTO(new ArrayList<>(cdWarenkorb.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+        hoerbuchInfos.forEach(dto -> {
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
             dto.setAlsDownloadGebucht(downloadsService.enthalten(hoerernummer, titelnummer));
@@ -122,8 +122,8 @@ public final class WarenkorbRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size());
-        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> map = Map.of("count", hoerbuchInfos.size());
+        return ResponseEntity.ok(new Antwort<>(map, hoerbuchInfos));
     }
 
     @Operation(summary = "")
@@ -131,20 +131,20 @@ public final class WarenkorbRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<Map<String, Object>>> bestellen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                     @RequestHeader("X-Bookworm-BestellungSessionId") final String xBestellungSessionId,
-                                                                     @RequestBody final BestellungAnfrageDTO bestellungAnfrageDTO) {
+    public ResponseEntity<Antwort<Map<String, Object>>> bestellen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                  @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                  @RequestHeader("X-Bookworm-BestellungSessionId") final String xBestellungSessionId,
+                                                                  @RequestBody final Bestellung bestellung) {
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(xBestellungSessionId);
         final Optional<BestellungId> bestellungId = bestellungService.bestellungAufgeben(bestellungSessionId,
                 new Hoerernummer(xHoerernummer),
-                Hoerername.of(bestellungAnfrageDTO.getHoerername()),
-                new HoererEmail(bestellungAnfrageDTO.getHoereremail()),
-                bestellungAnfrageDTO.getBemerkung(),
-                bestellungAnfrageDTO.getBestellkarteMischen(),
-                bestellungAnfrageDTO.getAlteBestellkarteLoeschen());
+                Hoerername.of(bestellung.getHoerername()),
+                new HoererEmail(bestellung.getHoereremail()),
+                bestellung.getBemerkung(),
+                bestellung.getBestellkarteMischen(),
+                bestellung.getAlteBestellkarteLoeschen());
         final Map<String, Object> map = Map.of("bestellungId", bestellungId.orElseThrow().getValue());
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), map));
+        return ResponseEntity.ok(new Antwort<>(Map.of(), map));
     }
 
 }

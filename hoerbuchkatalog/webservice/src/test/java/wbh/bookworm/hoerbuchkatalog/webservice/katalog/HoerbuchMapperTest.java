@@ -36,7 +36,7 @@ class HoerbuchMapperTest {
         Assertions.assertThat(belastungen).isNotNull();
         final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(new Hoerernummer("80170"), belastungen.get(0).getTitelnummer());
         Assertions.assertThat(hoerbuch).isNotNull();
-        final HoerbuchAntwortKurzDTO dto = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
+        final HoerbuchInfo dto = HoerbuchMapper.INSTANCE.convertToHoerbuchAntwortKurzDto(hoerbuch);
         Assertions.assertThat(dto)
                 .isNotNull()
                 .hasFieldOrPropertyWithValue("sachgebiet", "I")

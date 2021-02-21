@@ -16,11 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
-import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.HoererEmail;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Nachname;
 import wbh.bookworm.hoerbuchkatalog.domain.hoerer.Vorname;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
 import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Tag(name = "Hörerdaten", description = "")
@@ -39,16 +38,16 @@ public class HoererdatenRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<HoererAntwortDTO>> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
-        final Hoerer hoerer = hoererService.hoerer(new Hoerernummer(xHoerernummer));
+    public ResponseEntity<Antwort<Hoerer>> suche(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                 @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+        final wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer hoerer = hoererService.hoerer(new Hoerernummer(xHoerernummer));
         if (hoerer.isUnbekannt()) {
             return ResponseEntity.notFound().build();
         }
-        final HoererAntwortDTO hoererAntwortDTO = HoererdatenMapper.INSTANCE.convert(hoerer);
+        final Hoerer hoererAntwortDTO = HoererdatenMapper.INSTANCE.convert(hoerer);
         hoererAntwortDTO.setMandant(/* TODO Mandantenspezifisch */"06");
         hoererAntwortDTO.setHoerernummer(xHoerernummer);
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), hoererAntwortDTO));
+        return ResponseEntity.ok(new Antwort<>(Map.of(), hoererAntwortDTO));
     }
 
     @Mapper
@@ -56,7 +55,7 @@ public class HoererdatenRestService {
 
         public static final HoererdatenMapper INSTANCE = Mappers.getMapper(HoererdatenMapper.class);
 
-        abstract HoererAntwortDTO convert(Hoerer hoerer);
+        abstract Hoerer convert(wbh.bookworm.hoerbuchkatalog.domain.hoerer.Hoerer hoerer);
 
         String map(Hoerernummer value) {
             return null != value ? value.getValue() : "";

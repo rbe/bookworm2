@@ -1,40 +1,31 @@
 package wbh.bookworm.hoerbuchkatalog.webservice.admin;
 
-import javax.validation.constraints.Max;
-import javax.validation.constraints.Min;
 import java.io.Serializable;
-import java.util.Optional;
 
 import wbh.bookworm.shared.domain.Hoerernummer;
 
-public class AdminDTO implements Serializable {
-
-    private Boolean alleHoerer;
+public class TemplateModel implements Serializable {
 
     private Hoerernummer hoerernummer;
 
-    @Min(value = 0, message = "")
-    @Max(value = 100, message = "")
     private Integer anzahlBestellungenProAusleihzeitraum;
 
-    @Min(value = 0, message = "")
-    @Max(value = 30, message = "")
     private Integer anzahlBestellungenProTag;
 
-    @Min(value = 0, message = "")
-    @Max(value = 10, message = "")
     private Integer anzahlDownloadsProHoerbuch;
 
-    public Boolean getAlleHoerer() {
-        return alleHoerer;
+    public TemplateModel() {
     }
 
-    public void setAlleHoerer(final Boolean alleHoerer) {
-        this.alleHoerer = alleHoerer;
+    public TemplateModel(final Kontingent kontingent) {
+        this.hoerernummer = kontingent.getHoerernummer();
+        this.anzahlBestellungenProAusleihzeitraum = kontingent.getAnzahlBestellungenProAusleihzeitraum();
+        this.anzahlBestellungenProTag = kontingent.getAnzahlBestellungenProTag();
+        this.anzahlDownloadsProHoerbuch = kontingent.getAnzahlDownloadsProHoerbuch();
     }
 
     public Hoerernummer getHoerernummer() {
-        return Optional.ofNullable(hoerernummer).orElse(Hoerernummer.UNBEKANNT);
+        return hoerernummer;
     }
 
     public void setHoerernummer(final Hoerernummer hoerernummer) {
@@ -42,7 +33,7 @@ public class AdminDTO implements Serializable {
     }
 
     public Integer getAnzahlBestellungenProAusleihzeitraum() {
-        return Optional.ofNullable(anzahlBestellungenProAusleihzeitraum).orElse(-1);
+        return anzahlBestellungenProAusleihzeitraum;
     }
 
     public void setAnzahlBestellungenProAusleihzeitraum(final Integer anzahlBestellungenProAusleihzeitraum) {
@@ -50,7 +41,7 @@ public class AdminDTO implements Serializable {
     }
 
     public Integer getAnzahlBestellungenProTag() {
-        return Optional.ofNullable(anzahlBestellungenProTag).orElse(-1);
+        return anzahlBestellungenProTag;
     }
 
     public void setAnzahlBestellungenProTag(final Integer anzahlBestellungenProTag) {
@@ -58,7 +49,7 @@ public class AdminDTO implements Serializable {
     }
 
     public Integer getAnzahlDownloadsProHoerbuch() {
-        return Optional.ofNullable(anzahlDownloadsProHoerbuch).orElse(-1);
+        return anzahlDownloadsProHoerbuch;
     }
 
     public void setAnzahlDownloadsProHoerbuch(final Integer anzahlDownloadsProHoerbuch) {

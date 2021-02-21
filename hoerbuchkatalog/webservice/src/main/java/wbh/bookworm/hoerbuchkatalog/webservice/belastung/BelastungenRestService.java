@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
@@ -53,15 +52,15 @@ public class BelastungenRestService {
             "/belastungen",
             "/belastungen/stichwort/{stichwort}"
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<BelastungAntwortDTO>>> belastungen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                             @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                             @PathVariable(required = false) final String stichwort) {
-        final List<Belastung> belastungen = cdLieferungService.belastungen(new Hoerernummer(xHoerernummer));
+    public ResponseEntity<Antwort<List<Belastung>>> belastungen(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                @PathVariable(required = false) final String stichwort) {
+        final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung> belastungen = cdLieferungService.belastungen(new Hoerernummer(xHoerernummer));
         if (belastungen.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        final List<BelastungAntwortDTO> data = toBelastungenAntwortDTO(belastungen);
-        final List<BelastungAntwortDTO> filtered;
+        final List<Belastung> data = toBelastungenAntwortDTO(belastungen);
+        final List<Belastung> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             final String s = stichwort.toLowerCase();
             filtered = data.stream()
@@ -76,13 +75,13 @@ public class BelastungenRestService {
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
                 "stichwort", null != stichwort ? stichwort : "");
-        return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
+        return ResponseEntity.ok(new Antwort<>(meta, filtered));
     }
 
     @SuppressWarnings("squid:S3864")
-    private List<BelastungAntwortDTO> toBelastungenAntwortDTO(final List<Belastung> belastungen) {
-        final List<BelastungAntwortDTO> belastungAntwortDtos = BelastungMapper.INSTANCE.convert(belastungen);
-        return belastungAntwortDtos.stream()
+    private List<Belastung> toBelastungenAntwortDTO(final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.Belastung> belastungen) {
+        final List<Belastung> belastungs = BelastungMapper.INSTANCE.convert(belastungen);
+        return belastungs.stream()
                 .peek(antwortDTO -> {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(HOERERNUMMER, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());

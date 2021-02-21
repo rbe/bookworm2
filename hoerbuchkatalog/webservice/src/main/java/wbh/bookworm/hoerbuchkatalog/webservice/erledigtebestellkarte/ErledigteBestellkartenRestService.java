@@ -25,8 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
@@ -58,16 +57,16 @@ public class ErledigteBestellkartenRestService {
             "/erledigteBestellkarten/startdatum/{startdatum}",
             "/erledigteBestellkarten/stichwort/{stichwort}/startdatum/{startdatum}",
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<ErledigteBestellkarteAntwortDTO>>> erledigteBestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                                                    @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                                                    @PathVariable(required = false) final String stichwort,
-                                                                                                    @PathVariable(required = false) final String startdatum) {
-        final List<ErledigteBestellkarte> erledigteBestellkarten = cdLieferungService.erledigteBestellkarten(new Hoerernummer(xHoerernummer));
+    public ResponseEntity<Antwort<List<ErledigteBestellkarte>>> erledigteBestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                                       @PathVariable(required = false) final String stichwort,
+                                                                                       @PathVariable(required = false) final String startdatum) {
+        final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte> erledigteBestellkarten = cdLieferungService.erledigteBestellkarten(new Hoerernummer(xHoerernummer));
         if (erledigteBestellkarten.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        final List<ErledigteBestellkarteAntwortDTO> data = toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
-        List<ErledigteBestellkarteAntwortDTO> filtered;
+        final List<ErledigteBestellkarte> data = toErledigteBestellkarteAntwortDTO(erledigteBestellkarten);
+        List<ErledigteBestellkarte> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             final String s = stichwort.toLowerCase();
             filtered = data.stream()
@@ -93,13 +92,13 @@ public class ErledigteBestellkartenRestService {
         final Map<String, Object> meta = Map.of("count", filtered.size(),
                 "stichwort", null != stichwort ? stichwort : "",
                 "startdatum", null != startdatum ? startdatum : "");
-        return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
+        return ResponseEntity.ok(new Antwort<>(meta, filtered));
     }
 
     @SuppressWarnings("squid:S3864")
-    private List<ErledigteBestellkarteAntwortDTO> toErledigteBestellkarteAntwortDTO(final List<ErledigteBestellkarte> erledigteBestellkarten) {
-        final List<ErledigteBestellkarteAntwortDTO> erledigteBestellkarteAntwortDtos = ErledigteBestellkarteMapper.INSTANCE.convert(erledigteBestellkarten);
-        return erledigteBestellkarteAntwortDtos.stream()
+    private List<ErledigteBestellkarte> toErledigteBestellkarteAntwortDTO(final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.ErledigteBestellkarte> erledigteBestellkarten) {
+        final List<ErledigteBestellkarte> erledigteBestellkartes = ErledigteBestellkarteMapper.INSTANCE.convert(erledigteBestellkarten);
+        return erledigteBestellkartes.stream()
                 .peek(antwortDTO -> {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(HOERERNUMMER, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());

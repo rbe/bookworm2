@@ -39,31 +39,31 @@ class AdminKontingentController {
     public ModelAndView index() {
         final Map<String, Serializable> map = Map.of(
                 "alle", alleHoererTemplateDTO(),
-                "hoerer", new TemplateDTO(),
+                "hoerer", new TemplateModel(),
                 "result", ""
         );
         return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
     }
 
     @PostMapping(params = "abfragen")
-    public ModelAndView abfragen(@Valid @ModelAttribute final AdminDTO adminDTO,
+    public ModelAndView abfragen(@Valid @ModelAttribute final Kontingent kontingent,
                                  final BindingResult errors, final Model model) {
         final Map<String, Serializable> map = Map.of(
                 "alle", alleHoererTemplateDTO(),
-                "hoerer", frageHoererAb(adminDTO.getHoerernummer()),
+                "hoerer", frageHoererAb(kontingent.getHoerernummer()),
                 "result", ""
         );
         return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
     }
 
     @PostMapping(params = "setzen")
-    public ModelAndView setzen(@Valid @ModelAttribute final AdminDTO adminDTO,
+    public ModelAndView setzen(@Valid @ModelAttribute final Kontingent kontingent,
                                final BindingResult errors, final Model model) {
         final ArrayList<String> result = new ArrayList<>();
-        final Hoerernummer hoerernummer = adminDTO.getHoerernummer();
-        final int anzahlBestellungenProAusleihzeitraum = adminDTO.getAnzahlBestellungenProAusleihzeitraum();
-        final int anzahlBestellungenProTag = adminDTO.getAnzahlBestellungenProTag();
-        final int anzahlDownloadsProHoerbuch = adminDTO.getAnzahlDownloadsProHoerbuch();
+        final Hoerernummer hoerernummer = kontingent.getHoerernummer();
+        final int anzahlBestellungenProAusleihzeitraum = kontingent.getAnzahlBestellungenProAusleihzeitraum();
+        final int anzahlBestellungenProTag = kontingent.getAnzahlBestellungenProTag();
+        final int anzahlDownloadsProHoerbuch = kontingent.getAnzahlDownloadsProHoerbuch();
         if (anzahlBestellungenProAusleihzeitraum > 0) {
             hoererService.neueAnzahlBestellungenProAusleihzeitraum(hoerernummer, anzahlBestellungenProAusleihzeitraum);
             result.add("Kontingent " + anzahlBestellungenProAusleihzeitraum + " Bestellungen pro Ausleihzeitraum für Hörer " + hoerernummer + " gesetzt");
@@ -78,16 +78,16 @@ class AdminKontingentController {
         }
         final Map<String, Serializable> map = Map.of(
                 "alle", alleHoererTemplateDTO(),
-                "hoerer", hoerernummer.isBekannt() ? frageHoererAb(hoerernummer) : new TemplateDTO(),
+                "hoerer", hoerernummer.isBekannt() ? frageHoererAb(hoerernummer) : new TemplateModel(),
                 "result", result
         );
         return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
     }
 
     @PostMapping(params = "freiputzen")
-    public ModelAndView freiputzen(@Valid @ModelAttribute final AdminDTO adminDTO,
+    public ModelAndView freiputzen(@Valid @ModelAttribute final Kontingent kontingent,
                                    final BindingResult errors, final Model model) {
-        final Hoerernummer hoerernummer = adminDTO.getHoerernummer();
+        final Hoerernummer hoerernummer = kontingent.getHoerernummer();
         final boolean geputzt = hoererService.freiputzen(hoerernummer);
         final ArrayList<String> result = new ArrayList<>();
         result.add("Hörer %s %s".formatted(hoerernummer, geputzt ? "freigeputzt" : "nicht freigeputzt"));
@@ -99,22 +99,22 @@ class AdminKontingentController {
         return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
     }
 
-    private TemplateDTO frageHoererAb(final Hoerernummer hoerernummer) {
-        final TemplateDTO templateDTO = new TemplateDTO();
-        templateDTO.setHoerernummer(hoerernummer);
-        templateDTO.setAnzahlBestellungenProAusleihzeitraum(hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
-        templateDTO.setAnzahlBestellungenProTag(hoererService.anzahlBestellungenProTag(hoerernummer));
-        templateDTO.setAnzahlDownloadsProHoerbuch(hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
-        return templateDTO;
+    private TemplateModel frageHoererAb(final Hoerernummer hoerernummer) {
+        final TemplateModel templateModel = new TemplateModel();
+        templateModel.setHoerernummer(hoerernummer);
+        templateModel.setAnzahlBestellungenProAusleihzeitraum(hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
+        templateModel.setAnzahlBestellungenProTag(hoererService.anzahlBestellungenProTag(hoerernummer));
+        templateModel.setAnzahlDownloadsProHoerbuch(hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
+        return templateModel;
     }
 
-    private TemplateDTO alleHoererTemplateDTO() {
-        final TemplateDTO alleTemplateDTO = new TemplateDTO();
+    private TemplateModel alleHoererTemplateDTO() {
+        final TemplateModel alleTemplateModel = new TemplateModel();
         final Hoerernummer hoerernummer = Hoerernummer.UNBEKANNT;
-        alleTemplateDTO.setAnzahlBestellungenProAusleihzeitraum(hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
-        alleTemplateDTO.setAnzahlBestellungenProTag(hoererService.anzahlBestellungenProTag(hoerernummer));
-        alleTemplateDTO.setAnzahlDownloadsProHoerbuch(hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
-        return alleTemplateDTO;
+        alleTemplateModel.setAnzahlBestellungenProAusleihzeitraum(hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
+        alleTemplateModel.setAnzahlBestellungenProTag(hoererService.anzahlBestellungenProTag(hoerernummer));
+        alleTemplateModel.setAnzahlDownloadsProHoerbuch(hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
+        return alleTemplateModel;
     }
 
 }

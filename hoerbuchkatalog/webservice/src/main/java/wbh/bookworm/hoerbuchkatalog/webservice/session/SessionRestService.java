@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.BestellungService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
 import wbh.bookworm.shared.domain.Hoerernummer;
 
 @Tag(name = "", description = "")
@@ -36,12 +36,12 @@ public final class SessionRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @PutMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<Map<String, String>>> bestellungSessionId(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                               @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
+    public ResponseEntity<Antwort<Map<String, String>>> bestellungSessionId(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                            @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer) {
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = bestellungService.bestellungSessionId(hoerernummer);
         final Map<String, String> data = Map.of("bestellungSessionId", bestellungSessionId.getValue());
-        return ResponseEntity.ok(new AntwortDTO<>(Map.of(), data));
+        return ResponseEntity.ok(new Antwort<>(Map.of(), data));
     }
 
 }

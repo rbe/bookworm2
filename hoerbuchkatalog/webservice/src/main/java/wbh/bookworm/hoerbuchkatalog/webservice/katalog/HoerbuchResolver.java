@@ -20,14 +20,14 @@ public class HoerbuchResolver {
         this.hoerbuchkatalogService = hoerbuchkatalogService;
     }
 
-    public List<HoerbuchAntwortDTO> toHoerbuchAntwortDTO(final List<Titelnummer> titelnummern) {
+    public List<Hoerbuch> toHoerbuchAntwortDTO(final List<Titelnummer> titelnummern) {
         return titelnummern.stream()
                 .map(titelnummer -> hoerbuchkatalogService.hole(HOERERNUMMER, titelnummer))
                 .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortDto)
                 .collect(Collectors.toList());
     }
 
-    public List<HoerbuchAntwortKurzDTO> toHoerbuchAntwortKurzDTO(final List<Titelnummer> titelnummern) {
+    public List<HoerbuchInfo> toHoerbuchAntwortKurzDTO(final List<Titelnummer> titelnummern) {
         return titelnummern.stream()
                 .map(titelnummer -> hoerbuchkatalogService.hole(HOERERNUMMER, titelnummer))
                 .map(HoerbuchMapper.INSTANCE::convertToHoerbuchAntwortKurzDto)

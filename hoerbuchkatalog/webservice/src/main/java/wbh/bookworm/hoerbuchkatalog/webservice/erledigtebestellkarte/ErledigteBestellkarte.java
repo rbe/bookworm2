@@ -9,7 +9,7 @@ package wbh.bookworm.hoerbuchkatalog.webservice.erledigtebestellkarte;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public final class ErledigteBestellkarteAntwortDTO {
+public final class ErledigteBestellkarte {
 
     private String hoerernummer;
 

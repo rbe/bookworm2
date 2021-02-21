@@ -21,8 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import wbh.bookworm.hoerbuchkatalog.app.katalog.HoerbuchkatalogService;
 import wbh.bookworm.hoerbuchkatalog.app.lieferung.CdLieferungService;
 import wbh.bookworm.hoerbuchkatalog.domain.katalog.Hoerbuch;
-import wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
 
@@ -52,15 +51,15 @@ public class BestellkartenRestService {
             "/bestellkarten",
             "/bestellkarten/stichwort/{stichwort}"
     }, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<BestellkarteAntwortDTO>>> bestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                                  @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                                  @PathVariable(required = false) final String stichwort) {
-        final List<Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(new Hoerernummer(xHoerernummer));
+    public ResponseEntity<Antwort<List<Bestellkarte>>> bestellkarten(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                     @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                     @PathVariable(required = false) final String stichwort) {
+        final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte> bestellkarten = cdLieferungService.bestellkarten(new Hoerernummer(xHoerernummer));
         if (bestellkarten.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
-        final List<BestellkarteAntwortDTO> data = toBestellkarteAntwortDTO(bestellkarten);
-        final List<BestellkarteAntwortDTO> filtered;
+        final List<Bestellkarte> data = toBestellkarteAntwortDTO(bestellkarten);
+        final List<Bestellkarte> filtered;
         if (null != stichwort && !stichwort.isBlank() && !stichwort.equals("*")) {
             final String s = stichwort.toLowerCase();
             filtered = data.stream()
@@ -75,13 +74,13 @@ public class BestellkartenRestService {
         }
         final Map<String, Object> meta = Map.of("count", filtered.size(),
                 "stichwort", null != stichwort ? stichwort : "");
-        return ResponseEntity.ok(new AntwortDTO<>(meta, filtered));
+        return ResponseEntity.ok(new Antwort<>(meta, filtered));
     }
 
     @SuppressWarnings("squid:S3864")
-    private List<BestellkarteAntwortDTO> toBestellkarteAntwortDTO(final List<Bestellkarte> bestellkarten) {
-        final List<BestellkarteAntwortDTO> bestellkarteAntwortDtos = BestellkarteMapper.INSTANCE.convert(bestellkarten);
-        return bestellkarteAntwortDtos.stream()
+    private List<Bestellkarte> toBestellkarteAntwortDTO(final List<wbh.bookworm.hoerbuchkatalog.domain.lieferung.Bestellkarte> bestellkarten) {
+        final List<Bestellkarte> bestellkartes = BestellkarteMapper.INSTANCE.convert(bestellkarten);
+        return bestellkartes.stream()
                 .peek(antwortDTO -> {
                     final Hoerbuch hoerbuch = hoerbuchkatalogService.hole(HOERERNUMMER, new Titelnummer(antwortDTO.getTitelnummer()));
                     antwortDTO.setAutor(hoerbuch.getAutor());

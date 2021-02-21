@@ -24,8 +24,8 @@ import wbh.bookworm.hoerbuchkatalog.app.bestellung.MerklisteService;
 import wbh.bookworm.hoerbuchkatalog.app.bestellung.WarenkorbService;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.BestellungSessionId;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Merkliste;
-import wbh.bookworm.hoerbuchkatalog.webservice.api.AntwortDTO;
-import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchAntwortKurzDTO;
+import wbh.bookworm.hoerbuchkatalog.webservice.api.Antwort;
+import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchInfo;
 import wbh.bookworm.hoerbuchkatalog.webservice.katalog.HoerbuchResolver;
 import wbh.bookworm.shared.domain.Hoerernummer;
 import wbh.bookworm.shared.domain.Titelnummer;
@@ -87,9 +87,9 @@ public class MerklisteRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                           @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                           @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
+    public ResponseEntity<Antwort<List<HoerbuchInfo>>> inhalt(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                              @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                              @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId;
@@ -98,8 +98,8 @@ public class MerklisteRestService {
         } else {
             bestellungSessionId = null;
         }
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+        final List<HoerbuchInfo> hoerbuchInfos = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        hoerbuchInfos.forEach(dto -> {
             dto.setAufDerMerkliste(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
@@ -108,8 +108,8 @@ public class MerklisteRestService {
                     && warenkorbService.imCdWarenkorbEnthalten(bestellungSessionId, hoerernummer, titelnummer);
             dto.setImWarenkorb(imWarenkorb);
         });
-        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size());
-        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
+        final Map<String, Object> map = Map.of("count", hoerbuchInfos.size());
+        return ResponseEntity.ok(new Antwort<>(map, hoerbuchInfos));
     }
 
     @Operation(summary = "")
@@ -117,16 +117,16 @@ public class MerklisteRestService {
             @ApiResponse(responseCode = "200", description = "")
     })
     @GetMapping(value = "datumab/{datumab}/stichwort/{stichwort}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<AntwortDTO<List<HoerbuchAntwortKurzDTO>>> inhaltGefiltert(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
-                                                                                    @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
-                                                                                    @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
-                                                                                    @PathVariable final String datumab,
-                                                                                    @PathVariable final String stichwort) {
+    public ResponseEntity<Antwort<List<HoerbuchInfo>>> inhaltGefiltert(@RequestHeader("X-Bookworm-Mandant") final String xMandant,
+                                                                       @RequestHeader("X-Bookworm-Hoerernummer") final String xHoerernummer,
+                                                                       @RequestHeader(value = "X-Bookworm-BestellungSessionId", required = false) final String xBestellungSessionId,
+                                                                       @PathVariable final String datumab,
+                                                                       @PathVariable final String stichwort) {
         final Merkliste merkliste = merklisteService.merklisteKopie(new Hoerernummer(xHoerernummer));
         final Hoerernummer hoerernummer = new Hoerernummer(xHoerernummer);
         final BestellungSessionId bestellungSessionId = BestellungSessionId.of(xBestellungSessionId);
-        final List<HoerbuchAntwortKurzDTO> hoerbuchAntwortKurzDTOS = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
-        hoerbuchAntwortKurzDTOS.forEach(dto -> {
+        final List<HoerbuchInfo> hoerbuchInfos = hoerbuchResolver.toHoerbuchAntwortKurzDTO(new ArrayList<>(merkliste.getTitelnummern()));
+        hoerbuchInfos.forEach(dto -> {
             dto.setAufDerMerkliste(true);
             final Titelnummer titelnummer = new Titelnummer(dto.getTitelnummer());
             dto.setDownloadErlaubt(downloadsService.downloadErlaubt(hoerernummer, titelnummer));
@@ -134,10 +134,10 @@ public class MerklisteRestService {
             dto.setImWarenkorb(warenkorbService.imCdWarenkorbEnthalten(
                     bestellungSessionId, hoerernummer, titelnummer));
         });
-        final Map<String, Object> map = Map.of("count", hoerbuchAntwortKurzDTOS.size(),
+        final Map<String, Object> map = Map.of("count", hoerbuchInfos.size(),
                 "stichwort", null != stichwort ? stichwort : "",
                 "datumab", null != datumab ? datumab : "");
-        return ResponseEntity.ok(new AntwortDTO<>(map, hoerbuchAntwortKurzDTOS));
+        return ResponseEntity.ok(new Antwort<>(map, hoerbuchInfos));
     }
 
 }

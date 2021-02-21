@@ -5,7 +5,7 @@ import java.io.Serializable;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public final class BestellungAnfrageDTO implements Serializable {
+public final class Bestellung implements Serializable {
 
     private final String hoerername;
 
@@ -18,11 +18,11 @@ public final class BestellungAnfrageDTO implements Serializable {
     private final Boolean alteBestellkarteLoeschen;
 
     @JsonCreator
-    public BestellungAnfrageDTO(@JsonProperty("hoerername") final String hoerername,
-                                @JsonProperty("hoereremail") final String hoereremail,
-                                @JsonProperty("bemerkung") final String bemerkung,
-                                @JsonProperty("bestellkarteMischen") final Boolean bestellkarteMischen,
-                                @JsonProperty("alteBestellkarteLoeschen") final Boolean alteBestellkarteLoeschen) {
+    public Bestellung(@JsonProperty("hoerername") final String hoerername,
+                      @JsonProperty("hoereremail") final String hoereremail,
+                      @JsonProperty("bemerkung") final String bemerkung,
+                      @JsonProperty("bestellkarteMischen") final Boolean bestellkarteMischen,
+                      @JsonProperty("alteBestellkarteLoeschen") final Boolean alteBestellkarteLoeschen) {
         this.hoerername = hoerername;
         this.hoereremail = hoereremail;
         this.bemerkung = bemerkung;
