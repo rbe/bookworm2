@@ -23,7 +23,7 @@ export class BookwormRestClient {
     //
 
     fuegeZuMerklisteHinzu(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'PUT',
             'headers': {
@@ -46,7 +46,7 @@ export class BookwormRestClient {
     }
 
     entferneVonMerkliste(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/merkliste/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'DELETE',
             'headers': {
@@ -73,7 +73,7 @@ export class BookwormRestClient {
     //
 
     fuegeZuWarenkorbHinzu(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'PUT',
             'headers': {
@@ -96,7 +96,7 @@ export class BookwormRestClient {
     }
 
     entferneAusWarenkorb(titelnummer, successCallback) {
-        const url = new URL('/hoerbuchkatalog/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/warenkorb/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'DELETE',
             'headers': {
@@ -161,7 +161,7 @@ export class BookwormRestClient {
     //
 
     downloadErlaubt(titelnummer) {
-        const url = new URL('/hoerbuchkatalog/v1/downloads/' + titelnummer + '/erlaubt', HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/downloads/' + titelnummer + '/erlaubt', HOERBUCHKATALOG_URL);
         return fetch(url.toString(), {
             'method': 'GET',
             'headers': {
@@ -304,7 +304,7 @@ export class BookwormRestClient {
     }
 
     verbucheDownload(shardName, titelnummer) {
-        const url = new URL('/hoerbuchkatalog/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
+        const url = new URL('/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
         fetch(url.toString(), {
             'method': 'PUT',
             'headers': {

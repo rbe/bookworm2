@@ -1,0 +1,22 @@
+server {
+    listen 443 ssl http2;
+    #listen [::]:443 ssl http2;
+    server_name ${hbk.hostname};
+
+    ssl_certificate ${tls.path}/${hbk.hostname}/fullchain.pem;
+    ssl_certificate_key ${tls.path}/${hbk.hostname}/privkey.pem;
+    ssl_trusted_certificate ${tls.path}/${hbk.hostname}/fullchain.pem;
+    include tls-options.nginx;
+
+    include docker-logging.nginx;
+
+    client_max_body_size 1m;
+
+    location /v1/ {
+        include tls-headers.nginx;
+        include cors.nginx;
+        include hoerbuchkatalog-proxy.nginx;
+        include hoerbuchkatalog-csp.nginx;
+    }
+
+}

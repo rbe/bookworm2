@@ -19,6 +19,7 @@
         <nginx.release>1.17-alpine</nginx.release>
         <cms.release>${maven.build.timestamp}</cms.release>
         <cms.hostname>www.${domain}</cms.hostname>
+        <hbk.hostname>www.${domain}</hbk.hostname>
         <!-- Siehe auch hoerbuchkatalog.deployment -->
         <keycloak.hostname>idp.${domain}</keycloak.hostname>
         <docker.dir>${project.basedir}/src/main/docker</docker.dir>

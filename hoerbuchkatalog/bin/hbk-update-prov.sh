@@ -12,8 +12,10 @@ autoupdate.sh prod hbk force
 
 cnt.sh prod cms exec cms-rproxy \
   provision.sh -e site \
-  default_tls_server \
-  wbhonline
+    default_tls_server \
+    wbhonline \
+    hoerbuchkatalog \
+    keycloak
 
 popd >/dev/null
 

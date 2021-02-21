@@ -46,7 +46,7 @@ export class WbhonlineCdBestellung {
                     alert('Bitte eine E-Mail Adrese eingeben!');
                     return;
                 }
-                const url = new URL('/hoerbuchkatalog/v1/warenkorb', HOERBUCHKATALOG_URL);
+                const url = new URL('/v1/warenkorb', HOERBUCHKATALOG_URL);
                 const bestellung = {
                     'hoerername': self.formValue('nachname'),
                     'hoereremail': hoereremail,
