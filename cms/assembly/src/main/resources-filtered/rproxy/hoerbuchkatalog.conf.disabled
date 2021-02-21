@@ -12,7 +12,7 @@ server {
 
     client_max_body_size 1m;
 
-    location /v1/ {
+    location ~* "/(v1|sso)/" {
         include tls-headers.nginx;
         include cors.nginx;
         include hoerbuchkatalog-proxy.nginx;
