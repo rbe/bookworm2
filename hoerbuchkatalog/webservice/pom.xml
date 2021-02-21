@@ -12,6 +12,8 @@
     <packaging>jar</packaging>
     <properties>
         <mapstruct.version>1.4.2.Final</mapstruct.version>
+        <swagger-annotations.version>2.1.6</swagger-annotations.version>
+        <springdoc.version>1.5.4</springdoc.version>
     </properties>
     <dependencies>
         <!-- Bookworm -->
@@ -65,7 +67,12 @@
         <dependency>
             <groupId>io.swagger.core.v3</groupId>
             <artifactId>swagger-annotations</artifactId>
-            <version>2.1.6</version>
+            <version>${swagger-annotations.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springdoc</groupId>
+            <artifactId>springdoc-openapi-ui</artifactId>
+            <version>${springdoc.version}</version>
         </dependency>
         <!-- Spring Boot -->
         <dependency>
