@@ -58,6 +58,7 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         //.ignoringAntMatchers("/actuator/**");
     }
 
+    /*
     @Bean
     @Primary
     public KeycloakConfigResolver keycloakConfigResolver(final KeycloakSpringBootProperties properties) {
@@ -78,6 +79,7 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
         }
 
     }
+    */
 
     /*
     @Bean
