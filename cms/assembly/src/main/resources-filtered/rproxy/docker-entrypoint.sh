@@ -35,6 +35,7 @@ then
   then
     echo "Creating self-signed TLS server certificates"
     selfsigned-openssl.sh "${keycloak.hostname}"
+    selfsigned-openssl.sh "${hbk.hostname}"
     selfsigned-openssl.sh "${cms.hostname}"
   elif [[ -n "${domain}" ]]
   then
@@ -48,6 +49,8 @@ then
     [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
     [[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
+    [[ ! -d /etc/letsencrypt/live/${hbk.hostname} ]] \
+      && certbot certonly ${certonly_args} -d "${hbk.hostname}"
     [[ ! -d /etc/letsencrypt/live/"${cms.hostname}" ]] \
       && certbot certonly ${certonly_args} -d "${cms.hostname}"
     [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
