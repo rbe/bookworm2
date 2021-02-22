@@ -40,4 +40,4 @@ RUN cat /etc/ssh/sshd_config_2 >>/etc/ssh/sshd_config
 WORKDIR /etc/ssh
 VOLUME ["/var/www/html"]
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D", "-e"]

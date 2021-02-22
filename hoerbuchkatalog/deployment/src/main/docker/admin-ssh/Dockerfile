@@ -39,4 +39,4 @@ RUN mkdir /var/local/hoerbuchkatalog \
     && chmod 555 /var/local
 WORKDIR /etc/ssh
 EXPOSE 22
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/sbin/sshd", "-D", "-e"]
