@@ -65,7 +65,6 @@ spring:
             user-info-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/userinfo
             jwk-set-uri: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect/certs
             user-name-attribute: preferred_username
-
 server:
   port: 8080
   compression:
@@ -103,7 +102,11 @@ management:
 
 springdoc:
   api-docs:
-    path: /swagger
+    enabled: true
+    path: /v1/private/swagger
+  swagger-ui:
+    enabled: true
+    path: /v1/private/swagger
 
 logging:
   level:
