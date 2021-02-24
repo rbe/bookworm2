@@ -1,4 +1,4 @@
-package wbh.bookworm.hoerbuchkatalog.webservice.admin;
+package wbh.bookworm.hoerbuchkatalog.webservice.security;
 
 import org.keycloak.adapters.KeycloakConfigResolver;
 import org.keycloak.adapters.springboot.KeycloakSpringBootConfigResolver;

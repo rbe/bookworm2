@@ -1,4 +1,4 @@
-package wbh.bookworm.hoerbuchkatalog.webservice.admin;
+package wbh.bookworm.hoerbuchkatalog.webservice.security;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
