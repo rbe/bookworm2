@@ -41,14 +41,16 @@ export class WbhonlineSuchformular {
                 const sachgebiete = document.querySelector('select#sachgebiet');
                 const einstelldatum = document.querySelector('input#einstelldatum');
                 const startdatum = document.querySelector('input#startdatum');
-                const url = self.erstelleUrl(inputField, sachgebiete, einstelldatum, startdatum);
+                const titel = document.querySelector('input#titel');
+                const autor = document.querySelector('input#autor');
+                const url = self.erstelleUrl(inputField, sachgebiete, einstelldatum, startdatum, titel, autor);
                 window.location = url.toString();
             };
             WbhonlineButtons.addMultiEventListener(button, 'click touchend', buttonListener);
         }
     }
 
-    erstelleUrl(stichwort, sachgebiet, einstelldatum, startdatum) {
+    erstelleUrl(stichwort, sachgebiet, einstelldatum, startdatum, titel, autor) {
         const url = new URL(window.location);
         switch (url.pathname) {
             case '/konto/bestellkarte.html':
@@ -63,6 +65,8 @@ export class WbhonlineSuchformular {
         url.searchParams.delete('sachgebiet');
         url.searchParams.delete('einstelldatum');
         url.searchParams.delete('startdatum');
+        url.searchParams.delete('titel');
+        url.searchParams.delete('autor');
         url.search = Array.from(url.searchParams.entries())
             .map(([k, v]) => `${encodeURIComponent(k)}=${encodeURIComponent(v)}`)
             .join('&');
@@ -81,6 +85,12 @@ export class WbhonlineSuchformular {
         if (this.isset(startdatum)) {
             url.search += '&startdatum=' + this.encode(startdatum, 10, 10);
         }
+        if (this.isset(titel)) {
+            url.search += '&titel=' + this.encode(titel, 1, 100);
+        }
+        if (this.isset(autor)) {
+            url.search += '&autor=' + this.encode(autor, 1, 100);
+        }
         return url;
     }
 
@@ -96,13 +106,17 @@ export class WbhonlineSuchformular {
     zeigeSuchwerte() {
         const searchParams = new URLSearchParams(window.location.search);
         const stichwort = this.decode(searchParams.get('stichwort'));
-        const sachgebiet = this.decode(searchParams.get('sachgebiet'));
-        const einstelldatum = this.decode(searchParams.get('einstelldatum'));
-        const startdatum = this.decode(searchParams.get('startdatum'));
         this.setValue(document, 'input#stichwort', stichwort);
+        const sachgebiet = this.decode(searchParams.get('sachgebiet'));
         this.setValue(document, 'select#sachgebiet', sachgebiet);
+        const einstelldatum = this.decode(searchParams.get('einstelldatum'));
         this.setValue(document, 'input#einstelldatum', einstelldatum);
+        const startdatum = this.decode(searchParams.get('startdatum'));
         this.setValue(document, 'input#startdatum', startdatum);
+        const titel = this.decode(searchParams.get('titel'));
+        this.setValue(document, 'input#titel', titel);
+        const autor = this.decode(searchParams.get('autor'));
+        this.setValue(document, 'input#autor', autor);
     }
 
     decode(val, def = '') {
