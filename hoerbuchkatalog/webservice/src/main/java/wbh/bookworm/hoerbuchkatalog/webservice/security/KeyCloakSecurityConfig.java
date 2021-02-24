@@ -42,10 +42,11 @@ public class KeyCloakSecurityConfig extends KeycloakWebSecurityConfigurerAdapter
                 .logoutSuccessUrl("/")
                 .and()
                 .authorizeRequests()
-                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/actuator", "/actuator/**").hasRole("admin")
                 .antMatchers("/sba", "/sba/**").hasRole("admin")
                 .antMatchers("/**/private/**").hasRole("admin")
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
+                .antMatchers("/").permitAll()
                 .anyRequest().permitAll()
         ;
         http.csrf().disable();
