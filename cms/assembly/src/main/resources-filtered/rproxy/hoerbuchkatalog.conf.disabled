@@ -14,7 +14,7 @@ server {
 
     location ~* "/(v1|sso)/" {
         include tls-headers.nginx;
-        include cors.nginx;
+        #include cors.nginx;
         include hoerbuchkatalog-proxy.nginx;
         include hoerbuchkatalog-csp.nginx;
     }
