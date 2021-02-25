@@ -21,4 +21,4 @@ services:
       - KEYCLOAK_PASSWORD=Pa55w0rd
   hoerbuchkatalog:
     environment:
-      - OAUTH2_BASEURL=http://keycloak:8080/auth
+      - OAUTH2_BASEURL=https://${keycloak.hostname}/auth
