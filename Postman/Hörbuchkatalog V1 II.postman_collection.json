@@ -27,6 +27,11 @@
 						"method": "PUT",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -35,6 +40,11 @@
 								"key": "X-Bookworm-Hoerernummer",
 								"type": "text",
 								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
 							}
 						],
 						"url": {
@@ -59,6 +69,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -94,6 +109,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -121,6 +141,179 @@
 						}
 					},
 					"response": []
+				},
+				{
+					"name": "Detailsuche mit Titel, Autor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/stichwort/*/sachgebiet/*/einstelldatum/01.01.2020/titel/Bretagne/autor/Chateaubriand",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"stichwort",
+								"*",
+								"sachgebiet",
+								"*",
+								"einstelldatum",
+								"01.01.2020",
+								"titel",
+								"Bretagne",
+								"autor",
+								"Chateaubriand"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detailsuche mit Titel",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/titel/Bretagne",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"titel",
+								"Bretagne"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Detailsuche mit Autor",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{KatalogURL}}/autor/Chateaubriand%2C%20Fran%C3%A7ois-Ren%C3%A9",
+							"host": [
+								"{{KatalogURL}}"
+							],
+							"path": [
+								"autor",
+								"Chateaubriand%2C%20Fran%C3%A7ois-Ren%C3%A9"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CD Warenkorb",
+			"item": [
+				{
+					"name": "Titel zum Warenkorb hinzufügen (OPTIONS)",
+					"request": {
+						"method": "OPTIONS",
+						"header": [
+							{
+								"key": "Origin",
+								"value": "https://www.beta.wbh-online.de",
+								"type": "text"
+							},
+							{
+								"key": "Access-Control-Request-Method",
+								"value": "PUT",
+								"type": "text"
+							},
+							{
+								"key": "X-Bookworm-Mandant",
+								"type": "text",
+								"value": "{{Mandant}}"
+							},
+							{
+								"key": "X-Bookworm-Hoerernummer",
+								"type": "text",
+								"value": "{{Hoerernummer}}"
+							},
+							{
+								"key": "X-Bookworm-BestellungSessionId",
+								"type": "text",
+								"value": "{{bestellungSessionId}}"
+							}
+						],
+						"url": {
+							"raw": "{{WarenkorbURL}}/{{Titelnummer}}",
+							"host": [
+								"{{WarenkorbURL}}"
+							],
+							"path": [
+								"{{Titelnummer}}"
+							]
+						}
+					},
+					"response": []
 				}
 			]
 		},
@@ -132,6 +325,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -189,7 +387,7 @@
 	"variable": [
 		{
 			"key": "Hoerbuchkatalog_V1",
-			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+			"value": "{{Hostname}}/v1"
 		},
 		{
 			"key": "SessionURL",

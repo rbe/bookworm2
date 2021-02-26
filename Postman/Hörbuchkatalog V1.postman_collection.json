@@ -14,6 +14,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
 								"type": "text"
@@ -47,6 +52,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -82,6 +92,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -111,10 +126,15 @@
 					"response": []
 				},
 				{
-					"name": "Detailsuche",
+					"name": "Detailsuche mit Sachgebiet",
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -154,6 +174,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
 								"type": "text"
@@ -186,6 +211,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
@@ -226,6 +256,11 @@
 						"method": "PUT",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
 								"type": "text"
@@ -253,6 +288,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
@@ -283,6 +323,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -321,6 +366,11 @@
 						"method": "DELETE",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -353,6 +403,11 @@
 					"request": {
 						"method": "PUT",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -387,6 +442,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
 								"type": "text"
@@ -420,6 +480,11 @@
 						"method": "DELETE",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -452,6 +517,11 @@
 					"request": {
 						"method": "POST",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"value": "{{Mandant}}",
@@ -497,6 +567,11 @@
 						"method": "PUT",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -525,6 +600,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -549,6 +629,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -577,6 +662,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -607,6 +697,11 @@
 						"method": "GET",
 						"header": [
 							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
+							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
 								"value": "{{Mandant}}"
@@ -634,6 +729,11 @@
 					"request": {
 						"method": "GET",
 						"header": [
+							{
+								"key": "Origin",
+								"value": "{{Origin}}",
+								"type": "text"
+							},
 							{
 								"key": "X-Bookworm-Mandant",
 								"type": "text",
@@ -683,7 +783,7 @@
 	"variable": [
 		{
 			"key": "Hoerbuchkatalog_V1",
-			"value": "{{Hostname}}/hoerbuchkatalog/v1"
+			"value": "{{Hostname}}/v1"
 		},
 		{
 			"key": "SessionURL",
