@@ -13,7 +13,7 @@ public class AdminController {
 
     @GetMapping
     public String index() {
-        return "redirect:kontingent";
+        return "redirect:%s/kontingent".formatted(AdminConstants.BASE_URL);
     }
 
 }

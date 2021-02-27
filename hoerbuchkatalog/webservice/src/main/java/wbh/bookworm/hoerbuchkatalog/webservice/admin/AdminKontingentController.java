@@ -4,11 +4,14 @@ import javax.annotation.security.RolesAllowed;
 import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -17,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.stylesheets.LinkStyle;
 
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.shared.domain.Hoerernummer;
@@ -28,32 +32,30 @@ class AdminKontingentController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(AdminKontingentController.class);
 
+    private final String oauth2BaseUrl;
+
     private final HoererService hoererService;
 
     @Autowired
-    AdminKontingentController(final HoererService hoererService) {
+    AdminKontingentController(@Value("${OAUTH2_BASEURL}") final String oauth2BaseUrl,
+                              final HoererService hoererService) {
+        this.oauth2BaseUrl = oauth2BaseUrl;
         this.hoererService = hoererService;
     }
 
     @GetMapping
     public ModelAndView index() {
-        final Map<String, Serializable> map = Map.of(
-                "alle", alleHoererTemplateDTO(),
-                "hoerer", new TemplateModel(),
-                "result", ""
-        );
-        return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
+        final Map<String, Serializable> map = model(alleHoererTemplateDTO(), new TemplateModel(), new ArrayList<>());
+        return new ModelAndView(AdminConstants.TEMPLATE_WBH_ADMIN, map);
     }
 
     @PostMapping(params = "abfragen")
     public ModelAndView abfragen(@Valid @ModelAttribute final Kontingent kontingent,
                                  final BindingResult errors, final Model model) {
-        final Map<String, Serializable> map = Map.of(
-                "alle", alleHoererTemplateDTO(),
-                "hoerer", frageHoererAb(kontingent.getHoerernummer()),
-                "result", ""
-        );
-        return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
+        return new ModelAndView(AdminConstants.TEMPLATE_WBH_ADMIN,
+                model(alleHoererTemplateDTO(),
+                        frageHoererAb(kontingent.getHoerernummer()),
+                        new ArrayList<>()));
     }
 
     @PostMapping(params = "setzen")
@@ -76,12 +78,10 @@ class AdminKontingentController {
             hoererService.neueAnzahlDownloadsProHoerbuch(hoerernummer, anzahlDownloadsProHoerbuch);
             result.add("Kontingent " + anzahlDownloadsProHoerbuch + " Downloads pro Hörbuch für Hörer " + hoerernummer + " gesetzt");
         }
-        final Map<String, Serializable> map = Map.of(
-                "alle", alleHoererTemplateDTO(),
-                "hoerer", hoerernummer.isBekannt() ? frageHoererAb(hoerernummer) : new TemplateModel(),
-                "result", result
-        );
-        return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
+        return new ModelAndView(AdminConstants.TEMPLATE_WBH_ADMIN,
+                model(alleHoererTemplateDTO(),
+                        hoerernummer.isBekannt() ? frageHoererAb(hoerernummer) : new TemplateModel(),
+                        result));
     }
 
     @PostMapping(params = "freiputzen")
@@ -91,12 +91,19 @@ class AdminKontingentController {
         final boolean geputzt = hoererService.freiputzen(hoerernummer);
         final ArrayList<String> result = new ArrayList<>();
         result.add("Hörer %s %s".formatted(hoerernummer, geputzt ? "freigeputzt" : "nicht freigeputzt"));
-        final Map<String, Serializable> map = Map.of(
-                "alle", alleHoererTemplateDTO(),
-                "hoerer", frageHoererAb(hoerernummer),
-                "result", result
-        );
-        return new ModelAndView(AdminConstants.INDEX_TEMPLATE, map);
+        return new ModelAndView(AdminConstants.TEMPLATE_WBH_ADMIN,
+                model(alleHoererTemplateDTO(), frageHoererAb(hoerernummer), result));
+    }
+
+    private Map<String, Serializable> model(final TemplateModel alle,
+                                            final TemplateModel hoerer,
+                                            final ArrayList<String> result) {
+        final Map<String, Serializable> map = new HashMap<>();
+        map.put("oauth2_baseurl", oauth2BaseUrl);
+        map.put("alle", alle);
+        map.put("hoerer", hoerer);
+        map.put("result", result);
+        return map;
     }
 
     private TemplateModel frageHoererAb(final Hoerernummer hoerernummer) {
@@ -111,9 +118,12 @@ class AdminKontingentController {
     private TemplateModel alleHoererTemplateDTO() {
         final TemplateModel alleTemplateModel = new TemplateModel();
         final Hoerernummer hoerernummer = Hoerernummer.UNBEKANNT;
-        alleTemplateModel.setAnzahlBestellungenProAusleihzeitraum(hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
-        alleTemplateModel.setAnzahlBestellungenProTag(hoererService.anzahlBestellungenProTag(hoerernummer));
-        alleTemplateModel.setAnzahlDownloadsProHoerbuch(hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
+        alleTemplateModel.setAnzahlBestellungenProAusleihzeitraum(
+                hoererService.anzahlBestellungenProAusleihzeitraum(hoerernummer));
+        alleTemplateModel.setAnzahlBestellungenProTag(
+                hoererService.anzahlBestellungenProTag(hoerernummer));
+        alleTemplateModel.setAnzahlDownloadsProHoerbuch(
+                hoererService.anzahlDownloadsProHoerbuch(hoerernummer));
         return alleTemplateModel;
     }
 
