@@ -13,6 +13,8 @@ services:
       - POSTGRES_PASSWORD=Pa55w0rd
     volumes:
       - keycloakpostgresdata:/var/lib/postgresql/data
+    networks:
+      - backend
     expose:
       - 5432
   keycloak:
@@ -32,6 +34,8 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=Pa55w0rd
       - PROXY_ADDRESS_FORWARDING=true
+    networks:
+      - backend
     expose:
       - 8080
   redis:
