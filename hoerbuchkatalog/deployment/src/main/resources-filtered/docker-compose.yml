@@ -70,12 +70,9 @@ services:
   hoerbuchkatalog:
     image: wbh-hbk/hoerbuchkatalog:${hbk.release}
     restart: unless-stopped
-    depends_on:
-      - redis
     environment:
       - TZ=Europe/Berlin
       - LANG=en_US.UTF-8
-      - HOERBUCHKATALOG_TEMPLATE=/var/local/templates
     volumes:
       - hoerbuchkataloglocal:/var/local:rw
     networks:
