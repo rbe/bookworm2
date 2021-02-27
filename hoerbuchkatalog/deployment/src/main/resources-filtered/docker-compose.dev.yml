@@ -16,7 +16,7 @@ services:
     environment:
       - DB_DATABASE=keycloak
       - DB_USER=keycloak
-      - DB_PASSWORD=password
+      - DB_PASSWORD=Pa55w0rd
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=Pa55w0rd
       - KEYCLOAK_LOGLEVEL=DEBUG

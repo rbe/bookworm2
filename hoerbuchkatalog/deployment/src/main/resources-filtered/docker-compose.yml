@@ -13,10 +13,6 @@ services:
       - POSTGRES_PASSWORD=Pa55w0rd
     volumes:
       - keycloakpostgresdata:/var/lib/postgresql/data
-    networks:
-      backend:
-        aliases:
-          - ${keycloak.postgres.hostname}
     expose:
       - 5432
   keycloak:
@@ -32,14 +28,10 @@ services:
       - DB_PORT=5432
       - DB_DATABASE=keycloak
       - DB_USER=keycloak
-      - DB_PASSWORD=password
+      - DB_PASSWORD=Pa55w0rd
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=Pa55w0rd
       - PROXY_ADDRESS_FORWARDING=true
-    networks:
-      backend:
-        aliases:
-          - ${keycloak.hostname}
     expose:
       - 8080
   redis:
