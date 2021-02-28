@@ -1,3 +1,7 @@
+OAUTH2_REALM: dev
+OAUTH2_CLIENT_ID: microservice
+OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+
 hoerbuchkatalog:
   directory: ./var/wbh/hoerbuchkatalog
   cron:

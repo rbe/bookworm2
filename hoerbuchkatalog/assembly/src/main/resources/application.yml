@@ -1,3 +1,9 @@
+OAUTH2_BASEURL: http://localhost:8081/auth
+OAUTH2_REALM: dev
+OAUTH2_OIDC_URL: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect
+OAUTH2_CLIENT_ID: u53r
+OAUTH2_CLIENT_SECRET: secr3t
+
 hoerbuchkatalog:
   directory: ./var/wbh/hoerbuchkatalog
   cron:
@@ -21,12 +27,6 @@ repository:
 lucene:
   index:
     directory: ${hoerbuchkatalog.directory}/lucene
-
-OAUTH2_BASEURL: http://localhost:8081/auth
-OAUTH2_OIDC_URL: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect
-OAUTH2_REALM: dev
-OAUTH2_CLIENT_ID: microservice
-OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
 
 spring:
   redis:

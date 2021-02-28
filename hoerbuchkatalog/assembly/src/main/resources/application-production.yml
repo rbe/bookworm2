@@ -1,3 +1,7 @@
+OAUTH2_REALM: Bookworm
+OAUTH2_CLIENT_ID: wbh-admin
+OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+
 hoerbuchkatalog:
   directory: /var/local/wbh/hoerbuchkatalog
   cron:
@@ -25,9 +29,11 @@ lucene:
 spring:
   redis:
     host: redis
-  # Siehe application-secrets.yml
   mail:
-    port: 587
+    host:
+    port:
+    username:
+    password:
 
 server:
   address: 0.0.0.0
