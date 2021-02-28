@@ -7,7 +7,7 @@
     <license>All rights reserved. Use is subject to license terms.</license>
     <authorEmail>ralf@art-of-coding.eu</authorEmail>
     <authorUrl>https://www.art-of-coding.eu</authorUrl>
-    <version>0.0.251</version>
+    <version>0.0.252</version>
     <description>Use JSON data from a REST service in a template.</description>
     <files>
         <filename plugin="restbridge">autoload.php</filename>

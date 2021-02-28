@@ -24,8 +24,9 @@ $apiVersion = '/v1';
 
 global $restBridge;
 $restBridge = [
-    'DEBUG' => false,
     'WARNING' => false,
+    'DEBUG' => false,
+    'TRACE' => false,
     'TEMPLATE_NAME_PREFIX' => 'Bookworm',
     'REST_ENDPOINTS' => [
         // Suche

@@ -11,8 +11,8 @@ export const LOGIN_HTML = '/anmelden.html';
 export const CD_BESTELLUNG_OK_HTML = '/cd-bestellung-ok.html';
 export const CD_BESTELLUNG_FEHLER_HTML = '/cd-bestellung-fehler.html';
 const host = window.location.host.split('.');
-host.splice(0,1,'hoerbuchkatalog');
-export const HOERBUCHKATALOG_URL = window.location.protocol + host.join('.');
+host.splice(0, 1, 'hoerbuchkatalog');
+export const HOERBUCHKATALOG_URL = window.location.protocol + '//' + host.join('.');
 export const SHARD_URLS = [
     'https://hoerbuchdienst-shard11.wbh-online.de',
     'https://hoerbuchdienst-shard12.wbh-online.de',
@@ -21,6 +21,22 @@ export const SHARD_URLS = [
 export const DOWNLOAD_STATUS_TIMEOUT = 2500;
 
 export class WbhonlineHelper {
+
+    //
+    // URLs
+    //
+
+    idpUrl() {
+        const host = window.location.host.split('.');
+        host.splice(0, 1, 'idp');
+        return window.location.protocol + '//' + host.join('.');
+    }
+
+    hoerbuchkatalogUrl() {
+        const host = window.location.host.split('.');
+        host.splice(0, 1, 'hoerbuchkatalog');
+        return window.location.protocol + '//' + host.join('.');
+    }
 
     //
     // Cookie

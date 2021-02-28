@@ -68,7 +68,7 @@ final class HttpClient
         $info = $this->responseInfo($ch);
         curl_close($ch);
         restBridgeDebugLog(sprintf("GET %s, HTTP response: %s",
-            print_r($responseBody, true), $url));
+            $url, print_r($responseBody, true)));
         return new HttpResponse($url, $info['statuscode'], $responseBody);
 
     }//end httpGET()

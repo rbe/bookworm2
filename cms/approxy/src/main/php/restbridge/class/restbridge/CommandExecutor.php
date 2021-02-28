@@ -98,6 +98,8 @@ final class CommandExecutor
             ]
         );
         $result = $command->execute();
+        /* ... um HTTP Request Parameter im Template zur Verfügung zu haben
+           --> {meta.} nutzen!
         if ($result->isOk()) {
             // Merge urlParameterArray into every row
             $jsonHelper = new JsonHelper($result->getData());
@@ -106,6 +108,7 @@ final class CommandExecutor
         } else {
             // ignore
         }
+        */
 
         return $result;
 
