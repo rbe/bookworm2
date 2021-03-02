@@ -12,99 +12,152 @@
     <script type="application/javascript" th:src="@{/v1/private/admin/wbh-admin.js}" th:defer="defer"></script>
 </head>
 <body class="wbh-admin">
-    <div id="kopfzeile" role="banner" class="fluid-container">
-        <div class="container">
-            <div id="header-logo">
-                <div class="header-logo">
-                    <div class="custom desktop">
-                        <p><a href="/" aria-label="zurück zur Startseite"><img src="https://www.wbh-online.de/images/logo/logo_wbh-online_400x162.png" alt="Logo WBH">Westdeutsche Bibliothek der Hörmedien<br>für blinde, seh- und lesebehinderte Menschen e.V.</a></p>
-                    </div>
+<div id="kopfzeile" role="banner" class="fluid-container">
+    <div class="container">
+        <div id="header-logo">
+            <div class="header-logo">
+                <div class="custom desktop">
+                    <p>
+                        <a href="/" aria-label="zurück zur Startseite">
+                            <img src="https://www.wbh-online.de/images/logo/logo_wbh-online_400x162.png" alt="Logo WBH">Westdeutsche Bibliothek der Hörmedien<br>für blinde, seh- und lesebehinderte Menschen e.V.</img>
+                        </a>
+                    </p>
                 </div>
             </div>
-            <div class="header-text">
-                <h2>WBH Admin</h2>
-                <p class="text">
-                    Ihr KeyCloak heute ist <span th:text="${oauth2_baseurl}"></span>
-                </p>
-            </div>
+        </div>
+        <div class="header-text">
+            <h2>Kontingent für Hörer abfragen und festlegen</h2>
+            <p class="text"></p>
         </div>
     </div>
-    <div id="kontingent-hoerer" role="banner" class="fluid-container">
-        <div class="container">
-            <h2>1 Hörer</h2>
-            <!--/*@thymesVar id="hoerer" type="wbh.bookworm.hoerbuchkatalog.webservice.admin.TemplateModel"*/-->
-            <form id="kontingentForm" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${hoerer}" method="post">
-                <input type="hidden" id="modus" name="modus" value=""/>
-                <table class="kontigent_hoerer">
-                    <tr>
-                        <td class="label"><label for="hoerernummer">Hörernummer</label></td>
-                        <td class="entry"><input id="hoerernummer" type="text" value="" th:field="*{hoerernummer}" aria-label="Eingabe Hörernummer"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label></td>
-                        <td class="entry"><input id="proAusleihzeitraum" type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}" aria-label="Anzahl von Download-Bestellungen pro Ausleihzeitraum"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><label for="proTag">Anzahl von Download-Bestellungen pro Tag</label></td>
-                        <td class="entry"><input id="proTag" type="number" value="" th:field="*{anzahlBestellungenProTag}" aria-label="Anzahl von Download-Bestellungen pro Tag"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label></td>
-                        <td class="entry"><input id="proHoerbuch" type="number" value="" th:field="*{anzahlDownloadsProHoerbuch}" aria-label="Anzahl von Downloads pro Hörbuch"/></td>
-                    </tr>
-                    <tr>
-                        <td class="submit">
-                            <input class="btn abfragen" id="abfragen" type="submit" name="abfragen" value="Kontingent abfragen" aria-label="Für diesen Hörer abfragen"/>
-                            <input class="btn setzen" id="setzen" type="submit" name="setzen" value="Kontingent festlegen" aria-label="Für diesen Hörer festlegen"/>
-                            <input class="btn freiputzen" id="freiputzen" type="submit" name="freiputzen" value="Hörer auf 0 zurücksetzen" aria-label="Für diesen Hörer auf 0 zurücksetzen"/>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+</div>
+<div id="kontingent-hoerer" role="banner" class="fluid-container">
+    <div class="container">
+        <h2>1 Hörer</h2>
+        <!--/*@thymesVar id="hoerer" type="wbh.bookworm.hoerbuchkatalog.webservice.admin.TemplateModel"*/-->
+        <form id="kontingentForm" action="#"
+              th:action="@{/v1/private/admin/kontingent}" th:object="${hoerer}"
+              method="post">
+            <input type="hidden" id="modus" name="modus" value=""/>
+            <table class="kontigent_hoerer">
+                <tr>
+                    <td class="label">
+                        <label for="hoerernummer">Hörernummer</label>
+                    </td>
+                    <td class="entry">
+                        <input id="hoerernummer" type="text" value=""
+                               th:field="*{hoerernummer}"
+                               aria-label="Eingabe Hörernummer"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proAusleihzeitraum" type="number" value=""
+                               th:field="*{anzahlBestellungenProAusleihzeitraum}"
+                               aria-label="Anzahl von Download-Bestellungen pro Ausleihzeitraum"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="proTag">Anzahl von Download-Bestellungen pro Tag</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proTag" type="number" value=""
+                               th:field="*{anzahlBestellungenProTag}"
+                               aria-label="Anzahl von Download-Bestellungen pro Tag"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proHoerbuch" type="number" value=""
+                               th:field="*{anzahlDownloadsProHoerbuch}"
+                               aria-label="Anzahl von Downloads pro Hörbuch"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="submit">
+                        <input class="btn abfragen" id="abfragen" type="submit" name="abfragen"
+                               value="Kontingent abfragen" aria-label="Für diesen Hörer abfragen"/>
+                        <input class="btn setzen" id="setzen" type="submit" name="setzen" value="Kontingent festlegen"
+                               aria-label="Für diesen Hörer festlegen"/>
+                        <input class="btn freiputzen" id="freiputzen" type="submit" name="freiputzen"
+                               value="Downloads auf 0 zurücksetzen" aria-label="Downloads auf 0 zurücksetzen"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div id="kontingent-alle" role="banner" class="fluid-container">
+    <div class="container">
+        <h2>Alle Hörer</h2>
+        <!--/*@thymesVar id="alle" type="wbh.bookworm.hoerbuchkatalog.webservice.admin.TemplateModel"*/-->
+        <form id="alleHoererkontingentForm" action="#"
+              th:action="@{/v1/private/admin/kontingent}" th:object="${alle}"
+              method="post">
+            <input type="hidden" id="alleHoerer" name="alleHoerer" value="true"/>
+            <table class="kontigent_global">
+                <tr>
+                    <td class="label">
+                        <label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proAusleihzeitraum" type="number" value=""
+                               th:field="*{anzahlBestellungenProAusleihzeitraum}"
+                               aria-label="Anzahl von Download-Bestellungen pro Ausleihzeitraum"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="proTag">Anzahl von Download-Bestellungen pro Tag</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proTag" type="number" value=""
+                               th:field="*{anzahlBestellungenProTag}"
+                               aria-label="Anzahl von Download-Bestellungen pro Tag"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="label">
+                        <label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label>
+                    </td>
+                    <td class="entry">
+                        <input id="proHoerbuch" type="number" value=""
+                               th:field="*{anzahlDownloadsProHoerbuch}"
+                               aria-label="Anzahl von Downloads pro Hörbuch"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="submit">
+                        <input class="btn setzen" id="setzen" type="submit" name="setzen" value="Kontingent festlegen"
+                               aria-label="Für alle Hörer festlegen"/>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+</div>
+<div id="ausgabe" class="fluid-container">
+    <div class="container">
+        <h2>Ausgabe</h2>
+        <div class="nachrichten">
+            <!--/*@thymesVar id="result" type="java.util.List<String>"*/-->
+            <div class="eintrag" th:each="r : ${result}" th:text="${r}"></div>
         </div>
     </div>
-    <div id="kontingent-alle" role="banner" class="fluid-container">
-        <div class="container">
-            <h2>Alle Hörer</h2>
-            <!--/*@thymesVar id="alle" type="wbh.bookworm.hoerbuchkatalog.webservice.admin.TemplateModel"*/-->
-            <form id="alleHoererkontingentForm" action="#" th:action="@{/v1/private/admin/kontingent}" th:object="${alle}" method="post">
-                <input type="hidden" id="alleHoerer" name="alleHoerer" value="true"/>
-                <table class="kontigent_global">
-                    <tr>
-                        <td class="label"><label for="proAusleihzeitraum">Anzahl von Download-Bestellungen pro Ausleihzeitraum</label></td>
-                        <td class="entry"><input id="proAusleihzeitraum" type="number" value="" th:field="*{anzahlBestellungenProAusleihzeitraum}" aria-label="Anzahl von Download-Bestellungen pro Ausleihzeitraum"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><label for="proTag">Anzahl von Download-Bestellungen pro Tag</label></td>
-                        <td class="entry"><input id="proTag" type="number" value="" th:field="*{anzahlBestellungenProTag}" aria-label="Anzahl von Download-Bestellungen pro Tag"/></td>
-                    </tr>
-                    <tr>
-                        <td class="label"><label for="proHoerbuch">Anzahl von Downloads pro Hörbuch</label></td>
-                        <td class="entry"><input id="proHoerbuch" type="number" value="" th:field="*{anzahlDownloadsProHoerbuch}" aria-label="Anzahl von Downloads pro Hörbuch"/></td>
-                    </tr>
-                    <tr>
-                        <td class="submit">
-                            <input class="btn setzen" id="setzen" type="submit" name="setzen" value="Kontingent festlegen" aria-label="Für alle Hörer festlegen"/>
-                        </td>
-                    </tr>
-                </table>
-            </form>
+</div>
+<div id="footer" class="fluid-container">
+    <div class="container">
+        <div class="footer-text">
+            <p></p>
         </div>
     </div>
-    <div id="ausgabe" class="fluid-container">
-        <div class="container">
-            <h2>Ausgabe</h2>
-            <div class="nachrichten">
-                <div class="eintrag" th:each="r : ${result}" th:text="${r}"></div>
-            </div>
-        </div>
-    </div>
-    <div id="footer" class="fluid-container">
-        <div class="container">
-            <div class="footer-text">
-                <p>Footer Text</p>
-            </div>
-        </div>
-    </div>
+</div>
 </body>
 </html>

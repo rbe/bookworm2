@@ -5,7 +5,6 @@ import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
-import org.w3c.dom.stylesheets.LinkStyle;
 
 import wbh.bookworm.hoerbuchkatalog.app.hoerer.HoererService;
 import wbh.bookworm.shared.domain.Hoerernummer;
@@ -90,7 +88,9 @@ class AdminKontingentController {
         final Hoerernummer hoerernummer = kontingent.getHoerernummer();
         final boolean geputzt = hoererService.freiputzen(hoerernummer);
         final ArrayList<String> result = new ArrayList<>();
-        result.add("Hörer %s %s".formatted(hoerernummer, geputzt ? "freigeputzt" : "nicht freigeputzt"));
+        result.add("Hörer %s: %s".formatted(hoerernummer, geputzt
+                ? "Downloads auf 0 zurückgesetzt"
+                : "Downloads nicht auf 0 gesetzt"));
         return new ModelAndView(AdminConstants.TEMPLATE_WBH_ADMIN,
                 model(alleHoererTemplateDTO(), frageHoererAb(hoerernummer), result));
     }
