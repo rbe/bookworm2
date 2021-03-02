@@ -1,7 +1,7 @@
 server {
     listen 443 ssl http2;
     #listen [::]:443 ssl http2;
-    server_name ${hbk.hostname};
+    server_name ${hbk.hostname} ${hbk.tls.hostname};
 
     ssl_certificate ${tls.path}/${hbk.hostname}/fullchain.pem;
     ssl_certificate_key ${tls.path}/${hbk.hostname}/privkey.pem;

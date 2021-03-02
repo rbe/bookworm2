@@ -232,6 +232,9 @@
                 <domain>local</domain>
                 <cms.hostname>wbhonline.${domain}</cms.hostname>
                 <tls.path>/etc/letsencrypt/selfsigned</tls.path>
+                <cms.tls.hostname/>
+                <hbk.tls.hostname/>
+                <keycloak.tls.hostname/>
                 <nginx.enable.servers/>
             </properties>
             <build>
@@ -270,6 +273,9 @@
                 <docker.project.name>hbk</docker.project.name>
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
+                <cms.tls.hostname>www.wbh-online.de</cms.tls.hostname>
+                <hbk.tls.hostname>hoerbuchkatalog.wbh-online.de</hbk.tls.hostname>
+                <keycloak.tls.hostname>idp.wbh-online.de</keycloak.tls.hostname>
                 <nginx.enable.servers/>
             </properties>
             <build>

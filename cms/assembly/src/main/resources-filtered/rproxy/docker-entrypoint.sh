@@ -49,10 +49,16 @@ then
     [[ ! -d /var/lib/letsencrypt ]] && mkdir /var/lib/letsencrypt
     [[ ! -d /etc/letsencrypt/live/${keycloak.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${keycloak.hostname}"
+    [[ -n "${keycloak.tls.hostname}" ]] \
+      && certbot certonly ${certonly_args} --expand -d "${keycloak.hostname}" -d "${keycloak.tls.hostname}"
     [[ ! -d /etc/letsencrypt/live/${hbk.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${hbk.hostname}"
+    [[ -n "${hbk.tls.hostname}" ]] \
+      && certbot certonly ${certonly_args} --expand -d "${hbk.hostname}" -d "${hbk.tls.hostname}"
     [[ ! -d /etc/letsencrypt/live/${cms.hostname} ]] \
       && certbot certonly ${certonly_args} -d "${cms.hostname}"
+    [[ -n "${cms.tls.hostname}" ]] \
+      && certbot certonly ${certonly_args} --expand -d "${cms.hostname}" -d "${cms.tls.hostname}"
     [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
     [[ -d /etc/letsencrypt/live ]] && chmod 755 /etc/letsencrypt/live
   else
