@@ -7,6 +7,7 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -191,8 +192,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public void freiputzen() {
-        titelnummern.values()
-                .forEach(Downloads.Details::resetDownloads);
+        titelnummern.clear();
     }
 
     public LocalDateTime ausgeliehenAm(final Titelnummer titelnummer) {

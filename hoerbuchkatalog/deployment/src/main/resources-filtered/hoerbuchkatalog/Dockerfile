@@ -24,7 +24,6 @@ RUN find /usr/local/bin -type f -name \*.sh -print0 | xargs -0 chmod 755 \
     && /usr/local/bin/mkdirs.sh
 COPY --chown=service wbh.bookworm.hoerbuchkatalog.assembly-${project.version}.jar /usr/local/service.jar
 COPY --chown=service application-production.yml /var/local/
-COPY --chown=service application-secrets.tmpl.yml /var/local/application-secrets.yml
 RUN /usr/local/bin/perms.sh
 USER service:service
 RUN echo "* */10 * * * /usr/local/bin/cleanup.sh" | crontab -
