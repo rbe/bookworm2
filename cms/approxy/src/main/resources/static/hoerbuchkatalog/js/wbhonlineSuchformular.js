@@ -29,6 +29,18 @@ export class WbhonlineSuchformular {
         if (undefined !== inputField && null !== inputField) {
             inputField.addEventListener('keyup', enterListener);
         }
+        const inputTitel = document.querySelector('input#titel');
+        if (undefined !== inputTitel && null !== inputTitel) {
+            inputTitel.addEventListener('keyup', enterListener);
+        }
+        const inputAutor = document.querySelector('input#autor');
+        if (undefined !== inputAutor && null !== inputAutor) {
+            inputAutor.addEventListener('keyup', enterListener);
+        }
+        const inputEinstelldatum = document.querySelector('input#einstelldatum');
+        if (undefined !== inputEinstelldatum && null !== inputEinstelldatum) {
+            inputEinstelldatum.addEventListener('keyup', enterListener);
+        }
         const inputStartdatum = document.querySelector('input#startdatum');
         if (undefined !== inputStartdatum && null !== inputStartdatum) {
             inputStartdatum.addEventListener('keyup', enterListener);
