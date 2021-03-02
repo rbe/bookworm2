@@ -1,3 +1,4 @@
+OAUTH2_BASEURL:
 OAUTH2_REALM: Bookworm
 OAUTH2_CLIENT_ID: wbh-admin
 OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
@@ -45,22 +46,33 @@ server:
 logging:
   level:
     root: ERROR
-    wbh.bookworm.hoerbuchkatalog.assembly: ERROR
+    wbh.bookworm.hoerbuchkatalog.assembly: INFO
     wbh.bookworm.hoerbuchkatalog.webservice: INFO
     wbh.bookworm.hoerbuchkatalog.app: INFO
     wbh.bookworm.hoerbuchkatalog.repository: INFO
     wbh.bookworm.hoerbuchkatalog.domain: INFO
-    wbh.bookworm.hoerbuchkatalog: ERROR
-    aoc.mikrokosmos: ERROR
-    aoc.mikrokosmos.fs: ERROR
-    aoc.mikrokosmos.io: ERROR
-    aoc.mikrokosmos.ddd.event: ERROR
-    aoc.mikrokosmos.ddd.repository: ERROR
+    wbh.bookworm.hoerbuchkatalog: INFO
+    aoc.mikrokosmos.io.dataformat.CsvFormat: INFO
+    aoc.mikrokosmos.io.dataformat.LineFileParser: INFO
+    aoc.mikrokosmos.io: INFO
+    aoc.mikrokosmos.fs: INFO
+    aoc.mikrokosmos.ddd.event: INFO
+    aoc.mikrokosmos.ddd.repository: INFO
     aoc.mikrokosmos.ddd.search: INFO
-    eu.artofcoding: ERROR
+    aoc.mikrokosmos: INFO
+    eu.artofcoding: INFO
+    org.keycloak: ERROR
     org.eclipse.jetty: ERROR
+    org.springframework.boot.web.embedded.jetty: ERROR
+    org.springframework.boot.actuator: ERROR
     org.springframework.web.servlet.handler: ERROR
-    org.springframework.web: ERROR
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method: INFO
+    org.springframework.web: INFO
+    org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource: DEBUG
+    org.springframework.security: INFO
+    org.springframework.scheduling: ERROR
     org.springframework.beans.factory.support: ERROR
+    org.springframework.beans: ERROR
     org.springframework: ERROR
     org.reflections: ERROR

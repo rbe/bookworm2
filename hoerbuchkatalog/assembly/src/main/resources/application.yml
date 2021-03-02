@@ -1,8 +1,8 @@
-OAUTH2_BASEURL: http://localhost:8081/auth
-OAUTH2_REALM: dev
+OAUTH2_BASEURL:
+OAUTH2_REALM:
 OAUTH2_OIDC_URL: ${OAUTH2_BASEURL}/realms/${OAUTH2_REALM}/protocol/openid-connect
-OAUTH2_CLIENT_ID: u53r
-OAUTH2_CLIENT_SECRET: secr3t
+OAUTH2_CLIENT_ID:
+OAUTH2_CLIENT_SECRET:
 
 hoerbuchkatalog:
   directory: ./var/wbh/hoerbuchkatalog
@@ -112,28 +112,3 @@ springdoc:
 logging:
   level:
     root: ERROR
-    wbh.bookworm.hoerbuchkatalog.assembly: ERROR
-    wbh.bookworm.hoerbuchkatalog.webservice: ERROR
-    wbh.bookworm.hoerbuchkatalog.app: ERROR
-    wbh.bookworm.hoerbuchkatalog.repository: ERROR
-    wbh.bookworm.hoerbuchkatalog.domain: ERROR
-    aoc.mikrokosmos: ERROR
-    aoc.mikrokosmos.io.dataformat.CsvFormat: ERROR
-    aoc.mikrokosmos.io.dataformat.LineFileParser: ERROR
-    aoc.mikrokosmos.io: ERROR
-    aoc.mikrokosmos.fs: ERROR
-    aoc.mikrokosmos.ddd.event: ERROR
-    aoc.mikrokosmos.ddd.repository: ERROR
-    aoc.mikrokosmos.ddd.search: ERROR
-    eu.artofcoding: ERROR
-    org.keycloak: DEBUG
-    org.eclipse.jetty: ERROR
-    org.springframework.boot.actuator: ERROR
-    org.springframework.boot.security: DEBUG
-    org.springframework.security: DEBUG
-    org.springframework.web.servlet.handler: ERROR
-    org.springframework.web: ERROR
-    org.springframework.scheduling: ERROR
-    org.springframework.beans.factory.support: ERROR
-    org.springframework: ERROR
-    org.reflections: ERROR
