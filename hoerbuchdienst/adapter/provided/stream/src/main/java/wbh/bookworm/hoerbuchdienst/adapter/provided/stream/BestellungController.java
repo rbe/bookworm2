@@ -8,7 +8,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
-import java.nio.file.Path;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -16,7 +15,6 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
-import io.micronaut.context.annotation.Value;
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
 import io.micronaut.http.HttpResponse;
@@ -70,9 +68,6 @@ public class BestellungController {
     private final KatalogService katalogService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
-
-    @Value("${hoerbuchdienst.temporary.path}")
-    private Path temporaryDirectory;
 
     @Inject
     public BestellungController(final AudiobookOrderService audiobookOrderService,
@@ -161,7 +156,7 @@ public class BestellungController {
     }
 
     private StreamedFile daisyZipAsStream(final String titelnummer, final String orderId) {
-        final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId);
+        final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId, titelnummer);
         if (maybeDaisyZipInputStream.isPresent()) {
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
             final String titel = katalogService.audiobookInfo(titelnummer).getTitel()
