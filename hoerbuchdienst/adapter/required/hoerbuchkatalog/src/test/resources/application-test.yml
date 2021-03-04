@@ -1,0 +1,9 @@
+hoerbuchkatalog:
+  url: http://localhost:8080
+
+logger:
+  levels:
+    root: ERROR
+    io.micronaut.http.client: TRACE
+    io.micronaut.http: TRACE
+    io.micronaut: ERROR

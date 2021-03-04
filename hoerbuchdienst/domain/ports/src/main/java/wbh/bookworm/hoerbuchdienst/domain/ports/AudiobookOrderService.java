@@ -16,7 +16,7 @@ public interface AudiobookOrderService {
 
     String orderStatus(String orderId);
 
-    Optional<InputStream> fetchOrderAsStream(String orderId);
+    Optional<InputStream> fetchOrderAsStream(String orderId, String titelnummer);
 
     Optional<Path> fetchOrderAsFile(String orderId);
 

@@ -15,5 +15,6 @@
         <module>daisy</module>
         <module>watermark</module>
         <module>mandantrepository</module>
+        <module>hoerbuchkatalog</module>
     </modules>
 </project>

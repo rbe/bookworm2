@@ -23,6 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import wbh.bookworm.hoerbuchdienst.domain.ports.AudiobookOrderService;
+import wbh.bookworm.hoerbuchdienst.domain.required.hoerbuchkatalog.HoerbuchkatalogClient;
+import wbh.bookworm.shared.domain.Hoerernummer;
 
 import aoc.mikrokosmos.io.fs.DeleteOnCloseSeekableByteChannel;
 
@@ -43,12 +45,19 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
 
     private final AudiobookZipper audiobookZipper;
 
+    private final Map<String, Hoerernummer> bestellungen;
+
+    private final HoerbuchkatalogClient hoerbuchkatalogClient;
+
     @Value("${hoerbuchdienst.temporary.path}")
     private Path temporaryDirectory;
 
-    AudiobookOrderServiceImpl(final AudiobookZipper audiobookZipper) {
+    AudiobookOrderServiceImpl(final AudiobookZipper audiobookZipper,
+                              final HoerbuchkatalogClient hoerbuchkatalogClient) {
         this.audiobookZipper = audiobookZipper;
+        this.hoerbuchkatalogClient = hoerbuchkatalogClient;
         orderStatus = new ConcurrentHashMap<>(10);
+        bestellungen = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -56,6 +65,7 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     public void orderZip(final String mandant, final String hoerernummer, /* TODO Mandantenspezifisch */ final String titelnummer, final String orderId) {
         LOGGER.debug("Hörer '{}' Hörbuch '{}' Bestellung {}: Erstelle DAISY ZIP", hoerernummer, titelnummer, orderId);
         orderStatus.put(orderId, ORDER_STATUS_PROCESSING);
+        bestellungen.put(orderId, new Hoerernummer(hoerernummer));
         try {
             final Path zipFile = audiobookZipper.watermarkedDaisyZipAsFile(mandant, hoerernummer, titelnummer);
             if (null != zipFile) {
@@ -81,10 +91,20 @@ class AudiobookOrderServiceImpl implements AudiobookOrderService {
     }
 
     @Override
-    public Optional<InputStream> fetchOrderAsStream(final String orderId) {
+    public Optional<InputStream> fetchOrderAsStream(final String orderId, final String titelnummer) {
         final Optional<Path> maybeDaisyZip = fetchOrderAsFile(orderId);
         if (maybeDaisyZip.isPresent()) {
             LOGGER.info("Bestellung '{}' wird abgeholt", orderId);
+            if (bestellungen.containsKey(orderId)) {
+                try {
+                    final Hoerernummer hoerernummer = bestellungen.get(orderId);
+                    hoerbuchkatalogClient.verbuche(hoerernummer.getValue(), titelnummer);
+                } catch (Exception e) {
+                    LOGGER.error("", e);
+                }
+            } else {
+                LOGGER.warn("Bestellung {} hat keine Hörernummer, Download nicht verbucht", orderId);
+            }
             try {
                 final ReadableByteChannel byteChannel = new DeleteOnCloseSeekableByteChannel(maybeDaisyZip.get());
                 return Optional.of(Channels.newInputStream(byteChannel));

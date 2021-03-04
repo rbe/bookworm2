@@ -300,30 +300,6 @@ export class BookwormRestClient {
         document.body.appendChild(anchor);
         anchor.click();
         anchor.remove();
-        this.verbucheDownload(shardName, titelnummer);
-    }
-
-    verbucheDownload(shardName, titelnummer) {
-        const url = new URL('/v1/downloads/' + titelnummer, HOERBUCHKATALOG_URL);
-        fetch(url.toString(), {
-            'method': 'PUT',
-            'headers': {
-                'Accept': 'application/json',
-                'X-Bookworm-Mandant': this.mandant,
-                'X-Bookworm-Hoerernummer': this.hoerernummer,
-                'X-Bookworm-BestellungSessionId': this.bestellungSessionId
-            }
-        })
-            .then(response => {
-                if (response.ok) {
-                    // ignore
-                } else {
-                    FetchErrorHandler.handle(response);
-                }
-            })
-            .catch(reason => {
-                console.log('Fehler: ' + reason);
-            });
     }
 
     //
