@@ -1,37 +1,41 @@
 @startuml
-'https://plantuml.com/component-diagram
 
 !include plantuml/Skinparams.iuml
 
-package wbhonline.de {
-    component WebBrowser {
-        component HTML
-        component JavaScript
-        HTML - JavaScript
-    }
-    component CMS {
-        component Joomla
-        interface HTTP as "Web UI"
-        Joomla -r- HTTP
-        database MySQL
-        interface SQL
-        SQL - MySQL
-        Joomla .d.> SQL
-    }
-    component Hoerbuchkatalog {
-        component HBK {
-            component RESTServer
-            database Katalog
-            RESTServer .d.> Katalog
-            database Hoererdaten
-            RESTServer .d.> Hoererdaten
-        }
-        interface REST
-        RESTServer - REST
-    }
-    Joomla .r.> REST
-    HTML .> HTTP
-    JavaScript .u.> REST
+component "Client mit\nClient Credentials Flow" as IDP_ClientCredentials <<ID Provider>> {
 }
+component "Client mit\nAuthorization Code Flow" as IDP_AuthorizationCode <<ID Provider>> {
+}
+
+component "Hoerbuchkatalog" as HBK {
+    component webservice <<Adapter>> {
+    }
+    webservice -l- IDP_ClientCredentials
+    component adminui <<Adapter>> {
+    }
+    adminui -r- IDP_AuthorizationCode
+    rectangle Domain {
+        component app <<module>> {
+        }
+        component domain <<module>> {
+        }
+        component repository <<module>> {
+        }
+        database Katalog
+        repository -r- Katalog
+        database Hoererdaten
+        repository -l- Hoererdaten
+        database Downloads
+        repository -d- Downloads
+        adminui -- app
+        webservice -- app
+        app -- domain
+        domain -- repository
+    }
+}
+interface REST
+REST -- webservice
+interface HTTP
+HTTP -- adminui
 
 @enduml

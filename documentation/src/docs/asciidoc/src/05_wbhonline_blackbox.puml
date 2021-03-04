@@ -10,25 +10,29 @@ component "Web Browser" as WBH_WebBrowser
 component "S3 Browser" as WBH_S3Browser
 
 actor "Hörer:in" as Hoerer
-component "Web Browser" as Hoerer_WebBrowser
+component "Web Browser" as Hoerer_WebBrowser {
+    component HTML
+    component JavaScript
+    HTML -l- JavaScript
+}
 
 package wbh-online.de {
-    component CMS
-    component "Hörbuchkatalog" as Hoerbuchkatalog
-    CMS - Hoerbuchkatalog
-    component "Hörbuchdienst" as Hoerbuchdienst
+    component "KeyCloak" as IDP <<ID Provider>>
+    component "CMS" as CMS
+    component "Hörbuchkatalog" as HBK
+    component "Hörbuchdienst" as HBD
+    CMS - HBK
 }
 
 Hoerer -d- Hoerer_WebBrowser
-Hoerer_WebBrowser -d- CMS
-Hoerer_WebBrowser -r- Hoerbuchkatalog
-Hoerer_WebBrowser -r- Hoerbuchdienst
+HTML --- CMS
+HTML --- HBD
 
 WBH -u- WBH_S3Browser
-WBH_S3Browser -u- Hoerbuchdienst
+WBH_S3Browser -u- HBD
 WBH -u- WBH_WebBrowser
 WBH_WebBrowser -u- CMS
-WBH_WebBrowser -u- Hoerbuchkatalog
-WBH_WebBrowser -u- Hoerbuchdienst
+WBH_WebBrowser -u- HBK
+WBH_WebBrowser -u- HBD
 
 @enduml

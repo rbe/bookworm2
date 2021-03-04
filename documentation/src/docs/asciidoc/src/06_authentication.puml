@@ -1,5 +1,4 @@
 @startuml
-'https://plantuml.com/sequence-diagram
 
 skinparam monochrome true
 skinparam ResponseMessageBelowArrow true
@@ -7,20 +6,52 @@ skinparam ResponseMessageBelowArrow true
 autonumber
 
 participant Browser
-participant CMS as CMS
+participant "CMS" as CMS
+participant "ID Provider" as IDP
 participant "Hörbuchkatalog" as HBK
 participant "Hörbuchdienst" as HBD
-participant "ID Provider" as IDP
 
 Browser -> CMS++ : Login
+CMS -> CMS : Anmeldung prüfen
 CMS -> CMS : Session erzeugen
-Browser <-- CMS--
-Browser -> CMS++ : Hörbuch herunterladen
-CMS -> CMS : Hörernummer in Session\nnachsehen
-CMS -> IDP++ : Authenticate
-IDP -> IDP : Validate credentials
-CMS <-- IDP-- : JWT
-CMS -> CMS : Access Token -> Cookie\noder Session/Datenbank
-Browser <-- CMS-- : Cookie mit Access Token
+CMS -> IDP++ : Client Credentials Grant
+IDP -> IDP : Access Token,\nGültigkeit =\nDauer der\nCMS-Session
+CMS <-- IDP-- : Access Token
+CMS -> CMS : Access Token\nin Session speichern
+Browser <-- CMS-- : Ergebnis
+
+group Katalog abfragen
+Browser -> CMS++ : Hörbuch suchen,\nDetails anzeigen
+CMS -> CMS : Access Token\naus Session holen
+CMS -> CMS : URL für HBK erstellen
+CMS -> HBK++ : Abfrage mit HBK-URL
+alt
+HBK -> HBK : Access Token prüfen
+else
+HBK -> IDP++ : Access Token prüfen
+HBK <-- IDP-- : Ergebnis
+end alt
+HBK -> HBK : Abfrage durchführen
+CMS <-- HBK-- : Ergebnis
+Browser <-- CMS-- : Ergebnis
+end group
+
+group Hörbuch bestellen
+Browser -> CMS++ : Hörbuch\nherunterladen
+CMS -> CMS : Access Token\naus Session holen
+CMS -> CMS : URL für HBD erstellen
+Browser <-- CMS-- : Redirect mit HBD-URL
+Browser -> HBD++ : Bestellung/Download inkl. Access Token
+alt
+HBD -> HBD : Access Token prüfen
+else
+HBD -> IDP++ : Access Token prüfen
+HBD <-- IDP-- : Ergebnis
+end alt
+HBD -> HBD : Download erzeugen
+HBD -> HBK++ : Download verbuchen
+HBD <-- HBK-- : Ergebnis
+Browser <-- HBD-- : Download
+end group
 
 @enduml
