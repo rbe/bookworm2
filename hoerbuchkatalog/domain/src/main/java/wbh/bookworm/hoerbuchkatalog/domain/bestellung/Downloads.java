@@ -176,7 +176,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         titelnummern.putIfAbsent(titelnummer, Details.neu());
         final Details details = titelnummern.get(titelnummer);
         // Ausleihdatum aktualisieren?
-        if (details.rueckgabeBis.isAfter(LocalDateTime.now())) {
+        if (details.rueckgabeBis.isBefore(LocalDateTime.now())) {
             details.jetztAusleihen();
         }
         details.zaehleDownload();
