@@ -23,6 +23,7 @@ logger:
     wbh.bookworm.hoerbuchdienst.adapter.provided.stream: DEBUG
     wbh.bookworm.hoerbuchdienst.adapter.required.daisy: DEBUG
     wbh.bookworm.hoerbuchdienst.adapter.required.watermark: DEBUG
+    wbh.bookworm.hoerbuchdienst.adapter.required.hoerbuchkatalog: DEBUG
     wbh.bookworm.hoerbuchdienst.application: DEBUG
     wbh.bookworm.hoerbuchdienst: DEBUG
     io.micronaut.web.router: ERROR
