@@ -1,32 +1,6 @@
 version: '3.7'
 
 services:
-  # cms
-  mysql:
-    image: wbh-cms/mysql:${CMS_RELEASE}
-    restart: "no"
-  joomla:
-    image: wbh-cms/joomla:${CMS_RELEASE}
-    restart: "no"
-  assets-ssh:
-    image: wbh-cms/assets-ssh:${CMS_RELEASE}
-    restart: "no"
-  cms-rproxy:
-    image: wbh-cms/rproxy:${CMS_RELEASE}
-    restart: "no"
-    ports:
-      - "8080:80"
-      - "8443:443"
-  # hoerbuchkatalog
-  hoerbuchkatalog:
-    image: wbh-hbk/hoerbuchkatalog:${HBK_RELEASE}
-    restart: "no"
-  datatransfer-ssh:
-    image: wbh-hbk/datatransfer-ssh:${HBK_RELEASE}
-    restart: "no"
-  admin-ssh:
-    image: wbh-hbk/admin-ssh:${HBK_RELEASE}
-    restart: "no"
   keycloakpostgres:
     image: postgres:${KEYCLOAK_POSTGRES_RELEASE}
     restart: "no"
@@ -68,41 +42,16 @@ services:
       - "9990:9990"
       - "9993:9993"
   # hoerbuchdienst
-  vault:
-    image: wbh-hbd/vault:${HBD_RELEASE}
-    restart: "no"
-  kes:
-    image: wbh-hbd/kes:${HBD_RELEASE}
-    restart: "no"
   minio:
-    image: wbh-hbd/minio:${HBD_RELEASE}
+    image: minio/minio:latest
     restart: "no"
-  mc:
-    image: wbh-hbd/mc:${HBD_RELEASE}
-    restart: "no"
+    command: server /data
+    ports:
+      - "9000:9000"
   rabbitmq:
-    image: wbh-hbd/rabbitmq:${HBD_RELEASE}
+    image: rabbitmq:latest
     restart: "no"
     ports:
       - "5671:5671"
+      - "5672:5672"
       - "15671:15671"
-  #virenscanner:
-  #  image: wbh-hbd/virenscanner:${HBD_RELEASE}
-  #  restart: "no"
-  #  ports:
-  #    - "3310:3310"
-  hoerbuchdienst:
-    image: wbh-hbd/hoerbuchdienst:${HBD_RELEASE}
-    restart: "no"
-  hbd-rproxy:
-    image: wbh-hbd/rproxy:${HBD_RELEASE}
-    restart: "no"
-    ports:
-      - "8081:80"
-      - "8444:443"
-
-networks:
-  frontend:
-    driver: bridge
-    external: false
-    internal: true
