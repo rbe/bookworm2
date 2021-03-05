@@ -8,6 +8,7 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 
 import javax.inject.Inject;
 import java.io.InputStream;
+import java.time.Instant;
 
 import io.micronaut.core.annotation.Blocking;
 import io.micronaut.http.HttpRequest;
@@ -65,11 +66,15 @@ public class HoerbuchController {
 
     private final AudiobookStreamService audiobookStreamService;
 
+    private final DaisyStreamHelper daisyStreamHelper;
+
     @Inject
     public HoerbuchController(final AudiobookShardRedirector audiobookShardRedirector,
-                              final AudiobookStreamService audiobookStreamService) {
+                              final AudiobookStreamService audiobookStreamService,
+                              final DaisyStreamHelper daisyStreamHelper) {
         this.audiobookShardRedirector = audiobookShardRedirector;
         this.audiobookStreamService = audiobookStreamService;
+        this.daisyStreamHelper = daisyStreamHelper;
     }
 
     @Operation(hidden = true)
@@ -90,10 +95,7 @@ public class HoerbuchController {
                                                        @PathVariable("titelnummer") final String titelnummer) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> makeDaisyZipStream(xMandant, xHoerernummer, titelnummer),
-                streamedFile -> CORS.response(httpRequest, streamedFile)
-                        .contentType(APPLICATION_ZIP_VALUE)
-                        .contentLength(streamedFile.getLength())
-                        .header("Content-Disposition", String.format("attachment; filename=\"%s.zip\"", titelnummer)),
+                streamedFile -> CORS.response(httpRequest, streamedFile),
                 String.format("%s/%s", BASE_URL, titelnummer),
                 httpRequest);
     }
@@ -105,8 +107,9 @@ public class HoerbuchController {
             final long stop = System.nanoTime();
             LOGGER.info("Hörer '{}' Hörbuch '{}': DAISY Hörbuch als ZIP-Datei in {} ms = {} s erstellt",
                     hoerernummer, titelnummer, (stop - start) / 1_000_000L, (stop - start) / 1_000_000L / 1_000L);
-            return new StreamedFile(zip, APPLICATION_ZIP)
-                    .attach(String.format("%s.zip", titelnummer));
+            final long lastModified = Instant.now().toEpochMilli();
+            return new StreamedFile(zip, APPLICATION_ZIP, lastModified)
+                    .attach(String.format("%s.zip", daisyStreamHelper.titel(titelnummer)));
         } catch (Exception e) {
             throw new BusinessException(EMPTY_STRING, e);
         }

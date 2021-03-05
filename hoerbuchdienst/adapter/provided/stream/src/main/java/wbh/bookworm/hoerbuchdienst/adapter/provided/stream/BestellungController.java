@@ -9,8 +9,6 @@ package wbh.bookworm.hoerbuchdienst.adapter.provided.stream;
 import javax.inject.Inject;
 import java.io.InputStream;
 import java.time.Instant;
-import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
@@ -65,15 +63,19 @@ public class BestellungController {
 
     private final AudiobookOrderService audiobookOrderService;
 
+    private final DaisyStreamHelper daisyStreamHelper;
+
     private final KatalogService katalogService;
 
     private final AudiobookShardRedirector audiobookShardRedirector;
 
     @Inject
     public BestellungController(final AudiobookOrderService audiobookOrderService,
+                                final DaisyStreamHelper daisyStreamHelper,
                                 final KatalogService katalogService,
                                 final AudiobookShardRedirector audiobookShardRedirector) {
         this.audiobookOrderService = audiobookOrderService;
+        this.daisyStreamHelper = daisyStreamHelper;
         this.katalogService = katalogService;
         this.audiobookShardRedirector = audiobookShardRedirector;
     }
@@ -148,33 +150,22 @@ public class BestellungController {
                                                     @PathVariable final String orderId) {
         return audiobookShardRedirector.withLocalOrRedirect(titelnummer,
                 () -> daisyZipAsStream(titelnummer, orderId),
-                streamedFile -> CORS.response(httpRequest, streamedFile)
-                        .contentType(APPLICATION_ZIP)
-                        .contentLength(streamedFile.getLength()),
+                streamedFile -> CORS.response(httpRequest, streamedFile),
                 String.format("%s/%s/fetch/%s", BASE_URL, titelnummer, orderId),
                 httpRequest);
     }
 
     private StreamedFile daisyZipAsStream(final String titelnummer, final String orderId) {
+        final Long contentLength = audiobookOrderService.fileSize(orderId).orElse(0L);
         final Optional<InputStream> maybeDaisyZipInputStream = audiobookOrderService.fetchOrderAsStream(orderId, titelnummer);
         if (maybeDaisyZipInputStream.isPresent()) {
             LOGGER.info("Bestellung '{}' Hörbuch '{}': DAISY ZIP wird gestreamt", orderId, titelnummer);
-            final String titel = katalogService.audiobookInfo(titelnummer).getTitel()
-                    .replace(' ', '_')
-                    .replaceAll("[^\\p{ASCII}]", "");
             final long lastModified = Instant.now().toEpochMilli();
-            final Long contentLength = audiobookOrderService.fileSize(orderId).orElse(-1L);
             return new StreamedFile(maybeDaisyZipInputStream.get(), APPLICATION_ZIP,
                     lastModified, contentLength)
-                    .attach(String.format("%s-%s.zip", titelnummer, titel));
+                    .attach(String.format("%s.zip", daisyStreamHelper.titel(titelnummer)));
         }
         throw new BusinessException(String.format("Bestellung '%s' zu Hörbuch '%s' nicht gefunden", orderId, titelnummer));
-    }
-
-    private ZoneOffset berlinZoneOffset(final Instant instant) {
-        final ZoneId berlinId = ZoneId.of("Europe/Berlin");
-        final ZoneOffset berlinOffset = berlinId.getRules().getOffset(instant);
-        return ZoneOffset.of(berlinOffset.toString());
     }
 
 }
