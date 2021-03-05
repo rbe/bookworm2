@@ -5,5 +5,10 @@ npm init -y && npm install webpack webpack-cli webpack-merge --save-dev
 
 .Generieren
 ----
+npm run build-dev
+npm run build-prod
+----
+
+----
 npx webpack
 ----
