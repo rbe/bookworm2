@@ -8,21 +8,20 @@
 
 window.onload = function () {
     const swagger_view_urls = {
-        'swagger-ui': '/specification/swagger-ui.html',
-        'redoc': '/specification/redoc.html',
-        'rapidoc': '/specification/rapidoc.html'
+        'swagger-ui': '/v1/private/specification/swagger-ui.html',
+        'redoc': '/v1/private/specification/redoc.html',
+        'rapidoc': '/v1/private/specification/rapidoc.html'
     };
     this.view_url = swagger_view_urls['swagger-ui'];
     this.service = '';
     // services
     const services = document.querySelectorAll('div#service div');
     for (const service of services) {
-        console.log(service);
         service.addEventListener('click', (e) => {
             for (const service of services) {
                 service.style = 'background: white';
             }
-            e.target.style = 'background: red';
+            e.target.style = 'color: white; background: black';
             this.service = e.target.id;
             if (this.view_url && this.service) {
                 const content = document.querySelector('#content');
@@ -33,12 +32,11 @@ window.onload = function () {
     // swagger-view
     const swagger_views = document.querySelectorAll('div#swagger-view div');
     for (const swagger_view of swagger_views) {
-        console.log(swagger_view);
         swagger_view.addEventListener('click', (e) => {
             for (const swagger_view of swagger_views) {
                 swagger_view.style = 'background: white';
             }
-            e.target.style = 'background: red';
+            e.target.style = 'color: white; background: black';
             this.view_url = swagger_view_urls[swagger_view.id];
             if (this.view_url && this.service) {
                 const content = document.querySelector('#content');
