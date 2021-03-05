@@ -2,16 +2,6 @@ shard:
   name: shard0
   domain: local
 
-micronaut:
-  server:
-    max-request-size: 1mb
-    multipart:
-      max-file-size: 1mb
-
-hoerbuchdienst:
-  objectstorage:
-    path: /Users
-
 rabbitmq:
   servers:
     default:
@@ -21,6 +11,6 @@ rabbitmq:
 
 objectstorage:
   minio:
-    url: http://minio.shard0.local:9000
-    access_key: AKIAIOSFODNN7EXAMPLE
-    secure_key: wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+    url: http://localhost:9000
+    access_key: minioadmin
+    secure_key: minioadmin

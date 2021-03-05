@@ -1,11 +1,15 @@
 micronaut:
   server:
     host: localhost
+    port: 8090
 
 hoerbuchdienst:
   repository:
     localdisk:
       uri: /tmp/Buecher-WBH
+
+hoerbuchkatalog:
+  url: http://localhost:8080
 
 elasticsearch:
   httpHosts: "http://localhost:9200"

@@ -1,9 +1,46 @@
+shard:
+  name: shard0
+  domain: local
+
+hoerbuchdienst:
+  repository:
+    type: objectstorage
+    localdisk:
+      uri: /path/to/Buecher-WBH
+    objectstorage:
+      name: minio
+  objectstorage:
+    path: /Users
+  temporary:
+    path: ${java.io.tmpdir}/hoerbuchdienst
+  piracy:
+    inquiry:
+      urlprefix: https://wbh-online.de/q-ausleihe
+
+objectstorage:
+  minio:
+    url: http://localhost:9000
+    access_key: minioadmin
+    secure_key: minioadmin
+    bucketName: hoerbuchdienst
+    serversideencryption: atRest
+
+rabbitmq:
+  servers:
+    default:
+      automatic-recovery-enabled: true
+      uri: amqp://guest:guest@localhost
+      #uri: amqps://nnn:nnn@rabbitmq.${shard.name}.${shard.domain}/hoerbuchdienst
+      #uri: amqps://nnn:nnn@rabbitmq.shard2.wbh-online.de/hoerbuchdienst
+
 micronaut:
   application:
     name: hoerbuchdienst
   server:
-    port: 8080
     context-path: /
+    max-request-size: 1mb
+    multipart:
+      max-file-size: 1mb
   router:
     static-resources:
       default:
@@ -44,26 +81,3 @@ micronaut:
       - pattern: /redoc/**
         access:
           - isAnonymous()
-
-hoerbuchdienst:
-  repository:
-    type: objectstorage
-    localdisk:
-      uri: /path/to/Buecher-WBH
-    objectstorage:
-      name: minio
-  temporary:
-    path: ${java.io.tmpdir}/hoerbuchdienst
-  piracy:
-    inquiry:
-      urlprefix: https://wbh-online.de/q-ausleihe
-
-objectstorage:
-  minio:
-    bucketName: hoerbuchdienst
-    serversideencryption: atRest
-
-rabbitmq:
-  servers:
-    default:
-      automatic-recovery-enabled: true
