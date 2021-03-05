@@ -71,6 +71,11 @@
             <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.watermark</artifactId>
             <version>LocalBuild</version>
         </dependency>
+        <dependency>
+            <groupId>wbh.bookworm</groupId>
+            <artifactId>wbh.bookworm.hoerbuchdienst.adapter.required.hoerbuchkatalog</artifactId>
+            <version>LocalBuild</version>
+        </dependency>
         <!-- Bookworm -->
         <dependency>
             <groupId>wbh.bookworm</groupId>
