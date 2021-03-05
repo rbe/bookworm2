@@ -167,6 +167,7 @@ class DatabeatManagerImpl implements DatabeatManager {
     }
 
     void persistDatabeat(final Databeat myDatabeat) {
+        // TODO Databeat auf MinIO ablegen
         try (final OutputStream outputStream = Files.newOutputStream(databeatJson)) {
             objectMapper.writeValue(outputStream, myDatabeat);
             LOGGER.debug("Persisted Databeat with {} entries", myDatabeat.numberOfObjects());
