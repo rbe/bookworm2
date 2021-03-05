@@ -15,11 +15,6 @@ server {
     include docker-logging.nginx;
     include security-locations.nginx;
 
-    location ~* "^/audioplayer/.+\.(html|css|js)" {
-        include hoerbuchdienst-proxy.nginx;
-        include tls-headers.nginx;
-        include hoerbuchdienst-csp.nginx;
-    }
     location ~* "^/specification/.+\.(html|css|js)" {
         include hoerbuchdienst-proxy.nginx;
         include tls-headers.nginx;
@@ -29,6 +24,11 @@ server {
         include tls-headers.nginx;
     }
     location ~* "^/v./(shard|katalog|bestellung|hoerbuch|hoerprobe|stream)/.+$" {
+        include hoerbuchdienst-proxy.nginx;
+        include tls-headers.nginx;
+        include hoerbuchdienst-csp.nginx;
+    }
+    location ~* "^/audioplayer/.+\.(html|css|js)" {
         include hoerbuchdienst-proxy.nginx;
         include tls-headers.nginx;
         include hoerbuchdienst-csp.nginx;
