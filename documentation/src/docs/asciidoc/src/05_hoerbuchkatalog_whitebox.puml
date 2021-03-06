@@ -15,22 +15,22 @@ component "Hoerbuchkatalog" as HBK {
     }
     adminui -r- IDP_AuthorizationCode
     rectangle Domain {
-        component app <<module>> {
+        component app <<Services>> {
         }
-        component domain <<module>> {
+        component domain <<Domain>> {
         }
-        component repository <<module>> {
+        component adapter <<module>> {
         }
-        database Katalog
-        repository -r- Katalog
-        database Hoererdaten
-        repository -l- Hoererdaten
-        database Downloads
-        repository -d- Downloads
-        adminui -- app
-        webservice -- app
-        app -- domain
-        domain -- repository
+        adminui -d- app
+        webservice -d- app
+        app -d- domain
+        domain -d- adapter
+        database "Katalog\nGesamt.dat" as Katalog
+        database "Hoererdaten\nhoe*.dat\nbk*.dat" as Hoererdaten
+        database Downloads <<JsonRepository>>
+        adapter -d- Downloads
+        adapter -r- Katalog
+        adapter -l- Hoererdaten
     }
 }
 interface REST

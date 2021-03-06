@@ -1,0 +1,78 @@
+@startuml
+
+!include plantuml/Skinparams.iuml
+
+rectangle "Hörer" as r_Hoerer <<Bounded Context>> {
+    class Hoerer <<(A,white) Aggregate>> {
+        hoerernummer
+        --
+        +persDaten()
+        ..Merkliste..
+        +merke(Titelnummer)
+        +vergesse(Titelnummer)
+        ..CD Bestellung..
+        +warenkorb(Titelnummer)
+        ..DAISY..
+        +leihe(Titelnummer)
+        +download(Titelnummer)
+        +gebeZurueck(Titelnummer)
+    }
+    class PersDaten <<(E,white) Entity>>
+    together {
+        class Bestellkarte <<(E,white) Entity>> {
+            titelnummer
+        }
+        class ErledigteBestellkarte <<(E,white) Entity>> {
+            titelnummer
+        }
+        class Belastung <<(E,white) Entity>> {
+            titelnummer
+        }
+    }
+    together {
+        class Merkliste <<(E,white) Entity>> {
+            titelnummer[]
+        }
+        class Warenkorb <<(E,white) Entity>> {
+            titelnummer[]
+        }
+        class Download <<(E,white) Entity>> {
+            titelnummer[]
+        }
+    }
+}
+Hoerer "1" -r- "1" PersDaten
+Hoerer "1" -d- "0..*" Belastung
+Hoerer "1" -d- "0..*" Bestellkarte
+Hoerer "1" -d- "0..*" ErledigteBestellkarte
+Hoerer "1" -u- "1" Merkliste
+Hoerer "1" -u- "0..*" Warenkorb
+Hoerer "1" -u- "0..*" Download
+
+rectangle Katalog <<Bounded Context>> {
+    together {
+        class Katalog <<(A,white) Aggregate>> {
+            Hoerbuch[]
+        }
+        class Hoerbuch <<(E,white) Entity>> {
+            titelnummer
+        }
+    }
+    together {
+        class Suche <<(A,white) Aggregate>>
+        class Suchparameter <<(E,white) Entity>>
+        class Suchergebnis <<(E,white) Entity>> {
+            Titelnummer[]
+        }
+    }
+}
+Katalog "1" -- "1..*" Hoerbuch
+Suche "1" -- "1" Suchparameter
+Suche "1" -- "1" Suchergebnis
+
+rectangle "Shared Kernel" {
+    class Hoerernummer <<(V,white) Value Object>>
+    class Titelnummer <<(V,white) Value Object>>
+}
+
+@enduml
