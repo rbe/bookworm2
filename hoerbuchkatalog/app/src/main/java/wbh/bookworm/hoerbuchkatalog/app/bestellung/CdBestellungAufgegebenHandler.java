@@ -71,7 +71,7 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
         final String htmlEmail = emailTemplateBuilder.build(
                 "BestellbestaetigungCd.html",
                 Map.of("bestellung", bestellung, "hoerbuecher", hoerbucher));
-        emailArchivieren(domainEvent, htmlEmail);
+        // TODO emailArchivieren(domainEvent, htmlEmail);
         emailService.send(bestellung.getHoereremail().getValue(), "wbh@wbh-online.de",
                 "Ihre CD-Bestellung bei der WBH",
                 htmlEmail);
@@ -82,7 +82,7 @@ class CdBestellungAufgegebenHandler extends DomainEventSubscriber<BestellungAufg
         logger.trace("Hörer '{}': Archiviere E-Mail zu Bestellung '{}'",
                 domainEvent.getHoerernummer(), domainEvent.getDomainId());
         try {
-            final Path archivDatei = Path.of("var/repository/Bestellung",
+            final Path archivDatei = Path.of("/var/local/repository/Bestellung",
                     domainEvent.getDomainId() + "-CDBestellung.html");
             Files.createDirectories(archivDatei.getParent());
             Files.write(archivDatei, htmlEmail.getBytes(StandardCharsets.UTF_8));
