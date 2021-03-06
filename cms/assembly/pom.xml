@@ -274,6 +274,7 @@
                 <domain>${domain}</domain>
                 <tls.path>/etc/letsencrypt/live</tls.path>
                 <cms.tls.hostname>www.wbh-online.de</cms.tls.hostname>
+                <cms.tls.hostname2>wbh-online.de</cms.tls.hostname2>
                 <hbk.tls.hostname>hoerbuchkatalog.wbh-online.de</hbk.tls.hostname>
                 <keycloak.tls.hostname>idp.wbh-online.de</keycloak.tls.hostname>
                 <nginx.enable.servers/>

@@ -59,6 +59,8 @@ then
       && certbot certonly ${certonly_args} -d "${cms.hostname}"
     [[ -n "${cms.tls.hostname}" ]] \
       && certbot certonly ${certonly_args} --expand -d "${cms.hostname}" -d "${cms.tls.hostname}"
+    [[ -n "${cms.tls.hostname}" && -n "${cms.tls.hostname2}" ]] \
+      && certbot certonly ${certonly_args} --expand -d "${cms.hostname}" -d "${cms.tls.hostname}" -d "${cms.tls.hostname2}"
     [[ -d /etc/letsencrypt/archive ]] && chmod 755 /etc/letsencrypt/archive
     [[ -d /etc/letsencrypt/live ]] && chmod 755 /etc/letsencrypt/live
   else
