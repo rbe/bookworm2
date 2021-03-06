@@ -37,6 +37,6 @@ RUN cat /etc/ssh/sshd_config_2 >>/etc/ssh/sshd_config
 RUN mkdir /var/local/hoerbuchkatalog \
     && chown root:root /var/local \
     && chmod 555 /var/local
-WORKDIR /etc/ssh
+WORKDIR /var/local
 EXPOSE 22
 CMD ["/usr/sbin/sshd", "-D", "-e"]
