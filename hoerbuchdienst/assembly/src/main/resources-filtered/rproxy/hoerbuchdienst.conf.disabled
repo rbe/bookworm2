@@ -15,7 +15,10 @@ server {
     include docker-logging.nginx;
     include security-locations.nginx;
 
-    location ~* "^/specification/.+\.(html|css|js)" {
+    location = "/v1/private/specification" {
+        return 302 https://$host$request_uri/index.html;
+    }
+    location ~* "^/v1/private/specification/.+\.(html|css|js)" {
         include hoerbuchdienst-proxy.nginx;
         include tls-headers.nginx;
     }
