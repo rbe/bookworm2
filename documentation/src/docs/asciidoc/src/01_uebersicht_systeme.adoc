@@ -1,0 +1,70 @@
+== Übersicht der Systeme
+
+.Beta: Entwicklung und Test
+[cols="a,a",options="header"]
+|===
+| System
+| URL
+
+| CMS
+| https://www.beta.wbh-online.de/
+
+| CMS Admin
+| https://www.beta.wbh-online.de/administrator/
+
+| Web Audio Player
+| https://www.beta.wbh-online.de/audioplayer/index.html
+
+| Download-Statistik
+| https://hoerbuchkatalog.beta.wbh-online.de/v1/private/statistik/webhoer-20210104.csv
+
+| Download-Kontingent
+| https://hoerbuchkatalog.beta.wbh-online.de/v1/private/admin/
+
+| REST API
+| https://hoerbuchkatalog.beta.wbh-online.de/v1/private/swagger/
+
+| Identity Provider: +
+Console für Realm "Bookworm"
+| https://idp.beta.wbh-online.de/auth/admin/Bookworm/console
+
+| Identity Provider: +
+Eigener Account für Realm "Bookworm"
+| https://idp.beta.wbh-online.de/auth/realms/Bookworm/account
+|===
+
+.Prod: Live-/Produktionssystem
+[cols="a,a",options="header"]
+|===
+| System
+| URL
+
+| CMS
+| https://www.wbh-online.de/
+
+| CMS Admin
+| https://www.wbh-online.de/administrator/
+
+| Web Audio Player
+| https://www.wbh-online.de/audioplayer/index.html
+
+| Download-Statistik
+| https://hoerbuchkatalog.prod.wbh-online.de/v1/private/statistik/webhoer-20210104.csv
+
+| Download-Kontingent
+| https://hoerbuchkatalog.prod.wbh-online.de/v1/private/admin/
+
+| REST API
+| https://hoerbuchkatalog.prod.wbh-online.de/v1/private/swagger/
+
+|
+| https://hoerbuchdienst-shard11.wbh-online.de/specification/index.html
+
+| Identity Provider: +
+Console für Realm "Bookworm"
+| https://idp.prod.wbh-online.de/auth/admin/Bookworm/console
+
+| Identity Provider: +
+Eigener Account für Realm "Bookworm"
+| https://idp.prod.wbh-online.de/auth/realms/Bookworm/account
+|===
