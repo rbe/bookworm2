@@ -20,7 +20,16 @@ final class DaisyStreamHelper {
             final String titel = katalogService.audiobookInfo(titelnummer)
                     .getTitel()
                     .replace(' ', '_')
-                    .replaceAll("[^\\p{ASCII}]", "");
+                    .replaceAll("ä", "ae")
+                    .replaceAll("Ä", "Ae")
+                    .replaceAll("ö", "oe")
+                    .replaceAll("Ö", "Oe")
+                    .replaceAll("ü", "ue")
+                    .replaceAll("ü", "Ue")
+                    .replaceAll("ß", "ss")
+                    .replaceAll("[^\\p{ASCII}]", "")
+                    .replaceAll("[ ,\\.]", "_")
+                    .replaceAll("__", "_");
             return "%s-%s".formatted(titelnummer, titel);
         } catch (RuntimeException e) {
             return "%s".formatted(titelnummer);
