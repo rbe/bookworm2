@@ -1,4 +1,4 @@
-FROM adoptopenjdk/openjdk14:alpine AS base
+FROM adoptopenjdk/openjdk15:alpine AS base
 LABEL maintainer="Ralf Bensmann <ralf@art-of-coding.eu>"
 LABEL vendor="Art of Coding UG"
 LABEL project="wbhonline"
