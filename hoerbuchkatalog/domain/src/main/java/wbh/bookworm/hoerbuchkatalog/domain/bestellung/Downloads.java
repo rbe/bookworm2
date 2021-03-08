@@ -209,6 +209,9 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public boolean downloadErlaubt(final Titelnummer titelnummer) {
+        if (Hoerernummer.UNBEKANNT == hoerernummer) {
+            return false;
+        }
         final boolean kannHeruntergeladenWerden = rules.titelKannHeruntergeladenWerden.isSatisfied(titelnummer);
         final boolean kannBestelltWerden = rules.titelKannBestelltWerden.isSatisfied(titelnummer);
         LOGGER.info("Hörer {}: Titelnummer {} {} heruntergeladen und {} bestellt werden", hoerernummer, titelnummer,
