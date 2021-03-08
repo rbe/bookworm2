@@ -7,7 +7,6 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -210,8 +209,12 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public boolean downloadErlaubt(final Titelnummer titelnummer) {
-        return rules.titelKannHeruntergeladenWerden.or(rules.titelKannBestelltWerden)
-                .isSatisfied(titelnummer);
+        final boolean kannHeruntergeladenWerden = rules.titelKannHeruntergeladenWerden.isSatisfied(titelnummer);
+        final boolean kannBestelltWerden = rules.titelKannBestelltWerden.isSatisfied(titelnummer);
+        LOGGER.info("Hörer {}: Titelnummer {} {} heruntergeladen und {} bestellt werden", hoerernummer, titelnummer,
+                kannHeruntergeladenWerden ? "kann" : "kann nicht",
+                kannBestelltWerden ? "kann" : "kann nicht");
+        return kannHeruntergeladenWerden || kannBestelltWerden;
     }
 
     @Override
