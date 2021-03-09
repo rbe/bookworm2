@@ -10,6 +10,9 @@ import java.nio.file.Path;
 import java.util.Collections;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.Downloads;
 import wbh.bookworm.hoerbuchkatalog.domain.bestellung.DownloadsId;
 import wbh.bookworm.shared.domain.Hoerernummer;
@@ -19,14 +22,24 @@ import aoc.mikrokosmos.ddd.repository.JsonDomainRepository;
 // TODO @DomainRepositoryComponent
 public class DownloadsRepository extends JsonDomainRepository<Downloads, DownloadsId> {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(DownloadsRepository.class);
+
     public DownloadsRepository(final Path storagePath) {
         super(Downloads.class, DownloadsId.class, storagePath);
     }
 
     public Downloads erstellen(final Hoerernummer hoerernummer) {
+        if (Hoerernummer.UNBEKANNT == hoerernummer) {
+            LOGGER.warn("Erstelle kein Downloads(Aggregate) für Hörer unbekannt");
+        }
+        final DownloadsId unbekanntId = downloadsIdIdFuerHoerer(Hoerernummer.UNBEKANNT);
+        final Downloads unbekannt = load(unbekanntId).orElseThrow();
         final DownloadsId downloadsId = downloadsIdIdFuerHoerer(hoerernummer);
         return new Downloads(downloadsId, hoerernummer,
-                30, 10, 5, Collections.emptyMap());
+                unbekannt.getAnzahlBestellungenProAusleihzeitraum(),
+                unbekannt.getAnzahlBestellungenProTag(),
+                unbekannt.getAnzahlDownloadsProHoerbuch(),
+                Collections.emptyMap());
     }
 
     public Optional<Downloads> load(final Hoerernummer hoerernummer) {

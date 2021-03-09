@@ -211,16 +211,18 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public boolean downloadErlaubt(final Titelnummer titelnummer) {
         final boolean kannHeruntergeladenWerden = rules.titelKannHeruntergeladenWerden.isSatisfied(titelnummer);
         final boolean kannBestelltWerden = rules.titelKannBestelltWerden.isSatisfied(titelnummer);
+        final boolean bestellungErlaubt = rules.bestellungErlaubt.isSatisfied(titelnummer);
+        final boolean downloadErlaubt = rules.downloadErlaubt.isSatisfied(titelnummer);
         LOGGER.info("Hörer {}: Titelnummer {}," +
                         " imAusleihzeitraum={}, bestellungErlaubt={}, downloadErlaubt={}," +
                         " {} heruntergeladen und {} bestellt werden",
                 hoerernummer, titelnummer,
                 rules.imAusleihzeitraum.isSatisfied(titelnummer),
-                rules.bestellungErlaubt.isSatisfied(titelnummer),
-                rules.downloadErlaubt.isSatisfied(titelnummer),
+                bestellungErlaubt,
+                downloadErlaubt,
                 kannHeruntergeladenWerden ? "kann" : "kann nicht",
                 kannBestelltWerden ? "kann" : "kann nicht");
-        return kannHeruntergeladenWerden || kannBestelltWerden;
+        return bestellungErlaubt || downloadErlaubt;
     }
 
     @Override
