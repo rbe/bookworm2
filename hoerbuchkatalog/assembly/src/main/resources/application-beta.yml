@@ -1,0 +1,78 @@
+OAUTH2_BASEURL:
+OAUTH2_REALM: Bookworm
+OAUTH2_CLIENT_ID: wbh-admin
+OAUTH2_CLIENT_SECRET: b1e2b616-192d-4383-96e4-e4c9f6b63ace
+
+hoerbuchkatalog:
+  directory: /var/local/wbh/hoerbuchkatalog
+  cron:
+    expression: 0 15 5 * * MON-FRI
+  suchergebnisse:
+    anzahl: 1000
+  wbh:
+    gesamtdat:
+      filename: Gesamt.dat
+      charset: ISO-8859-15
+
+hoererdaten:
+  directory: /var/local/wbh/nutzerdaten
+
+cdlieferung:
+  directory: /var/local/wbh/nutzerdaten
+
+repository:
+  path: /var/local
+
+lucene:
+  index:
+    directory: ${hoerbuchkatalog.directory}/lucene
+
+spring:
+  redis:
+    host: redis
+  mail:
+    host:
+    port:
+    username:
+    password:
+
+server:
+  address: 0.0.0.0
+  error:
+    whitelabel:
+      enabled: false
+    include-stacktrace: never
+
+logging:
+  level:
+    root: ERROR
+    wbh.bookworm.hoerbuchkatalog.assembly: DEBUG
+    wbh.bookworm.hoerbuchkatalog.webservice: DEBUG
+    wbh.bookworm.hoerbuchkatalog.app: DEBUG
+    wbh.bookworm.hoerbuchkatalog.repository: DEBUG
+    wbh.bookworm.hoerbuchkatalog.domain: DEBUG
+    wbh.bookworm.hoerbuchkatalog: DEBUG
+    aoc.mikrokosmos.io.dataformat.CsvFormat: INFO
+    aoc.mikrokosmos.io.dataformat.LineFileParser: INFO
+    aoc.mikrokosmos.io: DEBUG
+    aoc.mikrokosmos.fs: DEBUG
+    aoc.mikrokosmos.ddd.event: DEBUG
+    aoc.mikrokosmos.ddd.repository: DEBUG
+    aoc.mikrokosmos.ddd.search: DEBUG
+    aoc.mikrokosmos: INFO
+    eu.artofcoding: INFO
+    org.keycloak: DEBUG
+    org.eclipse.jetty: ERROR
+    org.springframework.boot.web.embedded.jetty: ERROR
+    org.springframework.boot.actuator: ERROR
+    org.springframework.web.servlet.handler: ERROR
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method: INFO
+    org.springframework.web: INFO
+    org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource: DEBUG
+    org.springframework.security: DEBUG
+    org.springframework.scheduling: ERROR
+    org.springframework.beans.factory.support: ERROR
+    org.springframework.beans: ERROR
+    org.springframework: ERROR
+    org.reflections: ERROR

@@ -47,8 +47,13 @@ if [[ -f "/var/local/.java_debug" ]]; then
 fi
 export JAVA_TOOL_OPTIONS
 
+SPRING_PROFILE=prod
+if hostname -f | grep -c beta; then
+    SPRING_PROFILE=beta
+fi
+
 java -jar /usr/local/service.jar \
-  --spring.profiles.active=production \
+  --spring.profiles.active=${SPRING_PROFILE} \
   --spring.config.additional-location=/var/local/application-secrets.yml
 
 #if [ -x jstatd ]; then
