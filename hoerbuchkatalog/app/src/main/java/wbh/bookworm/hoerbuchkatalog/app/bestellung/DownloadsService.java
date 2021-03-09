@@ -49,29 +49,49 @@ public class DownloadsService {
     }
 
     public boolean neueBestellungErlaubt(final Hoerernummer hoerernummer) {
-        return downloads(hoerernummer).neueBestellungErlaubt();
+        if (hoerernummer.isUnbekannt()) {
+            return false;
+        } else {
+            return downloads(hoerernummer).neueBestellungErlaubt();
+        }
     }
 
     public boolean downloadErlaubt(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return downloads(hoerernummer).downloadErlaubt(titelnummer);
+        if (hoerernummer.isUnbekannt()) {
+            return false;
+        } else {
+            return downloads(hoerernummer).downloadErlaubt(titelnummer);
+        }
     }
 
     public int anzahlDownloads(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return downloads(hoerernummer).anzahlDownloads(titelnummer);
+        if (hoerernummer.isUnbekannt()) {
+            return 0;
+        } else {
+            return downloads(hoerernummer).anzahlDownloads(titelnummer);
+        }
     }
 
     /**
      * Command
      */
     public boolean ausleihen(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        final Downloads downloads = downloads(hoerernummer);
-        final boolean ausgeliehen = downloads.ausleihen(titelnummer);
-        downloadsRepository.save(downloads);
-        return ausgeliehen;
+        if (hoerernummer.isUnbekannt()) {
+            return false;
+        } else {
+            final Downloads downloads = downloads(hoerernummer);
+            final boolean ausgeliehen = downloads.ausleihen(titelnummer);
+            downloadsRepository.save(downloads);
+            return ausgeliehen;
+        }
     }
 
     public boolean enthalten(final Hoerernummer hoerernummer, final Titelnummer titelnummer) {
-        return downloads(hoerernummer).imAusleihzeitraumEnthalten(titelnummer);
+        if (hoerernummer.isUnbekannt()) {
+            return false;
+        } else {
+            return downloads(hoerernummer).imAusleihzeitraumEnthalten(titelnummer);
+        }
     }
 
 }
