@@ -230,7 +230,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         final boolean kannBestelltWerden = rules.titelKannBestelltWerden.isSatisfied(titelnummer);
         final boolean bestellungErlaubt = rules.bestellungErlaubt.isSatisfied(titelnummer);
         final boolean downloadErlaubt = rules.downloadErlaubt.isSatisfied(titelnummer);
-        LOGGER.info("Hörer {}: Titelnummer {}," +
+        LOGGER.debug("Hörer {}: Titelnummer {}," +
                         " imAusleihzeitraum={}, bestellungErlaubt={}, downloadErlaubt={}," +
                         " {} heruntergeladen, {} bestellt werden",
                 hoerernummer, titelnummer,
@@ -263,7 +263,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 domainId, domainId, hoerernummer, titelnummern);
     }
 
-    public boolean imAusleihzeitraum(Titelnummer titelnummer) {
+    public boolean imAusleihzeitraum(final Titelnummer titelnummer) {
         return rules.imAusleihzeitraum.isSatisfied(titelnummer);
     }
 
