@@ -69,7 +69,7 @@ logging:
     aoc.mikrokosmos.ddd.search: DEBUG
     aoc.mikrokosmos: INFO
     eu.artofcoding: INFO
-    org.keycloak: ERROR
+    org.keycloak: DEBUG
     org.eclipse.jetty: ERROR
     org.springframework.boot.web.embedded.jetty: ERROR
     org.springframework.boot.actuator: ERROR
@@ -78,7 +78,7 @@ logging:
     org.springframework.web.servlet.mvc.method: INFO
     org.springframework.web: INFO
     org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource: DEBUG
-    org.springframework.security: INFO
+    org.springframework.security: DEBUG
     org.springframework.scheduling: ERROR
     org.springframework.beans.factory.support: ERROR
     org.springframework.beans: ERROR

@@ -66,10 +66,10 @@ logging:
     org.springframework.boot.web.embedded.jetty: ERROR
     org.springframework.boot.actuator: ERROR
     org.springframework.web.servlet.handler: ERROR
-    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: TRACE
+    org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping: INFO
     org.springframework.web.servlet.mvc.method: INFO
     org.springframework.web: INFO
-    org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource: DEBUG
+    org.springframework.security.web.access.expression.ExpressionBasedFilterInvocationSecurityMetadataSource: INFO
     org.springframework.security: INFO
     org.springframework.scheduling: ERROR
     org.springframework.beans.factory.support: ERROR
