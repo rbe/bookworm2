@@ -209,12 +209,15 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public boolean downloadErlaubt(final Titelnummer titelnummer) {
-        if (Hoerernummer.UNBEKANNT == hoerernummer) {
-            return false;
-        }
         final boolean kannHeruntergeladenWerden = rules.titelKannHeruntergeladenWerden.isSatisfied(titelnummer);
         final boolean kannBestelltWerden = rules.titelKannBestelltWerden.isSatisfied(titelnummer);
-        LOGGER.info("Hörer {}: Titelnummer {} {} heruntergeladen und {} bestellt werden", hoerernummer, titelnummer,
+        LOGGER.info("Hörer {}: Titelnummer {}," +
+                        " imAusleihzeitraum={}, bestellungErlaubt={}, downloadErlaubt={}," +
+                        " {} heruntergeladen und {} bestellt werden",
+                hoerernummer, titelnummer,
+                rules.imAusleihzeitraum.isSatisfied(titelnummer),
+                rules.bestellungErlaubt.isSatisfied(titelnummer),
+                rules.downloadErlaubt.isSatisfied(titelnummer),
                 kannHeruntergeladenWerden ? "kann" : "kann nicht",
                 kannBestelltWerden ? "kann" : "kann nicht");
         return kannHeruntergeladenWerden || kannBestelltWerden;
@@ -317,6 +320,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private class Rules {
 
+        final Specification<Titelnummer> imAusleihzeitraum = new ImAusleihzeitraum();
+
         final Specification<Titelnummer> bestellungErlaubt = new BestellungErlaubt();
 
         // Fall 1:
@@ -325,6 +330,9 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         // - Download-Zähler wird auf 1 gesetzt
         final Specification<Titelnummer> titelKannBestelltWerden =
                 not(new ImAusleihzeitraum()).and(new BestellungErlaubt());
+
+        final Specification<Titelnummer> downloadErlaubt = new DownloadErlaubt();
+
 
         // Fall 2:
         // - Titel ist in der Download-Liste im Ausleihzeitraum enthalten und
@@ -350,6 +358,9 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
+            if (Hoerernummer.UNBEKANNT == hoerernummer) {
+                return false;
+            }
             return anzahlHeutigerBestellungen() < anzahlBestellungenProTag
                     && anzahlBestellungenImAusleihzeitraum() < anzahlBestellungenProAusleihzeitraum;
         }
@@ -360,6 +371,9 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
+            if (Hoerernummer.UNBEKANNT == hoerernummer) {
+                return false;
+            }
             return anzahlDownloads(titelnummer) < anzahlDownloadsProHoerbuch;
         }
 
