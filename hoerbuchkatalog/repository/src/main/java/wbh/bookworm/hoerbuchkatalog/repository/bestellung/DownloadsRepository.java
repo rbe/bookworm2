@@ -33,7 +33,10 @@ public class DownloadsRepository extends JsonDomainRepository<Downloads, Downloa
             LOGGER.warn("Erstelle kein Downloads(Aggregate) für Hörer unbekannt");
         }
         final DownloadsId unbekanntId = downloadsIdIdFuerHoerer(Hoerernummer.UNBEKANNT);
-        final Downloads unbekannt = load(unbekanntId).orElseThrow();
+        final Downloads unbekannt = load(unbekanntId)
+                .orElse(new Downloads(unbekanntId, Hoerernummer.UNBEKANNT,
+                        30, 10, 5,
+                        Collections.emptyMap()));
         final DownloadsId downloadsId = downloadsIdIdFuerHoerer(hoerernummer);
         return new Downloads(downloadsId, hoerernummer,
                 unbekannt.getAnzahlBestellungenProAusleihzeitraum(),
