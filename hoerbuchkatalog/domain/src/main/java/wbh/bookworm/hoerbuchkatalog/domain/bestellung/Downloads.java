@@ -7,7 +7,9 @@
 package wbh.bookworm.hoerbuchkatalog.domain.bestellung;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,7 +45,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlBestellungenHeutePredicate;
 
-    private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlBestellungenAusleihzeitraumPredicate;
+    private final transient Predicate<Details> anzahlBestellungenAusleihzeitraumPredicate;
 
     private final transient Predicate<Map.Entry<Titelnummer, Details>> anzahlDownloadsProHoerbuchPredicate;
 
@@ -86,14 +88,25 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 ? 10 : anzahlBestellungenProTag;
         this.anzahlDownloadsProHoerbuch = anzahlDownloadsProHoerbuch == 0
                 ? 5 : anzahlDownloadsProHoerbuch;
-        anzahlBestellungenAusleihzeitraumPredicate = entry ->
-                entry.getValue().getAusgeliehenAm().isAfter(LocalDateTime.now().toLocalDate()
+        anzahlBestellungenAusleihzeitraumPredicate = details ->
+                details.getAusgeliehenAm().isAfter(LocalDateTime.now().toLocalDate()
                         .atStartOfDay().minusDays(AUSLEIHZEITRAUM_TAGE));
         anzahlBestellungenHeutePredicate = entry ->
                 isSameDay(LocalDateTime.now(), entry.getValue().getAusgeliehenAm());
         anzahlDownloadsProHoerbuchPredicate = entry ->
                 entry.getValue().getAnzahlDownloads() < anzahlDownloadsProHoerbuch;
         this.rules = new Rules();
+    }
+
+    public static void main(String[] args) {
+        final Downloads downloads = new Downloads(new DownloadsId("99998-Downloads"),
+                new Hoerernummer("99998"),
+                30, 10, 5,
+                Collections.emptyMap());
+        final Titelnummer titel21052 = Titelnummer.of("21052");
+        System.out.println("Neue Bestellung erlaubt: " + downloads.neueBestellungErlaubt());
+        System.out.println("21052 im Ausleihzeitraum: " + downloads.imAusleihzeitraumEnthalten(titel21052));
+        System.out.println("Download 21052 erlaubt: " + downloads.downloadErlaubt(titel21052));
     }
 
     public Hoerernummer getHoerernummer() {
@@ -128,7 +141,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public Map<Titelnummer, Details> titelnummernImAusleihzeitraum() {
         return titelnummern.entrySet()
                 .stream()
-                .filter(anzahlBestellungenAusleihzeitraumPredicate)
+                .filter(e -> anzahlBestellungenAusleihzeitraumPredicate.test(e.getValue()))
                 .collect(Collectors.toUnmodifiableMap(Map.Entry::getKey, Map.Entry::getValue));
     }
 
@@ -151,6 +164,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     public long anzahlBestellungenImAusleihzeitraum() {
         return titelnummern.entrySet().stream()
+                .map(Map.Entry::getValue)
                 .filter(anzahlBestellungenAusleihzeitraumPredicate)
                 .count();
     }
@@ -158,7 +172,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public Integer anzahlDownloads(final Titelnummer titelnummer) {
         return titelnummern.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(titelnummer))
-                .filter(anzahlBestellungenAusleihzeitraumPredicate)
+                .filter(entry -> anzahlBestellungenAusleihzeitraumPredicate.test(entry.getValue()))
                 .findFirst()
                 .map(Map.Entry::getValue)
                 .map(Details::getAnzahlDownloads)
@@ -166,9 +180,12 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     public boolean imAusleihzeitraumEnthalten(final Titelnummer titelnummer) {
-        return titelnummern.entrySet().stream()
+        final List<Details> titel = titelnummern.entrySet().stream()
                 .filter(entry -> entry.getKey().equals(titelnummer))
-                .allMatch(anzahlBestellungenAusleihzeitraumPredicate);
+                .map(Map.Entry::getValue)
+                .collect(Collectors.toUnmodifiableList());
+        return !titel.isEmpty()
+                && titel.stream().allMatch(anzahlBestellungenAusleihzeitraumPredicate);
     }
 
     public boolean ausleihen(final Titelnummer titelnummer) {
@@ -215,7 +232,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         final boolean downloadErlaubt = rules.downloadErlaubt.isSatisfied(titelnummer);
         LOGGER.info("Hörer {}: Titelnummer {}," +
                         " imAusleihzeitraum={}, bestellungErlaubt={}, downloadErlaubt={}," +
-                        " {} heruntergeladen und {} bestellt werden",
+                        " {} heruntergeladen, {} bestellt werden",
                 hoerernummer, titelnummer,
                 rules.imAusleihzeitraum.isSatisfied(titelnummer),
                 bestellungErlaubt,
@@ -244,6 +261,10 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     public String toString() {
         return String.format("Downloads{domainId=%s, merklisteId=%s, hoerernummer=%s, titelnummern=%s}",
                 domainId, domainId, hoerernummer, titelnummern);
+    }
+
+    public boolean imAusleihzeitraum(Titelnummer titelnummer) {
+        return rules.imAusleihzeitraum.isSatisfied(titelnummer);
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
@@ -335,7 +356,6 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         final Specification<Titelnummer> downloadErlaubt = new DownloadErlaubt();
 
-
         // Fall 2:
         // - Titel ist in der Download-Liste im Ausleihzeitraum enthalten und
         // - Ausleihzeitraum passt und
@@ -349,9 +369,12 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
-            return titelnummern.entrySet().stream()
+            final List<Details> details = titelnummern.entrySet().stream()
                     .filter(entry -> entry.getKey().equals(titelnummer))
-                    .allMatch(anzahlBestellungenAusleihzeitraumPredicate);
+                    .map(Map.Entry::getValue)
+                    .collect(Collectors.toUnmodifiableList());
+            return !details.isEmpty()
+                    && details.stream().allMatch(anzahlBestellungenAusleihzeitraumPredicate);
         }
 
     }
