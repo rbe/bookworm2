@@ -40,7 +40,7 @@ if [[ -f "/var/local/.java_debug" ]]; then
 -Dcom.sun.management.jmxremote.rmi.port=1099 \
 -Dcom.sun.management.jmxremote.ssl=false \
 -Dcom.sun.management.jmxremote.authenticate=false \
--Djava.rmi.server.hostname=\$(hostname -f) \
+-Djava.rmi.server.hostname=$(hostname -f) \
 -Dspring.jmx.enabled=true \
 -Dspring.liveBeansView.mbeanDomain \
 -Dspring.application.admin.enabled=true"

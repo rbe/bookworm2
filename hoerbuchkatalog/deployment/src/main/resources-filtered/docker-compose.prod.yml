@@ -20,5 +20,6 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=Pa55w0rd
   hoerbuchkatalog:
+    hostname: ${hbk.hostname}
     environment:
       - OAUTH2_BASEURL=https://${keycloak.hostname}/auth
