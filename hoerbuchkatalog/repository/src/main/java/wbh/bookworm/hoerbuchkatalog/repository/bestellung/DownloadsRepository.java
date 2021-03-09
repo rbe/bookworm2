@@ -29,8 +29,9 @@ public class DownloadsRepository extends JsonDomainRepository<Downloads, Downloa
     }
 
     public Downloads erstellen(final Hoerernummer hoerernummer) {
-        if (Hoerernummer.UNBEKANNT == hoerernummer) {
+        if (hoerernummer.isUnbekannt()) {
             LOGGER.warn("Erstelle kein Downloads(Aggregate) für Hörer unbekannt");
+            return null;
         }
         final DownloadsId unbekanntId = downloadsIdIdFuerHoerer(Hoerernummer.UNBEKANNT);
         final Downloads unbekannt = load(unbekanntId)

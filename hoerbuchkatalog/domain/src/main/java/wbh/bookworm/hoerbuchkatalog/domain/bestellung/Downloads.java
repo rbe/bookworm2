@@ -384,6 +384,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
             if (hoerernummer.isUnbekannt()) {
+                LOGGER.warn("Hörer 00000 darf {} nicht bestellen", titelnummer);
                 return false;
             }
             return anzahlHeutigerBestellungen() < anzahlBestellungenProTag
@@ -397,6 +398,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
             if (hoerernummer.isUnbekannt()) {
+                LOGGER.warn("Hörer 00000 darf {} nicht herunterladen", titelnummer);
                 return false;
             }
             return anzahlDownloads(titelnummer) < anzahlDownloadsProHoerbuch;
