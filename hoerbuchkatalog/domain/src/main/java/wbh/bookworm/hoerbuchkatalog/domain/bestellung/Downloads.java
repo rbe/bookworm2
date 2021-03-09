@@ -383,7 +383,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
-            if (Hoerernummer.UNBEKANNT == hoerernummer) {
+            if (hoerernummer.isUnbekannt()) {
                 return false;
             }
             return anzahlHeutigerBestellungen() < anzahlBestellungenProTag
@@ -396,7 +396,7 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
-            if (Hoerernummer.UNBEKANNT == hoerernummer) {
+            if (hoerernummer.isUnbekannt()) {
                 return false;
             }
             return anzahlDownloads(titelnummer) < anzahlDownloadsProHoerbuch;
