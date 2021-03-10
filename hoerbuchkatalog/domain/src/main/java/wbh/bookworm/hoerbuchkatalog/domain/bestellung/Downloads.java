@@ -387,6 +387,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 LOGGER.warn("Hörer 00000 darf {} nicht bestellen", titelnummer);
                 return false;
             }
+            LOGGER.debug("Hörer {}: {} heute bestellt, {} im Ausleihzeitraum bestellt", hoerernummer,
+                    anzahlHeutigerBestellungen(), anzahlBestellungenImAusleihzeitraum());
             return anzahlHeutigerBestellungen() < anzahlBestellungenProTag
                     && anzahlBestellungenImAusleihzeitraum() < anzahlBestellungenProAusleihzeitraum;
         }
@@ -401,7 +403,10 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
                 LOGGER.warn("Hörer 00000 darf {} nicht herunterladen", titelnummer);
                 return false;
             }
-            return anzahlDownloads(titelnummer) < anzahlDownloadsProHoerbuch;
+            final Integer i = anzahlDownloads(titelnummer);
+            LOGGER.debug("Hörer {}: Titel {} hat {} Downloads", hoerernummer,
+                    titelnummer, i);
+            return i < anzahlDownloadsProHoerbuch;
         }
 
     }
