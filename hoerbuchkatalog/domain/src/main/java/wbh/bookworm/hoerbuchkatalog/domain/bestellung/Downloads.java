@@ -367,6 +367,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
 
     private class ImAusleihzeitraum implements Specification<Titelnummer> {
 
+        private final Logger LOGGER = LoggerFactory.getLogger(Downloads.ImAusleihzeitraum.class);
+
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
             final List<Details> details = titelnummern.entrySet().stream()
@@ -380,6 +382,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     private class BestellungErlaubt implements Specification<Titelnummer> {
+
+        private final Logger LOGGER = LoggerFactory.getLogger(Downloads.BestellungErlaubt.class);
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
@@ -396,6 +400,8 @@ public final class Downloads extends DomainAggregate<Downloads, DownloadsId> {
     }
 
     private class DownloadErlaubt implements Specification<Titelnummer> {
+
+        private final Logger LOGGER = LoggerFactory.getLogger(Downloads.DownloadErlaubt.class);
 
         @Override
         public boolean isSatisfied(final Titelnummer titelnummer) {
