@@ -29,20 +29,23 @@ public class DownloadsRepository extends JsonDomainRepository<Downloads, Downloa
     }
 
     public Downloads erstellen(final Hoerernummer hoerernummer) {
+        final DownloadsId unbekanntId = downloadsIdIdFuerHoerer(Hoerernummer.UNBEKANNT);
         if (hoerernummer.isUnbekannt()) {
             LOGGER.warn("Erstelle kein Downloads(Aggregate) für Hörer unbekannt");
-            return null;
+            return fresh(unbekanntId);
         }
-        final DownloadsId unbekanntId = downloadsIdIdFuerHoerer(Hoerernummer.UNBEKANNT);
-        final Downloads unbekannt = load(unbekanntId)
-                .orElse(new Downloads(unbekanntId, Hoerernummer.UNBEKANNT,
-                        30, 10, 5,
-                        Collections.emptyMap()));
+        final Downloads unbekannt = load(unbekanntId).orElse(fresh(unbekanntId));
         final DownloadsId downloadsId = downloadsIdIdFuerHoerer(hoerernummer);
         return new Downloads(downloadsId, hoerernummer,
                 unbekannt.getAnzahlBestellungenProAusleihzeitraum(),
                 unbekannt.getAnzahlBestellungenProTag(),
                 unbekannt.getAnzahlDownloadsProHoerbuch(),
+                Collections.emptyMap());
+    }
+
+    private Downloads fresh(final DownloadsId unbekanntId) {
+        return new Downloads(unbekanntId, Hoerernummer.UNBEKANNT,
+                30, 10, 5,
                 Collections.emptyMap());
     }
 
