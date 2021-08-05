@@ -30,13 +30,7 @@ services:
       - KEYCLOAK_USER=admin
       - KEYCLOAK_PASSWORD=Pa55w0rd
       - KEYCLOAK_STATISTICS=true
-      #- PROXY_ADDRESS_FORWARDING=true
-      #- KEYCLOAK_LOGLEVEL=DEBUG
-      #- DEBUG=true
-      #- DEBUG_PORT='*:5005'
-    #command: -c standalone.xml
     ports:
-      - "5005:5005"
       - "8081:8080"
       - "8443:8443"
       - "9990:9990"
