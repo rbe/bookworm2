@@ -21,6 +21,12 @@ execdir="$(
   popd >/dev/null
 )"
 
+ssh-keygen -R github.com
+ssh-keyscan github.com 2>/dev/null 1>>~/.ssh/known_hosts
+ssh-keygen -R bitbucket.org
+ssh-keyscan bitbucket.org 2>/dev/null 1>>~/.ssh/known_hosts
+ssh-keygen -H
+
 MAVEN_REPO="${execdir}/../maven-repository"
 [[ ! -d ${MAVEN_REPO} ]] && mkdir -p "${MAVEN_REPO}"
 MAVEN_REPO="$(
@@ -33,12 +39,6 @@ MAVEN_OPTS="-Xshare:on -XX:+TieredCompilation -XX:TieredStopAtLevel=1 -XX:+UsePa
 MAVEN_CMD_LINE_ARGS="-s .mvn/settings.xml --batch-mode --fail-fast"
 MAVEN_INIT="cd /var/local/source && rm -f .mvn/maven.config && java -Xshare:dump"
 MAVEN_BUILD="mvn ${MAVEN_CMD_LINE_ARGS} clean verify && mvn install"
-
-ssh-keygen -R github.com
-ssh-keyscan github.com 2>/dev/null 1>>~/.ssh/known_hosts
-ssh-keygen -R bitbucket.org
-ssh-keyscan bitbucket.org 2>/dev/null 1>>~/.ssh/known_hosts
-ssh-keygen -H
 
 echo "Building Docker Image 'Java/Maven/Docker builder'"
 pushd "${execdir}"/builder/openjdk15-maven-docker >/dev/null
