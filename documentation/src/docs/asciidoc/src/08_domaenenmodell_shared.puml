@@ -1,0 +1,10 @@
+@startuml
+
+!include plantuml/Skinparams.iuml
+
+rectangle "Shared Kernel" {
+    class Hoerernummer <<(V,white) Value Object>>
+    class Titelnummer <<(V,white) Value Object>>
+}
+
+@enduml

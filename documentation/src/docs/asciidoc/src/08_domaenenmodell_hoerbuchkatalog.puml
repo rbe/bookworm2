@@ -1,0 +1,31 @@
+@startuml
+
+!include plantuml/Skinparams.iuml
+
+rectangle "Hörbuchkatalog" as r_hoerbuchkatalog <<Bounded Context>> {
+    class HoerbuchkatalogSuchService <<(S,white) Service>> {
+        suche(Suche) : Suchergebnis
+    }
+    together {
+        class Hoerbuchkatalog <<(A,white) Aggregate>> {
+            Hoerbuch[]
+        }
+        class Hoerbuch <<(E,white) Entity>> {
+            titelnummer
+        }
+    }
+    together {
+        class Suche <<(A,white) Aggregate>>
+        class Suchparameter <<(E,white) Entity>>
+        class Suchergebnis <<(E,white) Entity>> {
+            Titelnummer[]
+        }
+    }
+}
+HoerbuchkatalogSuchService -- Suche
+HoerbuchkatalogSuchService -- Hoerbuchkatalog
+Hoerbuchkatalog "1" -- "1..*" Hoerbuch
+Suche "1" -- "1" Suchparameter
+Suche "1" -- "1" Suchergebnis
+
+@enduml
