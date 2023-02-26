@@ -32,7 +32,7 @@
         <!-- Mikrokosmos -->
         <mikrokosmos.version>LocalBuild</mikrokosmos.version>
         <!-- Jackson -->
-        <jackson.version>2.11.1</jackson.version>
+        <jackson.version>2.12.7.1</jackson.version>
         <!-- Test -->
         <skipTests>true</skipTests>
         <maven.test.skip>true</maven.test.skip>
